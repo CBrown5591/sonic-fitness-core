@@ -360,8 +360,10 @@
 
     function setTimerDuration(seconds, vibrate = true) {
       configuredRestSeconds = seconds;
-      timerSeconds = seconds;
-      updateTimerDisplay();
+      if (!timerEndTime) {
+        timerSeconds = seconds;
+        updateTimerDisplay();
+      }
 
       // Persist chosen rest interval to device localStorage
       localStorage.setItem('sonic_rest_duration', seconds);
@@ -425,26 +427,55 @@
       renderSessionUI();
     }
 
+    let timerEndTime = null;
+
     function startRestTimer() {
       clearInterval(timerInterval);
-      timerSeconds = configuredRestSeconds;
-      updateTimerDisplay();
+      timerEndTime = Date.now() + (configuredRestSeconds * 1000);
+      localStorage.setItem('sonic_timer_end', timerEndTime);
+      syncTimerDelta();
       requestWakeLock();
-      timerInterval = setInterval(() => {
-        timerSeconds--;
+
+      timerInterval = setInterval(syncTimerDelta, 250);
+    }
+
+    function syncTimerDelta() {
+      if (!timerEndTime) return;
+
+      const remainingMs = timerEndTime - Date.now();
+      const newSeconds = Math.max(0, Math.ceil(remainingMs / 1000));
+
+      // Trigger 3, 2, 1 warning beeps only when crossing the second boundary
+      if (newSeconds !== timerSeconds) {
+        timerSeconds = newSeconds;
         updateTimerDisplay();
 
-        // 3-2-1 Audio & Haptic Warning
         if (timerSeconds === 3 || timerSeconds === 2 || timerSeconds === 1) {
           playCountdownBeep(false);
           if (navigator.vibrate) navigator.vibrate(40);
-        } else if (timerSeconds <= 0) {
+        } else if (timerSeconds === 0) {
           clearInterval(timerInterval);
+          timerEndTime = null;
+          localStorage.removeItem('sonic_timer_end');
           playCountdownBeep(true);
           if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
         }
-      }, 1000);
+      }
     }
+
+    // Re-synchronize timer immediately when returning to the app from background/lock screen
+    document.addEventListener('visibilitychange', () => {
+      if (document.visibilityState === 'visible') {
+        const savedEnd = parseInt(localStorage.getItem('sonic_timer_end'), 10);
+        if (savedEnd) {
+          timerEndTime = savedEnd;
+          syncTimerDelta();
+          if (timerEndTime && !timerInterval) {
+            timerInterval = setInterval(syncTimerDelta, 250);
+          }
+        }
+      }
+    });
 
     function updateTimerDisplay() {
       const mins = Math.floor(timerSeconds / 60);
@@ -598,7 +629,7 @@
     }
 
     // Hardcoded Default Webhook URL (Bake your deployed Google Apps Script URL here)
-    const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxVl5oX6U2OwD6vI-KcJnR0srmjg64MLKY3CDuovFi20I_k_4Cc_t0a4XRy5KMo1AZo/exec"; 
+    const DEFAULT_WEBHOOK_URL = ""; 
 
     function getActiveWebhookUrl() {
       return localStorage.getItem('sonic_sheets_webhook') || DEFAULT_WEBHOOK_URL;
@@ -673,17 +704,16 @@
       const rank = totalScore >= 75000 ? "S" : (totalScore >= 55000 ? "A" : "B");
 
       // Payload for Google Sheets
-      // Payload for Google Sheets
-const syncPayload = {
-  stage: "DAY_A", // Routes directly to the DAY_A sheet and COMMAND_HUB
-  totalScore,
-  rank,
-  ringsBanked,
-  totalReps,
-  prehab,
-  jointPain: anyPain,
-  sets: activeSession.sets
-};
+      const syncPayload = {
+        stage: "STAGE_X",
+        totalScore,
+        rank,
+        ringsBanked,
+        totalReps,
+        prehab,
+        jointPain: anyPain,
+        sets: activeSession.sets
+      };
 
       // Transmit to Google Sheets in background
       syncSessionToSheets(syncPayload);
@@ -700,10 +730,20 @@ const syncPayload = {
       }, 750);
     }
 
-    // Initialize persisted rest preference & active session on launch
+    // Initialize persisted rest preference, active session & active timer on launch
     document.addEventListener('DOMContentLoaded', () => {
       setTimerDuration(configuredRestSeconds, false);
       loadSessionState();
+
+      // Check if a rest timer was running before app closure
+      const savedEnd = parseInt(localStorage.getItem('sonic_timer_end'), 10);
+      if (savedEnd && savedEnd > Date.now()) {
+        timerEndTime = savedEnd;
+        syncTimerDelta();
+        timerInterval = setInterval(syncTimerDelta, 250);
+      } else {
+        localStorage.removeItem('sonic_timer_end');
+      }
     });
 
     if ('serviceWorker' in navigator) {
