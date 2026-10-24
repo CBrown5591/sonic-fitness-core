@@ -1,0 +1,41 @@
+{
+  "name": "Sonic Fitness HUD",
+  "short_name": "SonicFit",
+  "description": "Arcade-style workout cockpit with 5-Ring mastery tracking and Stage Clear evaluation",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "orientation": "portrait",
+  "background_color": "#0b0f19",
+  "theme_color": "#060911",
+  "icons": [
+    {
+      "src": "/assets/icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/assets/icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["fitness", "health", "games"],
+  "shortcuts": [
+    {
+      "name": "Launch Day A",
+      "short_name": "Day A",
+      "description": "Start Day A: Hinge & Horizontal Power",
+      "url": "/index.html?stage=DAY_A",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    },
+    {
+      "name": "Stage X Calisthenics",
+      "short_name": "Protocol Zero",
+      "description": "Start Zero-Equipment Density Circuit",
+      "url": "/index.html?stage=STAGE_X",
+      "icons": [{ "src": "/assets/icons/icon-192.png", "sizes": "192x192" }]
+    }
+  ]
+}
