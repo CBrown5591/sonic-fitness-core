@@ -673,16 +673,17 @@
       const rank = totalScore >= 75000 ? "S" : (totalScore >= 55000 ? "A" : "B");
 
       // Payload for Google Sheets
-      const syncPayload = {
-        stage: "STAGE_X",
-        totalScore,
-        rank,
-        ringsBanked,
-        totalReps,
-        prehab,
-        jointPain: anyPain,
-        sets: activeSession.sets
-      };
+      // Payload for Google Sheets
+const syncPayload = {
+  stage: "DAY_A", // Routes directly to the DAY_A sheet and COMMAND_HUB
+  totalScore,
+  rank,
+  ringsBanked,
+  totalReps,
+  prehab,
+  jointPain: anyPain,
+  sets: activeSession.sets
+};
 
       // Transmit to Google Sheets in background
       syncSessionToSheets(syncPayload);
