@@ -204,6 +204,96 @@
   </div>
 
   <script>
+    // Audio Context singleton (lazy-initialized on first user tap to satisfy mobile browser autoplay policies)
+let audioCtx = null;
+
+function getAudioContext() {
+  if (!audioCtx) {
+    audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+  }
+  if (audioCtx.state === 'suspended') {
+    audioCtx.resume();
+  }
+  return audioCtx;
+}
+
+// 1. Classic Sonic Ring Chime (Dual-frequency FM ring modulation)
+function playRingChime() {
+  const ctx = getAudioContext();
+  const now = ctx.currentTime;
+
+  // Primary tone (High bell chime)
+  const osc1 = ctx.createOscillator();
+  const gain1 = ctx.createGain();
+
+  // Secondary harmonic tone (Adds arcade sparkle)
+  const osc2 = ctx.createOscillator();
+  const gain2 = ctx.createGain();
+
+  osc1.type = 'sine';
+  osc2.type = 'triangle';
+
+  // Pitch ramp up (1046 Hz [C6] quickly stepping to 1567 Hz [G6])
+  osc1.frequency.setValueAtTime(1046.50, now);
+  osc1.frequency.exponentialRampToValueAtTime(1567.98, now + 0.08);
+
+  osc2.frequency.setValueAtTime(2093.00, now);
+  osc2.frequency.exponentialRampToValueAtTime(3135.96, now + 0.08);
+
+  // Volume decay envelopes
+  gain1.gain.setValueAtTime(0.25, now);
+  gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+
+  gain2.gain.setValueAtTime(0.12, now);
+  gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
+
+  // Wire up audio nodes
+  osc1.connect(gain1);
+  gain1.connect(ctx.destination);
+
+  osc2.connect(gain2);
+  gain2.connect(ctx.destination);
+
+  osc1.start(now);
+  osc2.start(now);
+  osc1.stop(now + 0.36);
+  osc2.stop(now + 0.36);
+}
+
+// 2. Stage Clear Victory Fanfare (Arcade Arpeggio + Resolved Power Chord)
+function playStageClearFanfare() {
+  const ctx = getAudioContext();
+  const now = ctx.currentTime;
+
+  // 16-bit Genesis-style arpeggio sequence: G4 -> C5 -> E5 -> G5 -> C6
+  const notes = [
+    { freq: 392.00, time: 0.00, dur: 0.10 }, // G4
+    { freq: 523.25, time: 0.10, dur: 0.10 }, // C5
+    { freq: 659.25, time: 0.20, dur: 0.10 }, // E5
+    { freq: 783.99, time: 0.30, dur: 0.12 }, // G5
+    { freq: 1046.5, time: 0.42, dur: 0.55 }, // C6 (Sustained Lead)
+    // Harmonized root chord at the climax
+    { freq: 523.25, time: 0.42, dur: 0.55 }, // C5 (Bass root)
+    { freq: 659.25, time: 0.42, dur: 0.55 }  // E5 (Harmony third)
+  ];
+
+  notes.forEach((note) => {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'triangle'; // Gives that nostalgic 16-bit chime quality
+    osc.frequency.setValueAtTime(note.freq, now + note.time);
+
+    gain.gain.setValueAtTime(0.22, now + note.time);
+    gain.gain.exponentialRampToValueAtTime(0.001, now + note.time + note.dur);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(now + note.time);
+    osc.stop(now + note.time + note.dur + 0.05);
+  });
+}
     let prehabChecked = false;
     let tempoClean = true;
     let jointPain = false;
