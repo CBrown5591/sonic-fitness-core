@@ -1,13 +1,11 @@
 const CACHE_NAME = 'sonic-fit-v1';
 const STATIC_ASSETS = [
-  '/',
-  '/index.html',
-  '/manifest.json',
-  '/assets/icons/icon-192.png',
-  '/assets/icons/icon-512.png'
+  './',
+  './index.html',
+  './manifest.json'
 ];
 
-// Install: Cache critical core shell assets
+// Install: Pre-cache offline shell
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -17,7 +15,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
-// Activate: Clean up legacy caches
+// Activate: Purge legacy caches
 self.addEventListener('activate', (event) => {
   event.waitUntil(
     caches.keys().then((keys) => {
@@ -33,23 +31,19 @@ self.addEventListener('activate', (event) => {
   );
 });
 
-// Fetch: Network-first for API telemetry, Cache-first for offline application shell
+// Fetch: Cache-first for offline application shell, Network fallback
 self.addEventListener('fetch', (event) => {
   const url = new URL(event.request.url);
 
-  // If hitting the FastAPI backend, try network first, then fall back to offline queue/response
-  if (url.pathname.startsWith('/api/')) {
+  // If hitting an external API, network-first
+  if (url.pathname.includes('/api/')) {
     event.respondWith(
-      fetch(event.request)
-        .catch(() => {
-          return new Response(
-            JSON.stringify({
-              offline: true,
-              message: 'Offline mode active. Set queued to local storage.'
-            }),
-            { headers: { 'Content-Type': 'application/json' } }
-          );
-        })
+      fetch(event.request).catch(() => {
+        return new Response(
+          JSON.stringify({ offline: true, message: 'Offline mode active.' }),
+          { headers: { 'Content-Type': 'application/json' } }
+        );
+      })
     );
     return;
   }
