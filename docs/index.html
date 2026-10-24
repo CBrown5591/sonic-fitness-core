@@ -265,8 +265,14 @@
       timerInterval = setInterval(() => {
         timerSeconds--;
         updateTimerDisplay();
-        if (timerSeconds <= 0) {
+
+        // 3-2-1 Audio & Haptic Warning
+        if (timerSeconds === 3 || timerSeconds === 2 || timerSeconds === 1) {
+          playCountdownBeep(false);
+          if (navigator.vibrate) navigator.vibrate(40);
+        } else if (timerSeconds <= 0) {
           clearInterval(timerInterval);
+          playCountdownBeep(true);
           if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
         }
       }, 1000);
@@ -289,6 +295,32 @@
         audioCtx.resume();
       }
       return audioCtx;
+    }
+
+    // 3. Countdown Audio Warning (3-2-1 Warning Beeps + Final Buzzer/Ding)
+    function playCountdownBeep(isFinal = false) {
+      try {
+        const ctx = getAudioContext();
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        // 3, 2, 1 beeps = 880 Hz (A5); 0 buzzer/bell = 1760 Hz (A6)
+        osc.type = isFinal ? 'triangle' : 'sine';
+        osc.frequency.setValueAtTime(isFinal ? 1760.00 : 880.00, now);
+
+        const duration = isFinal ? 0.35 : 0.12;
+        gain.gain.setValueAtTime(0.20, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(now);
+        osc.stop(now + duration + 0.05);
+      } catch (e) {
+        console.warn('Countdown beep failed:', e);
+      }
     }
 
     function playRingChime() {
