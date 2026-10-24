@@ -144,6 +144,28 @@
       font-weight: 800;
       cursor: pointer;
     }
+    /* Quick-Select Timer Pills */
+    .timer-selector {
+      display: flex;
+      gap: 6px;
+      align-items: center;
+    }
+    .btn-pill {
+      background: #141c2e;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 6px 10px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .btn-pill.active {
+      background: rgba(0, 229, 255, 0.2);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
   </style>
 </head>
 <body>
@@ -200,6 +222,14 @@
       <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Recovery Timer</div>
       <div class="timer-val" id="timerClock">01:30</div>
     </div>
+
+    <!-- Quick-Select Rest Intervals -->
+    <div class="timer-selector">
+      <button class="btn-pill" id="pill-60" onclick="setTimerDuration(60)">60s</button>
+      <button class="btn-pill active" id="pill-90" onclick="setTimerDuration(90)">90s</button>
+      <button class="btn-pill" id="pill-120" onclick="setTimerDuration(120)">120s</button>
+    </div>
+
     <button class="btn-advance" onclick="finishSession()">CLEAR STAGE</button>
   </div>
 
@@ -207,9 +237,31 @@
     let prehabChecked = false;
     let tempoClean = true;
     let jointPain = false;
+    let configuredRestSeconds = 90;
     let timerSeconds = 90;
     let timerInterval = null;
     let wakeLock = null;
+
+    function setTimerDuration(seconds) {
+      configuredRestSeconds = seconds;
+      timerSeconds = seconds;
+      updateTimerDisplay();
+
+      // Update active pill button UI
+      [60, 90, 120].forEach(s => {
+        const pill = document.getElementById(`pill-${s}`);
+        if (pill) {
+          if (s === seconds) {
+            pill.classList.add('active');
+          } else {
+            pill.classList.remove('active');
+          }
+        }
+      });
+
+      // Quick micro-haptic acknowledgment
+      if (navigator.vibrate) navigator.vibrate(25);
+    }
 
     async function requestWakeLock() {
       try {
@@ -259,7 +311,7 @@
 
     function startRestTimer() {
       clearInterval(timerInterval);
-      timerSeconds = 90;
+      timerSeconds = configuredRestSeconds;
       updateTimerDisplay();
       requestWakeLock();
       timerInterval = setInterval(() => {
