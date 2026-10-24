@@ -237,15 +237,21 @@
     let prehabChecked = false;
     let tempoClean = true;
     let jointPain = false;
-    let configuredRestSeconds = 90;
-    let timerSeconds = 90;
+
+    // Load saved rest interval preference or default to 90s
+    const savedRest = parseInt(localStorage.getItem('sonic_rest_duration'), 10);
+    let configuredRestSeconds = [60, 90, 120].includes(savedRest) ? savedRest : 90;
+    let timerSeconds = configuredRestSeconds;
     let timerInterval = null;
     let wakeLock = null;
 
-    function setTimerDuration(seconds) {
+    function setTimerDuration(seconds, vibrate = true) {
       configuredRestSeconds = seconds;
       timerSeconds = seconds;
       updateTimerDisplay();
+
+      // Persist chosen rest interval to device localStorage
+      localStorage.setItem('sonic_rest_duration', seconds);
 
       // Update active pill button UI
       [60, 90, 120].forEach(s => {
@@ -260,7 +266,7 @@
       });
 
       // Quick micro-haptic acknowledgment
-      if (navigator.vibrate) navigator.vibrate(25);
+      if (vibrate && navigator.vibrate) navigator.vibrate(25);
     }
 
     async function requestWakeLock() {
@@ -465,6 +471,11 @@
         alert(`STAGE CLEAR!\nTotal Score: ${total.toLocaleString()} pts\nRank: S-TIER`);
       }, 750);
     }
+
+    // Initialize persisted rest preference on launch
+    document.addEventListener('DOMContentLoaded', () => {
+      setTimerDuration(configuredRestSeconds, false);
+    });
 
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
