@@ -203,6 +203,7 @@
     <div class="hud-title">STAGE X // CALISTHENICS</div>
     <div style="display: flex; align-items: center; gap: 8px;">
       <div class="shield-badge" id="shieldStatus">SHIELD: 100%</div>
+      <button id="notifyBtn" onclick="requestNotificationPermission()" style="background: none; border: 1px solid var(--border); color: var(--text-dim); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" title="Enable Lock-Screen Notifications">🔔 ALERTS</button>
       <button onclick="promptWebhookUrl()" style="background: none; border: 1px solid var(--border); color: var(--accent-blue); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">SYNC ⚙</button>
     </div>
   </div>
@@ -429,6 +430,64 @@
 
     let timerEndTime = null;
 
+    
+    // Notification & Alert Management
+    async function requestNotificationPermission() {
+      if (!('Notification' in window)) {
+        alert("Web Notifications are not supported by this browser.");
+        return;
+      }
+      try {
+        const permission = await Notification.requestPermission();
+        updateNotificationBtnUI(permission);
+        if (permission === 'granted') {
+          if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+          alert("Lock-screen alerts enabled! You will now receive a buzz and notification when rest expires.");
+        }
+      } catch (err) {
+        console.warn("Notification permission request error:", err);
+      }
+    }
+
+    function updateNotificationBtnUI(permission) {
+      const btn = document.getElementById('notifyBtn');
+      if (!btn) return;
+      if (permission === 'granted') {
+        btn.style.color = "var(--accent-green)";
+        btn.style.borderColor = "var(--accent-green)";
+        btn.innerText = "🔔 ACTIVE";
+      } else if (permission === 'denied') {
+        btn.style.color = "var(--accent-red)";
+        btn.style.borderColor = "var(--accent-red)";
+        btn.innerText = "🔕 BLOCKED";
+      } else {
+        btn.style.color = "var(--text-dim)";
+        btn.style.borderColor = "var(--border)";
+        btn.innerText = "🔔 ALERTS";
+      }
+    }
+
+    async function dispatchRestNotification() {
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+
+      try {
+        if ('serviceWorker' in navigator) {
+          const reg = await navigator.serviceWorker.ready;
+          reg.showNotification("REST COMPLETE // STAGE READY", {
+            body: "Recovery window elapsed. Time to execute your next set!",
+            icon: "./assets/icons/icon-192.png",
+            badge: "./assets/icons/icon-192.png",
+            vibrate: [300, 100, 300, 100, 400],
+            tag: "rest-timer-complete",
+            renotify: true,
+            requireInteraction: true
+          });
+        }
+      } catch (e) {
+        console.warn("Could not dispatch notification:", e);
+      }
+    }
+
     function startRestTimer() {
       clearInterval(timerInterval);
       timerEndTime = Date.now() + (configuredRestSeconds * 1000);
@@ -459,6 +518,7 @@
           localStorage.removeItem('sonic_timer_end');
           playCountdownBeep(true);
           if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+          dispatchRestNotification();
         }
       }
     }
@@ -734,6 +794,9 @@
     document.addEventListener('DOMContentLoaded', () => {
       setTimerDuration(configuredRestSeconds, false);
       loadSessionState();
+      if ('Notification' in window) {
+        updateNotificationBtnUI(Notification.permission);
+      }
 
       // Check if a rest timer was running before app closure
       const savedEnd = parseInt(localStorage.getItem('sonic_timer_end'), 10);
