@@ -544,11 +544,26 @@
         `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
-    // --- Web Audio API Arcade Synthesizer ---
+    // --- Web Audio API Arcade Synthesizer with Audio Session Ducking ---
     let audioCtx = null;
+
+    function configureAudioSession() {
+      // Audio Session API (iOS Safari 16.4+ & Android PWA): Ducks background audio (Spotify/Apple Music)
+      if ('audioSession' in navigator) {
+        try {
+          navigator.audioSession.type = 'transient-solo-duck';
+        } catch (e) {
+          console.warn('AudioSession ducking type configuration failed:', e);
+        }
+      }
+    }
+
     function getAudioContext() {
       if (!audioCtx) {
-        audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        // latencyHint: 'interactive' ensures minimum latency when mixing with system audio
+        audioCtx = new AudioContextClass({ latencyHint: 'interactive' });
+        configureAudioSession();
       }
       if (audioCtx.state === 'suspended') {
         audioCtx.resume();
@@ -569,7 +584,7 @@
         osc.frequency.setValueAtTime(isFinal ? 1760.00 : 880.00, now);
 
         const duration = isFinal ? 0.35 : 0.12;
-        gain.gain.setValueAtTime(0.20, now);
+        gain.gain.setValueAtTime(0.35, now);
         gain.gain.exponentialRampToValueAtTime(0.001, now + duration);
 
         osc.connect(gain);
@@ -601,10 +616,10 @@
         osc2.frequency.setValueAtTime(2093.00, now);
         osc2.frequency.exponentialRampToValueAtTime(3135.96, now + 0.08);
 
-        gain1.gain.setValueAtTime(0.25, now);
+        gain1.gain.setValueAtTime(0.40, now);
         gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
 
-        gain2.gain.setValueAtTime(0.12, now);
+        gain2.gain.setValueAtTime(0.25, now);
         gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.25);
 
         osc1.connect(gain1);
