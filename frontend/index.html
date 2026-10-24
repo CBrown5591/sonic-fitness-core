@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+  <title>Sonic Fitness HUD // Stage X</title>
+  <link rel="manifest" href="./manifest.json">
+  <meta name="theme-color" content="#060911">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <link rel="apple-touch-icon" href="./assets/icons/icon-192.png">
+  <style>
+    :root {
+      --bg: #0b0f19;
+      --card-bg: #141c2e;
+      --accent-blue: #00e5ff;
+      --accent-gold: #ffc400;
+      --accent-red: #ff3d00;
+      --accent-green: #00e676;
+      --text: #ffffff;
+      --text-dim: #90a4ae;
+      --border: #263238;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
+
+    .hud-header {
+      background: #060911;
+      padding: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 2px solid var(--accent-blue);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+    .hud-title { font-size: 16px; font-weight: 800; letter-spacing: 1px; color: var(--accent-blue); }
+    .shield-badge {
+      background: rgba(0, 230, 118, 0.15);
+      border: 1px solid var(--accent-green);
+      color: var(--accent-green);
+      padding: 4px 10px;
+      border-radius: 20px;
+      font-size: 12px;
+      font-weight: 700;
+    }
+
+    .container { padding: 16px; }
+
+    .stage-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .stage-label { color: var(--accent-gold); font-size: 12px; font-weight: 700; text-transform: uppercase; }
+    .stage-name { font-size: 20px; font-weight: 800; margin-top: 4px; }
+
+    .prehab-box {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      background: rgba(255, 196, 0, 0.08);
+      border: 1px dashed var(--accent-gold);
+      padding: 12px;
+      border-radius: 8px;
+      margin-bottom: 16px;
+      cursor: pointer;
+    }
+    .prehab-box input { width: 22px; height: 22px; accent-color: var(--accent-gold); }
+
+    .movement-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 16px;
+      margin-bottom: 16px;
+    }
+    .slot-tag { color: var(--accent-blue); font-size: 13px; font-weight: 700; }
+    .move-title { font-size: 18px; font-weight: 700; margin: 4px 0 12px 0; }
+
+    .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
+    .input-box { background: #0b0f19; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); }
+    .input-box label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; display: block; }
+    .input-box input, .input-box select {
+      background: transparent;
+      border: none;
+      color: #fff;
+      font-size: 20px;
+      font-weight: 700;
+      width: 100%;
+      outline: none;
+    }
+
+    .toggle-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .btn-toggle {
+      padding: 12px;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: #0b0f19;
+      color: var(--text-dim);
+      font-weight: 700;
+      font-size: 13px;
+      cursor: pointer;
+      text-align: center;
+    }
+    .btn-toggle.active-green { background: rgba(0, 230, 118, 0.2); border-color: var(--accent-green); color: var(--accent-green); }
+    .btn-toggle.active-red { background: rgba(255, 61, 0, 0.2); border-color: var(--accent-red); color: var(--accent-red); }
+
+    .btn-log {
+      width: 100%;
+      background: var(--accent-blue);
+      color: #000;
+      border: none;
+      padding: 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+    }
+
+    .rest-dock {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #060911;
+      border-top: 1px solid var(--border);
+      padding: 14px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .timer-val { font-size: 24px; font-weight: 900; color: var(--accent-gold); }
+    .btn-advance {
+      background: var(--accent-green);
+      color: #000;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 8px;
+      font-weight: 800;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="hud-header">
+    <div class="hud-title">STAGE X // CALISTHENICS</div>
+    <div class="shield-badge" id="shieldStatus">SHIELD: 100%</div>
+  </div>
+
+  <div class="container">
+    <div class="stage-card">
+      <div class="stage-label">PROTOCOL ZERO: ZERO-EQUIPMENT CIRCUIT</div>
+      <div class="stage-name">Density & Core Alignment</div>
+    </div>
+
+    <div class="prehab-box" onclick="togglePrehab()">
+      <input type="checkbox" id="prehabCheck">
+      <label style="cursor: pointer; font-size: 14px; font-weight: 600;">
+        Pre-Flight: Wrist Mobilization + McGill Bird-Dogs Done
+      </label>
+    </div>
+
+    <div class="movement-card">
+      <div class="slot-tag">SLOT X1 • PUSH DENSITY</div>
+      <div class="move-title">Elevated Hands / Floor Push-Ups</div>
+
+      <div class="input-grid">
+        <div class="input-box">
+          <label>Reps Logged</label>
+          <input type="number" id="repsInput" value="12">
+        </div>
+        <div class="input-box">
+          <label>RPE (Effort)</label>
+          <select id="rpeSelect">
+            <option value="6.5">RPE 6.5 (Easy)</option>
+            <option value="7.5" selected>RPE 7.5 (Solid / 2-3 in tank)</option>
+            <option value="8.0">RPE 8.0 (Sweet Spot)</option>
+            <option value="9.0">RPE 9.0 (Grind)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="toggle-row">
+        <div class="btn-toggle active-green" id="tempoBtn" onclick="toggleTempo()">Tempo: Clean (3-0-1)</div>
+        <div class="btn-toggle" id="painBtn" onclick="togglePain()">Joint Strain: No</div>
+      </div>
+
+      <button class="btn-log" onclick="logActiveSet()">LOG SET 1 & START REST</button>
+    </div>
+  </div>
+
+  <div class="rest-dock">
+    <div>
+      <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Recovery Timer</div>
+      <div class="timer-val" id="timerClock">01:30</div>
+    </div>
+    <button class="btn-advance" onclick="finishSession()">CLEAR STAGE</button>
+  </div>
+
+  <script>
+    let prehabChecked = false;
+    let tempoClean = true;
+    let jointPain = false;
+    let timerSeconds = 90;
+    let timerInterval = null;
+    let wakeLock = null;
+
+    async function requestWakeLock() {
+      try {
+        if ('wakeLock' in navigator) {
+          wakeLock = await navigator.wakeLock.request('screen');
+        }
+      } catch (err) {
+        console.warn('WakeLock not acquired:', err);
+      }
+    }
+
+    function togglePrehab() {
+      prehabChecked = !prehabChecked;
+      document.getElementById('prehabCheck').checked = prehabChecked;
+    }
+
+    function toggleTempo() {
+      tempoClean = !tempoClean;
+      const btn = document.getElementById('tempoBtn');
+      if (tempoClean) {
+        btn.classList.add('active-green');
+        btn.innerText = "Tempo: Clean (3-0-1)";
+      } else {
+        btn.classList.remove('active-green');
+        btn.innerText = "Tempo: Fast / Sloppy";
+      }
+    }
+
+    function togglePain() {
+      jointPain = !jointPain;
+      const btn = document.getElementById('painBtn');
+      const shield = document.getElementById('shieldStatus');
+      if (jointPain) {
+        btn.classList.add('active-red');
+        btn.innerText = "Joint Strain: YES";
+        shield.innerText = "SHIELD: 50% (CUSHION)";
+        shield.style.borderColor = "var(--accent-red)";
+        shield.style.color = "var(--accent-red)";
+      } else {
+        btn.classList.remove('active-red');
+        btn.innerText = "Joint Strain: No";
+        shield.innerText = "SHIELD: 100%";
+        shield.style.borderColor = "var(--accent-green)";
+        shield.style.color = "var(--accent-green)";
+      }
+    }
+
+    function startRestTimer() {
+      clearInterval(timerInterval);
+      timerSeconds = 90;
+      updateTimerDisplay();
+      requestWakeLock();
+      timerInterval = setInterval(() => {
+        timerSeconds--;
+        updateTimerDisplay();
+        if (timerSeconds <= 0) {
+          clearInterval(timerInterval);
+          if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
+        }
+      }, 1000);
+    }
+
+    function updateTimerDisplay() {
+      const mins = Math.floor(timerSeconds / 60);
+      const secs = timerSeconds % 60;
+      document.getElementById('timerClock').innerText = 
+        `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
+    }
+
+    function logActiveSet() {
+      if (navigator.vibrate) navigator.vibrate(50);
+      startRestTimer();
+    }
+
+    function finishSession() {
+      const ringBonus = prehabChecked ? (jointPain ? 7500 : 15000) : 0;
+      const total = ringBonus + 20000 + (12 * 75 * 3) + 10000;
+      alert(`STAGE CLEAR!\nTotal Score: ${total.toLocaleString()} pts\nRank: S-TIER`);
+    }
+
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('[SW] Registered:', reg.scope))
+          .catch(err => console.error('[SW] Registration failed:', err));
+      });
+    }
+  </script>
+</body>
+</html>
