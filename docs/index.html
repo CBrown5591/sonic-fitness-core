@@ -136,9 +136,16 @@
       background: rgba(0, 229, 255, 0.2);
       border-color: var(--accent-blue);
       color: var(--accent-blue);
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
     }
     .slot-btn.completed {
       border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+    .slot-btn.completed.active {
+      border-color: var(--accent-blue);
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+      background: rgba(0, 230, 118, 0.15);
       color: var(--accent-green);
     }
 
@@ -601,6 +608,7 @@
 
     function saveSessionState() {
       activeSession.stage = activeStageKey;
+      activeSession.slotIndex = activeSlotIndex;
       localStorage.setItem('sonic_active_session', JSON.stringify(activeSession));
       localStorage.setItem('sonic_active_stage', activeStageKey);
       updateTonnageDisplay();
@@ -630,11 +638,15 @@
         if (activeSession.sets.length > 0 && !confirm("Switching stages will start a new session. Proceed?")) {
           return;
         }
-        activeSession = { stage: stageKey, prehabChecked: false, jointPain: false, sets: [] };
+        activeSession = { stage: stageKey, slotIndex: 0, prehabChecked: false, jointPain: false, sets: [] };
+        activeSlotIndex = 0;
+      } else if (!resetIfNew && activeSession.slotIndex !== undefined) {
+        activeSlotIndex = activeSession.slotIndex;
+      } else if (resetIfNew) {
+        activeSlotIndex = 0;
       }
 
       activeStageKey = stageKey;
-      activeSlotIndex = 0;
 
       // Update Tab Pill UI
       document.querySelectorAll('.stage-tab').forEach(tab => tab.classList.remove('active'));
@@ -668,6 +680,7 @@
         btn.innerText = slotData.slot;
         btn.onclick = () => {
           activeSlotIndex = index;
+          saveSessionState();
           renderSlotStepper();
           loadSlotData();
         };
@@ -742,12 +755,14 @@
       if (navigator.vibrate) navigator.vibrate(50);
       startRestTimer();
 
-      // Check if slot reached 3 sets; if so, prompt or auto-highlight next slot
+      // Check if slot reached 3 sets; if so, auto-advance to next slot
       if (setsInSlot >= 3 && activeSlotIndex < stageDef.slots.length - 1) {
         activeSlotIndex++;
+        saveSessionState();
         renderSlotStepper();
         loadSlotData();
       } else {
+        saveSessionState();
         renderSlotStepper();
         updateLogButtonText();
       }
