@@ -1,7 +1,9 @@
-const CACHE_NAME = 'sonic-fit-v7';
+const CACHE_NAME = 'sonic-fit-v8';
 const STATIC_ASSETS = [
   './',
   './index.html',
+  './styles.css',
+  './app.js',
   './manifest.json'
 ];
 
@@ -9,7 +11,7 @@ self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching offline shell v3');
+      console.log('[SW] Pre-caching offline shell v8');
       return cache.addAll(STATIC_ASSETS);
     })
   );
@@ -63,7 +65,6 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
-// Notification click event: focus the app when user taps the notification
 self.addEventListener('notificationclick', (event) => {
   event.notification.close();
   event.waitUntil(
