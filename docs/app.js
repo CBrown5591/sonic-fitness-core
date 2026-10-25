@@ -636,93 +636,165 @@
       }
     }
 
-    // --- Modern Sonic Act Clear Fanfare (Adventure / Generations / Colors) ---
-    function playModernFanfare(ctx, now) {
-      const D2 = 73.42, G2 = 98.00, A2 = 110.00, B2 = 123.47;
-      const D5 = 587.33, E5 = 659.25, Fs5 = 739.99, G5 = 783.99, A5 = 880.00, B5 = 987.77, Cs6 = 1108.73;
-      const D6 = 1174.66, A6 = 1760.00, Cs7 = 2217.46, D7 = 2349.32;
+    // --- Authentic Modern Sonic Act Clear Fanfare (Generations / Unleashed / Colors) ---
+function playModernFanfare(ctx, now) {
+  // Frequencies (F Major / D Minor Sonic Modern Orchestration)
+  const C4 = 261.63, D4 = 293.66, E4 = 329.63, F4 = 349.23, G4 = 392.00, A4 = 440.00, Bb4 = 466.16;
+  const C5 = 523.25, D5 = 587.33, E5 = 659.25, F5 = 698.46, G5 = 783.99, A5 = 880.00, Bb5 = 932.33;
+  const C6 = 1046.50, D6 = 1174.66, E6 = 1318.51, F6 = 1396.91, G6 = 1567.98, A6 = 1760.00, C7 = 2093.00, F7 = 2793.83;
+  const F2 = 87.31, G2 = 98.00, A2 = 110.00, Bb2 = 116.54, C3 = 130.81, D3 = 146.83;
 
-      const melody = [
-        { f: D5,  t: 0.00, d: 0.10 },
-        { f: D5,  t: 0.11, d: 0.10 },
-        { f: Fs5, t: 0.22, d: 0.12 },
-        { f: A5,  t: 0.36, d: 0.38 },
-        { f: G5,  t: 0.78, d: 0.10 },
-        { f: Fs5, t: 0.89, d: 0.10 },
-        { f: E5,  t: 1.00, d: 0.16 },
-        { f: D5,  t: 1.18, d: 0.32 },
+  // 1. Modern Horn Section (Lead Melody with authentic rhythmic stabs & sixteenth pickups)
+  const hornNotes = [
+    // Rapid Sixteenth Horn Pickup
+    { f: C5,  t: 0.00, d: 0.07 },
+    { f: D5,  t: 0.07, d: 0.07 },
+    { f: F5,  t: 0.14, d: 0.07 },
+    { f: G5,  t: 0.21, d: 0.09 },
 
-        { f: E5,  t: 1.54, d: 0.10 },
-        { f: E5,  t: 1.65, d: 0.10 },
-        { f: G5,  t: 1.76, d: 0.12 },
-        { f: B5,  t: 1.90, d: 0.38 },
-        { f: A5,  t: 2.32, d: 0.10 },
-        { f: G5,  t: 2.43, d: 0.10 },
-        { f: Fs5, t: 2.54, d: 0.16 },
-        { f: E5,  t: 2.72, d: 0.32 },
+    // Bar 1: Accent Hit & Funk Rise
+    { f: A5,  t: 0.32, d: 0.28 }, // Big accent
+    { f: F5,  t: 0.68, d: 0.12 },
+    { f: G5,  t: 0.82, d: 0.12 },
+    { f: A5,  t: 0.96, d: 0.14 },
+    { f: Bb5, t: 1.12, d: 0.14 },
+    { f: C6,  t: 1.28, d: 0.45 }, // Sustained brass hold
 
-        { f: G5,  t: 3.08, d: 0.12 },
-        { f: A5,  t: 3.22, d: 0.12 },
-        { f: B5,  t: 3.36, d: 0.12 },
-        { f: Cs6, t: 3.50, d: 0.20 },
+    // Bar 2: Syncopated Brass Descent
+    { f: D6,  t: 1.82, d: 0.14 },
+    { f: C6,  t: 1.98, d: 0.14 },
+    { f: Bb5, t: 2.14, d: 0.14 },
+    { f: A5,  t: 2.30, d: 0.18 },
+    { f: G5,  t: 2.50, d: 0.18 },
+    { f: F5,  t: 2.70, d: 0.18 },
+    { f: G5,  t: 2.90, d: 0.35 },
 
-        { f: D6,  t: 3.74, d: 1.50 },
-        { f: A5,  t: 3.74, d: 1.50 },
-        { f: Fs5, t: 3.74, d: 1.50 },
-        { f: D5,  t: 3.74, d: 1.50 }
-      ];
+    // Bar 3: Modern Chromatic Turnaround & Horn Buildup
+    { f: Bb5, t: 3.32, d: 0.12 },
+    { f: A5,  t: 3.46, d: 0.12 },
+    { f: G5,  t: 3.60, d: 0.12 },
+    { f: F5,  t: 3.74, d: 0.12 },
+    { f: E5,  t: 3.88, d: 0.12 },
+    { f: F5,  t: 4.02, d: 0.14 },
+    { f: G5,  t: 4.18, d: 0.20 },
+    { f: C6,  t: 4.40, d: 0.32 }, // Peak trumpet swell
 
-      const bass = [
-        { f: D2, t: 0.00, d: 0.30 },
-        { f: D2, t: 0.36, d: 0.36 },
-        { f: A2, t: 0.78, d: 0.35 },
-        { f: D2, t: 1.18, d: 0.30 },
+    // Bar 4: Final High Power Chord Hit
+    { f: F6,  t: 4.76, d: 1.60 },
+    { f: C6,  t: 4.76, d: 1.60 },
+    { f: A5,  t: 4.76, d: 1.60 },
+    { f: F5,  t: 4.76, d: 1.60 }
+  ];
 
-        { f: G2, t: 1.54, d: 0.30 },
-        { f: G2, t: 1.90, d: 0.36 },
-        { f: B2, t: 2.32, d: 0.35 },
-        { f: A2, t: 2.72, d: 0.30 },
+  // 2. Punchy Funk Slap/Rock Bass
+  const bassRhythm = [
+    { f: F2,  t: 0.32, d: 0.30 },
+    { f: C3,  t: 0.68, d: 0.20 },
+    { f: F2,  t: 0.96, d: 0.25 },
+    { f: C3,  t: 1.28, d: 0.40 },
 
-        { f: G2, t: 3.08, d: 0.24 },
-        { f: A2, t: 3.36, d: 0.28 },
-        { f: D2, t: 3.74, d: 1.50 }
-      ];
+    { f: Bb2, t: 1.82, d: 0.25 },
+    { f: F2,  t: 2.14, d: 0.20 },
+    { f: G2,  t: 2.50, d: 0.25 },
+    { f: C3,  t: 2.90, d: 0.35 },
 
-      melody.forEach(n => {
-        const tStart = now + n.t;
-        const tEnd = tStart + n.d;
+    { f: Bb2, t: 3.32, d: 0.20 },
+    { f: A2,  t: 3.60, d: 0.20 },
+    { f: G2,  t: 3.88, d: 0.20 },
+    { f: C3,  t: 4.18, d: 0.35 },
 
-        const osc1 = ctx.createOscillator();
-        const osc2 = ctx.createOscillator();
-        const filter = ctx.createBiquadFilter();
-        const gain = ctx.createGain();
+    { f: F2,  t: 4.76, d: 1.60 }
+  ];
 
-        osc1.type = 'sawtooth';
-        osc2.type = 'sawtooth';
+  // Render Modern Brass (Layered Supersaw + Resonant Lowpass Filter)
+  hornNotes.forEach(h => {
+    const tStart = now + h.t;
+    const tEnd = tStart + h.d;
 
-        osc1.frequency.setValueAtTime(n.f, tStart);
-        osc2.frequency.setValueAtTime(n.f * 1.006, tStart);
+    const osc1 = ctx.createOscillator();
+    const osc2 = ctx.createOscillator();
+    const filter = ctx.createBiquadFilter();
+    const gain = ctx.createGain();
 
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(2200, tStart);
-        filter.frequency.exponentialRampToValueAtTime(5000, tStart + 0.03);
-        filter.frequency.exponentialRampToValueAtTime(2400, tEnd);
-        filter.Q.value = 3.0;
+    osc1.type = 'sawtooth';
+    osc2.type = 'sawtooth';
 
-        gain.gain.setValueAtTime(0.001, tStart);
-        gain.gain.linearRampToValueAtTime(0.20, tStart + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.001, tEnd + 0.03);
+    osc1.frequency.setValueAtTime(h.f, tStart);
+    osc2.frequency.setValueAtTime(h.f * 1.005, tStart); // Detuned brass chorus
 
-        osc1.connect(filter);
-        osc2.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
+    // Dynamic Horn Filter Bite
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(1800, tStart);
+    filter.frequency.exponentialRampToValueAtTime(4500, tStart + 0.04);
+    filter.frequency.exponentialRampToValueAtTime(2200, tEnd);
+    filter.Q.value = 2.2;
 
-        osc1.start(tStart);
-        osc2.start(tStart);
-        osc1.stop(tEnd + 0.04);
-        osc2.stop(tEnd + 0.04);
-      });
+    // Fast Attack Brass Envelope
+    gain.gain.setValueAtTime(0.001, tStart);
+    gain.gain.linearRampToValueAtTime(0.22, tStart + 0.018);
+    gain.gain.exponentialRampToValueAtTime(0.001, tEnd + 0.04);
+
+    osc1.connect(filter);
+    osc2.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc1.start(tStart);
+    osc2.start(tStart);
+    osc1.stop(tEnd + 0.05);
+    osc2.stop(tEnd + 0.05);
+  });
+
+  // Render Modern Slap Bass
+  bassRhythm.forEach(b => {
+    const tStart = now + b.t;
+    const tEnd = tStart + b.d;
+
+    const osc = ctx.createOscillator();
+    const filter = ctx.createBiquadFilter();
+    const gain = ctx.createGain();
+
+    osc.type = 'sawtooth';
+    osc.frequency.setValueAtTime(b.f, tStart);
+
+    filter.type = 'lowpass';
+    filter.frequency.setValueAtTime(1600, tStart);
+    filter.frequency.exponentialRampToValueAtTime(400, tStart + 0.08);
+
+    gain.gain.setValueAtTime(0.001, tStart);
+    gain.gain.linearRampToValueAtTime(0.32, tStart + 0.015);
+    gain.gain.exponentialRampToValueAtTime(0.001, tEnd);
+
+    osc.connect(filter);
+    filter.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(tStart);
+    osc.stop(tEnd + 0.03);
+  });
+
+  // Final Chord Ring Cascade & Shimmer
+  const sparkleNotes = [
+    { f: F6, t: 4.80 }, { f: A6, t: 4.88 }, { f: C7, t: 4.96 }, { f: F7, t: 5.04 }
+  ];
+  sparkleNotes.forEach(s => {
+    const tStart = now + s.t;
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+
+    osc.type = 'sine';
+    osc.frequency.setValueAtTime(s.f, tStart);
+
+    gain.gain.setValueAtTime(0.25, tStart);
+    gain.gain.exponentialRampToValueAtTime(0.001, tStart + 0.45);
+
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+
+    osc.start(tStart);
+    osc.stop(tStart + 0.46);
+  });
+}
 
       bass.forEach(b => {
         const tStart = now + b.t;
