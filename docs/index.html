@@ -27,6 +27,24 @@
 
   <div class="container">
     <!-- Stage Switching Bar -->
+        <!-- Pilot Progression & Lifetime EXP Cockpit Bar -->
+    <div class="pilot-exp-card">
+      <div class="pilot-exp-header">
+        <div class="pilot-lvl-tag">
+          <span class="lvl-badge" id="hudPilotLevel">LVL 3</span>
+          <span class="pilot-title" id="hudPilotTitle">JUGGERNAUT // VETERAN</span>
+        </div>
+        <div class="exp-counter" id="hudExpCounter">512,900 EXP</div>
+      </div>
+      <div class="exp-bar-track">
+        <div class="exp-bar-fill" id="hudExpFill" style="width: 54.3%;"></div>
+      </div>
+      <div class="exp-footer">
+        <span id="hudExpToNext">137,100 EXP TO LVL 4</span>
+        <span id="hudExpBracket">350K / 650K</span>
+      </div>
+    </div>
+
     <div class="stage-nav">
       <div class="stage-tab active" id="tab-DAY_A" onclick="selectStage('DAY_A')">DAY A // HINGE</div>
       <div class="stage-tab" id="tab-DAY_B" onclick="selectStage('DAY_B')">DAY B // KNEE</div>
@@ -156,6 +174,7 @@
   <!-- Integrated Results Dossier Overlay -->
   <div id="resultsOverlay" class="results-overlay">
     <div class="results-card">
+      <div class="levelup-alert-badge" id="resLevelUpBadge">★ PILOT LEVEL UP! ★</div>
       <div class="results-banner">STAGE CLEAR // MISSION COMPLETE</div>
       <div class="results-stage-title" id="resStageTitle">DAY A: HINGE & HORIZONTAL</div>
       
