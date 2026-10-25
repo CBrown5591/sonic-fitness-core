@@ -1243,34 +1243,43 @@
     // -------------------------------------------------------------
     // LIVE GOOGLE SHEETS TELEMETRY SYNC (GET ENDPOINT)
     // -------------------------------------------------------------
-    async function syncStateFromSheet() {
-      const webhookUrl = getActiveWebhookUrl();
-      if (!webhookUrl || webhookUrl.includes('YOUR_APPS_SCRIPT_WEBHOOK_URL_HERE')) return;
+   async function syncStateFromSheet() {
+  const webhookUrl = getActiveWebhookUrl();
+  if (!webhookUrl || webhookUrl.includes('YOUR_APPS_SCRIPT_WEBHOOK_URL_HERE')) return;
 
-      try {
-        console.log('[Telemetry] Querying Google Sheet for live pilot telemetry...');
-        const res = await fetch(webhookUrl);
-        if (!res.ok) return;
-        const data = await res.json();
+  try {
+    console.log('[Telemetry] Querying Google Sheet for live pilot telemetry...');
+    
+    // Explicitly follow Google's 302 redirect
+    const res = await fetch(webhookUrl, {
+      method: 'GET',
+      redirect: 'follow'
+    });
 
-        if (data && data.status === 'success') {
-          console.log('[Telemetry] Synchronized with Google Sheet:', data);
-
-          if (data.lifetimeExp !== undefined) {
-            localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
-            updatePilotExpUI();
-          }
-
-          if (data.vault && Array.isArray(data.vault) && data.vault.length > 0) {
-            saveVaultData(data.vault);
-            renderVault();
-          }
-        }
-      } catch (err) {
-        console.warn('[Telemetry] Sync query error (offline mode active):', err);
-      }
+    if (!res.ok) {
+      console.warn('[Telemetry] HTTP response not OK:', res.status);
+      return;
     }
 
+    const data = await res.json();
+
+    if (data && data.status === 'success') {
+      console.log('[Telemetry] Synchronized with Google Sheet:', data);
+
+      if (data.lifetimeExp !== undefined) {
+        localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
+        updatePilotExpUI();
+      }
+
+      if (data.vault && Array.isArray(data.vault) && data.vault.length > 0) {
+        saveVaultData(data.vault);
+        renderVault();
+      }
+    }
+  } catch (err) {
+    console.warn('[Telemetry] Sync query error:', err);
+  }
+}
     document.addEventListener('DOMContentLoaded', () => {
       syncStateFromSheet();
       updateAudioThemeBtnUI();
