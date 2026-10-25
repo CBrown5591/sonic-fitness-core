@@ -127,23 +127,19 @@
     // MASTERY VAULT CATALOG (12 RELIC MOVEMENTS)
     // -------------------------------------------------------------
     const DEFAULT_VAULT = [
-  { exercise: "Barbell Deadlift (Standard Bar)", focus: "Hinge", rings: 0 },
-  { exercise: "Chest-Supported Dumbbell Row", focus: "Horizontal Pull", rings: 0 },
-  { exercise: "Neutral-Grip DB Floor Press", focus: "Horizontal Push", rings: 0 },
-  { exercise: "Cable Pallof Press", focus: "Core", rings: 0 },
-  { exercise: "Goblet Squat (Tempo 3-0-1)", focus: "Squat", rings: 0 },
-  { exercise: "Half-Kneeling Landmine Press", focus: "Vertical Push", rings: 0 },
-  { exercise: "Supported Romanian Deadlift (RDL)", focus: "Hinge", rings: 0 },
-  { exercise: "Cable External Rotations", focus: "Shoulder Rehab", rings: 0 },
-  { exercise: "DB Bulgarian Split Squat", focus: "Single Leg", rings: 0 },
-  { exercise: "Lat Pulldown (Neutral/Mag-Grip)", focus: "Vertical Pull", rings: 0 },
-  { exercise: "Incline DB Bench Press (30°)", focus: "Horizontal Push", rings: 0 },
-  { exercise: "Farmer's Carries", focus: "Carry", rings: 0 },
-  { exercise: "Aegis Striker (Push Progression)", focus: "Horizontal Push", rings: 0 },
-  { exercise: "Kinetic Stride (Squat Progression)", focus: "Squat", rings: 0 },
-  { exercise: "Pillar Stride (Lunge Progression)", focus: "Single Leg", rings: 0 },
-  { exercise: "Gale Retractor (Pull Progression)", focus: "Horizontal Pull", rings: 0 }
-];
+      { exercise: "Barbell Deadlift (Standard Bar)", focus: "Hinge", rings: 0 },
+      { exercise: "Chest-Supported Dumbbell Row", focus: "Horizontal Pull", rings: 0 },
+      { exercise: "Neutral-Grip DB Floor Press", focus: "Horizontal Push", rings: 0 },
+      { exercise: "Cable Pallof Press", focus: "Core", rings: 0 },
+      { exercise: "Goblet Squat (Tempo 3-0-1)", focus: "Squat", rings: 0 },
+      { exercise: "Half-Kneeling Landmine Press", focus: "Vertical Push", rings: 0 },
+      { exercise: "Supported Romanian Deadlift (RDL)", focus: "Hinge", rings: 0 },
+      { exercise: "Cable External Rotations", focus: "Shoulder Rehab", rings: 0 },
+      { exercise: "DB Bulgarian Split Squat", focus: "Single Leg", rings: 0 },
+      { exercise: "Lat Pulldown (Neutral/Mag-Grip)", focus: "Vertical Pull", rings: 0 },
+      { exercise: "Incline DB Bench Press (30°)", focus: "Horizontal Push", rings: 0 },
+      { exercise: "Farmer's Carries", focus: "Carry", rings: 0 }
+    ];
 
     // -------------------------------------------------------------
     // STATE ENGINE
@@ -1016,9 +1012,8 @@
     ];
 
     function getLifetimeExp() {
-      const stored = localStorage.getItem('sonic_lifetime_exp');
+      const stored = localStorage.getItem("sonic_lifetime_exp");
       if (stored !== null) return parseInt(stored, 10) || 0;
-      // Default initial baseline from logged sessions
       return 0;
     }
 
@@ -1244,7 +1239,40 @@
     // -------------------------------------------------------------
     // BOOTSTRAP
     // -------------------------------------------------------------
-    document.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('
+    // -------------------------------------------------------------
+    // LIVE GOOGLE SHEETS TELEMETRY SYNC (GET ENDPOINT)
+    // -------------------------------------------------------------
+    async function syncStateFromSheet() {
+      const webhookUrl = getWebhookUrl();
+      if (!webhookUrl || webhookUrl.includes('YOUR_APPS_SCRIPT_WEBHOOK_URL_HERE')) return;
+
+      try {
+        console.log('[Telemetry] Querying Google Sheet for live pilot telemetry...');
+        const res = await fetch(webhookUrl);
+        if (!res.ok) return;
+        const data = await res.json();
+
+        if (data && data.status === 'success') {
+          console.log('[Telemetry] Synchronized with Google Sheet:', data);
+
+          if (data.lifetimeExp !== undefined) {
+            localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
+            updatePilotExpUI();
+          }
+
+          if (data.vault && Array.isArray(data.vault) && data.vault.length > 0) {
+            saveVaultData(data.vault);
+            renderVault();
+          }
+        }
+      } catch (err) {
+        console.warn('[Telemetry] Sync query error (offline mode active):', err);
+      }
+    }
+
+    window.addEventListener('DOMContentLoaded', () => {
+      syncStateFromSheet();
       updateAudioThemeBtnUI();
       setTimerDuration(configuredRestSeconds, false);
       loadSessionState();
@@ -1265,9 +1293,9 @@
     });
 
     if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js', { scope: './' })
-      .then(reg => console.log('[SW] Registered within repo scope:', reg.scope))
-      .catch(err => console.error('[SW] Registration failed:', err));
-  });
-}
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js')
+          .then(reg => console.log('[SW] Registered:', reg.scope))
+          .catch(err => console.error('[SW] Registration failed:', err));
+      });
+    }
