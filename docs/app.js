@@ -156,7 +156,7 @@
       sets: []
     };
 
-    const DEFAULT_WEBHOOK_URL = "";
+    const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxVl5oX6U2OwD6vI-KcJnR0srmjg64MLKY3CDuovFi20I_k_4Cc_t0a4XRy5KMo1AZo/exec";
 
     function getActiveWebhookUrl() {
       return localStorage.getItem('sonic_sheets_webhook') || DEFAULT_WEBHOOK_URL;
@@ -1015,7 +1015,7 @@
       const stored = localStorage.getItem('sonic_lifetime_exp');
       if (stored !== null) return parseInt(stored, 10) || 0;
       // Default initial baseline from logged sessions
-      return 512900;
+      return 0;
     }
 
     function addLifetimeExp(pts) {
