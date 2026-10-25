@@ -595,8 +595,57 @@
     // -------------------------------------------------------------
     const audioElements = {
       modern: null,
-      classic: null
+      classic: null,
+      levelup: null
     };
+
+    function playLevelUpFanfare() {
+      const ctx = getAudioContext();
+      const now = ctx ? ctx.currentTime : 0;
+      try {
+        if (!audioElements.levelup) {
+          audioElements.levelup = new Audio('./assets/audio/level_up.mp3');
+          audioElements.levelup.preload = 'auto';
+        }
+        audioElements.levelup.currentTime = 0;
+        const playPromise = audioElements.levelup.play();
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            console.warn('[Audio] level_up.mp3 playback failed, falling back to synth:', err);
+            playLevelUpSynth(ctx, now);
+          });
+        }
+      } catch (e) {
+        console.warn('[Audio] Level up audio failed:', e);
+        playLevelUpSynth(ctx, now);
+      }
+    }
+
+    function playLevelUpSynth(ctx, now) {
+      if (!ctx) return;
+      const notes = [
+        { f: 523.25, t: 0.00, d: 0.12 },
+        { f: 659.25, t: 0.12, d: 0.12 },
+        { f: 783.99, t: 0.24, d: 0.12 },
+        { f: 1046.50, t: 0.36, d: 0.18 },
+        { f: 1318.51, t: 0.54, d: 0.18 },
+        { f: 1567.98, t: 0.72, d: 0.25 },
+        { f: 2093.00, t: 0.97, d: 0.85 }
+      ];
+      notes.forEach(n => {
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(n.f, now + n.t);
+        gain.gain.setValueAtTime(0.001, now + n.t);
+        gain.gain.linearRampToValueAtTime(0.35, now + n.t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + n.t + n.d);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now + n.t);
+        osc.stop(now + n.t + n.d + 0.05);
+      });
+    }
 
     function getAudioTheme() {
       return localStorage.getItem('sonic_audio_theme') || 'modern';
@@ -607,6 +656,7 @@
       const next = current === 'modern' ? 'classic' : 'modern';
       localStorage.setItem('sonic_audio_theme', next);
       updateAudioThemeBtnUI();
+      updatePilotExpUI();
       showToast(`Audio Theme: ${next === 'modern' ? 'MODERN SONIC ⚡' : '16-BIT CLASSIC 🕹️'}`);
       if (navigator.vibrate) navigator.vibrate(25);
     }
@@ -949,16 +999,91 @@
       }
     }
 
-        let pendingStageClearData = null;
+        
+    // -------------------------------------------------------------
+    // PILOT EXP & LEVEL PROGRESSION ENGINE
+    // -------------------------------------------------------------
+    const EXP_TIERS = [
+      { level: 1, title: "JUGGERNAUT // RECRUIT", min: 0, max: 150000 },
+      { level: 2, title: "JUGGERNAUT // REINFORCED", min: 150000, max: 350000 },
+      { level: 3, title: "JUGGERNAUT // VETERAN", min: 350000, max: 650000 },
+      { level: 4, title: "JUGGERNAUT // OVERDRIVE", min: 650000, max: 1050000 },
+      { level: 5, title: "JUGGERNAUT // APEX MASTER", min: 1050000, max: 2000000 }
+    ];
+
+    function getLifetimeExp() {
+      const stored = localStorage.getItem('sonic_lifetime_exp');
+      if (stored !== null) return parseInt(stored, 10) || 0;
+      // Default initial baseline from logged sessions
+      return 512900;
+    }
+
+    function addLifetimeExp(pts) {
+      const current = getLifetimeExp();
+      const updated = current + pts;
+      localStorage.setItem('sonic_lifetime_exp', updated);
+      updatePilotExpUI();
+      return updated;
+    }
+
+    function calculatePilotProgress(exp) {
+      let tier = EXP_TIERS[0];
+      for (let i = EXP_TIERS.length - 1; i >= 0; i--) {
+        if (exp >= EXP_TIERS[i].min) {
+          tier = EXP_TIERS[i];
+          break;
+        }
+      }
+
+      const isMax = tier.level >= 5;
+      const span = tier.max - tier.min;
+      const progress = Math.min(100, Math.max(0, ((exp - tier.min) / span) * 100));
+      const expToNext = isMax ? 0 : Math.max(0, tier.max - exp);
+
+      return {
+        level: tier.level,
+        title: tier.title,
+        exp,
+        progressPct: progress.toFixed(1),
+        expToNext,
+        tierMin: tier.min,
+        tierMax: tier.max,
+        isMax
+      };
+    }
+
+    function updatePilotExpUI() {
+      const exp = getLifetimeExp();
+      const info = calculatePilotProgress(exp);
+
+      const lvlEl = document.getElementById('hudPilotLevel');
+      const titleEl = document.getElementById('hudPilotTitle');
+      const counterEl = document.getElementById('hudExpCounter');
+      const fillEl = document.getElementById('hudExpFill');
+      const toNextEl = document.getElementById('hudExpToNext');
+      const bracketEl = document.getElementById('hudExpBracket');
+
+      if (lvlEl) lvlEl.innerText = `LVL ${info.level}`;
+      if (titleEl) titleEl.innerText = info.title;
+      if (counterEl) counterEl.innerText = `${info.exp.toLocaleString()} EXP`;
+      if (fillEl) fillEl.style.width = `${info.progressPct}%`;
+      if (toNextEl) {
+        toNextEl.innerText = info.isMax 
+          ? "MAX LEVEL ATTAINED" 
+          : `${info.expToNext.toLocaleString()} EXP TO LVL ${info.level + 1}`;
+      }
+      if (bracketEl) {
+        bracketEl.innerText = `${Math.floor(info.tierMin/1000)}K / ${Math.floor(info.tierMax/1000)}K`;
+      }
+    }
+
+    let pendingStageClearData = null;
 
     async function finishSession() {
       if (activeSession.sets.length === 0) {
         showToast("Log at least 1 set before clearing stage!");
         return;
       }
-
-      playStageClearFanfare();
-      if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
 
       const prehab = activeSession.prehabChecked;
       const anyPain = activeSession.jointPain || activeSession.sets.some(s => s.jointPain);
@@ -970,6 +1095,22 @@
       const ringsBanked = activeSession.sets.filter(s => s.rpe <= 8.0 && s.tempoClean && !s.jointPain).length;
       const redRingBonus = ringsBanked * 10000;
       const totalScore = ringBonus + timeBonus + forceBonus + redRingBonus;
+
+      // Check for Level Up milestone
+      const oldProgress = calculatePilotProgress(getLifetimeExp());
+      const newLifetimeExp = addLifetimeExp(totalScore);
+      const newProgress = calculatePilotProgress(newLifetimeExp);
+      const didLevelUp = newProgress.level > oldProgress.level;
+
+      if (didLevelUp) {
+        playLevelUpFanfare();
+        if (navigator.vibrate) navigator.vibrate([120, 60, 120, 60, 450]);
+        showToast(`PILOT PROMOTED TO LEVEL ${newProgress.level}!`);
+      } else {
+        playStageClearFanfare();
+        if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
+      }
+
       const rank = totalScore >= 75000 ? "S" : (totalScore >= 55000 ? "A" : "B");
 
       // Credit local vault
@@ -1000,7 +1141,9 @@
         forceBonus,
         redRingBonus,
         ringsBanked,
-        totalSets: activeSession.sets.length
+        totalSets: activeSession.sets.length,
+        didLevelUp,
+        newLevel: newProgress.level
       });
 
       // Transmit to Google Sheets in background
@@ -1010,6 +1153,16 @@
     function renderResultsOverlay(data) {
       const stageDef = STAGES[data.stage];
       document.getElementById('resStageTitle').innerText = `${data.stage.replace('_', ' ')} // ${stageDef ? stageDef.name : ''}`;
+
+      const lvlBadge = document.getElementById('resLevelUpBadge');
+      if (lvlBadge) {
+        if (data.didLevelUp) {
+          lvlBadge.style.display = 'inline-block';
+          lvlBadge.innerText = `★ LEVEL UP! PILOT PROMOTED TO LVL ${data.newLevel} ★`;
+        } else {
+          lvlBadge.style.display = 'none';
+        }
+      }
       
       const rankCircle = document.getElementById('resRankCircle');
       rankCircle.innerText = data.rank;
