@@ -617,3 +617,93 @@
       transform: scale(0.98);
     }
     .prehab-drawer.open { display: block !important; }
+
+
+    /* Pilot EXP & Level Progression Cockpit */
+    .pilot-exp-card {
+      background: linear-gradient(135deg, rgba(20, 28, 46, 0.95) 0%, rgba(11, 15, 25, 0.95) 100%);
+      border: 1px solid rgba(0, 229, 255, 0.35);
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 4px 15px rgba(0, 229, 255, 0.1);
+    }
+    .pilot-exp-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .pilot-lvl-tag {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .lvl-badge {
+      background: var(--accent-blue);
+      color: #000;
+      font-size: 11px;
+      font-weight: 900;
+      padding: 3px 7px;
+      border-radius: 5px;
+      letter-spacing: 0.5px;
+    }
+    .pilot-title {
+      font-size: 12px;
+      font-weight: 800;
+      color: #fff;
+      letter-spacing: 0.5px;
+    }
+    .exp-counter {
+      font-size: 12px;
+      font-weight: 800;
+      color: var(--accent-gold);
+    }
+    .exp-bar-track {
+      width: 100%;
+      height: 7px;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 6px;
+      overflow: hidden;
+      margin-bottom: 6px;
+      border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+    .exp-bar-fill {
+      height: 100%;
+      background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-green) 100%);
+      border-radius: 6px;
+      transition: width 0.4s ease-out;
+      box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+    }
+    .exp-footer {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 10px;
+      font-weight: 700;
+      color: var(--text-dim);
+    }
+    .exp-footer span:first-child {
+      color: var(--accent-blue);
+    }
+
+
+    /* Level Up Alert Badge */
+    .levelup-alert-badge {
+      display: none;
+      background: linear-gradient(90deg, rgba(255, 196, 0, 0.25) 0%, rgba(0, 229, 255, 0.25) 100%);
+      border: 1.5px solid var(--accent-gold);
+      color: var(--accent-gold);
+      font-size: 11px;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      padding: 5px 12px;
+      border-radius: 20px;
+      margin-bottom: 8px;
+      box-shadow: 0 0 15px rgba(255, 196, 0, 0.4);
+      animation: levelUpPulse 1s infinite alternate ease-in-out;
+    }
+    @keyframes levelUpPulse {
+      from { transform: scale(0.98); box-shadow: 0 0 8px rgba(255, 196, 0, 0.3); }
+      to { transform: scale(1.03); box-shadow: 0 0 18px rgba(0, 229, 255, 0.6); }
+    }
