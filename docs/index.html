@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
-  <title>Sonic Fitness HUD // Stage X</title>
+  <title>Sonic Fitness HUD // Modular Rig</title>
   <link rel="manifest" href="./manifest.json">
   <meta name="theme-color" content="#060911">
   <meta name="apple-mobile-web-app-capable" content="yes">
@@ -17,6 +17,7 @@
       --accent-gold: #ffc400;
       --accent-red: #ff3d00;
       --accent-green: #00e676;
+      --accent-purple: #b388ff;
       --text: #ffffff;
       --text-dim: #90a4ae;
       --border: #263238;
@@ -26,7 +27,7 @@
 
     .hud-header {
       background: #060911;
-      padding: 16px;
+      padding: 12px 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -35,74 +36,169 @@
       top: 0;
       z-index: 100;
     }
-    .hud-title { font-size: 16px; font-weight: 800; letter-spacing: 1px; color: var(--accent-blue); }
+    .hud-left { display: flex; align-items: center; gap: 8px; }
+    .hud-title { font-size: 15px; font-weight: 800; letter-spacing: 1px; color: var(--accent-blue); }
     .shield-badge {
       background: rgba(0, 230, 118, 0.15);
       border: 1px solid var(--accent-green);
       color: var(--accent-green);
-      padding: 4px 10px;
-      border-radius: 20px;
-      font-size: 12px;
+      padding: 3px 8px;
+      border-radius: 14px;
+      font-size: 11px;
       font-weight: 700;
+      white-space: nowrap;
     }
 
-    .container { padding: 16px; }
+    .container { padding: 14px; }
 
+    /* Stage Selector Bar */
+    .stage-nav {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .stage-tab {
+      background: #141c2e;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 8px 4px;
+      border-radius: 8px;
+      font-size: 12px;
+      font-weight: 800;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .stage-tab.active {
+      background: rgba(0, 229, 255, 0.15);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+
+    /* Stage Mission Card */
     .stage-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
+      padding: 14px;
+      margin-bottom: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
     }
-    .stage-label { color: var(--accent-gold); font-size: 12px; font-weight: 700; text-transform: uppercase; }
-    .stage-name { font-size: 20px; font-weight: 800; margin-top: 4px; }
+    .stage-label { color: var(--accent-gold); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+    .stage-name { font-size: 17px; font-weight: 800; margin-top: 2px; }
+    .tonnage-pill {
+      background: rgba(179, 136, 255, 0.15);
+      border: 1px solid var(--accent-purple);
+      color: var(--accent-purple);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 11px;
+      font-weight: 800;
+      text-align: right;
+    }
 
+    /* Prehab Banner */
     .prehab-box {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       background: rgba(255, 196, 0, 0.08);
       border: 1px dashed var(--accent-gold);
-      padding: 12px;
+      padding: 10px 12px;
       border-radius: 8px;
-      margin-bottom: 16px;
+      margin-bottom: 12px;
       cursor: pointer;
     }
-    .prehab-box input { width: 22px; height: 22px; accent-color: var(--accent-gold); }
+    .prehab-box input { width: 20px; height: 20px; accent-color: var(--accent-gold); }
 
+    /* Slot Progress Stepper (A1, A2, A3, A4) */
+    .slot-stepper {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+    .slot-btn {
+      flex: 1;
+      background: #141c2e;
+      border: 1px solid var(--border);
+      color: var(--text-dim);
+      padding: 8px 4px;
+      border-radius: 6px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      text-align: center;
+    }
+    .slot-btn.active {
+      background: rgba(0, 229, 255, 0.2);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
+    }
+    .slot-btn.completed {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+    }
+
+    /* Active Movement Card */
     .movement-card {
       background: var(--card-bg);
       border: 1px solid var(--border);
       border-radius: 12px;
-      padding: 16px;
-      margin-bottom: 16px;
+      padding: 14px;
+      margin-bottom: 14px;
     }
-    .slot-tag { color: var(--accent-blue); font-size: 13px; font-weight: 700; }
-    .move-title { font-size: 18px; font-weight: 700; margin: 4px 0 12px 0; }
+    .move-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .slot-tag { color: var(--accent-blue); font-size: 12px; font-weight: 800; }
+    .target-tag { color: var(--accent-gold); font-size: 12px; font-weight: 700; }
+    
+    .exercise-select {
+      width: 100%;
+      background: #0b0f19;
+      border: 1px solid var(--border);
+      color: #fff;
+      font-size: 15px;
+      font-weight: 700;
+      padding: 10px;
+      border-radius: 8px;
+      margin-bottom: 12px;
+      outline: none;
+    }
 
-    .input-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
-    .input-box { background: #0b0f19; padding: 8px 12px; border-radius: 8px; border: 1px solid var(--border); }
-    .input-box label { font-size: 11px; color: var(--text-dim); text-transform: uppercase; display: block; }
+    .input-grid-3 {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    .input-box { background: #0b0f19; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); }
+    .input-box label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; display: block; margin-bottom: 2px; }
     .input-box input, .input-box select {
       background: transparent;
       border: none;
       color: #fff;
-      font-size: 20px;
+      font-size: 17px;
       font-weight: 700;
       width: 100%;
       outline: none;
     }
 
-    .toggle-row { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 12px; }
+    .toggle-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
     .btn-toggle {
-      padding: 12px;
+      padding: 10px;
       border-radius: 8px;
       border: 1px solid var(--border);
       background: #0b0f19;
       color: var(--text-dim);
       font-weight: 700;
-      font-size: 13px;
+      font-size: 12px;
       cursor: pointer;
       text-align: center;
     }
@@ -114,64 +210,56 @@
       background: var(--accent-blue);
       color: #000;
       border: none;
-      padding: 14px;
+      padding: 13px;
       border-radius: 8px;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 800;
       letter-spacing: 0.5px;
       cursor: pointer;
     }
 
-    .rest-dock {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: #060911;
-      border-top: 1px solid var(--border);
-      padding: 14px 20px;
+    /* Vault Drawer Toggle Bar */
+    .vault-toggle-bar {
       display: flex;
       justify-content: space-between;
       align-items: center;
-    }
-    .timer-val { font-size: 24px; font-weight: 900; color: var(--accent-gold); }
-    .btn-advance {
-      background: var(--accent-green);
-      color: #000;
-      border: none;
-      padding: 10px 18px;
+      background: rgba(179, 136, 255, 0.1);
+      border: 1px solid var(--accent-purple);
+      padding: 10px 14px;
       border-radius: 8px;
-      font-weight: 800;
+      margin-bottom: 14px;
       cursor: pointer;
     }
-    /* Quick-Select Timer Pills */
-    .timer-selector {
-      display: flex;
-      gap: 6px;
-      align-items: center;
-    }
-    .btn-pill {
-      background: #141c2e;
+    .vault-title { font-size: 13px; font-weight: 800; color: var(--accent-purple); display: flex; align-items: center; gap: 6px; }
+
+    /* Collapsible Vault Content */
+    #vaultDrawer {
+      display: none;
+      background: var(--card-bg);
       border: 1px solid var(--border);
-      color: var(--text-dim);
-      padding: 6px 10px;
-      border-radius: 6px;
+      border-radius: 12px;
+      padding: 12px;
+      margin-bottom: 16px;
+    }
+    .vault-item {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.05);
       font-size: 12px;
-      font-weight: 700;
-      cursor: pointer;
-      transition: all 0.15s ease;
     }
-    .btn-pill.active {
-      background: rgba(0, 229, 255, 0.2);
-      border-color: var(--accent-blue);
-      color: var(--accent-blue);
-    }
+    .vault-item:last-child { border-bottom: none; }
+    .vault-move { font-weight: 700; color: #fff; }
+    .vault-focus { color: var(--text-dim); font-size: 10px; }
+    .vault-rings { color: var(--accent-gold); font-weight: 800; letter-spacing: 2px; }
+
     /* Logged Sets Feed */
     .logged-sets-list {
-      margin-top: 14px;
       display: flex;
       flex-direction: column;
       gap: 6px;
+      margin-top: 8px;
     }
     .set-row {
       display: flex;
@@ -181,62 +269,127 @@
       border: 1px solid var(--border);
       padding: 8px 12px;
       border-radius: 6px;
-      font-size: 13px;
+      font-size: 12px;
     }
-    .set-tag {
+    .set-tag { font-weight: 800; color: var(--accent-blue); }
+    .set-detail { color: var(--text-dim); }
+    .set-badge-ring { color: var(--accent-gold); font-weight: 700; font-size: 11px; }
+
+    /* Bottom Recovery Dock */
+    .rest-dock {
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      background: #060911;
+      border-top: 1px solid var(--border);
+      padding: 12px 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      z-index: 90;
+    }
+    .timer-val { font-size: 22px; font-weight: 900; color: var(--accent-gold); }
+    .btn-advance {
+      background: var(--accent-green);
+      color: #000;
+      border: none;
+      padding: 10px 16px;
+      border-radius: 8px;
       font-weight: 800;
-      color: var(--accent-blue);
+      font-size: 13px;
+      cursor: pointer;
     }
-    .set-detail {
+    .timer-selector { display: flex; gap: 5px; align-items: center; }
+    .btn-pill {
+      background: #141c2e;
+      border: 1px solid var(--border);
       color: var(--text-dim);
-    }
-    .set-badge-ring {
-      color: var(--accent-gold);
-      font-weight: 700;
+      padding: 5px 8px;
+      border-radius: 6px;
       font-size: 11px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-pill.active {
+      background: rgba(0, 229, 255, 0.2);
+      border-color: var(--accent-blue);
+      color: var(--accent-blue);
     }
   </style>
 </head>
 <body>
 
   <div class="hud-header">
-    <div class="hud-title">STAGE X // CALISTHENICS</div>
-    <div style="display: flex; align-items: center; gap: 8px;">
+    <div class="hud-left">
+      <div class="hud-title">SONIC HUD // RIG</div>
       <div class="shield-badge" id="shieldStatus">SHIELD: 100%</div>
-      <button id="notifyBtn" onclick="requestNotificationPermission()" style="background: none; border: 1px solid var(--border); color: var(--text-dim); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;" title="Enable Lock-Screen Notifications">🔔 ALERTS</button>
+    </div>
+    <div style="display: flex; align-items: center; gap: 6px;">
+      <button id="notifyBtn" onclick="requestNotificationPermission()" style="background: none; border: 1px solid var(--border); color: var(--text-dim); padding: 4px 6px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">🔔</button>
       <button onclick="promptWebhookUrl()" style="background: none; border: 1px solid var(--border); color: var(--accent-blue); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">SYNC ⚙</button>
     </div>
   </div>
 
   <div class="container">
-    <div class="stage-card">
-      <div class="stage-label">PROTOCOL ZERO: ZERO-EQUIPMENT CIRCUIT</div>
-      <div class="stage-name">Density & Core Alignment</div>
+    <!-- Stage Switching Bar -->
+    <div class="stage-nav">
+      <div class="stage-tab active" id="tab-DAY_A" onclick="selectStage('DAY_A')">DAY A // HINGE</div>
+      <div class="stage-tab" id="tab-DAY_B" onclick="selectStage('DAY_B')">DAY B // KNEE</div>
+      <div class="stage-tab" id="tab-DAY_C" onclick="selectStage('DAY_C')">DAY C // TOTAL</div>
     </div>
 
+    <!-- Active Stage Info Card -->
+    <div class="stage-card">
+      <div>
+        <div class="stage-label" id="stageFocus">STAGE CLEAR ZONE // DAY A</div>
+        <div class="stage-name" id="stageName">Hinge & Horizontal Power</div>
+      </div>
+      <div class="tonnage-pill" id="tonnageDisplay">VOL: 0 LBS</div>
+    </div>
+
+    <!-- Prehab Checklist -->
     <div class="prehab-box" onclick="togglePrehab()">
       <input type="checkbox" id="prehabCheck">
-      <label style="cursor: pointer; font-size: 14px; font-weight: 600;">
-        Pre-Flight: Wrist Mobilization + McGill Bird-Dogs Done
+      <label id="prehabLabel" style="cursor: pointer; font-size: 13px; font-weight: 600;">
+        Prehab: McGill Big 3 + Band Pull-Aparts
       </label>
     </div>
 
-    <div class="movement-card">
-      <div class="slot-tag">SLOT X1 • PUSH DENSITY</div>
-      <div class="move-title">Elevated Hands / Floor Push-Ups</div>
+    <!-- Slot Progression Stepper -->
+    <div class="slot-stepper" id="slotStepper">
+      <!-- Generated via JS -->
+    </div>
 
-      <div class="input-grid">
+    <!-- Movement Execution Card -->
+    <div class="movement-card">
+      <div class="move-meta">
+        <span class="slot-tag" id="currentSlotTag">SLOT A1</span>
+        <span class="target-tag" id="currentTargetTag">TARGET: 3x6-8</span>
+      </div>
+
+      <select class="exercise-select" id="exerciseSelect" onchange="onExerciseChange()">
+        <!-- Generated via JS -->
+      </select>
+
+      <div class="input-grid-3">
         <div class="input-box">
-          <label>Reps Logged</label>
-          <input type="number" id="repsInput" value="12">
+          <label>Load (Lbs)</label>
+          <input type="number" id="loadInput" value="135" step="5">
         </div>
         <div class="input-box">
-          <label>RPE (Effort)</label>
+          <label>Reps</label>
+          <input type="number" id="repsInput" value="8">
+        </div>
+        <div class="input-box">
+          <label>RPE</label>
           <select id="rpeSelect">
-            <option value="6.5">RPE 6.5 (Easy)</option>
-            <option value="7.5" selected>RPE 7.5 (Solid / 2-3 in tank)</option>
-            <option value="8.0">RPE 8.0 (Sweet Spot)</option>
-            <option value="9.0">RPE 9.0 (Grind)</option>
+            <option value="6.5">6.5</option>
+            <option value="7.0">7.0</option>
+            <option value="7.5" selected>7.5</option>
+            <option value="8.0">8.0 ★</option>
+            <option value="8.5">8.5</option>
+            <option value="9.0">9.0</option>
           </select>
         </div>
       </div>
@@ -249,8 +402,22 @@
       <button class="btn-log" id="logSetBtn" onclick="logActiveSet()">LOG SET 1 & START REST</button>
       <div id="loggedSetsList" class="logged-sets-list"></div>
     </div>
-  </div>
 
+    <!-- Vault Drawer Toggle Bar -->
+    <div class="vault-toggle-bar" onclick="toggleVaultDrawer()">
+      <div class="vault-title">
+        <span>★ 5-RING MASTERY VAULT</span>
+      </div>
+      <div style="font-size: 12px; color: var(--accent-purple); font-weight: 700;" id="vaultToggleIcon">EXPAND ▾</div>
+    </div>
+
+    <!-- Collapsible Vault Content -->
+    <div id="vaultDrawer">
+      <div id="vaultItemsContainer">
+        <!-- Rendered dynamically from storage -->
+      </div>
+    </div>
+  </div>
 
   <!-- Webhook Settings Modal -->
   <div id="syncModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center; padding:20px;">
@@ -265,13 +432,13 @@
     </div>
   </div>
 
+  <!-- Rest Dock -->
   <div class="rest-dock">
     <div>
-      <div style="font-size: 11px; color: var(--text-dim); text-transform: uppercase;">Recovery Timer</div>
+      <div style="font-size: 10px; color: var(--text-dim); text-transform: uppercase;">Recovery Timer</div>
       <div class="timer-val" id="timerClock">01:30</div>
     </div>
 
-    <!-- Quick-Select Rest Intervals -->
     <div class="timer-selector">
       <button class="btn-pill" id="pill-60" onclick="setTimerDuration(60)">60s</button>
       <button class="btn-pill active" id="pill-90" onclick="setTimerDuration(90)">90s</button>
@@ -282,25 +449,161 @@
   </div>
 
   <script>
-    // Active workout session state
+    // -------------------------------------------------------------
+    // STAGE DEFINITIONS & MOVEMENT CATALOG
+    // -------------------------------------------------------------
+    const STAGES = {
+      DAY_A: {
+        id: "DAY_A",
+        name: "Hinge & Horizontal Power",
+        prehab: "Prehab: McGill Big 3 + Band Pull-Aparts & Face Pulls",
+        slots: [
+          {
+            slot: "A1",
+            target: "3x6-8",
+            primary: "Trap Bar Deadlift (High Handles)",
+            defaultLoad: 225,
+            alts: ["Trap Bar Deadlift (High Handles)", "Glute Bridge / DB RDL (to Bench)", "Supported Romanian Deadlift (RDL)"]
+          },
+          {
+            slot: "A2",
+            target: "3x8-10",
+            primary: "Chest-Supported Dumbbell Row",
+            defaultLoad: 50,
+            alts: ["Chest-Supported Dumbbell Row", "Seated Cable Row / Incline Machine Row", "Lat Pulldown (Neutral/Mag-Grip)"]
+          },
+          {
+            slot: "A3",
+            target: "3x8-10",
+            primary: "Neutral-Grip DB Floor Press",
+            defaultLoad: 60,
+            alts: ["Neutral-Grip DB Floor Press", "Incline Push-Up (Hands on Bench)", "Incline DB Bench Press (30°)"]
+          },
+          {
+            slot: "A4",
+            target: "3x10-12",
+            primary: "Cable Pallof Press",
+            defaultLoad: 30,
+            alts: ["Cable Pallof Press", "Tall-Kneeling Pallof Hold", "Suitcase Carry (Single-Arm)"]
+          }
+        ]
+      },
+      DAY_B: {
+        id: "DAY_B",
+        name: "Knee Stability & Shoulder Rehab",
+        prehab: "Prehab: Tibialis Wall Raises & 90/90 Hip Switches",
+        slots: [
+          {
+            slot: "B1",
+            target: "3x8-10",
+            primary: "Goblet Box Squat (to 90° Bench)",
+            defaultLoad: 70,
+            alts: ["Goblet Box Squat (to 90° Bench)", "Bodyweight Box Squat / TRX Squat", "DB Bulgarian Split Squat"]
+          },
+          {
+            slot: "B2",
+            target: "3x8-10",
+            primary: "Half-Kneeling Landmine Press",
+            defaultLoad: 45,
+            alts: ["Half-Kneeling Landmine Press", "Half-Kneeling Cable Press", "Neutral-Grip DB Floor Press"]
+          },
+          {
+            slot: "B3",
+            target: "3x8-10",
+            primary: "Supported Romanian Deadlift (RDL)",
+            defaultLoad: 65,
+            alts: ["Supported Romanian Deadlift (RDL)", "B-Stance DB Hinge", "Trap Bar Deadlift (High Handles)"]
+          },
+          {
+            slot: "B4",
+            target: "3x12-15",
+            primary: "Cable External Rotations",
+            defaultLoad: 15,
+            alts: ["Cable External Rotations", "Side-Lying DB External Rotation", "Prone Scapular Y-T-W Raises"]
+          }
+        ]
+      },
+      DAY_C: {
+        id: "DAY_C",
+        name: "Full-Body Capacity & Hinge Resilience",
+        prehab: "Prehab: Deadbug with Wall Press + Band Dislocates",
+        slots: [
+          {
+            slot: "C1",
+            target: "3x6-8",
+            primary: "DB Bulgarian Split Squat",
+            defaultLoad: 40,
+            alts: ["DB Bulgarian Split Squat", "Supported Reverse Lunge (Rack/Wall)", "Goblet Box Squat (to 90° Bench)"]
+          },
+          {
+            slot: "C2",
+            target: "3x8-10",
+            primary: "Lat Pulldown (Neutral/Mag-Grip)",
+            defaultLoad: 130,
+            alts: ["Lat Pulldown (Neutral/Mag-Grip)", "Half-Kneeling Single-Arm Pulldown", "Chest-Supported Dumbbell Row"]
+          },
+          {
+            slot: "C3",
+            target: "3x8-10",
+            primary: "Incline DB Bench Press (30°)",
+            defaultLoad: 65,
+            alts: ["Incline DB Bench Press (30°)", "Neutral-Grip Flat DB Bench", "Neutral-Grip DB Floor Press"]
+          },
+          {
+            slot: "C4",
+            target: "3x40-50 paces",
+            primary: "Farmer's Carries",
+            defaultLoad: 70,
+            alts: ["Farmer's Carries", "Suitcase Carry (Single-Arm)", "Cable Pallof Press"]
+          }
+        ]
+      }
+    };
+
+    // -------------------------------------------------------------
+    // MASTERY VAULT CATALOG (12 RELIC MOVEMENTS)
+    // -------------------------------------------------------------
+    const DEFAULT_VAULT = [
+      { exercise: "Trap Bar Deadlift (High Handles)", focus: "Hinge", rings: 4 },
+      { exercise: "Chest-Supported Dumbbell Row", focus: "Horizontal Pull", rings: 3 },
+      { exercise: "Neutral-Grip DB Floor Press", focus: "Horizontal Push", rings: 3 },
+      { exercise: "Cable Pallof Press", focus: "Core", rings: 2 },
+      { exercise: "Goblet Box Squat (to 90° Bench)", focus: "Squat", rings: 5 },
+      { exercise: "Half-Kneeling Landmine Press", focus: "Vertical Push", rings: 2 },
+      { exercise: "Supported Romanian Deadlift (RDL)", focus: "Hinge", rings: 3 },
+      { exercise: "Cable External Rotations", focus: "Shoulder Rehab", rings: 2 },
+      { exercise: "DB Bulgarian Split Squat", focus: "Single Leg", rings: 2 },
+      { exercise: "Lat Pulldown (Neutral/Mag-Grip)", focus: "Vertical Pull", rings: 3 },
+      { exercise: "Incline DB Bench Press (30°)", focus: "Horizontal Push", rings: 3 },
+      { exercise: "Farmer's Carries", focus: "Carry", rings: 2 }
+    ];
+
+    // -------------------------------------------------------------
+    // STATE ENGINE
+    // -------------------------------------------------------------
+    let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
+    let activeSlotIndex = 0;
+    let tempoClean = true;
+    let currentSetPain = false;
+
     let activeSession = {
+      stage: activeStageKey,
       prehabChecked: false,
       jointPain: false,
       sets: []
     };
 
-    let tempoClean = true;
-    let currentSetPain = false;
+    const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxVl5oX6U2OwD6vI-KcJnR0srmjg64MLKY3CDuovFi20I_k_4Cc_t0a4XRy5KMo1AZo/exec";
 
-    // Load saved rest interval preference or default to 90s
-    const savedRest = parseInt(localStorage.getItem('sonic_rest_duration'), 10);
-    let configuredRestSeconds = [60, 90, 120].includes(savedRest) ? savedRest : 90;
-    let timerSeconds = configuredRestSeconds;
-    let timerInterval = null;
-    let wakeLock = null;
+    function getActiveWebhookUrl() {
+      return localStorage.getItem('sonic_sheets_webhook') || DEFAULT_WEBHOOK_URL;
+    }
 
     function saveSessionState() {
+      activeSession.stage = activeStageKey;
       localStorage.setItem('sonic_active_session', JSON.stringify(activeSession));
+      localStorage.setItem('sonic_active_stage', activeStageKey);
+      updateTonnageDisplay();
     }
 
     function loadSessionState() {
@@ -308,56 +611,247 @@
       if (saved) {
         try {
           activeSession = JSON.parse(saved);
+          if (activeSession.stage && STAGES[activeSession.stage]) {
+            activeStageKey = activeSession.stage;
+          }
         } catch (e) {
-          console.warn('Failed parsing active session from localStorage', e);
+          console.warn('Error reading saved session state', e);
         }
       }
+      selectStage(activeStageKey, false);
       renderSessionUI();
     }
 
-    function renderSessionUI() {
-      // Restore prehab
-      const prehabCheck = document.getElementById('prehabCheck');
-      if (prehabCheck) prehabCheck.checked = activeSession.prehabChecked;
-
-      // Restore Shield status
-      const shield = document.getElementById('shieldStatus');
-      if (shield) {
-        if (activeSession.jointPain) {
-          shield.innerText = "SHIELD: 50% (CUSHION)";
-          shield.style.borderColor = "var(--accent-red)";
-          shield.style.color = "var(--accent-red)";
-        } else {
-          shield.innerText = "SHIELD: 100%";
-          shield.style.borderColor = "var(--accent-green)";
-          shield.style.color = "var(--accent-green)";
+    // -------------------------------------------------------------
+    // STAGE & SLOT SWITCHING (SUITE A & B)
+    // -------------------------------------------------------------
+    function selectStage(stageKey, resetIfNew = true) {
+      if (resetIfNew && stageKey !== activeStageKey) {
+        if (activeSession.sets.length > 0 && !confirm("Switching stages will start a new session. Proceed?")) {
+          return;
         }
+        activeSession = { stage: stageKey, prehabChecked: false, jointPain: false, sets: [] };
       }
 
-      // Update Log Button Text
-      const nextSetNum = activeSession.sets.length + 1;
-      const logBtn = document.getElementById('logSetBtn');
-      if (logBtn) {
-        logBtn.innerText = `LOG SET ${nextSetNum} & START REST`;
+      activeStageKey = stageKey;
+      activeSlotIndex = 0;
+
+      // Update Tab Pill UI
+      document.querySelectorAll('.stage-tab').forEach(tab => tab.classList.remove('active'));
+      const activeTab = document.getElementById(`tab-${stageKey}`);
+      if (activeTab) activeTab.classList.add('active');
+
+      const stageDef = STAGES[stageKey];
+      document.getElementById('stageFocus').innerText = `STAGE CLEAR ZONE // ${stageKey.replace('_', ' ')}`;
+      document.getElementById('stageName').innerText = stageDef.name;
+      document.getElementById('prehabLabel').innerText = stageDef.prehab;
+
+      renderSlotStepper();
+      loadSlotData();
+      saveSessionState();
+      renderSessionUI();
+    }
+
+    function renderSlotStepper() {
+      const stepper = document.getElementById('slotStepper');
+      stepper.innerHTML = '';
+      const stageDef = STAGES[activeStageKey];
+
+      stageDef.slots.forEach((slotData, index) => {
+        const btn = document.createElement('div');
+        btn.className = `slot-btn ${index === activeSlotIndex ? 'active' : ''}`;
+        
+        // Check if slot has logged sets
+        const setsInSlot = activeSession.sets.filter(s => s.slot === slotData.slot).length;
+        if (setsInSlot >= 3) btn.classList.add('completed');
+
+        btn.innerText = slotData.slot;
+        btn.onclick = () => {
+          activeSlotIndex = index;
+          renderSlotStepper();
+          loadSlotData();
+        };
+        stepper.appendChild(btn);
+      });
+    }
+
+    function loadSlotData() {
+      const stageDef = STAGES[activeStageKey];
+      const slotDef = stageDef.slots[activeSlotIndex];
+
+      document.getElementById('currentSlotTag').innerText = `SLOT ${slotDef.slot}`;
+      document.getElementById('currentTargetTag').innerText = `TARGET: ${slotDef.target}`;
+
+      // Populate exercises dropdown
+      const select = document.getElementById('exerciseSelect');
+      select.innerHTML = '';
+      slotDef.alts.forEach(alt => {
+        const opt = document.createElement('option');
+        opt.value = alt;
+        opt.innerText = alt;
+        select.appendChild(opt);
+      });
+      select.value = slotDef.primary;
+
+      // Set default load
+      document.getElementById('loadInput').value = slotDef.defaultLoad;
+
+      updateLogButtonText();
+    }
+
+    function onExerciseChange() {
+      updateLogButtonText();
+    }
+
+    function updateLogButtonText() {
+      const stageDef = STAGES[activeStageKey];
+      const slotDef = stageDef.slots[activeSlotIndex];
+      const setsInThisSlot = activeSession.sets.filter(s => s.slot === slotDef.slot).length;
+      document.getElementById('logSetBtn').innerText = `LOG SET ${setsInThisSlot + 1} (${slotDef.slot}) & REST`;
+    }
+
+    // -------------------------------------------------------------
+    // LOG SET & AUTO ADVANCE
+    // -------------------------------------------------------------
+    function logActiveSet() {
+      const stageDef = STAGES[activeStageKey];
+      const slotDef = stageDef.slots[activeSlotIndex];
+      const exercise = document.getElementById('exerciseSelect').value;
+      const load = parseFloat(document.getElementById('loadInput').value) || 0;
+      const reps = parseInt(document.getElementById('repsInput').value, 10) || 0;
+      const rpe = parseFloat(document.getElementById('rpeSelect').value) || 7.5;
+
+      const setsInSlot = activeSession.sets.filter(s => s.slot === slotDef.slot).length + 1;
+
+      activeSession.sets.push({
+        slot: slotDef.slot,
+        exercise,
+        setNum: setsInSlot,
+        load,
+        reps,
+        rpe,
+        tempoClean,
+        jointPain: currentSetPain
+      });
+
+      saveSessionState();
+      renderSessionUI();
+
+      // Trigger Audio & Haptic feedback
+      playRingChime();
+      if (navigator.vibrate) navigator.vibrate(50);
+      startRestTimer();
+
+      // Check if slot reached 3 sets; if so, prompt or auto-highlight next slot
+      if (setsInSlot >= 3 && activeSlotIndex < stageDef.slots.length - 1) {
+        activeSlotIndex++;
+        renderSlotStepper();
+        loadSlotData();
+      } else {
+        renderSlotStepper();
+        updateLogButtonText();
       }
 
-      // Render Logged Sets List
-      const listContainer = document.getElementById('loggedSetsList');
-      if (listContainer) {
-        listContainer.innerHTML = '';
-        activeSession.sets.forEach((s) => {
-          const row = document.createElement('div');
-          row.className = 'set-row';
-          const ringEarned = s.rpe <= 8.0 && s.tempoClean && !s.jointPain;
-          row.innerHTML = `
-            <span class="set-tag">SET ${s.setNum}</span>
-            <span class="set-detail">${s.reps} reps @ RPE ${s.rpe}</span>
-            <span class="set-badge-ring">${ringEarned ? '★ RING' : 'CHECK'}</span>
-          `;
-          listContainer.appendChild(row);
-        });
+      // Reset joint strain flag for next set
+      currentSetPain = false;
+      const painBtn = document.getElementById('painBtn');
+      if (painBtn) {
+        painBtn.classList.remove('active-red');
+        painBtn.innerText = "Joint Strain: No";
       }
     }
+
+    // -------------------------------------------------------------
+    // TONNAGE & MASTERY VAULT (SUITE D)
+    // -------------------------------------------------------------
+    function updateTonnageDisplay() {
+      const totalTonnage = activeSession.sets.reduce((sum, s) => sum + ((s.load || 0) * (s.reps || 0)), 0);
+      const display = document.getElementById('tonnageDisplay');
+      if (display) {
+        display.innerText = `VOL: ${totalTonnage.toLocaleString()} LBS`;
+      }
+    }
+
+    function toggleVaultDrawer() {
+      const drawer = document.getElementById('vaultDrawer');
+      const icon = document.getElementById('vaultToggleIcon');
+      if (drawer.style.display === 'block') {
+        drawer.style.display = 'none';
+        icon.innerText = 'EXPAND ▾';
+      } else {
+        renderVault();
+        drawer.style.display = 'block';
+        icon.innerText = 'COLLAPSE ▴';
+      }
+    }
+
+    function getVaultData() {
+      const stored = localStorage.getItem('sonic_mastery_vault');
+      if (stored) {
+        try { return JSON.parse(stored); } catch (e) {}
+      }
+      return DEFAULT_VAULT;
+    }
+
+    function saveVaultData(data) {
+      localStorage.setItem('sonic_mastery_vault', JSON.stringify(data));
+    }
+
+    function renderVault() {
+      const container = document.getElementById('vaultItemsContainer');
+      if (!container) return;
+      const vault = getVaultData();
+      container.innerHTML = '';
+
+      vault.forEach(item => {
+        const row = document.createElement('div');
+        row.className = 'vault-item';
+        
+        let stars = '';
+        for (let i = 1; i <= 5; i++) {
+          stars += i <= item.rings ? '★' : '☆';
+        }
+
+        row.innerHTML = `
+          <div>
+            <div class="vault-move">${item.exercise}</div>
+            <div class="vault-focus">${item.focus}</div>
+          </div>
+          <div style="text-align: right;">
+            <div class="vault-rings">${stars}</div>
+            <div style="font-size: 10px; color: ${item.rings >= 5 ? 'var(--accent-gold)' : 'var(--text-dim)'};">
+              ${item.rings >= 5 ? 'MASTERED' : item.rings + '/5 Rings'}
+            </div>
+          </div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
+    function creditVaultRings(stageKey, ringsCount) {
+      const vault = getVaultData();
+      const stageMap = {
+        "DAY_A": "Trap Bar Deadlift (High Handles)",
+        "DAY_B": "Goblet Box Squat (to 90° Bench)",
+        "DAY_C": "Neutral-Grip Flat DB Bench"
+      };
+      const targetName = stageMap[stageKey] || "Trap Bar Deadlift (High Handles)";
+      const target = vault.find(v => v.exercise.includes(targetName) || targetName.includes(v.exercise));
+      if (target) {
+        target.rings = Math.min(5, (target.rings || 0) + ringsCount);
+        saveVaultData(vault);
+      }
+    }
+
+    // -------------------------------------------------------------
+    // REST TIMER (DELTA BASED & BACKGROUND RESILIENT)
+    // -------------------------------------------------------------
+    const savedRest = parseInt(localStorage.getItem('sonic_rest_duration'), 10);
+    let configuredRestSeconds = [60, 90, 120].includes(savedRest) ? savedRest : 90;
+    let timerSeconds = configuredRestSeconds;
+    let timerInterval = null;
+    let timerEndTime = null;
+    let wakeLock = null;
 
     function setTimerDuration(seconds, vibrate = true) {
       configuredRestSeconds = seconds;
@@ -365,23 +859,14 @@
         timerSeconds = seconds;
         updateTimerDisplay();
       }
-
-      // Persist chosen rest interval to device localStorage
       localStorage.setItem('sonic_rest_duration', seconds);
-
-      // Update active pill button UI
       [60, 90, 120].forEach(s => {
         const pill = document.getElementById(`pill-${s}`);
         if (pill) {
-          if (s === seconds) {
-            pill.classList.add('active');
-          } else {
-            pill.classList.remove('active');
-          }
+          if (s === seconds) pill.classList.add('active');
+          else pill.classList.remove('active');
         }
       });
-
-      // Quick micro-haptic acknowledgment
       if (vibrate && navigator.vibrate) navigator.vibrate(25);
     }
 
@@ -391,100 +876,7 @@
           wakeLock = await navigator.wakeLock.request('screen');
         }
       } catch (err) {
-        console.warn('WakeLock not acquired:', err);
-      }
-    }
-
-    function togglePrehab() {
-      activeSession.prehabChecked = !activeSession.prehabChecked;
-      saveSessionState();
-      renderSessionUI();
-    }
-
-    function toggleTempo() {
-      tempoClean = !tempoClean;
-      const btn = document.getElementById('tempoBtn');
-      if (tempoClean) {
-        btn.classList.add('active-green');
-        btn.innerText = "Tempo: Clean (3-0-1)";
-      } else {
-        btn.classList.remove('active-green');
-        btn.innerText = "Tempo: Fast / Sloppy";
-      }
-    }
-
-    function togglePain() {
-      currentSetPain = !currentSetPain;
-      const btn = document.getElementById('painBtn');
-      if (currentSetPain) {
-        btn.classList.add('active-red');
-        btn.innerText = "Joint Strain: YES";
-        activeSession.jointPain = true;
-      } else {
-        btn.classList.remove('active-red');
-        btn.innerText = "Joint Strain: No";
-      }
-      saveSessionState();
-      renderSessionUI();
-    }
-
-    let timerEndTime = null;
-
-    
-    // Notification & Alert Management
-    async function requestNotificationPermission() {
-      if (!('Notification' in window)) {
-        alert("Web Notifications are not supported by this browser.");
-        return;
-      }
-      try {
-        const permission = await Notification.requestPermission();
-        updateNotificationBtnUI(permission);
-        if (permission === 'granted') {
-          if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
-          alert("Lock-screen alerts enabled! You will now receive a buzz and notification when rest expires.");
-        }
-      } catch (err) {
-        console.warn("Notification permission request error:", err);
-      }
-    }
-
-    function updateNotificationBtnUI(permission) {
-      const btn = document.getElementById('notifyBtn');
-      if (!btn) return;
-      if (permission === 'granted') {
-        btn.style.color = "var(--accent-green)";
-        btn.style.borderColor = "var(--accent-green)";
-        btn.innerText = "🔔 ACTIVE";
-      } else if (permission === 'denied') {
-        btn.style.color = "var(--accent-red)";
-        btn.style.borderColor = "var(--accent-red)";
-        btn.innerText = "🔕 BLOCKED";
-      } else {
-        btn.style.color = "var(--text-dim)";
-        btn.style.borderColor = "var(--border)";
-        btn.innerText = "🔔 ALERTS";
-      }
-    }
-
-    async function dispatchRestNotification() {
-      if (!('Notification' in window) || Notification.permission !== 'granted') return;
-
-      try {
-        if ('serviceWorker' in navigator) {
-          const reg = await navigator.serviceWorker.ready;
-          reg.showNotification("REST COMPLETE // STAGE READY", {
-            body: "Recovery window elapsed. Time to execute your next set!",
-            icon: "./assets/icons/icon-192.png",
-            badge: "./assets/icons/icon-192.png",
-            vibrate: [300, 100, 300, 100, 400],
-            tag: "rest-timer-complete",
-            renotify: true,
-            requireInteraction: true
-          });
-        }
-      } catch (e) {
-        console.warn("Could not dispatch notification:", e);
+        console.warn('WakeLock unavailable:', err);
       }
     }
 
@@ -494,17 +886,14 @@
       localStorage.setItem('sonic_timer_end', timerEndTime);
       syncTimerDelta();
       requestWakeLock();
-
       timerInterval = setInterval(syncTimerDelta, 250);
     }
 
     function syncTimerDelta() {
       if (!timerEndTime) return;
-
       const remainingMs = timerEndTime - Date.now();
       const newSeconds = Math.max(0, Math.ceil(remainingMs / 1000));
 
-      // Trigger 3, 2, 1 warning beeps only when crossing the second boundary
       if (newSeconds !== timerSeconds) {
         timerSeconds = newSeconds;
         updateTimerDisplay();
@@ -523,7 +912,6 @@
       }
     }
 
-    // Re-synchronize timer immediately when returning to the app from background/lock screen
     document.addEventListener('visibilitychange', () => {
       if (document.visibilityState === 'visible') {
         const savedEnd = parseInt(localStorage.getItem('sonic_timer_end'), 10);
@@ -544,16 +932,17 @@
         `${String(mins).padStart(2, '0')}:${String(secs).padStart(2, '0')}`;
     }
 
-    // --- Web Audio API Arcade Synthesizer with Audio Session Ducking ---
+    // -------------------------------------------------------------
+    // WEB AUDIO API ARCADE SYNTHESIZER WITH AUDIO DUCKING
+    // -------------------------------------------------------------
     let audioCtx = null;
 
     function configureAudioSession() {
-      // Audio Session API (iOS Safari 16.4+ & Android PWA): Ducks background audio (Spotify/Apple Music)
       if ('audioSession' in navigator) {
         try {
           navigator.audioSession.type = 'transient-solo-duck';
         } catch (e) {
-          console.warn('AudioSession ducking type configuration failed:', e);
+          console.warn('AudioSession ducking failed:', e);
         }
       }
     }
@@ -561,7 +950,6 @@
     function getAudioContext() {
       if (!audioCtx) {
         const AudioContextClass = window.AudioContext || window.webkitAudioContext;
-        // latencyHint: 'interactive' ensures minimum latency when mixing with system audio
         audioCtx = new AudioContextClass({ latencyHint: 'interactive' });
         configureAudioSession();
       }
@@ -571,7 +959,6 @@
       return audioCtx;
     }
 
-    // 3. Countdown Audio Warning (3-2-1 Warning Beeps + Final Buzzer/Ding)
     function playCountdownBeep(isFinal = false) {
       try {
         const ctx = getAudioContext();
@@ -579,7 +966,6 @@
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
 
-        // 3, 2, 1 beeps = 880 Hz (A5); 0 buzzer/bell = 1760 Hz (A6)
         osc.type = isFinal ? 'triangle' : 'sine';
         osc.frequency.setValueAtTime(isFinal ? 1760.00 : 880.00, now);
 
@@ -592,9 +978,7 @@
 
         osc.start(now);
         osc.stop(now + duration + 0.05);
-      } catch (e) {
-        console.warn('Countdown beep failed:', e);
-      }
+      } catch (e) {}
     }
 
     function playRingChime() {
@@ -631,9 +1015,7 @@
         osc2.start(now);
         osc1.stop(now + 0.36);
         osc2.stop(now + 0.36);
-      } catch (e) {
-        console.warn('Audio chime failed:', e);
-      }
+      } catch (e) {}
     }
 
     function playStageClearFanfare() {
@@ -666,50 +1048,141 @@
           osc.start(now + note.time);
           osc.stop(now + note.time + note.dur + 0.05);
         });
-      } catch (e) {
-        console.warn('Audio fanfare failed:', e);
+      } catch (e) {}
+    }
+
+    // -------------------------------------------------------------
+    // LOCK SCREEN NOTIFICATIONS
+    // -------------------------------------------------------------
+    async function requestNotificationPermission() {
+      if (!('Notification' in window)) {
+        alert("Web Notifications not supported.");
+        return;
+      }
+      try {
+        const permission = await Notification.requestPermission();
+        updateNotificationBtnUI(permission);
+        if (permission === 'granted') {
+          if (navigator.vibrate) navigator.vibrate([50, 50, 50]);
+          alert("Lock-screen alerts enabled!");
+        }
+      } catch (err) {}
+    }
+
+    function updateNotificationBtnUI(permission) {
+      const btn = document.getElementById('notifyBtn');
+      if (!btn) return;
+      if (permission === 'granted') {
+        btn.style.color = "var(--accent-green)";
+        btn.style.borderColor = "var(--accent-green)";
+        btn.innerText = "🔔";
+      } else if (permission === 'denied') {
+        btn.style.color = "var(--accent-red)";
+        btn.style.borderColor = "var(--accent-red)";
+        btn.innerText = "🔕";
+      } else {
+        btn.style.color = "var(--text-dim)";
+        btn.style.borderColor = "var(--border)";
+        btn.innerText = "🔔";
       }
     }
 
-    function logActiveSet() {
-      const reps = parseInt(document.getElementById('repsInput').value, 10) || 0;
-      const rpe = parseFloat(document.getElementById('rpeSelect').value) || 7.5;
-      const setNum = activeSession.sets.length + 1;
+    async function dispatchRestNotification() {
+      if (!('Notification' in window) || Notification.permission !== 'granted') return;
+      try {
+        if ('serviceWorker' in navigator) {
+          const reg = await navigator.serviceWorker.ready;
+          reg.showNotification("REST COMPLETE // NEXT SET READY", {
+            body: `Recovery elapsed for ${activeStageKey}. Time to strike!`,
+            icon: "./assets/icons/icon-192.png",
+            badge: "./assets/icons/icon-192.png",
+            vibrate: [300, 100, 300, 100, 400],
+            tag: "rest-timer-complete",
+            renotify: true,
+            requireInteraction: true
+          });
+        }
+      } catch (e) {}
+    }
 
-      // Push set to session state
-      activeSession.sets.push({
-        setNum,
-        reps,
-        rpe,
-        tempoClean,
-        jointPain: currentSetPain
-      });
-
-      // Save to localStorage
+    // -------------------------------------------------------------
+    // UI RENDERING & TOGGLES
+    // -------------------------------------------------------------
+    function togglePrehab() {
+      activeSession.prehabChecked = !activeSession.prehabChecked;
       saveSessionState();
       renderSessionUI();
+    }
 
-      // Trigger effects
-      playRingChime();
-      if (navigator.vibrate) navigator.vibrate(50);
-      startRestTimer();
-
-      // Reset current set toggles
-      currentSetPain = false;
-      const painBtn = document.getElementById('painBtn');
-      if (painBtn) {
-        painBtn.classList.remove('active-red');
-        painBtn.innerText = "Joint Strain: No";
+    function toggleTempo() {
+      tempoClean = !tempoClean;
+      const btn = document.getElementById('tempoBtn');
+      if (tempoClean) {
+        btn.classList.add('active-green');
+        btn.innerText = "Tempo: Clean (3-0-1)";
+      } else {
+        btn.classList.remove('active-green');
+        btn.innerText = "Tempo: Fast / Sloppy";
       }
     }
 
-    // Hardcoded Default Webhook URL (Bake your deployed Google Apps Script URL here)
-    const DEFAULT_WEBHOOK_URL = ""; 
-
-    function getActiveWebhookUrl() {
-      return localStorage.getItem('sonic_sheets_webhook') || DEFAULT_WEBHOOK_URL;
+    function togglePain() {
+      currentSetPain = !currentSetPain;
+      const btn = document.getElementById('painBtn');
+      if (currentSetPain) {
+        btn.classList.add('active-red');
+        btn.innerText = "Joint Strain: YES";
+        activeSession.jointPain = true;
+      } else {
+        btn.classList.remove('active-red');
+        btn.innerText = "Joint Strain: No";
+      }
+      saveSessionState();
+      renderSessionUI();
     }
 
+    function renderSessionUI() {
+      const prehabCheck = document.getElementById('prehabCheck');
+      if (prehabCheck) prehabCheck.checked = activeSession.prehabChecked;
+
+      const shield = document.getElementById('shieldStatus');
+      if (shield) {
+        if (activeSession.jointPain) {
+          shield.innerText = "SHIELD: 50%";
+          shield.style.borderColor = "var(--accent-red)";
+          shield.style.color = "var(--accent-red)";
+        } else {
+          shield.innerText = "SHIELD: 100%";
+          shield.style.borderColor = "var(--accent-green)";
+          shield.style.color = "var(--accent-green)";
+        }
+      }
+
+      updateTonnageDisplay();
+      renderSlotStepper();
+      updateLogButtonText();
+
+      // Render logged sets list
+      const listContainer = document.getElementById('loggedSetsList');
+      if (listContainer) {
+        listContainer.innerHTML = '';
+        activeSession.sets.forEach((s) => {
+          const row = document.createElement('div');
+          row.className = 'set-row';
+          const ringEarned = s.rpe <= 8.0 && s.tempoClean && !s.jointPain;
+          row.innerHTML = `
+            <span class="set-tag">${s.slot} • S${s.setNum}</span>
+            <span class="set-detail">${s.exercise}: ${s.load}lbs × ${s.reps}r @ RPE ${s.rpe}</span>
+            <span class="set-badge-ring">${ringEarned ? '★ RING' : 'CHECK'}</span>
+          `;
+          listContainer.appendChild(row);
+        });
+      }
+    }
+
+    // -------------------------------------------------------------
+    // WEBHOOK SYNCHRONIZATION & STAGE CLEAR
+    // -------------------------------------------------------------
     function promptWebhookUrl() {
       const modal = document.getElementById('syncModal');
       const input = document.getElementById('webhookInput');
@@ -725,22 +1198,16 @@
     function saveSyncModal() {
       const input = document.getElementById('webhookInput');
       const url = input ? input.value.trim() : '';
-      if (url) {
-        localStorage.setItem('sonic_sheets_webhook', url);
-      } else {
-        localStorage.removeItem('sonic_sheets_webhook');
-      }
+      if (url) localStorage.setItem('sonic_sheets_webhook', url);
+      else localStorage.removeItem('sonic_sheets_webhook');
       closeSyncModal();
       if (navigator.vibrate) navigator.vibrate(50);
-      alert(url ? "Google Sheets webhook linked successfully!" : "Webhook URL cleared.");
+      alert(url ? "Google Sheets webhook linked!" : "Webhook URL cleared.");
     }
 
     async function syncSessionToSheets(sessionData) {
       const webhookUrl = getActiveWebhookUrl();
-      if (!webhookUrl) {
-        console.log('[Webhook] No webhook configured. Skipping transmission.');
-        return;
-      }
+      if (!webhookUrl) return;
 
       try {
         console.log('[Webhook] Transmitting session telemetry to Google Sheets...');
@@ -750,9 +1217,9 @@
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(sessionData)
         });
-        console.log('[Webhook] Telemetry synced successfully.');
+        console.log('[Webhook] Telemetry synced.');
       } catch (err) {
-        console.warn('[Webhook] Transmission failed:', err);
+        console.warn('[Webhook] Sync error:', err);
       }
     }
 
@@ -765,7 +1232,6 @@
       playStageClearFanfare();
       if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
 
-      // Calculate score based on actual logged sets
       const prehab = activeSession.prehabChecked;
       const anyPain = activeSession.jointPain || activeSession.sets.some(s => s.jointPain);
       const ringBonus = prehab ? (anyPain ? 7500 : 15000) : 0;
@@ -778,9 +1244,12 @@
       const totalScore = ringBonus + timeBonus + forceBonus + redRingBonus;
       const rank = totalScore >= 75000 ? "S" : (totalScore >= 55000 ? "A" : "B");
 
-      // Payload for Google Sheets
+      // Credit local vault
+      creditVaultRings(activeStageKey, ringsBanked);
+
+      // Transmit to Google Sheets
       const syncPayload = {
-        stage: "STAGE_X",
+        stage: activeStageKey,
         totalScore,
         rank,
         ringsBanked,
@@ -790,30 +1259,33 @@
         sets: activeSession.sets
       };
 
-      // Transmit to Google Sheets in background
       syncSessionToSheets(syncPayload);
 
       setTimeout(() => {
         const webhookSet = !!getActiveWebhookUrl();
         const syncStatus = webhookSet ? "\n[✓] Telemetry synced to Google Sheets." : "";
-        alert(`STAGE CLEAR!\nTotal Score: ${totalScore.toLocaleString()} pts\nSonic Rank: ${rank}-TIER\nRings Banked: ${ringsBanked}/${activeSession.sets.length}${syncStatus}`);
-        
-        // Clear active session upon stage completion
+        alert(`STAGE CLEAR! // ${activeStageKey}\nScore: ${totalScore.toLocaleString()} pts\nSonic Rank: ${rank}-TIER\nRings Banked: ${ringsBanked}/${activeSession.sets.length}${syncStatus}`);
+
+        // Reset active session
         localStorage.removeItem('sonic_active_session');
-        activeSession = { prehabChecked: false, jointPain: false, sets: [] };
+        activeSession = { stage: activeStageKey, prehabChecked: false, jointPain: false, sets: [] };
         renderSessionUI();
+        renderVault();
       }, 750);
     }
 
-    // Initialize persisted rest preference, active session & active timer on launch
+    // -------------------------------------------------------------
+    // BOOTSTRAP
+    // -------------------------------------------------------------
     document.addEventListener('DOMContentLoaded', () => {
       setTimerDuration(configuredRestSeconds, false);
       loadSessionState();
+      renderVault();
+
       if ('Notification' in window) {
         updateNotificationBtnUI(Notification.permission);
       }
 
-      // Check if a rest timer was running before app closure
       const savedEnd = parseInt(localStorage.getItem('sonic_timer_end'), 10);
       if (savedEnd && savedEnd > Date.now()) {
         timerEndTime = savedEnd;
