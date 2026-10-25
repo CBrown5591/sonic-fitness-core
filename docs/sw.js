@@ -1,21 +1,24 @@
-const CACHE_NAME = 'sonic-fit-v16';
-const STATIC_ASSETS = [
-  './',
-  './index.html',
-  './styles.css',
-  './app.js',
-  './manifest.json',
+/**
+ * SONIC FITNESS HUD // SERVICE WORKER (NETWORK-FIRST ENGINE)
+ * Only caches heavy static assets (MP3 audio and PNG icons).
+ * HTML, CSS, and JS are ALWAYS fetched live over the network so you never get stuck on stale code.
+ */
+
+const CACHE_NAME = 'sonic-media-v17';
+const MEDIA_ASSETS = [
   './assets/audio/sa2_clear.mp3',
   './assets/audio/genesis_clear.mp3',
-  './assets/audio/level_up.mp3'
+  './assets/audio/level_up.mp3',
+  './assets/icons/icon-192.png',
+  './assets/icons/icon-512.png'
 ];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching offline shell v14');
-      return cache.addAll(STATIC_ASSETS);
+      console.log('[SW] Pre-caching static audio and icon assets.');
+      return cache.addAll(MEDIA_ASSETS);
     })
   );
 });
@@ -26,7 +29,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keys.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log('[SW] Purging deprecated cache:', key);
+            console.log('[SW] Purging stale cache:', key);
             return caches.delete(key);
           }
         })
@@ -37,34 +40,34 @@ self.addEventListener('activate', (event) => {
 
 self.addEventListener('fetch', (event) => {
   const req = event.request;
+  const url = req.url;
 
-  if (req.mode === 'navigate') {
+  // 1. Audio and Icons: Cache-First for instant playback and offline display
+  if (url.includes('/assets/')) {
     event.respondWith(
-      fetch(req).catch(() => caches.match('./index.html') || caches.match('./'))
+      caches.match(req).then((cached) => cached || fetch(req))
     );
     return;
   }
 
-  if (req.url.includes('/api/') || req.url.includes('script.google.com')) {
-    event.respondWith(
-      fetch(req).catch(() => new Response(
-        JSON.stringify({ offline: true, message: 'Offline mode active.' }),
-        { headers: { 'Content-Type': 'application/json' } }
-      ))
-    );
+  // 2. Apps Script API Webhook: Direct Network Pass-Through
+  if (url.includes('script.google.com')) {
+    event.respondWith(fetch(req));
     return;
   }
 
+  // 3. App Code (index.html, styles.css, app.js, manifest.json):
+  // ALWAYS Network-First! Fetch latest code from GitHub, fall back to cache only if strictly offline.
   event.respondWith(
-    caches.match(req).then((cached) => {
-      if (cached) return cached;
-      return fetch(req).then((res) => {
-        if (!res || res.status !== 200) return res;
-        const clone = res.clone();
-        caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
-        return res;
-      }).catch(() => caches.match(req));
-    })
+    fetch(req)
+      .then((networkRes) => {
+        if (networkRes && networkRes.status === 200) {
+          const clone = networkRes.clone();
+          caches.open(CACHE_NAME).then((cache) => cache.put(req, clone));
+        }
+        return networkRes;
+      })
+      .catch(() => caches.match(req) || caches.match('./index.html'))
   );
 });
 
