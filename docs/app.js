@@ -1239,12 +1239,12 @@
     // -------------------------------------------------------------
     // BOOTSTRAP
     // -------------------------------------------------------------
-    document.addEventListener('
+
     // -------------------------------------------------------------
     // LIVE GOOGLE SHEETS TELEMETRY SYNC (GET ENDPOINT)
     // -------------------------------------------------------------
     async function syncStateFromSheet() {
-      const webhookUrl = getWebhookUrl();
+      const webhookUrl = getActiveWebhookUrl();
       if (!webhookUrl || webhookUrl.includes('YOUR_APPS_SCRIPT_WEBHOOK_URL_HERE')) return;
 
       try {
@@ -1271,7 +1271,7 @@
       }
     }
 
-    window.addEventListener('DOMContentLoaded', () => {
+    document.addEventListener('DOMContentLoaded', () => {
       syncStateFromSheet();
       updateAudioThemeBtnUI();
       setTimerDuration(configuredRestSeconds, false);
