@@ -1,17 +1,19 @@
-const CACHE_NAME = 'sonic-fit-v10';
+const CACHE_NAME = 'sonic-fit-v12';
 const STATIC_ASSETS = [
   './',
   './index.html',
   './styles.css',
   './app.js',
-  './manifest.json'
+  './manifest.json',
+  './assets/audio/sa2_clear.mp3',
+  './assets/audio/genesis_clear.mp3'
 ];
 
 self.addEventListener('install', (event) => {
   self.skipWaiting();
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
-      console.log('[SW] Pre-caching offline shell v8');
+      console.log('[SW] Pre-caching offline shell v12');
       return cache.addAll(STATIC_ASSETS);
     })
   );
