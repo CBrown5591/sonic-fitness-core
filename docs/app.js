@@ -590,8 +590,14 @@
     }
 
         // -------------------------------------------------------------
-    // AUDIO THEME ENGINE: MODERN VS CLASSIC FANFARE
     // -------------------------------------------------------------
+    // AUDIO THEME ENGINE: MODERN VS CLASSIC FANFARE (MP3 + SYNTH FALLBACK)
+    // -------------------------------------------------------------
+    const audioElements = {
+      modern: null,
+      classic: null
+    };
+
     function getAudioTheme() {
       return localStorage.getItem('sonic_audio_theme') || 'modern';
     }
@@ -601,7 +607,7 @@
       const next = current === 'modern' ? 'classic' : 'modern';
       localStorage.setItem('sonic_audio_theme', next);
       updateAudioThemeBtnUI();
-      showToast(`Audio Theme: ${next.toUpperCase()} SONIC`);
+      showToast(`Audio Theme: ${next === 'modern' ? 'MODERN SONIC ⚡' : '16-BIT CLASSIC 🕹️'}`);
       if (navigator.vibrate) navigator.vibrate(25);
     }
 
@@ -621,363 +627,88 @@
     }
 
     function playStageClearFanfare() {
-      try {
-        const ctx = getAudioContext();
-        const now = ctx.currentTime;
-        const theme = getAudioTheme();
+      const theme = getAudioTheme();
+      const ctx = getAudioContext();
+      const now = ctx ? ctx.currentTime : 0;
 
-        if (theme === 'modern') {
-          playModernFanfare(ctx, now);
-        } else {
-          playClassicFanfare(ctx, now);
+      const audioSrc = theme === 'modern' 
+        ? './assets/audio/sa2_clear.mp3' 
+        : './assets/audio/genesis_clear.mp3';
+
+      try {
+        if (!audioElements[theme]) {
+          audioElements[theme] = new Audio(audioSrc);
+          audioElements[theme].preload = 'auto';
+        }
+        
+        audioElements[theme].currentTime = 0;
+        const playPromise = audioElements[theme].play();
+
+        if (playPromise !== undefined) {
+          playPromise.catch((err) => {
+            console.warn(`[Audio] ${theme.toUpperCase()} audio file playback failed, falling back to synth engine:`, err);
+            if (theme === 'modern') playModernSynthFanfare(ctx, now);
+            else playClassicSynthFanfare(ctx, now);
+          });
         }
       } catch (e) {
-        console.warn('Fanfare playback error:', e);
+        console.warn(`[Audio] Audio error on ${theme}, using synth fallback:`, e);
+        if (theme === 'modern') playModernSynthFanfare(ctx, now);
+        else playClassicSynthFanfare(ctx, now);
       }
     }
 
-    // --- Authentic Modern Sonic Act Clear Fanfare (Generations / Unleashed / Colors) ---
-function playModernFanfare(ctx, now) {
-  // Frequencies (F Major / D Minor Sonic Modern Orchestration)
-  const C4 = 261.63, D4 = 293.66, E4 = 329.63, F4 = 349.23, G4 = 392.00, A4 = 440.00, Bb4 = 466.16;
-  const C5 = 523.25, D5 = 587.33, E5 = 659.25, F5 = 698.46, G5 = 783.99, A5 = 880.00, Bb5 = 932.33;
-  const C6 = 1046.50, D6 = 1174.66, E6 = 1318.51, F6 = 1396.91, G6 = 1567.98, A6 = 1760.00, C7 = 2093.00, F7 = 2793.83;
-  const F2 = 87.31, G2 = 98.00, A2 = 110.00, Bb2 = 116.54, C3 = 130.81, D3 = 146.83;
+    // --- Modern Sonic Synth Fallback ---
+    function playModernSynthFanfare(ctx, now) {
+      if (!ctx) return;
+      const C5 = 523.25, D5 = 587.33, F5 = 698.46, G5 = 783.99, A5 = 880.00, Bb5 = 932.33;
+      const C6 = 1046.50, D6 = 1174.66, E6 = 1318.51, F6 = 1396.91, C7 = 2093.00, F7 = 2793.83;
+      const F2 = 87.31, C3 = 130.81;
 
-  // 1. Modern Horn Section (Lead Melody with authentic rhythmic stabs & sixteenth pickups)
-  const hornNotes = [
-    // Rapid Sixteenth Horn Pickup
-    { f: C5,  t: 0.00, d: 0.07 },
-    { f: D5,  t: 0.07, d: 0.07 },
-    { f: F5,  t: 0.14, d: 0.07 },
-    { f: G5,  t: 0.21, d: 0.09 },
-
-    // Bar 1: Accent Hit & Funk Rise
-    { f: A5,  t: 0.32, d: 0.28 }, // Big accent
-    { f: F5,  t: 0.68, d: 0.12 },
-    { f: G5,  t: 0.82, d: 0.12 },
-    { f: A5,  t: 0.96, d: 0.14 },
-    { f: Bb5, t: 1.12, d: 0.14 },
-    { f: C6,  t: 1.28, d: 0.45 }, // Sustained brass hold
-
-    // Bar 2: Syncopated Brass Descent
-    { f: D6,  t: 1.82, d: 0.14 },
-    { f: C6,  t: 1.98, d: 0.14 },
-    { f: Bb5, t: 2.14, d: 0.14 },
-    { f: A5,  t: 2.30, d: 0.18 },
-    { f: G5,  t: 2.50, d: 0.18 },
-    { f: F5,  t: 2.70, d: 0.18 },
-    { f: G5,  t: 2.90, d: 0.35 },
-
-    // Bar 3: Modern Chromatic Turnaround & Horn Buildup
-    { f: Bb5, t: 3.32, d: 0.12 },
-    { f: A5,  t: 3.46, d: 0.12 },
-    { f: G5,  t: 3.60, d: 0.12 },
-    { f: F5,  t: 3.74, d: 0.12 },
-    { f: E5,  t: 3.88, d: 0.12 },
-    { f: F5,  t: 4.02, d: 0.14 },
-    { f: G5,  t: 4.18, d: 0.20 },
-    { f: C6,  t: 4.40, d: 0.32 }, // Peak trumpet swell
-
-    // Bar 4: Final High Power Chord Hit
-    { f: F6,  t: 4.76, d: 1.60 },
-    { f: C6,  t: 4.76, d: 1.60 },
-    { f: A5,  t: 4.76, d: 1.60 },
-    { f: F5,  t: 4.76, d: 1.60 }
-  ];
-
-  // 2. Punchy Funk Slap/Rock Bass
-  const bassRhythm = [
-    { f: F2,  t: 0.32, d: 0.30 },
-    { f: C3,  t: 0.68, d: 0.20 },
-    { f: F2,  t: 0.96, d: 0.25 },
-    { f: C3,  t: 1.28, d: 0.40 },
-
-    { f: Bb2, t: 1.82, d: 0.25 },
-    { f: F2,  t: 2.14, d: 0.20 },
-    { f: G2,  t: 2.50, d: 0.25 },
-    { f: C3,  t: 2.90, d: 0.35 },
-
-    { f: Bb2, t: 3.32, d: 0.20 },
-    { f: A2,  t: 3.60, d: 0.20 },
-    { f: G2,  t: 3.88, d: 0.20 },
-    { f: C3,  t: 4.18, d: 0.35 },
-
-    { f: F2,  t: 4.76, d: 1.60 }
-  ];
-
-  // Render Modern Brass (Layered Supersaw + Resonant Lowpass Filter)
-  hornNotes.forEach(h => {
-    const tStart = now + h.t;
-    const tEnd = tStart + h.d;
-
-    const osc1 = ctx.createOscillator();
-    const osc2 = ctx.createOscillator();
-    const filter = ctx.createBiquadFilter();
-    const gain = ctx.createGain();
-
-    osc1.type = 'sawtooth';
-    osc2.type = 'sawtooth';
-
-    osc1.frequency.setValueAtTime(h.f, tStart);
-    osc2.frequency.setValueAtTime(h.f * 1.005, tStart); // Detuned brass chorus
-
-    // Dynamic Horn Filter Bite
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(1800, tStart);
-    filter.frequency.exponentialRampToValueAtTime(4500, tStart + 0.04);
-    filter.frequency.exponentialRampToValueAtTime(2200, tEnd);
-    filter.Q.value = 2.2;
-
-    // Fast Attack Brass Envelope
-    gain.gain.setValueAtTime(0.001, tStart);
-    gain.gain.linearRampToValueAtTime(0.22, tStart + 0.018);
-    gain.gain.exponentialRampToValueAtTime(0.001, tEnd + 0.04);
-
-    osc1.connect(filter);
-    osc2.connect(filter);
-    filter.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc1.start(tStart);
-    osc2.start(tStart);
-    osc1.stop(tEnd + 0.05);
-    osc2.stop(tEnd + 0.05);
-  });
-
-  // Render Modern Slap Bass
-  bassRhythm.forEach(b => {
-    const tStart = now + b.t;
-    const tEnd = tStart + b.d;
-
-    const osc = ctx.createOscillator();
-    const filter = ctx.createBiquadFilter();
-    const gain = ctx.createGain();
-
-    osc.type = 'sawtooth';
-    osc.frequency.setValueAtTime(b.f, tStart);
-
-    filter.type = 'lowpass';
-    filter.frequency.setValueAtTime(1600, tStart);
-    filter.frequency.exponentialRampToValueAtTime(400, tStart + 0.08);
-
-    gain.gain.setValueAtTime(0.001, tStart);
-    gain.gain.linearRampToValueAtTime(0.32, tStart + 0.015);
-    gain.gain.exponentialRampToValueAtTime(0.001, tEnd);
-
-    osc.connect(filter);
-    filter.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.start(tStart);
-    osc.stop(tEnd + 0.03);
-  });
-
-  // Final Chord Ring Cascade & Shimmer
-  const sparkleNotes = [
-    { f: F6, t: 4.80 }, { f: A6, t: 4.88 }, { f: C7, t: 4.96 }, { f: F7, t: 5.04 }
-  ];
-  sparkleNotes.forEach(s => {
-    const tStart = now + s.t;
-    const osc = ctx.createOscillator();
-    const gain = ctx.createGain();
-
-    osc.type = 'sine';
-    osc.frequency.setValueAtTime(s.f, tStart);
-
-    gain.gain.setValueAtTime(0.25, tStart);
-    gain.gain.exponentialRampToValueAtTime(0.001, tStart + 0.45);
-
-    osc.connect(gain);
-    gain.connect(ctx.destination);
-
-    osc.start(tStart);
-    osc.stop(tStart + 0.46);
-  });
-}
-
-      bass.forEach(b => {
-        const tStart = now + b.t;
-        const tEnd = tStart + b.d;
-
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-
-        osc.type = 'triangle';
-        osc.frequency.setValueAtTime(b.f, tStart);
-
-        gain.gain.setValueAtTime(0.001, tStart);
-        gain.gain.linearRampToValueAtTime(0.32, tStart + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, tEnd);
-
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.start(tStart);
-        osc.stop(tEnd + 0.02);
-      });
-
-      const sparkles = [
-        { f: A6, t: 3.80 }, { f: Cs7, t: 3.88 }, { f: D7, t: 3.96 }
+      const notes = [
+        { f: C5, t: 0.00, d: 0.08 }, { f: D5, t: 0.08, d: 0.08 }, { f: F5, t: 0.16, d: 0.08 }, { f: G5, t: 0.24, d: 0.10 },
+        { f: A5, t: 0.35, d: 0.30 }, { f: F5, t: 0.70, d: 0.14 }, { f: G5, t: 0.85, d: 0.14 }, { f: A5, t: 1.00, d: 0.14 },
+        { f: Bb5, t: 1.15, d: 0.14 }, { f: C6, t: 1.30, d: 0.45 },
+        { f: F6, t: 1.85, d: 1.20 }, { f: C6, t: 1.85, d: 1.20 }, { f: A5, t: 1.85, d: 1.20 }
       ];
-      sparkles.forEach(s => {
-        const tStart = now + s.t;
+
+      notes.forEach(n => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(s.f, tStart);
-
-        gain.gain.setValueAtTime(0.20, tStart);
-        gain.gain.exponentialRampToValueAtTime(0.001, tStart + 0.35);
-
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(n.f, now + n.t);
+        gain.gain.setValueAtTime(0.001, now + n.t);
+        gain.gain.linearRampToValueAtTime(0.20, now + n.t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + n.t + n.d);
         osc.connect(gain);
         gain.connect(ctx.destination);
-
-        osc.start(tStart);
-        osc.stop(tStart + 0.36);
+        osc.start(now + n.t);
+        osc.stop(now + n.t + n.d + 0.05);
       });
     }
 
-    // --- Classic Sega Genesis YM2612 Sonic Act Clear Fanfare ---
-    function playClassicFanfare(ctx, now) {
-      const C5 = 523.25, D5 = 587.33, F5 = 698.46, G5 = 783.99, A5 = 880.00;
-      const Bb5 = 932.33, C6 = 1046.50, D6 = 1174.66, F6 = 1396.91, A6 = 1760.00, C7 = 2093.00, F7 = 2793.83;
-      const F2 = 87.31, C3 = 130.81, G2 = 98.00, D3 = 146.83, Bb2 = 116.54;
-
-      const leadNotes = [
-        { f: C5,  t: 0.00, d: 0.09 },
-        { f: F5,  t: 0.10, d: 0.09 },
-        { f: A5,  t: 0.20, d: 0.09 },
-        { f: C6,  t: 0.30, d: 0.36 },
-        { f: Bb5, t: 0.70, d: 0.11 },
-        { f: A5,  t: 0.82, d: 0.11 },
-        { f: G5,  t: 0.94, d: 0.18 },
-        { f: F5,  t: 1.14, d: 0.34 },
-
-        { f: D5,  t: 1.54, d: 0.09 },
-        { f: G5,  t: 1.64, d: 0.09 },
-        { f: Bb5, t: 1.74, d: 0.09 },
-        { f: D6,  t: 1.84, d: 0.36 },
-        { f: C6,  t: 2.24, d: 0.11 },
-        { f: Bb5, t: 2.36, d: 0.11 },
-        { f: A5,  t: 2.48, d: 0.18 },
-        { f: G5,  t: 2.68, d: 0.34 },
-
-        { f: Bb5, t: 3.08, d: 0.14 },
-        { f: A5,  t: 3.24, d: 0.14 },
-        { f: G5,  t: 3.40, d: 0.14 },
-        { f: F5,  t: 3.56, d: 0.14 },
-        { f: G5,  t: 3.72, d: 0.26 },
-        { f: C6,  t: 4.00, d: 0.30 },
-
-        { f: F6,  t: 4.34, d: 1.40 },
-        { f: C6,  t: 4.34, d: 1.40 },
-        { f: A5,  t: 4.34, d: 1.40 },
-        { f: F5,  t: 4.34, d: 1.40 }
+    // --- Classic 16-Bit Sonic Synth Fallback ---
+    function playClassicSynthFanfare(ctx, now) {
+      if (!ctx) return;
+      const C5 = 523.25, F5 = 698.46, A5 = 880.00, Bb5 = 932.33, C6 = 1046.50, F6 = 1396.91;
+      const notes = [
+        { f: C5, t: 0.00, d: 0.09 }, { f: F5, t: 0.10, d: 0.09 }, { f: A5, t: 0.20, d: 0.09 }, { f: C6, t: 0.30, d: 0.36 },
+        { f: Bb5, t: 0.70, d: 0.11 }, { f: A5, t: 0.82, d: 0.11 }, { f: F5, t: 0.94, d: 0.35 },
+        { f: F6, t: 1.35, d: 1.20 }, { f: C6, t: 1.35, d: 1.20 }, { f: A5, t: 1.35, d: 1.20 }
       ];
 
-      const bassNotes = [
-        { f: F2,  t: 0.00, d: 0.25 },
-        { f: C3,  t: 0.30, d: 0.35 },
-        { f: F2,  t: 0.70, d: 0.35 },
-        { f: C3,  t: 1.14, d: 0.30 },
-
-        { f: G2,  t: 1.54, d: 0.25 },
-        { f: D3,  t: 1.84, d: 0.35 },
-        { f: G2,  t: 2.24, d: 0.35 },
-        { f: D3,  t: 2.68, d: 0.30 },
-
-        { f: Bb2, t: 3.08, d: 0.30 },
-        { f: C3,  t: 3.40, d: 0.30 },
-        { f: C3,  t: 3.72, d: 0.30 },
-        { f: C3,  t: 4.00, d: 0.30 },
-
-        { f: F2,  t: 4.34, d: 1.40 }
-      ];
-
-      leadNotes.forEach(n => {
-        const tStart = now + n.t;
-        const tEnd = tStart + n.d;
-
-        const osc1 = ctx.createOscillator();
-        const osc2 = ctx.createOscillator();
-        const filter = ctx.createBiquadFilter();
-        const gain = ctx.createGain();
-
-        osc1.type = 'sawtooth';
-        osc2.type = 'triangle';
-
-        osc1.frequency.setValueAtTime(n.f, tStart);
-        osc2.frequency.setValueAtTime(n.f * 1.003, tStart);
-
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(1400, tStart);
-        filter.frequency.exponentialRampToValueAtTime(3600, tStart + 0.04);
-        filter.frequency.exponentialRampToValueAtTime(1800, tEnd);
-        filter.Q.value = 2.5;
-
-        gain.gain.setValueAtTime(0.001, tStart);
-        gain.gain.linearRampToValueAtTime(0.24, tStart + 0.02);
-        gain.gain.exponentialRampToValueAtTime(0.001, tEnd + 0.04);
-
-        osc1.connect(filter);
-        osc2.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc1.start(tStart);
-        osc2.start(tStart);
-        osc1.stop(tEnd + 0.05);
-        osc2.stop(tEnd + 0.05);
-      });
-
-      bassNotes.forEach(b => {
-        const tStart = now + b.t;
-        const tEnd = tStart + b.d;
-
-        const osc = ctx.createOscillator();
-        const filter = ctx.createBiquadFilter();
-        const gain = ctx.createGain();
-
-        osc.type = 'sawtooth';
-        osc.frequency.setValueAtTime(b.f, tStart);
-
-        filter.type = 'lowpass';
-        filter.frequency.setValueAtTime(1800, tStart);
-        filter.frequency.exponentialRampToValueAtTime(450, tStart + 0.08);
-
-        gain.gain.setValueAtTime(0.001, tStart);
-        gain.gain.linearRampToValueAtTime(0.28, tStart + 0.015);
-        gain.gain.exponentialRampToValueAtTime(0.001, tEnd);
-
-        osc.connect(filter);
-        filter.connect(gain);
-        gain.connect(ctx.destination);
-
-        osc.start(tStart);
-        osc.stop(tEnd + 0.03);
-      });
-
-      const sparkleNotes = [
-        { f: F6, t: 4.40 }, { f: A6, t: 4.48 }, { f: C7, t: 4.56 }, { f: F7, t: 4.64 }
-      ];
-      sparkleNotes.forEach(s => {
-        const tStart = now + s.t;
+      notes.forEach(n => {
         const osc = ctx.createOscillator();
         const gain = ctx.createGain();
-
-        osc.type = 'sine';
-        osc.frequency.setValueAtTime(s.f, tStart);
-
-        gain.gain.setValueAtTime(0.22, tStart);
-        gain.gain.exponentialRampToValueAtTime(0.001, tStart + 0.35);
-
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(n.f, now + n.t);
+        gain.gain.setValueAtTime(0.001, now + n.t);
+        gain.gain.linearRampToValueAtTime(0.24, now + n.t + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + n.t + n.d);
         osc.connect(gain);
         gain.connect(ctx.destination);
-
-        osc.start(tStart);
-        osc.stop(tStart + 0.36);
+        osc.start(now + n.t);
+        osc.stop(now + n.t + n.d + 0.05);
       });
     }
 
