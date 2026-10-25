@@ -100,7 +100,7 @@
       text-align: right;
     }
 
-        /* High-Visibility Prehab Mission Banner */
+            /* High-Visibility Prehab Mission Banner & Intel Drawer */
     .prehab-box {
       display: flex;
       align-items: center;
@@ -115,10 +115,18 @@
       box-shadow: 0 0 10px rgba(255, 196, 0, 0.15);
       transition: all 0.2s ease;
     }
+    .prehab-box.has-drawer-open {
+      border-bottom-left-radius: 0;
+      border-bottom-right-radius: 0;
+      margin-bottom: 0;
+    }
     .prehab-box.cleared {
       background: rgba(0, 230, 118, 0.12);
       border-color: var(--accent-green);
       box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
+    }
+    .prehab-box.cleared.has-drawer-open {
+      border-bottom-color: rgba(0, 230, 118, 0.3);
     }
     .prehab-content {
       display: flex;
@@ -140,6 +148,22 @@
       font-weight: 700;
       color: #fff;
     }
+    .btn-prehab-info {
+      background: rgba(255, 196, 0, 0.15);
+      border: 1px solid var(--accent-gold);
+      color: var(--accent-gold);
+      font-size: 10px;
+      font-weight: 800;
+      padding: 4px 8px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+    }
+    .prehab-box.cleared .btn-prehab-info {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+      background: rgba(0, 230, 118, 0.15);
+    }
     .prehab-status-pill {
       background: rgba(0, 0, 0, 0.4);
       border: 1px solid var(--accent-gold);
@@ -154,6 +178,58 @@
       border-color: var(--accent-green);
       color: var(--accent-green);
       background: rgba(0, 230, 118, 0.15);
+    }
+
+    /* Expandable Prehab Intel Drawer */
+    .prehab-drawer {
+      display: none;
+      background: #0b0f19;
+      border: 1.5px solid var(--accent-gold);
+      border-top: none;
+      border-radius: 0 0 10px 10px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+      animation: drawerSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+    .prehab-drawer.drawer-cleared {
+      border-color: var(--accent-green);
+    }
+    @keyframes drawerSlideDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    .prehab-drill-row {
+      padding: 8px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .prehab-drill-row:first-child { padding-top: 2px; }
+    .prehab-drill-row:last-child { border-bottom: none; padding-bottom: 2px; }
+    .prehab-drill-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 12px;
+      font-weight: 800;
+      color: #fff;
+    }
+    .prehab-drill-dose {
+      color: var(--accent-gold);
+      font-size: 11px;
+      font-weight: 800;
+      background: rgba(255, 196, 0, 0.1);
+      padding: 2px 6px;
+      border-radius: 4px;
+    }
+    .prehab-drawer.drawer-cleared .prehab-drill-dose {
+      color: var(--accent-green);
+      background: rgba(0, 230, 118, 0.1);
+    }
+    .prehab-drill-cue {
+      color: var(--text-dim);
+      font-size: 11px;
+      margin-top: 3px;
+      line-height: 1.35;
     }
 
     /* Slot Progress Stepper (A1, A2, A3, A4) */
@@ -585,13 +661,23 @@
       <div class="tonnage-pill" id="tonnageDisplay">VOL: 0 LBS</div>
     </div>
 
-    <!-- Prehab Checklist Banner -->
+        <!-- Prehab Checklist Banner with Expandable Intel Drawer -->
     <div class="prehab-box" id="prehabBox" onclick="togglePrehab()">
       <div class="prehab-content">
         <span class="prehab-tag" id="prehabTag">PRE-FLIGHT MISSION</span>
         <span class="prehab-title" id="prehabLabel">McGill Big 3 + Band Pull-Aparts & Face Pulls</span>
       </div>
-      <div class="prehab-status-pill" id="prehabStatusPill">PENDING [ ]</div>
+      <div style="display: flex; align-items: center; gap: 8px;">
+        <button class="btn-prehab-info" id="prehabInfoBtn" onclick="togglePrehabDrawer(event)" title="View Movement Cues & Prescription">INTEL ▾</button>
+        <div class="prehab-status-pill" id="prehabStatusPill">PENDING [ ]</div>
+      </div>
+    </div>
+
+    <!-- Expandable Prehab Intel Drawer -->
+    <div id="prehabDrawer" class="prehab-drawer">
+      <div id="prehabDrawerContent">
+        <!-- Rendered dynamically per stage -->
+      </div>
     </div>
 
     <!-- Slot Progression Stepper -->
@@ -690,11 +776,16 @@
     // -------------------------------------------------------------
     // STAGE DEFINITIONS & MOVEMENT CATALOG
     // -------------------------------------------------------------
-    const STAGES = {
+        const STAGES = {
       DAY_A: {
         id: "DAY_A",
         name: "Hinge & Horizontal Power",
         prehab: "Prehab: McGill Big 3 + Band Pull-Aparts & Face Pulls",
+        prehabDetails: [
+          { name: "Bird-Dogs (McGill Big 3)", dose: "2 sets × 6 reps / side", cue: "5s hold at full extension. Neutral spine; do not hyperextend lumbar." },
+          { name: "Side Planks (McGill Big 3)", dose: "2 sets × 15–20s hold / side", cue: "Straight line from ankle to shoulder. Brace glutes & lateral obliques." },
+          { name: "Band Pull-Aparts & Face Pulls", dose: "2 sets × 15 reps", cue: "Pull band to clavicle/bridge of nose. Squeeze scaps together for 1s." }
+        ],
         slots: [
           {
             slot: "A1",
@@ -730,6 +821,11 @@
         id: "DAY_B",
         name: "Knee Stability & Shoulder Rehab",
         prehab: "Prehab: Tibialis Wall Raises & 90/90 Hip Switches",
+        prehabDetails: [
+          { name: "Tibialis Wall Raises", dose: "2 sets × 15–20 reps", cue: "Heels 12" from wall. Flex toes hard to shins to buffer patellar load." },
+          { name: "90/90 Hip Switches", dose: "2 sets × 8 reps / side", cue: "Upright tall torso. Smoothly rotate internal & external hip capsules." },
+          { name: "Prone Scapular Y-T-W Raises", dose: "1–2 sets × 6 reps / position", cue: "Thumbs up to ceiling. Fire lower traps & posterior rotator cuff." }
+        ],
         slots: [
           {
             slot: "B1",
@@ -765,6 +861,10 @@
         id: "DAY_C",
         name: "Full-Body Capacity & Hinge Resilience",
         prehab: "Prehab: Deadbug with Wall Press + Band Dislocates",
+        prehabDetails: [
+          { name: "Deadbug with Wall Press", dose: "2 sets × 6 reps / side", cue: "Press hands hard into wall to lock lats. Lower back glued flush to floor." },
+          { name: "Band Shoulder Dislocates", dose: "2 sets × 10 passes", cue: "Wide grip on light band. Keep elbows locked; smooth over-and-back arc." }
+        ],
         slots: [
           {
             slot: "C1",
@@ -1354,6 +1454,57 @@
     // -------------------------------------------------------------
     // UI RENDERING & TOGGLES
     // -------------------------------------------------------------
+        // -------------------------------------------------------------
+    // PREHAB INTEL DRAWER
+    // -------------------------------------------------------------
+    function togglePrehabDrawer(event) {
+      if (event) event.stopPropagation(); // Avoid triggering prehab completion toggle
+      const drawer = document.getElementById('prehabDrawer');
+      const box = document.getElementById('prehabBox');
+      const btn = document.getElementById('prehabInfoBtn');
+
+      if (drawer.style.display === 'block') {
+        drawer.style.display = 'none';
+        box.classList.remove('has-drawer-open');
+        btn.innerText = 'INTEL ▾';
+      } else {
+        renderPrehabDrawer();
+        drawer.style.display = 'block';
+        box.classList.add('has-drawer-open');
+        btn.innerText = 'CLOSE ▴';
+      }
+      if (navigator.vibrate) navigator.vibrate(20);
+    }
+
+    function renderPrehabDrawer() {
+      const container = document.getElementById('prehabDrawerContent');
+      const drawer = document.getElementById('prehabDrawer');
+      if (!container || !drawer) return;
+
+      if (activeSession.prehabChecked) {
+        drawer.classList.add('drawer-cleared');
+      } else {
+        drawer.classList.remove('drawer-cleared');
+      }
+
+      const stageDef = STAGES[activeStageKey];
+      const details = (stageDef && stageDef.prehabDetails) ? stageDef.prehabDetails : [];
+      container.innerHTML = '';
+
+      details.forEach(drill => {
+        const row = document.createElement('div');
+        row.className = 'prehab-drill-row';
+        row.innerHTML = `
+          <div class="prehab-drill-header">
+            <span>${drill.name}</span>
+            <span class="prehab-drill-dose">${drill.dose}</span>
+          </div>
+          <div class="prehab-drill-cue">${drill.cue}</div>
+        `;
+        container.appendChild(row);
+      });
+    }
+
     function togglePrehab() {
       activeSession.prehabChecked = !activeSession.prehabChecked;
       if (activeSession.prehabChecked) {
@@ -1394,17 +1545,21 @@
       const prehabBox = document.getElementById('prehabBox');
       const statusPill = document.getElementById('prehabStatusPill');
       const prehabTag = document.getElementById('prehabTag');
+      const prehabDrawer = document.getElementById('prehabDrawer');
       if (prehabBox && statusPill && prehabTag) {
         if (activeSession.prehabChecked) {
           prehabBox.classList.add('cleared');
+          if (prehabDrawer) prehabDrawer.classList.add('drawer-cleared');
           statusPill.innerText = "CLEARED [✓]";
           prehabTag.innerText = "MISSION COMPLETED";
         } else {
           prehabBox.classList.remove('cleared');
+          if (prehabDrawer) prehabDrawer.classList.remove('drawer-cleared');
           statusPill.innerText = "PENDING [ ]";
           prehabTag.innerText = "PRE-FLIGHT MISSION";
         }
       }
+      renderPrehabDrawer();
 
       const shield = document.getElementById('shieldStatus');
       if (shield) {
