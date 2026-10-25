@@ -589,37 +589,324 @@
       } catch (e) {}
     }
 
+        // -------------------------------------------------------------
+    // AUDIO THEME ENGINE: MODERN VS CLASSIC FANFARE
+    // -------------------------------------------------------------
+    function getAudioTheme() {
+      return localStorage.getItem('sonic_audio_theme') || 'modern';
+    }
+
+    function toggleAudioTheme() {
+      const current = getAudioTheme();
+      const next = current === 'modern' ? 'classic' : 'modern';
+      localStorage.setItem('sonic_audio_theme', next);
+      updateAudioThemeBtnUI();
+      showToast(`Audio Theme: ${next.toUpperCase()} SONIC`);
+      if (navigator.vibrate) navigator.vibrate(25);
+    }
+
+    function updateAudioThemeBtnUI() {
+      const btn = document.getElementById('audioThemeBtn');
+      if (!btn) return;
+      const theme = getAudioTheme();
+      if (theme === 'modern') {
+        btn.innerText = "SONIC: MODERN ⚡";
+        btn.style.color = "var(--accent-blue)";
+        btn.style.borderColor = "var(--accent-blue)";
+      } else {
+        btn.innerText = "SONIC: 16-BIT 🕹️";
+        btn.style.color = "var(--accent-gold)";
+        btn.style.borderColor = "var(--accent-gold)";
+      }
+    }
+
     function playStageClearFanfare() {
       try {
         const ctx = getAudioContext();
         const now = ctx.currentTime;
+        const theme = getAudioTheme();
 
-        const notes = [
-          { freq: 392.00, time: 0.00, dur: 0.10 },
-          { freq: 523.25, time: 0.10, dur: 0.10 },
-          { freq: 659.25, time: 0.20, dur: 0.10 },
-          { freq: 783.99, time: 0.30, dur: 0.12 },
-          { freq: 1046.50, time: 0.42, dur: 0.55 },
-          { freq: 523.25, time: 0.42, dur: 0.55 },
-          { freq: 659.25, time: 0.42, dur: 0.55 }
-        ];
+        if (theme === 'modern') {
+          playModernFanfare(ctx, now);
+        } else {
+          playClassicFanfare(ctx, now);
+        }
+      } catch (e) {
+        console.warn('Fanfare playback error:', e);
+      }
+    }
 
-        notes.forEach((note) => {
-          const osc = ctx.createOscillator();
-          const gain = ctx.createGain();
-          osc.type = 'triangle';
-          osc.frequency.setValueAtTime(note.freq, now + note.time);
+    // --- Modern Sonic Act Clear Fanfare (Adventure / Generations / Colors) ---
+    function playModernFanfare(ctx, now) {
+      const D2 = 73.42, G2 = 98.00, A2 = 110.00, B2 = 123.47;
+      const D5 = 587.33, E5 = 659.25, Fs5 = 739.99, G5 = 783.99, A5 = 880.00, B5 = 987.77, Cs6 = 1108.73;
+      const D6 = 1174.66, A6 = 1760.00, Cs7 = 2217.46, D7 = 2349.32;
 
-          gain.gain.setValueAtTime(0.22, now + note.time);
-          gain.gain.exponentialRampToValueAtTime(0.001, now + note.time + note.dur);
+      const melody = [
+        { f: D5,  t: 0.00, d: 0.10 },
+        { f: D5,  t: 0.11, d: 0.10 },
+        { f: Fs5, t: 0.22, d: 0.12 },
+        { f: A5,  t: 0.36, d: 0.38 },
+        { f: G5,  t: 0.78, d: 0.10 },
+        { f: Fs5, t: 0.89, d: 0.10 },
+        { f: E5,  t: 1.00, d: 0.16 },
+        { f: D5,  t: 1.18, d: 0.32 },
 
-          osc.connect(gain);
-          gain.connect(ctx.destination);
+        { f: E5,  t: 1.54, d: 0.10 },
+        { f: E5,  t: 1.65, d: 0.10 },
+        { f: G5,  t: 1.76, d: 0.12 },
+        { f: B5,  t: 1.90, d: 0.38 },
+        { f: A5,  t: 2.32, d: 0.10 },
+        { f: G5,  t: 2.43, d: 0.10 },
+        { f: Fs5, t: 2.54, d: 0.16 },
+        { f: E5,  t: 2.72, d: 0.32 },
 
-          osc.start(now + note.time);
-          osc.stop(now + note.time + note.dur + 0.05);
-        });
-      } catch (e) {}
+        { f: G5,  t: 3.08, d: 0.12 },
+        { f: A5,  t: 3.22, d: 0.12 },
+        { f: B5,  t: 3.36, d: 0.12 },
+        { f: Cs6, t: 3.50, d: 0.20 },
+
+        { f: D6,  t: 3.74, d: 1.50 },
+        { f: A5,  t: 3.74, d: 1.50 },
+        { f: Fs5, t: 3.74, d: 1.50 },
+        { f: D5,  t: 3.74, d: 1.50 }
+      ];
+
+      const bass = [
+        { f: D2, t: 0.00, d: 0.30 },
+        { f: D2, t: 0.36, d: 0.36 },
+        { f: A2, t: 0.78, d: 0.35 },
+        { f: D2, t: 1.18, d: 0.30 },
+
+        { f: G2, t: 1.54, d: 0.30 },
+        { f: G2, t: 1.90, d: 0.36 },
+        { f: B2, t: 2.32, d: 0.35 },
+        { f: A2, t: 2.72, d: 0.30 },
+
+        { f: G2, t: 3.08, d: 0.24 },
+        { f: A2, t: 3.36, d: 0.28 },
+        { f: D2, t: 3.74, d: 1.50 }
+      ];
+
+      melody.forEach(n => {
+        const tStart = now + n.t;
+        const tEnd = tStart + n.d;
+
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const filter = ctx.createBiquadFilter();
+        const gain = ctx.createGain();
+
+        osc1.type = 'sawtooth';
+        osc2.type = 'sawtooth';
+
+        osc1.frequency.setValueAtTime(n.f, tStart);
+        osc2.frequency.setValueAtTime(n.f * 1.006, tStart);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(2200, tStart);
+        filter.frequency.exponentialRampToValueAtTime(5000, tStart + 0.03);
+        filter.frequency.exponentialRampToValueAtTime(2400, tEnd);
+        filter.Q.value = 3.0;
+
+        gain.gain.setValueAtTime(0.001, tStart);
+        gain.gain.linearRampToValueAtTime(0.20, tStart + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.001, tEnd + 0.03);
+
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc1.start(tStart);
+        osc2.start(tStart);
+        osc1.stop(tEnd + 0.04);
+        osc2.stop(tEnd + 0.04);
+      });
+
+      bass.forEach(b => {
+        const tStart = now + b.t;
+        const tEnd = tStart + b.d;
+
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(b.f, tStart);
+
+        gain.gain.setValueAtTime(0.001, tStart);
+        gain.gain.linearRampToValueAtTime(0.32, tStart + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, tEnd);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(tStart);
+        osc.stop(tEnd + 0.02);
+      });
+
+      const sparkles = [
+        { f: A6, t: 3.80 }, { f: Cs7, t: 3.88 }, { f: D7, t: 3.96 }
+      ];
+      sparkles.forEach(s => {
+        const tStart = now + s.t;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(s.f, tStart);
+
+        gain.gain.setValueAtTime(0.20, tStart);
+        gain.gain.exponentialRampToValueAtTime(0.001, tStart + 0.35);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(tStart);
+        osc.stop(tStart + 0.36);
+      });
+    }
+
+    // --- Classic Sega Genesis YM2612 Sonic Act Clear Fanfare ---
+    function playClassicFanfare(ctx, now) {
+      const C5 = 523.25, D5 = 587.33, F5 = 698.46, G5 = 783.99, A5 = 880.00;
+      const Bb5 = 932.33, C6 = 1046.50, D6 = 1174.66, F6 = 1396.91, A6 = 1760.00, C7 = 2093.00, F7 = 2793.83;
+      const F2 = 87.31, C3 = 130.81, G2 = 98.00, D3 = 146.83, Bb2 = 116.54;
+
+      const leadNotes = [
+        { f: C5,  t: 0.00, d: 0.09 },
+        { f: F5,  t: 0.10, d: 0.09 },
+        { f: A5,  t: 0.20, d: 0.09 },
+        { f: C6,  t: 0.30, d: 0.36 },
+        { f: Bb5, t: 0.70, d: 0.11 },
+        { f: A5,  t: 0.82, d: 0.11 },
+        { f: G5,  t: 0.94, d: 0.18 },
+        { f: F5,  t: 1.14, d: 0.34 },
+
+        { f: D5,  t: 1.54, d: 0.09 },
+        { f: G5,  t: 1.64, d: 0.09 },
+        { f: Bb5, t: 1.74, d: 0.09 },
+        { f: D6,  t: 1.84, d: 0.36 },
+        { f: C6,  t: 2.24, d: 0.11 },
+        { f: Bb5, t: 2.36, d: 0.11 },
+        { f: A5,  t: 2.48, d: 0.18 },
+        { f: G5,  t: 2.68, d: 0.34 },
+
+        { f: Bb5, t: 3.08, d: 0.14 },
+        { f: A5,  t: 3.24, d: 0.14 },
+        { f: G5,  t: 3.40, d: 0.14 },
+        { f: F5,  t: 3.56, d: 0.14 },
+        { f: G5,  t: 3.72, d: 0.26 },
+        { f: C6,  t: 4.00, d: 0.30 },
+
+        { f: F6,  t: 4.34, d: 1.40 },
+        { f: C6,  t: 4.34, d: 1.40 },
+        { f: A5,  t: 4.34, d: 1.40 },
+        { f: F5,  t: 4.34, d: 1.40 }
+      ];
+
+      const bassNotes = [
+        { f: F2,  t: 0.00, d: 0.25 },
+        { f: C3,  t: 0.30, d: 0.35 },
+        { f: F2,  t: 0.70, d: 0.35 },
+        { f: C3,  t: 1.14, d: 0.30 },
+
+        { f: G2,  t: 1.54, d: 0.25 },
+        { f: D3,  t: 1.84, d: 0.35 },
+        { f: G2,  t: 2.24, d: 0.35 },
+        { f: D3,  t: 2.68, d: 0.30 },
+
+        { f: Bb2, t: 3.08, d: 0.30 },
+        { f: C3,  t: 3.40, d: 0.30 },
+        { f: C3,  t: 3.72, d: 0.30 },
+        { f: C3,  t: 4.00, d: 0.30 },
+
+        { f: F2,  t: 4.34, d: 1.40 }
+      ];
+
+      leadNotes.forEach(n => {
+        const tStart = now + n.t;
+        const tEnd = tStart + n.d;
+
+        const osc1 = ctx.createOscillator();
+        const osc2 = ctx.createOscillator();
+        const filter = ctx.createBiquadFilter();
+        const gain = ctx.createGain();
+
+        osc1.type = 'sawtooth';
+        osc2.type = 'triangle';
+
+        osc1.frequency.setValueAtTime(n.f, tStart);
+        osc2.frequency.setValueAtTime(n.f * 1.003, tStart);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1400, tStart);
+        filter.frequency.exponentialRampToValueAtTime(3600, tStart + 0.04);
+        filter.frequency.exponentialRampToValueAtTime(1800, tEnd);
+        filter.Q.value = 2.5;
+
+        gain.gain.setValueAtTime(0.001, tStart);
+        gain.gain.linearRampToValueAtTime(0.24, tStart + 0.02);
+        gain.gain.exponentialRampToValueAtTime(0.001, tEnd + 0.04);
+
+        osc1.connect(filter);
+        osc2.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc1.start(tStart);
+        osc2.start(tStart);
+        osc1.stop(tEnd + 0.05);
+        osc2.stop(tEnd + 0.05);
+      });
+
+      bassNotes.forEach(b => {
+        const tStart = now + b.t;
+        const tEnd = tStart + b.d;
+
+        const osc = ctx.createOscillator();
+        const filter = ctx.createBiquadFilter();
+        const gain = ctx.createGain();
+
+        osc.type = 'sawtooth';
+        osc.frequency.setValueAtTime(b.f, tStart);
+
+        filter.type = 'lowpass';
+        filter.frequency.setValueAtTime(1800, tStart);
+        filter.frequency.exponentialRampToValueAtTime(450, tStart + 0.08);
+
+        gain.gain.setValueAtTime(0.001, tStart);
+        gain.gain.linearRampToValueAtTime(0.28, tStart + 0.015);
+        gain.gain.exponentialRampToValueAtTime(0.001, tEnd);
+
+        osc.connect(filter);
+        filter.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(tStart);
+        osc.stop(tEnd + 0.03);
+      });
+
+      const sparkleNotes = [
+        { f: F6, t: 4.40 }, { f: A6, t: 4.48 }, { f: C7, t: 4.56 }, { f: F7, t: 4.64 }
+      ];
+      sparkleNotes.forEach(s => {
+        const tStart = now + s.t;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+
+        osc.type = 'sine';
+        osc.frequency.setValueAtTime(s.f, tStart);
+
+        gain.gain.setValueAtTime(0.22, tStart);
+        gain.gain.exponentialRampToValueAtTime(0.001, tStart + 0.35);
+
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+
+        osc.start(tStart);
+        osc.stop(tStart + 0.36);
+      });
     }
 
     // -------------------------------------------------------------
@@ -998,6 +1285,7 @@
     // BOOTSTRAP
     // -------------------------------------------------------------
     document.addEventListener('DOMContentLoaded', () => {
+      updateAudioThemeBtnUI();
       setTimerDuration(configuredRestSeconds, false);
       loadSessionState();
       renderVault();
