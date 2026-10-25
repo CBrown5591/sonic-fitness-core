@@ -1,4 +1,4 @@
-const CACHE_NAME = 'sonic-fit-v15';
+const CACHE_NAME = 'sonic-fit-v16';
 const STATIC_ASSETS = [
   './',
   './index.html',
