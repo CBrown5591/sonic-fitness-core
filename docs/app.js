@@ -15,9 +15,9 @@
           {
             slot: "A1",
             target: "3x6-8",
-            primary: "Trap Bar Deadlift (High Handles)",
+            primary: "Barbell Deadlift (Standard Bar)",
             defaultLoad: 225,
-            alts: ["Trap Bar Deadlift (High Handles)", "Glute Bridge / DB RDL (to Bench)", "Supported Romanian Deadlift (RDL)"]
+            alts: ["Barbell Deadlift (Standard Bar)", "Glute Bridge / DB RDL (to Bench)", "Supported Romanian Deadlift (RDL)"]
           },
           {
             slot: "A2",
@@ -55,9 +55,9 @@
           {
             slot: "B1",
             target: "3x8-10",
-            primary: "Goblet Box Squat (to 90° Bench)",
+            primary: "Goblet Squat (Tempo 3-0-1)",
             defaultLoad: 70,
-            alts: ["Goblet Box Squat (to 90° Bench)", "Bodyweight Box Squat / TRX Squat", "DB Bulgarian Split Squat"]
+            alts: ["Goblet Squat (Tempo 3-0-1)", "Bodyweight Squat / TRX Squat", "DB Bulgarian Split Squat"]
           },
           {
             slot: "B2",
@@ -71,7 +71,7 @@
             target: "3x8-10",
             primary: "Supported Romanian Deadlift (RDL)",
             defaultLoad: 65,
-            alts: ["Supported Romanian Deadlift (RDL)", "B-Stance DB Hinge", "Trap Bar Deadlift (High Handles)"]
+            alts: ["Supported Romanian Deadlift (RDL)", "B-Stance DB Hinge", "Barbell Deadlift (Standard Bar)"]
           },
           {
             slot: "B4",
@@ -96,7 +96,7 @@
             target: "3x6-8",
             primary: "DB Bulgarian Split Squat",
             defaultLoad: 40,
-            alts: ["DB Bulgarian Split Squat", "Supported Reverse Lunge (Rack/Wall)", "Goblet Box Squat (to 90° Bench)"]
+            alts: ["DB Bulgarian Split Squat", "Supported Reverse Lunge (Rack/Wall)", "Goblet Squat (Tempo 3-0-1)"]
           },
           {
             slot: "C2",
@@ -127,11 +127,11 @@
     // MASTERY VAULT CATALOG (12 RELIC MOVEMENTS)
     // -------------------------------------------------------------
     const DEFAULT_VAULT = [
-      { exercise: "Trap Bar Deadlift (High Handles)", focus: "Hinge", rings: 4 },
+      { exercise: "Barbell Deadlift (Standard Bar)", focus: "Hinge", rings: 4 },
       { exercise: "Chest-Supported Dumbbell Row", focus: "Horizontal Pull", rings: 3 },
       { exercise: "Neutral-Grip DB Floor Press", focus: "Horizontal Push", rings: 3 },
       { exercise: "Cable Pallof Press", focus: "Core", rings: 2 },
-      { exercise: "Goblet Box Squat (to 90° Bench)", focus: "Squat", rings: 5 },
+      { exercise: "Goblet Squat (Tempo 3-0-1)", focus: "Squat", rings: 5 },
       { exercise: "Half-Kneeling Landmine Press", focus: "Vertical Push", rings: 2 },
       { exercise: "Supported Romanian Deadlift (RDL)", focus: "Hinge", rings: 3 },
       { exercise: "Cable External Rotations", focus: "Shoulder Rehab", rings: 2 },
@@ -402,11 +402,11 @@
     function creditVaultRings(stageKey, ringsCount) {
       const vault = getVaultData();
       const stageMap = {
-        "DAY_A": "Trap Bar Deadlift (High Handles)",
-        "DAY_B": "Goblet Box Squat (to 90° Bench)",
+        "DAY_A": "Barbell Deadlift (Standard Bar)",
+        "DAY_B": "Goblet Squat (Tempo 3-0-1)",
         "DAY_C": "Neutral-Grip Flat DB Bench"
       };
-      const targetName = stageMap[stageKey] || "Trap Bar Deadlift (High Handles)";
+      const targetName = stageMap[stageKey] || "Barbell Deadlift (Standard Bar)";
       const target = vault.find(v => v.exercise.includes(targetName) || targetName.includes(v.exercise));
       if (target) {
         target.rings = Math.min(5, (target.rings || 0) + ringsCount);
