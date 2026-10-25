@@ -127,19 +127,23 @@
     // MASTERY VAULT CATALOG (12 RELIC MOVEMENTS)
     // -------------------------------------------------------------
     const DEFAULT_VAULT = [
-      { exercise: "Barbell Deadlift (Standard Bar)", focus: "Hinge", rings: 4 },
-      { exercise: "Chest-Supported Dumbbell Row", focus: "Horizontal Pull", rings: 3 },
-      { exercise: "Neutral-Grip DB Floor Press", focus: "Horizontal Push", rings: 3 },
-      { exercise: "Cable Pallof Press", focus: "Core", rings: 2 },
-      { exercise: "Goblet Squat (Tempo 3-0-1)", focus: "Squat", rings: 5 },
-      { exercise: "Half-Kneeling Landmine Press", focus: "Vertical Push", rings: 2 },
-      { exercise: "Supported Romanian Deadlift (RDL)", focus: "Hinge", rings: 3 },
-      { exercise: "Cable External Rotations", focus: "Shoulder Rehab", rings: 2 },
-      { exercise: "DB Bulgarian Split Squat", focus: "Single Leg", rings: 2 },
-      { exercise: "Lat Pulldown (Neutral/Mag-Grip)", focus: "Vertical Pull", rings: 3 },
-      { exercise: "Incline DB Bench Press (30°)", focus: "Horizontal Push", rings: 3 },
-      { exercise: "Farmer's Carries", focus: "Carry", rings: 2 }
-    ];
+  { exercise: "Barbell Deadlift (Standard Bar)", focus: "Hinge", rings: 0 },
+  { exercise: "Chest-Supported Dumbbell Row", focus: "Horizontal Pull", rings: 0 },
+  { exercise: "Neutral-Grip DB Floor Press", focus: "Horizontal Push", rings: 0 },
+  { exercise: "Cable Pallof Press", focus: "Core", rings: 0 },
+  { exercise: "Goblet Squat (Tempo 3-0-1)", focus: "Squat", rings: 0 },
+  { exercise: "Half-Kneeling Landmine Press", focus: "Vertical Push", rings: 0 },
+  { exercise: "Supported Romanian Deadlift (RDL)", focus: "Hinge", rings: 0 },
+  { exercise: "Cable External Rotations", focus: "Shoulder Rehab", rings: 0 },
+  { exercise: "DB Bulgarian Split Squat", focus: "Single Leg", rings: 0 },
+  { exercise: "Lat Pulldown (Neutral/Mag-Grip)", focus: "Vertical Pull", rings: 0 },
+  { exercise: "Incline DB Bench Press (30°)", focus: "Horizontal Push", rings: 0 },
+  { exercise: "Farmer's Carries", focus: "Carry", rings: 0 },
+  { exercise: "Aegis Striker (Push Progression)", focus: "Horizontal Push", rings: 0 },
+  { exercise: "Kinetic Stride (Squat Progression)", focus: "Squat", rings: 0 },
+  { exercise: "Pillar Stride (Lunge Progression)", focus: "Single Leg", rings: 0 },
+  { exercise: "Gale Retractor (Pull Progression)", focus: "Horizontal Pull", rings: 0 }
+];
 
     // -------------------------------------------------------------
     // STATE ENGINE
