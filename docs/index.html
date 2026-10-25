@@ -100,19 +100,61 @@
       text-align: right;
     }
 
-    /* Prehab Banner */
+        /* High-Visibility Prehab Mission Banner */
     .prehab-box {
       display: flex;
       align-items: center;
-      gap: 10px;
-      background: rgba(255, 196, 0, 0.08);
-      border: 1px dashed var(--accent-gold);
-      padding: 10px 12px;
-      border-radius: 8px;
+      justify-content: space-between;
+      gap: 12px;
+      background: rgba(255, 196, 0, 0.12);
+      border: 1.5px solid var(--accent-gold);
+      padding: 12px 14px;
+      border-radius: 10px;
       margin-bottom: 12px;
       cursor: pointer;
+      box-shadow: 0 0 10px rgba(255, 196, 0, 0.15);
+      transition: all 0.2s ease;
     }
-    .prehab-box input { width: 20px; height: 20px; accent-color: var(--accent-gold); }
+    .prehab-box.cleared {
+      background: rgba(0, 230, 118, 0.12);
+      border-color: var(--accent-green);
+      box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
+    }
+    .prehab-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+    .prehab-tag {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: var(--accent-gold);
+      text-transform: uppercase;
+    }
+    .prehab-box.cleared .prehab-tag {
+      color: var(--accent-green);
+    }
+    .prehab-title {
+      font-size: 13px;
+      font-weight: 700;
+      color: #fff;
+    }
+    .prehab-status-pill {
+      background: rgba(0, 0, 0, 0.4);
+      border: 1px solid var(--accent-gold);
+      color: var(--accent-gold);
+      padding: 4px 10px;
+      border-radius: 14px;
+      font-size: 11px;
+      font-weight: 800;
+      white-space: nowrap;
+    }
+    .prehab-box.cleared .prehab-status-pill {
+      border-color: var(--accent-green);
+      color: var(--accent-green);
+      background: rgba(0, 230, 118, 0.15);
+    }
 
     /* Slot Progress Stepper (A1, A2, A3, A4) */
     .slot-stepper {
@@ -355,12 +397,13 @@
       <div class="tonnage-pill" id="tonnageDisplay">VOL: 0 LBS</div>
     </div>
 
-    <!-- Prehab Checklist -->
-    <div class="prehab-box" onclick="togglePrehab()">
-      <input type="checkbox" id="prehabCheck">
-      <label id="prehabLabel" style="cursor: pointer; font-size: 13px; font-weight: 600;">
-        Prehab: McGill Big 3 + Band Pull-Aparts
-      </label>
+    <!-- Prehab Checklist Banner -->
+    <div class="prehab-box" id="prehabBox" onclick="togglePrehab()">
+      <div class="prehab-content">
+        <span class="prehab-tag" id="prehabTag">PRE-FLIGHT MISSION</span>
+        <span class="prehab-title" id="prehabLabel">McGill Big 3 + Band Pull-Aparts & Face Pulls</span>
+      </div>
+      <div class="prehab-status-pill" id="prehabStatusPill">PENDING [ ]</div>
     </div>
 
     <!-- Slot Progression Stepper -->
@@ -656,7 +699,7 @@
       const stageDef = STAGES[stageKey];
       document.getElementById('stageFocus').innerText = `STAGE CLEAR ZONE // ${stageKey.replace('_', ' ')}`;
       document.getElementById('stageName').innerText = stageDef.name;
-      document.getElementById('prehabLabel').innerText = stageDef.prehab;
+      document.getElementById('prehabLabel').innerText = stageDef.prehab.replace('Prehab: ', '');
 
       renderSlotStepper();
       loadSlotData();
@@ -1125,6 +1168,9 @@
     // -------------------------------------------------------------
     function togglePrehab() {
       activeSession.prehabChecked = !activeSession.prehabChecked;
+      if (activeSession.prehabChecked) {
+        if (navigator.vibrate) navigator.vibrate(35);
+      }
       saveSessionState();
       renderSessionUI();
     }
@@ -1157,8 +1203,20 @@
     }
 
     function renderSessionUI() {
-      const prehabCheck = document.getElementById('prehabCheck');
-      if (prehabCheck) prehabCheck.checked = activeSession.prehabChecked;
+      const prehabBox = document.getElementById('prehabBox');
+      const statusPill = document.getElementById('prehabStatusPill');
+      const prehabTag = document.getElementById('prehabTag');
+      if (prehabBox && statusPill && prehabTag) {
+        if (activeSession.prehabChecked) {
+          prehabBox.classList.add('cleared');
+          statusPill.innerText = "CLEARED [✓]";
+          prehabTag.innerText = "MISSION COMPLETED";
+        } else {
+          prehabBox.classList.remove('cleared');
+          statusPill.innerText = "PENDING [ ]";
+          prehabTag.innerText = "PRE-FLIGHT MISSION";
+        }
+      }
 
       const shield = document.getElementById('shieldStatus');
       if (shield) {
