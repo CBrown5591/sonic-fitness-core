@@ -948,3 +948,27 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
 .total-val, #resTotalScore, .exp-counter, .timer-val {
   font-variant-numeric: tabular-nums;
 }
+/* -------------------------------------------------------------
+   CHALLENGE STAGE TAB PILLS (OPTION B)
+   ------------------------------------------------------------- */
+.challenge-tab-gold {
+  border-color: rgba(255, 196, 0, 0.45) !important;
+  color: var(--accent-gold) !important;
+}
+.challenge-tab-gold.active {
+  background: rgba(255, 196, 0, 0.22) !important;
+  border-color: var(--accent-gold) !important;
+  color: var(--accent-gold) !important;
+  box-shadow: 0 0 12px rgba(255, 196, 0, 0.45) !important;
+}
+
+.challenge-tab-red {
+  border-color: rgba(255, 61, 0, 0.45) !important;
+  color: var(--accent-red) !important;
+}
+.challenge-tab-red.active {
+  background: rgba(255, 61, 0, 0.22) !important;
+  border-color: var(--accent-red) !important;
+  color: var(--accent-red) !important;
+  box-shadow: 0 0 12px rgba(255, 61, 0, 0.45) !important;
+}
