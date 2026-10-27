@@ -726,34 +726,38 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
   overflow-x: auto !important;
   white-space: nowrap !important;
   padding-bottom: 4px !important;
-  scrollbar-width: none !important;
+  scrollbar-width: none !important; /* Firefox */
 }
 .stage-tabs::-webkit-scrollbar, .stage-nav::-webkit-scrollbar {
-  display: none !important;
+  display: none !important; /* Chrome/Android WebView */
 }
 .stage-tab {
   flex: 0 0 auto !important;
   min-width: 68px !important;
 }
 
-/* 2. GRADE STAMP SLAM ANIMATIONS (UPRIGHT & CRISP S/A/B LETTERS) */
+/* 2. GRADE STAMP SLAM ANIMATIONS (CINEMATIC SLOW-MOTION & UPRIGHT S/A/B) */
 @keyframes stampSlamS {
   0% {
     opacity: 0;
-    transform: scale(3.5);
-    filter: brightness(2.2);
+    transform: scale(4.0);
+    filter: brightness(2.5);
   }
-  55% {
+  45% {
+    opacity: 0.85;
+    transform: scale(2.0);
+  }
+  72% {
     opacity: 1;
     transform: scale(0.92);
-    filter: brightness(1.4);
-    box-shadow: 0 0 50px rgba(255, 196, 0, 0.9), 0 0 80px rgba(0, 229, 255, 0.5);
+    filter: brightness(1.5);
+    box-shadow: 0 0 55px rgba(255, 196, 0, 0.9), 0 0 90px rgba(0, 229, 255, 0.5);
   }
-  75% {
+  86% {
     transform: scale(1.06);
     box-shadow: 0 0 35px rgba(255, 196, 0, 0.7);
   }
-  90% {
+  95% {
     transform: scale(0.98);
   }
   100% {
@@ -766,16 +770,20 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
 @keyframes stampSlamA {
   0% {
     opacity: 0;
-    transform: scale(2.8);
-    filter: brightness(1.8);
+    transform: scale(3.2);
+    filter: brightness(2.0);
   }
-  60% {
+  50% {
+    opacity: 0.85;
+    transform: scale(1.8);
+  }
+  75% {
     opacity: 1;
     transform: scale(0.94);
-    box-shadow: 0 0 35px rgba(0, 229, 255, 0.8);
+    box-shadow: 0 0 40px rgba(0, 229, 255, 0.85);
   }
-  80% {
-    transform: scale(1.04);
+  88% {
+    transform: scale(1.05);
   }
   100% {
     opacity: 1;
@@ -787,9 +795,13 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
 @keyframes stampSlamB {
   0% {
     opacity: 0;
-    transform: scale(2.2);
+    transform: scale(2.6);
   }
-  70% {
+  55% {
+    opacity: 0.85;
+    transform: scale(1.6);
+  }
+  80% {
     opacity: 1;
     transform: scale(0.96);
   }
@@ -801,15 +813,72 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
 }
 
 .stamp-slam-s {
-  animation: stampSlamS 0.65s cubic-bezier(0.18, 0.9, 0.35, 1.2) forwards !important;
+  animation: stampSlamS 1.15s cubic-bezier(0.12, 0.8, 0.25, 1.15) forwards !important;
 }
 
 .stamp-slam-a {
-  animation: stampSlamA 0.55s cubic-bezier(0.18, 0.9, 0.35, 1.15) forwards !important;
+  animation: stampSlamA 1.0s cubic-bezier(0.12, 0.8, 0.25, 1.15) forwards !important;
 }
 
 .stamp-slam-b {
-  animation: stampSlamB 0.45s cubic-bezier(0.18, 0.9, 0.35, 1.1) forwards !important;
+  animation: stampSlamB 0.85s cubic-bezier(0.12, 0.8, 0.25, 1.1) forwards !important;
+}
+
+/* RESULTS IN-MODAL EXP PROGRESS BLOCK */
+.results-exp-block {
+  width: 100%;
+  background: #0b0f19;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 10px 12px;
+  margin-bottom: 14px;
+  transition: all 0.3s ease;
+}
+.results-exp-block.exp-active {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 15px rgba(0, 229, 255, 0.25);
+}
+.res-exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+.res-exp-title {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--accent-blue);
+  letter-spacing: 0.5px;
+}
+.res-exp-val {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--accent-gold);
+  font-variant-numeric: tabular-nums;
+}
+.res-exp-track {
+  width: 100%;
+  height: 8px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  overflow: hidden;
+  margin-bottom: 4px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.res-exp-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-green) 100%);
+  border-radius: 4px;
+  transition: width 0.08s linear;
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+}
+.res-exp-footer {
+  display: flex;
+  justify-content: space-between;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
 }
 
 /* 3. CAMERA SCREEN SHAKE FX */
