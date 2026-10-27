@@ -15,10 +15,10 @@
           {
             slot: "A1",
             target: "3x6-8",
-            primary: "Barbell Deadlift (Standard Bar)",
-            defaultLoad: 225,
+            primary: "Supported Romanian Deadlift (Heavy DBs)",
+            defaultLoad: 60,
             alts: [
-              "Barbell Deadlift (Standard Bar)",
+              "Supported Romanian Deadlift (Heavy DBs)",
               "Supported Romanian Deadlift (RDL)",
               "B-Stance DB Hinge",
               "Glute Bridge / DB RDL (to Bench)"
@@ -77,7 +77,7 @@
             slot: "B1",
             target: "3x8-10",
             primary: "Suitcase DB Squat",
-            defaultLoad: 70,
+            defaultLoad: 55,
             alts: [
               "Suitcase DB Squat",
               "Goblet Squat (Tempo 3-0-1)",
@@ -108,7 +108,7 @@
               "Supported Romanian Deadlift (RDL)",
               "Cybex VR2 Leg Curl",
               "B-Stance DB Hinge",
-              "Barbell Deadlift (Standard Bar)"
+              "Supported Romanian Deadlift (Heavy DBs)"
             ]
           },
           {
@@ -176,7 +176,7 @@
             slot: "C4",
             target: "3x40-50 paces",
             primary: "Farmer's Carries",
-            defaultLoad: 70,
+            defaultLoad: 60,
             alts: [
               "Farmer's Carries",
               "Suitcase Carry (Single-Arm)",
@@ -380,10 +380,10 @@
           {
             slot: "X1",
             target: "1x3-5 @ 88%",
-            primary: "Barbell Deadlift (Standard Bar)",
-            defaultLoad: 245,
+            primary: "Supported Romanian Deadlift (Heavy DBs)",
+            defaultLoad: 65,
             alts: [
-              "Barbell Deadlift (Standard Bar)",
+              "Supported Romanian Deadlift (Heavy DBs)",
               "Supported Romanian Deadlift (RDL)",
               "B-Stance DB Hinge"
             ]
@@ -403,7 +403,7 @@
             slot: "X3",
             target: "1x3-5 @ 88%",
             primary: "Neutral-Grip DB Floor Press",
-            defaultLoad: 75,
+            defaultLoad: 60,
             alts: [
               "Neutral-Grip DB Floor Press",
               "Cybex VR2 Converging Chest Press",
@@ -485,7 +485,7 @@
     // MASTERY VAULT CATALOG (12 RELIC MOVEMENTS)
     // -------------------------------------------------------------
     const DEFAULT_VAULT = [
-      { exercise: "Barbell Deadlift (Standard Bar)", focus: "Hinge", rings: 0 },
+      { exercise: "Supported Romanian Deadlift (Heavy DBs)", focus: "Hinge", rings: 0 },
       { exercise: "Chest-Supported Dumbbell Row", focus: "Horizontal Pull", rings: 0 },
       { exercise: "Neutral-Grip DB Floor Press", focus: "Horizontal Push", rings: 0 },
       { exercise: "Cable Pallof Press", focus: "Core", rings: 0 },
@@ -527,11 +527,15 @@
       return 0.70;
     }
 
-    function calculateTargetLoad(e1rm, targetStr, defaultVal) {
+    function calculateTargetLoad(e1rm, targetStr, defaultVal, exerciseName = '') {
       if (!e1rm || e1rm <= 0) return defaultVal;
       const pct = getTargetPercentage(targetStr);
-      const raw = e1rm * pct;
-      return Math.max(5, Math.round(raw / 5.0) * 5); // Round to nearest 5 lbs
+      let calculated = Math.max(5, Math.round((e1rm * pct) / 5.0) * 5);
+      // Hard ceiling at 65 lbs for dumbbell exercises
+      if (exerciseName && (exerciseName.includes('DB') || exerciseName.includes('Dumbbell') || exerciseName.includes('Farmer'))) {
+        calculated = Math.min(65, calculated);
+      }
+      return calculated;
     }
 
     function getPRVault() {
@@ -553,7 +557,7 @@
       const targetTag = document.getElementById('currentTargetTag');
 
       if (pr && pr.e1rm > 0) {
-        const dynamicLoad = calculateTargetLoad(pr.e1rm, targetStr, defaultLoad);
+        const dynamicLoad = calculateTargetLoad(pr.e1rm, targetStr, defaultLoad, exercise);
         if (loadInput) loadInput.value = dynamicLoad;
         if (targetTag) {
           targetTag.innerText = `TARGET: ${targetStr} [PR: ${pr.e1rm}# → LOAD: ${dynamicLoad}#]`;
@@ -861,16 +865,16 @@
     function creditVaultRings(stageKey, ringsCount) {
       const vault = getVaultData();
       const stageMap = {
-        "DAY_A": "Barbell Deadlift (Standard Bar)",
+        "DAY_A": "Supported Romanian Deadlift (Heavy DBs)",
         "DAY_B": "Goblet Squat (Tempo 3-0-1)",
         "DAY_C": "Neutral-Grip Flat DB Bench",
         "DAY_D": "Cable Pallof Press",
         "DAY_E": "Goblet Squat (Tempo 3-0-1)",
         "DAY_F": "Cable External Rotations",
-        "CH_1RM": "Barbell Deadlift (Standard Bar)",
+        "CH_1RM": "Supported Romanian Deadlift (Heavy DBs)",
         "CH_AMRAP": "Cybex VR2 Articulating Leg Press"
       };
-      const targetName = stageMap[stageKey] || "Barbell Deadlift (Standard Bar)";
+      const targetName = stageMap[stageKey] || "Supported Romanian Deadlift (Heavy DBs)";
       const target = vault.find(v => v.exercise.includes(targetName) || targetName.includes(v.exercise));
       if (target) {
         target.rings = Math.min(5, (target.rings || 0) + ringsCount);
