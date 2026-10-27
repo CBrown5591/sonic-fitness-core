@@ -536,11 +536,11 @@
               "Farmer's Carries (Dual DB/KB)",
               "Kettlebell Suitcase March / Carry",
               "Overhead Waiter's Walk (Single DB)"
-            ]
-          }
-        ]
-      }
-    };
+          ]
+        }
+      ]
+    } // <-- Properly closes DAY_G
+  };  // <-- Closes STAGES
 
     // -------------------------------------------------------------
     // MASTERY VAULT CATALOG (12 RELIC MOVEMENTS)
