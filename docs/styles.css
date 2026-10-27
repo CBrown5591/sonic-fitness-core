@@ -1,180 +1,97 @@
 /* =============================================================
    SONIC FITNESS HUD // TACTICAL ARCADE STYLESHEET
-   Full Production Stylesheet (v3.0 - Complete Edition)
+   Harmonized Production Stylesheet (v3.1)
    ============================================================= */
 
-/* -------------------------------------------------------------
-   1. ROOT VARIABLES & THEME ENGINE
-   ------------------------------------------------------------- */
 :root {
-  --bg-dark: #080d1a;
-  --bg-surface: #0f172a;
+  --bg: #0b0f19;
   --card-bg: #141c2e;
-  --card-hover: #1b253d;
-  --border: #1e293b;
-  --border-focus: #38bdf8;
-
-  /* Arcade Accent Colors */
-  --accent-blue: #00e5ff;       /* Sonic Cyan */
-  --accent-blue-glow: rgba(0, 229, 255, 0.4);
-  --accent-gold: #ffd700;       /* Star Ring Gold */
-  --accent-gold-glow: rgba(255, 215, 0, 0.45);
-  --accent-green: #00e676;      /* Chaos Emerald Green */
-  --accent-green-glow: rgba(0, 230, 118, 0.35);
-  --accent-red: #ff3d00;        /* Alert Red */
-  --accent-red-glow: rgba(255, 61, 0, 0.35);
-  --accent-purple: #a855f7;
-
-  /* Typography Colors */
-  --text-main: #f8fafc;
-  --text-dim: #94a3b8;
-  --text-muted: #64748b;
-
-  /* Layout Constants */
-  --radius-sm: 6px;
-  --radius-md: 10px;
-  --radius-lg: 14px;
-  --max-w: 480px;
+  --accent-blue: #00e5ff;
+  --accent-gold: #ffc400;
+  --accent-red: #ff3d00;
+  --accent-green: #00e676;
+  --accent-purple: #b388ff;
+  --text: #ffffff;
+  --text-dim: #90a4ae;
+  --border: #263238;
 }
 
-/* -------------------------------------------------------------
-   2. GLOBAL BASE & RESET
-   ------------------------------------------------------------- */
-*, *::before, *::after {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+* { 
+  box-sizing: border-box; 
+  margin: 0; 
+  padding: 0; 
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
   -webkit-tap-highlight-color: transparent;
 }
 
-body {
-  background-color: var(--bg-dark);
-  color: var(--text-main);
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-  min-height: 100vh;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  padding: 12px 10px 40px;
-  overflow-x: hidden;
-  user-select: none;
-}
-
-.hud-container {
-  width: 100%;
-  max-width: var(--max-w);
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+body { 
+  background: var(--bg); 
+  color: var(--text); 
+  padding-bottom: 90px; 
 }
 
 /* -------------------------------------------------------------
-   3. TOP PILOT HUD & EXP TRACKER
+   HUD HEADER
    ------------------------------------------------------------- */
-.pilot-hud-card {
-  background: linear-gradient(135deg, rgba(20, 28, 46, 0.95), rgba(15, 23, 42, 0.95));
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 12px 14px;
-  position: relative;
-  overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.4);
-}
-
-.pilot-hud-card::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 2px;
-  background: linear-gradient(90deg, var(--accent-blue), var(--accent-gold));
-}
-
-.pilot-header-row {
+.hud-header {
+  background: #060911;
+  padding: 12px 16px;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 8px;
+  border-bottom: 2px solid var(--accent-blue);
+  position: sticky;
+  top: 0;
+  z-index: 100;
 }
 
-.pilot-identity {
-  display: flex;
-  align-items: center;
-  gap: 8px;
+.hud-left { 
+  display: flex; 
+  align-items: center; 
+  gap: 8px; 
 }
 
-.hud-lvl-pill {
-  background: rgba(0, 229, 255, 0.15);
-  border: 1px solid var(--accent-blue);
-  color: var(--accent-blue);
+.hud-title { 
+  font-size: 15px; 
+  font-weight: 800; 
+  letter-spacing: 1px; 
+  color: var(--accent-blue); 
+}
+
+.shield-badge {
+  background: rgba(0, 230, 118, 0.15);
+  border: 1px solid var(--accent-green);
+  color: var(--accent-green);
+  padding: 3px 8px;
+  border-radius: 14px;
   font-size: 11px;
-  font-weight: 800;
-  padding: 2px 7px;
-  border-radius: var(--radius-sm);
-  letter-spacing: 0.5px;
+  font-weight: 700;
+  white-space: nowrap;
 }
 
-.hud-title-text {
-  font-size: 13px;
-  font-weight: 800;
-  color: var(--text-main);
-  letter-spacing: 0.5px;
+.container { 
+  padding: 14px; 
+  max-width: 480px;
+  margin: 0 auto;
 }
 
-.hud-actions {
+/* -------------------------------------------------------------
+   STAGE SELECTOR BAR (SUPPORTS 6-STAGE SCROLL & GRID)
+   ------------------------------------------------------------- */
+.stage-nav {
   display: flex;
   gap: 6px;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 4px;
+  margin-bottom: 12px;
+  scrollbar-width: none; /* Firefox */
 }
 
-.hud-mini-btn {
-  background: rgba(30, 41, 59, 0.8);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  font-size: 10px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s ease;
+.stage-nav::-webkit-scrollbar {
+  display: none; /* Chrome/Android WebView */
 }
 
-.hud-mini-btn:hover {
-  border-color: var(--accent-blue);
-  color: var(--text-main);
-}
-
-.exp-bar-container {
-  width: 100%;
-  height: 8px;
-  background: rgba(30, 41, 59, 0.6);
-  border-radius: 4px;
-  overflow: hidden;
-  margin-bottom: 6px;
-  position: relative;
-}
-
-.exp-bar-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--accent-blue), var(--accent-gold));
-  border-radius: 4px;
-  transition: width 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-  box-shadow: 0 0 10px var(--accent-gold-glow);
-}
-
-.exp-meta-row {
-  display: flex;
-  justify-content: space-between;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-dim);
-  font-variant-numeric: tabular-nums;
-}
-
-/* -------------------------------------------------------------
-   4. STAGE SWITCHER TABS (DAY A - DAY F)
-   ------------------------------------------------------------- */
 .stage-tabs {
   display: flex;
   gap: 6px;
@@ -190,589 +107,599 @@ body {
 
 .stage-tab {
   flex: 0 0 auto;
-  background: var(--card-bg);
+  min-width: 68px;
+  background: #141c2e;
   border: 1px solid var(--border);
   color: var(--text-dim);
-  padding: 7px 12px;
-  border-radius: var(--radius-sm);
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 800;
+  text-align: center;
   cursor: pointer;
-  transition: all 0.2s ease;
+  transition: all 0.15s ease;
 }
 
 .stage-tab.active {
   background: rgba(0, 229, 255, 0.15);
   border-color: var(--accent-blue);
   color: var(--accent-blue);
-  box-shadow: 0 0 12px var(--accent-blue-glow);
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
 }
 
 /* -------------------------------------------------------------
-   5. STAGE FOCUS BANNER & JOINT SHIELD
+   STAGE MISSION CARD
    ------------------------------------------------------------- */
-.stage-banner-card {
+.stage-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.stage-focus-title {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--accent-blue);
-  letter-spacing: 1px;
-  text-transform: uppercase;
-}
-
-.stage-name-text {
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--text-main);
-  margin-top: 2px;
-}
-
-.shield-pill {
-  font-size: 10px;
-  font-weight: 800;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  border: 1px solid var(--accent-green);
-  color: var(--accent-green);
-  background: rgba(0, 230, 118, 0.1);
-  letter-spacing: 0.5px;
-}
-
-/* -------------------------------------------------------------
-   6. PREHAB MISSION BOX & INTEL DRAWER
-   ------------------------------------------------------------- */
-.prehab-box {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 10px 14px;
-  transition: all 0.25s ease;
-}
-
-.prehab-box.cleared {
-  border-color: var(--accent-green);
-  background: rgba(0, 230, 118, 0.05);
-}
-
-.prehab-box.has-drawer-open {
-  border-bottom-left-radius: 0;
-  border-bottom-right-radius: 0;
-}
-
-.prehab-top-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.prehab-mission-title {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--accent-gold);
-  letter-spacing: 0.5px;
-}
-
-.prehab-status-pill {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--text-dim);
-  cursor: pointer;
-}
-
-.prehab-box.cleared .prehab-status-pill {
-  color: var(--accent-green);
-}
-
-.prehab-content-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-top: 4px;
-}
-
-.prehab-desc-text {
-  font-size: 12px;
-  font-weight: 600;
-  color: var(--text-main);
-}
-
-.prehab-info-btn {
-  background: rgba(30, 41, 59, 0.6);
-  border: 1px solid var(--border);
-  color: var(--accent-blue);
-  font-size: 10px;
-  font-weight: 700;
-  padding: 4px 8px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  margin-left: 8px;
-}
-
-.prehab-drawer {
-  display: none;
-  background: rgba(15, 23, 42, 0.98);
-  border: 1px solid var(--border);
-  border-top: none;
-  border-bottom-left-radius: var(--radius-md);
-  border-bottom-right-radius: var(--radius-md);
-  padding: 10px 14px;
-}
-
-.prehab-drawer.open {
-  display: block;
-}
-
-.prehab-drawer.drawer-cleared {
-  border-color: var(--accent-green);
-}
-
-.prehab-drill-row {
-  padding: 8px 0;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
-}
-
-.prehab-drill-row:last-child {
-  border-bottom: none;
-}
-
-.prehab-drill-header {
-  display: flex;
-  justify-content: space-between;
-  font-size: 12px;
-  font-weight: 700;
-  color: var(--accent-blue);
-}
-
-.prehab-drill-dose {
-  color: var(--accent-gold);
-  font-size: 11px;
-}
-
-.prehab-drill-cue {
-  font-size: 11px;
-  color: var(--text-dim);
-  margin-top: 2px;
-  line-height: 1.35;
-}
-
-/* -------------------------------------------------------------
-   7. SLOT STEPPER
-   ------------------------------------------------------------- */
-.slot-stepper-container {
-  display: flex;
-  gap: 6px;
-}
-
-.slot-btn {
-  flex: 1;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  font-size: 12px;
-  font-weight: 800;
-  padding: 8px 4px;
-  text-align: center;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.slot-btn.active {
-  background: rgba(0, 229, 255, 0.15);
-  border-color: var(--accent-blue);
-  color: var(--accent-blue);
-  box-shadow: 0 0 10px var(--accent-blue-glow);
-}
-
-.slot-btn.completed {
-  border-color: var(--accent-green);
-  color: var(--accent-green);
-  background: rgba(0, 230, 118, 0.08);
-}
-
-/* -------------------------------------------------------------
-   8. ACTIVE SLOT CONTROLS & EXERCISE SELECTION
-   ------------------------------------------------------------- */
-.slot-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+  border-radius: 12px;
   padding: 14px;
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-}
-
-.slot-header-tags {
+  margin-bottom: 12px;
   display: flex;
   justify-content: space-between;
-  align-items: center;
+  align-items: flex-start;
 }
 
-.slot-tag-badge {
+.stage-label { 
+  color: var(--accent-gold); 
+  font-size: 11px; 
+  font-weight: 700; 
+  text-transform: uppercase; 
+}
+
+.stage-name { 
+  font-size: 17px; 
+  font-weight: 800; 
+  margin-top: 2px; 
+}
+
+.tonnage-pill {
+  background: rgba(179, 136, 255, 0.15);
+  border: 1px solid var(--accent-purple);
+  color: var(--accent-purple);
+  padding: 4px 8px;
+  border-radius: 6px;
   font-size: 11px;
   font-weight: 800;
-  color: var(--accent-blue);
-  letter-spacing: 0.5px;
-}
-
-.target-tag-badge {
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--accent-gold);
-  letter-spacing: 0.5px;
-}
-
-.exercise-select-dropdown {
-  width: 100%;
-  background: rgba(15, 23, 42, 0.95);
-  border: 1px solid var(--border);
-  color: var(--text-main);
-  padding: 10px 12px;
-  border-radius: var(--radius-sm);
-  font-size: 13px;
-  font-weight: 700;
-  outline: none;
-  cursor: pointer;
-  transition: border-color 0.2s ease;
-}
-
-.exercise-select-dropdown:focus {
-  border-color: var(--border-focus);
-}
-
-/* Load / Reps / RPE Input Grid */
-.inputs-grid {
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 8px;
-}
-
-.input-block {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.input-label {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--text-dim);
-  text-transform: uppercase;
-}
-
-.hud-input, .hud-select {
-  width: 100%;
-  background: rgba(15, 23, 42, 0.95);
-  border: 1px solid var(--border);
-  color: var(--text-main);
-  padding: 8px;
-  border-radius: var(--radius-sm);
-  font-size: 14px;
-  font-weight: 800;
-  text-align: center;
-  outline: none;
+  text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-.hud-input:focus, .hud-select:focus {
-  border-color: var(--border-focus);
-}
-
-/* Tempo & Pain Toggle Row */
-.toggles-row {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-}
-
-.toggle-btn {
-  background: rgba(15, 23, 42, 0.9);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  padding: 8px;
-  border-radius: var(--radius-sm);
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  transition: all 0.2s ease;
-  text-align: center;
-}
-
-.toggle-btn.active-green {
-  border-color: var(--accent-green);
-  color: var(--accent-green);
-  background: rgba(0, 230, 118, 0.12);
-}
-
-.toggle-btn.active-red {
-  border-color: var(--accent-red);
-  color: var(--accent-red);
-  background: rgba(255, 61, 0, 0.15);
-}
-
-/* Primary Log Set Button */
-.log-set-btn {
-  width: 100%;
-  background: linear-gradient(135deg, #00b4d8, #0077b6);
-  border: none;
-  color: #fff;
-  font-size: 13px;
-  font-weight: 800;
-  padding: 12px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  letter-spacing: 0.5px;
-  transition: transform 0.1s ease, filter 0.2s ease;
-  box-shadow: 0 4px 15px rgba(0, 180, 216, 0.35);
-}
-
-.log-set-btn:active {
-  transform: scale(0.98);
-  filter: brightness(1.15);
-}
-
 /* -------------------------------------------------------------
-   9. REST TIMER & QUICK DURATION PILLS
+   PILOT EXP & LEVEL PROGRESSION COCKPIT
    ------------------------------------------------------------- */
-.timer-container-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+.pilot-exp-card {
+  background: linear-gradient(135deg, rgba(20, 28, 46, 0.95) 0%, rgba(11, 15, 25, 0.95) 100%);
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  border-radius: 12px;
   padding: 12px 14px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 15px rgba(0, 229, 255, 0.1);
 }
 
-.timer-left {
-  display: flex;
-  flex-direction: column;
-}
-
-.timer-sublabel {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--text-dim);
-  letter-spacing: 1px;
-}
-
-.timer-clock {
-  font-size: 26px;
-  font-weight: 900;
-  color: var(--accent-gold);
-  font-family: monospace;
-  letter-spacing: 1px;
-  font-variant-numeric: tabular-nums;
-  margin-top: 2px;
-}
-
-.duration-pills-row {
-  display: flex;
-  gap: 6px;
-}
-
-.duration-pill {
-  background: rgba(15, 23, 42, 0.95);
-  border: 1px solid var(--border);
-  color: var(--text-dim);
-  font-size: 11px;
-  font-weight: 800;
-  padding: 6px 10px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.duration-pill.active {
-  border-color: var(--accent-gold);
-  color: var(--accent-gold);
-  background: rgba(255, 215, 0, 0.12);
-  box-shadow: 0 0 10px var(--accent-gold-glow);
-}
-
-/* -------------------------------------------------------------
-   10. LOGGED SETS LIST & TONNAGE VOLUME
-   ------------------------------------------------------------- */
-.history-section-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
-  padding: 12px 14px;
-}
-
-.history-header-row {
+.pilot-exp-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
 }
 
-.history-title {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--text-dim);
+.pilot-lvl-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.lvl-badge {
+  background: var(--accent-blue);
+  color: #000;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 3px 7px;
+  border-radius: 5px;
   letter-spacing: 0.5px;
 }
 
-.tonnage-volume-pill {
-  font-size: 11px;
+.pilot-title {
+  font-size: 12px;
   font-weight: 800;
-  color: var(--accent-blue);
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+
+.exp-counter {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--accent-gold);
   font-variant-numeric: tabular-nums;
 }
 
-.logged-sets-list {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-}
-
-.set-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  background: rgba(15, 23, 42, 0.85);
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  padding: 7px 10px;
-  border-radius: var(--radius-sm);
-  font-size: 11px;
-}
-
-.set-tag {
-  font-weight: 800;
-  color: var(--accent-blue);
-  min-width: 55px;
-}
-
-.set-detail {
-  flex: 1;
-  color: var(--text-main);
-  font-weight: 600;
-  margin: 0 8px;
-}
-
-.set-badge-ring {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--accent-gold);
-}
-
-/* -------------------------------------------------------------
-   11. MASTERY VAULT ACCORDION DRAWER
-   ------------------------------------------------------------- */
-.vault-accordion-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-md);
+.exp-bar-track {
+  width: 100%;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
   overflow: hidden;
+  margin-bottom: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
 }
 
-.vault-header-bar {
+.exp-bar-fill {
+  height: 100%;
+  width: 0%;
+  background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-green) 100%);
+  border-radius: 6px;
+  transition: width 0.4s ease-out;
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+}
+
+.exp-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 10px 14px;
-  cursor: pointer;
-  background: rgba(20, 28, 46, 0.9);
-}
-
-.vault-header-title {
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--accent-gold);
-  letter-spacing: 0.5px;
-}
-
-.vault-toggle-icon {
   font-size: 10px;
-  font-weight: 800;
+  font-weight: 700;
   color: var(--text-dim);
 }
 
-.vault-drawer {
-  display: none;
-  padding: 10px 14px;
-  background: rgba(15, 23, 42, 0.95);
-  border-top: 1px solid var(--border);
+.exp-footer span:first-child {
+  color: var(--accent-blue);
 }
 
-.vault-items-container {
+/* -------------------------------------------------------------
+   PREHAB MISSION BANNER & INTEL DRAWER
+   ------------------------------------------------------------- */
+.prehab-box {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: rgba(255, 196, 0, 0.12);
+  border: 1.5px solid var(--accent-gold);
+  padding: 12px 14px;
+  border-radius: 10px;
+  margin-bottom: 12px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 196, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.prehab-box.has-drawer-open {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  margin-bottom: 0;
+}
+
+.prehab-box.cleared {
+  background: rgba(0, 230, 118, 0.12);
+  border-color: var(--accent-green);
+  box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
+}
+
+.prehab-box.cleared.has-drawer-open {
+  border-bottom-color: rgba(0, 230, 118, 0.3);
+}
+
+.prehab-content {
   display: flex;
   flex-direction: column;
+  gap: 2px;
+}
+
+.prehab-tag {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+}
+
+.prehab-box.cleared .prehab-tag {
+  color: var(--accent-green);
+}
+
+.prehab-title {
+  font-size: 13px;
+  font-weight: 700;
+  color: #fff;
+}
+
+.btn-prehab-info {
+  background: rgba(255, 196, 0, 0.15);
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.prehab-box.cleared .btn-prehab-info {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+  background: rgba(0, 230, 118, 0.15);
+}
+
+.prehab-status-pill {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+  padding: 4px 10px;
+  border-radius: 14px;
+  font-size: 11px;
+  font-weight: 800;
+  white-space: nowrap;
+}
+
+.prehab-box.cleared .prehab-status-pill {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+  background: rgba(0, 230, 118, 0.15);
+}
+
+.prehab-drawer {
+  display: none;
+  background: #0b0f19;
+  border: 1.5px solid var(--accent-gold);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  padding: 12px 14px;
+  margin-bottom: 14px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+  animation: drawerSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.prehab-drawer.open { display: block !important; }
+
+.prehab-drawer.drawer-cleared {
+  border-color: var(--accent-green);
+}
+
+@keyframes drawerSlideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.prehab-drill-row {
+  padding: 8px 0;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+}
+
+.prehab-drill-row:first-child { padding-top: 2px; }
+.prehab-drill-row:last-child { border-bottom: none; padding-bottom: 2px; }
+
+.prehab-drill-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  font-weight: 800;
+  color: #fff;
+}
+
+.prehab-drill-dose {
+  color: var(--accent-gold);
+  font-size: 11px;
+  font-weight: 800;
+  background: rgba(255, 196, 0, 0.1);
+  padding: 2px 6px;
+  border-radius: 4px;
+}
+
+.prehab-drawer.drawer-cleared .prehab-drill-dose {
+  color: var(--accent-green);
+  background: rgba(0, 230, 118, 0.1);
+}
+
+.prehab-drill-cue {
+  color: var(--text-dim);
+  font-size: 11px;
+  margin-top: 3px;
+  line-height: 1.35;
+}
+
+/* -------------------------------------------------------------
+   SLOT PROGRESS STEPPER (A1, A2, A3, A4...)
+   ------------------------------------------------------------- */
+.slot-stepper {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 12px;
+}
+
+.slot-btn {
+  flex: 1;
+  background: #141c2e;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 8px 4px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.slot-btn.active {
+  background: rgba(0, 229, 255, 0.2);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
+}
+
+.slot-btn.completed {
+  border-color: var(--accent-green);
+  color: var(--accent-green);
+}
+
+.slot-btn.completed.active {
+  border-color: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
+  background: rgba(0, 230, 118, 0.15);
+  color: var(--accent-green);
+}
+
+/* -------------------------------------------------------------
+   ACTIVE MOVEMENT CARD & INPUTS
+   ------------------------------------------------------------- */
+.movement-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 14px;
+  margin-bottom: 14px;
+}
+
+.move-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.slot-tag { 
+  color: var(--accent-blue); 
+  font-size: 12px; 
+  font-weight: 800; 
+}
+
+.target-tag { 
+  color: var(--accent-gold); 
+  font-size: 12px; 
+  font-weight: 700; 
+}
+
+.exercise-select {
+  width: 100%;
+  background: #0b0f19;
+  border: 1px solid var(--border);
+  color: #fff;
+  font-size: 15px;
+  font-weight: 700;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 12px;
+  outline: none;
+}
+
+.input-grid-3 {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 8px;
+  margin-bottom: 10px;
+}
+
+.input-box { 
+  background: #0b0f19; 
+  padding: 6px 10px; 
+  border-radius: 8px; 
+  border: 1px solid var(--border); 
+}
+
+.input-box label { 
+  font-size: 10px; 
+  color: var(--text-dim); 
+  text-transform: uppercase; 
+  display: block; 
+  margin-bottom: 2px; 
+}
+
+.input-box input, .input-box select {
+  background: transparent;
+  border: none;
+  color: #fff;
+  font-size: 17px;
+  font-weight: 700;
+  width: 100%;
+  outline: none;
+  font-variant-numeric: tabular-nums;
+}
+
+.toggle-row { 
+  display: grid; 
+  grid-template-columns: 1fr 1fr; 
+  gap: 8px; 
+  margin-bottom: 12px; 
+}
+
+.btn-toggle {
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: #0b0f19;
+  color: var(--text-dim);
+  font-weight: 700;
+  font-size: 12px;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.btn-toggle.active-green { 
+  background: rgba(0, 230, 118, 0.2); 
+  border-color: var(--accent-green); 
+  color: var(--accent-green); 
+}
+
+.btn-toggle.active-red { 
+  background: rgba(255, 61, 0, 0.2); 
+  border-color: var(--accent-red); 
+  color: var(--accent-red); 
+}
+
+.btn-log {
+  width: 100%;
+  background: var(--accent-blue);
+  color: #000;
+  border: none;
+  padding: 13px;
+  border-radius: 8px;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.btn-log:active {
+  transform: scale(0.98);
+}
+
+/* -------------------------------------------------------------
+   VAULT DRAWER & MASTERY
+   ------------------------------------------------------------- */
+.vault-toggle-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(179, 136, 255, 0.1);
+  border: 1px solid var(--accent-purple);
+  padding: 10px 14px;
+  border-radius: 8px;
+  margin-bottom: 14px;
+  cursor: pointer;
+}
+
+.vault-title { 
+  font-size: 13px; 
+  font-weight: 800; 
+  color: var(--accent-purple); 
+  display: flex; 
+  align-items: center; 
+  gap: 6px; 
+}
+
+#vaultDrawer {
+  display: none;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 12px;
+  margin-bottom: 16px;
 }
 
 .vault-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 6px 0;
+  padding: 8px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  font-size: 12px;
 }
 
-.vault-item:last-child {
-  border-bottom: none;
+.vault-item:last-child { border-bottom: none; }
+.vault-move { font-weight: 700; color: #fff; }
+.vault-focus { color: var(--text-dim); font-size: 10px; }
+.vault-rings { color: var(--accent-gold); font-weight: 800; letter-spacing: 2px; }
+
+/* -------------------------------------------------------------
+   LOGGED SETS FEED
+   ------------------------------------------------------------- */
+.logged-sets-list {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  margin-top: 8px;
 }
 
-.vault-move {
+.set-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: #0b0f19;
+  border: 1px solid var(--border);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 12px;
+}
+
+.set-tag { font-weight: 800; color: var(--accent-blue); }
+.set-detail { color: var(--text-dim); }
+.set-badge-ring { color: var(--accent-gold); font-weight: 700; font-size: 11px; }
+
+/* -------------------------------------------------------------
+   BOTTOM RECOVERY DOCK
+   ------------------------------------------------------------- */
+.rest-dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #060911;
+  border-top: 1px solid var(--border);
+  padding: 12px 16px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  z-index: 90;
+}
+
+.timer-val { 
+  font-size: 22px; 
+  font-weight: 900; 
+  color: var(--accent-gold); 
+  font-family: monospace;
+}
+
+.btn-advance {
+  background: var(--accent-green);
+  color: #000;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  font-weight: 800;
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.timer-selector { display: flex; gap: 5px; align-items: center; }
+
+.btn-pill {
+  background: #141c2e;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 5px 8px;
+  border-radius: 6px;
   font-size: 11px;
   font-weight: 700;
-  color: var(--text-main);
-}
-
-.vault-focus {
-  font-size: 9px;
-  font-weight: 600;
-  color: var(--text-dim);
-  text-transform: uppercase;
-}
-
-.vault-rings {
-  font-size: 12px;
-  color: var(--accent-gold);
-  letter-spacing: 1px;
-}
-
-/* -------------------------------------------------------------
-   12. CLEAR STAGE ACTION BUTTON
-   ------------------------------------------------------------- */
-.clear-stage-btn {
-  width: 100%;
-  background: linear-gradient(135deg, #10b981, #059669);
-  border: none;
-  color: #fff;
-  font-size: 14px;
-  font-weight: 800;
-  padding: 13px;
-  border-radius: var(--radius-md);
   cursor: pointer;
-  letter-spacing: 1px;
-  text-transform: uppercase;
-  transition: transform 0.1s ease, filter 0.2s ease;
-  box-shadow: 0 4px 18px rgba(16, 185, 129, 0.35);
-  margin-top: 4px;
+  transition: all 0.15s ease;
 }
 
-.clear-stage-btn:active {
-  transform: scale(0.98);
-  filter: brightness(1.15);
+.btn-pill.active {
+  background: rgba(0, 229, 255, 0.2);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
 }
 
 /* -------------------------------------------------------------
-   13. MODALS (SYNC CONFIG) & FLOATING TOAST
+   MODALS (SYNC CONFIG) & TOAST
    ------------------------------------------------------------- */
-.modal-overlay {
+#syncModal {
   display: none;
   position: fixed;
   inset: 0;
@@ -785,61 +712,26 @@ body {
 }
 
 .modal-card {
-  background: var(--card-bg);
+  background: #141c2e;
   border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
+  border-radius: 12px;
   padding: 18px;
   width: 100%;
   max-width: 380px;
-  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.6);
-}
-
-.modal-title {
-  font-size: 14px;
-  font-weight: 800;
-  color: var(--accent-blue);
-  margin-bottom: 10px;
 }
 
 .modal-input {
   width: 100%;
-  background: rgba(15, 23, 42, 0.95);
+  background: #0b0f19;
   border: 1px solid var(--border);
-  color: var(--text-main);
+  color: #fff;
   padding: 10px;
-  border-radius: var(--radius-sm);
+  border-radius: 6px;
   font-size: 11px;
   font-family: monospace;
   margin-bottom: 12px;
 }
 
-.modal-btn-row {
-  display: flex;
-  gap: 8px;
-  justify-content: flex-end;
-}
-
-.modal-btn {
-  padding: 8px 14px;
-  border-radius: var(--radius-sm);
-  font-size: 11px;
-  font-weight: 700;
-  cursor: pointer;
-  border: none;
-}
-
-.modal-btn-cancel {
-  background: rgba(30, 41, 59, 0.8);
-  color: var(--text-dim);
-}
-
-.modal-btn-save {
-  background: var(--accent-blue);
-  color: #000;
-  font-weight: 800;
-}
-
-/* Arcade Toast */
 #sonicToast {
   position: fixed;
   bottom: 80px;
@@ -859,28 +751,37 @@ body {
 }
 
 /* =============================================================
-   14. ARCADE RESULTS DOSSIER: CINEMATIC STAMP & SCREEN SHAKE FX
+   INTEGRATED RESULTS DOSSIER & CINEMATIC STAMP FX
    ============================================================= */
 .results-overlay {
-  display: none;
   position: fixed;
   inset: 0;
-  background: rgba(5, 8, 18, 0.92);
-  backdrop-filter: blur(8px);
-  z-index: 99999;
+  background: rgba(6, 9, 17, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  z-index: 10000;
+  display: none;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
-  padding: 16px;
+  padding: 20px;
+  animation: resultsFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes resultsFadeIn {
+  from { opacity: 0; transform: scale(0.96); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 .results-card {
-  background: linear-gradient(145deg, #131b2e, #0e1526);
-  border: 1px solid var(--border);
-  border-radius: var(--radius-lg);
-  padding: 22px 18px;
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+  background: #141c2e;
+  border: 2px solid var(--accent-gold);
+  border-radius: 16px;
+  padding: 24px 20px;
+  box-shadow: 0 0 35px rgba(255, 196, 0, 0.22), 0 10px 40px rgba(0, 0, 0, 0.6);
+  text-align: center;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -888,180 +789,197 @@ body {
   overflow: hidden;
 }
 
-.results-card::before {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background: linear-gradient(90deg, var(--accent-blue), var(--accent-gold), var(--accent-green));
+.results-banner {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  margin-bottom: 4px;
 }
 
 .results-stage-title {
-  font-size: 13px;
-  font-weight: 900;
-  color: var(--accent-blue);
-  letter-spacing: 1px;
-  text-align: center;
-  margin-bottom: 6px;
-  text-transform: uppercase;
+  font-size: 18px;
+  font-weight: 800;
+  color: #fff;
+  margin-bottom: 16px;
 }
 
-/* Rank Circle Badge */
-.rank-circle-wrapper {
-  margin: 12px 0 6px;
-  position: relative;
+.rank-badge-wrap {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
   align-items: center;
+  margin-bottom: 16px;
+  position: relative;
   height: 90px;
+  justify-content: center;
 }
 
 .rank-circle {
-  width: 78px;
-  height: 78px;
+  width: 80px;
+  height: 80px;
   border-radius: 50%;
   display: flex;
-  justify-content: center;
   align-items: center;
-  font-size: 42px;
+  justify-content: center;
+  font-size: 44px;
   font-weight: 900;
-  font-family: -apple-system, BlinkMacSystemFont, "Impact", sans-serif;
-  letter-spacing: -1px;
-  border: 3px solid #fff;
-  opacity: 0;
+  background: radial-gradient(circle, rgba(0, 229, 255, 0.25) 0%, rgba(20, 28, 46, 0.8) 70%);
+  border: 3px solid var(--accent-blue);
+  color: var(--accent-blue);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
+  margin-bottom: 8px;
 }
 
 .rank-circle.rank-s {
-  color: var(--accent-gold);
   border-color: var(--accent-gold);
-  background: radial-gradient(circle, rgba(255, 215, 0, 0.25) 0%, rgba(20, 28, 46, 0.8) 70%);
+  color: var(--accent-gold);
+  background: radial-gradient(circle, rgba(255, 196, 0, 0.3) 0%, rgba(20, 28, 46, 0.8) 70%);
+  box-shadow: 0 0 25px rgba(255, 196, 0, 0.5);
 }
 
 .rank-circle.rank-a {
-  color: var(--accent-blue);
   border-color: var(--accent-blue);
-  background: radial-gradient(circle, rgba(0, 229, 255, 0.2) 0%, rgba(20, 28, 46, 0.8) 70%);
+  color: var(--accent-blue);
+  box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
 }
 
 .rank-circle.rank-b {
-  color: var(--accent-green);
-  border-color: var(--accent-green);
-  background: radial-gradient(circle, rgba(0, 230, 118, 0.15) 0%, rgba(20, 28, 46, 0.8) 70%);
+  border-color: var(--accent-purple);
+  color: var(--accent-purple);
+  box-shadow: 0 0 15px rgba(179, 136, 255, 0.4);
 }
 
-.results-rank-tier {
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--text-main);
-  letter-spacing: 1px;
-  margin-bottom: 12px;
-}
-
-/* Subscore Breakdown Rows */
-.res-breakdown-card {
-  width: 100%;
-  background: rgba(15, 23, 42, 0.7);
-  border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: var(--radius-md);
-  padding: 10px 12px;
-  margin-bottom: 14px;
-}
-
-.res-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 5px 0;
-  font-size: 11px;
-  font-weight: 700;
-  color: var(--text-dim);
-}
-
-.res-pts-val {
-  color: var(--accent-blue);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 0.5px;
-}
-
-.res-divider {
-  height: 1px;
-  background: rgba(255, 255, 255, 0.08);
-  margin: 6px 0;
-}
-
-.res-total-row {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-top: 4px;
-}
-
-.res-total-label {
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--accent-gold);
-  letter-spacing: 0.5px;
-}
-
-.res-total-val {
-  font-size: 18px;
-  font-weight: 900;
-  color: var(--accent-gold);
-  font-variant-numeric: tabular-nums;
-  letter-spacing: 1px;
-  text-shadow: 0 0 12px var(--accent-gold-glow);
-}
-
-.results-rings-earned {
-  font-size: 11px;
-  font-weight: 800;
-  color: var(--accent-gold);
-  letter-spacing: 1px;
-  margin-bottom: 8px;
-  text-align: center;
-}
-
-.results-sync-status {
-  font-size: 10px;
-  font-weight: 800;
-  color: var(--text-dim);
-  letter-spacing: 0.5px;
-  margin-bottom: 14px;
-  text-align: center;
-}
-
-/* Level Up Promotion Banner */
-.level-up-badge {
-  display: none;
-  background: linear-gradient(90deg, rgba(255, 215, 0, 0.25), rgba(255, 140, 0, 0.25));
-  border: 1px solid var(--accent-gold);
-  color: var(--accent-gold);
-  font-size: 11px;
-  font-weight: 900;
-  padding: 6px 12px;
-  border-radius: var(--radius-sm);
-  margin-bottom: 12px;
-  letter-spacing: 0.5px;
-  text-align: center;
-}
-
-.results-close-btn {
-  width: 100%;
-  background: linear-gradient(135deg, #00b4d8, #0077b6);
-  border: none;
-  color: #fff;
+.rank-tier-text {
   font-size: 13px;
   font-weight: 800;
-  padding: 11px;
-  border-radius: var(--radius-sm);
-  cursor: pointer;
+  letter-spacing: 1px;
+  color: var(--text-dim);
+}
+
+.score-summary-grid {
+  width: 100%;
+  background: #0b0f19;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 12px 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-bottom: 16px;
+}
+
+.score-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 12px;
+  color: var(--text-dim);
+  font-weight: 600;
+}
+
+.score-line span:last-child {
+  color: #fff;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+
+.total-score-box {
+  width: 100%;
+  background: rgba(255, 196, 0, 0.1);
+  border: 1.5px solid var(--accent-gold);
+  border-radius: 10px;
+  padding: 12px;
+  margin-bottom: 14px;
+}
+
+.total-label {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 1.5px;
+  color: var(--accent-gold);
+}
+
+.total-val {
+  font-size: 26px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 1px;
+  margin-top: 2px;
+  font-variant-numeric: tabular-nums;
+}
+
+.rings-earned-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--accent-gold);
+  font-weight: 800;
+  margin-bottom: 14px;
+}
+
+.sync-status-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  font-size: 11px;
+  color: var(--accent-green);
+  font-weight: 700;
+  margin-bottom: 18px;
+}
+
+.sync-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--accent-green);
+  box-shadow: 0 0 8px var(--accent-green);
+  display: inline-block;
+  animation: pulseSync 1.5s infinite ease-in-out;
+}
+
+@keyframes pulseSync {
+  0%, 100% { opacity: 1; transform: scale(1); }
+  50% { opacity: 0.4; transform: scale(0.85); }
+}
+
+.btn-return-rig {
+  width: 100%;
+  background: var(--accent-green);
+  color: #000;
+  border: none;
+  padding: 14px;
+  border-radius: 10px;
+  font-size: 14px;
+  font-weight: 900;
   letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: transform 0.1s ease;
+}
+
+.btn-return-rig:active {
+  transform: scale(0.98);
+}
+
+.levelup-alert-badge {
+  display: none;
+  background: linear-gradient(90deg, rgba(255, 196, 0, 0.25) 0%, rgba(0, 229, 255, 0.25) 100%);
+  border: 1.5px solid var(--accent-gold);
+  color: var(--accent-gold);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  padding: 5px 12px;
+  border-radius: 20px;
+  margin-bottom: 12px;
+  box-shadow: 0 0 15px rgba(255, 196, 0, 0.4);
 }
 
 /* -------------------------------------------------------------
-   15. KEYFRAME ANIMATIONS: STAMP SLAM, SCREEN SHAKE & FLARES
+   DYNAMIC RESULTS ANIMATIONS: STAMP SLAM & SCREEN SHAKE
    ------------------------------------------------------------- */
 @keyframes stampSlamS {
   0% {
@@ -1073,11 +991,11 @@ body {
     opacity: 1;
     transform: scale(0.9) rotate(-3deg);
     filter: blur(0px) brightness(1.8);
-    box-shadow: 0 0 60px rgba(255, 215, 0, 0.9), 0 0 100px rgba(0, 229, 255, 0.6);
+    box-shadow: 0 0 60px rgba(255, 196, 0, 0.9), 0 0 100px rgba(0, 229, 255, 0.6);
   }
   70% {
     transform: scale(1.12) rotate(-5deg);
-    box-shadow: 0 0 35px rgba(255, 215, 0, 0.7);
+    box-shadow: 0 0 35px rgba(255, 196, 0, 0.7);
   }
   85% {
     transform: scale(0.98) rotate(-4deg);
@@ -1085,7 +1003,7 @@ body {
   100% {
     opacity: 1;
     transform: scale(1) rotate(-4deg);
-    box-shadow: 0 0 25px rgba(255, 215, 0, 0.6);
+    box-shadow: 0 0 25px rgba(255, 196, 0, 0.6);
   }
 }
 
@@ -1122,7 +1040,7 @@ body {
   100% {
     opacity: 1;
     transform: scale(1) rotate(-1deg);
-    box-shadow: 0 0 15px rgba(0, 230, 118, 0.4);
+    box-shadow: 0 0 15px rgba(179, 136, 255, 0.4);
   }
 }
 
@@ -1138,7 +1056,7 @@ body {
   animation: stampSlamB 0.3s cubic-bezier(0.2, 0.85, 0.4, 1.1) forwards !important;
 }
 
-/* Screen Shake Profiles */
+/* Camera Screen Shake FX */
 @keyframes screenShakeHeavy {
   0% { transform: translate(0, 0) rotate(0deg); }
   15% { transform: translate(-8px, 9px) rotate(-1.5deg); }
@@ -1183,17 +1101,17 @@ body {
   0% {
     transform: scale(0.6);
     opacity: 0;
-    box-shadow: 0 0 0 rgba(255, 215, 0, 0);
+    box-shadow: 0 0 0 rgba(255, 196, 0, 0);
   }
   50% {
     transform: scale(1.12);
     opacity: 1;
-    box-shadow: 0 0 35px rgba(255, 215, 0, 0.9), 0 0 60px rgba(255, 153, 0, 0.6);
+    box-shadow: 0 0 35px rgba(255, 196, 0, 0.9), 0 0 60px rgba(0, 229, 255, 0.6);
   }
   100% {
     transform: scale(1);
     opacity: 1;
-    box-shadow: 0 0 15px rgba(255, 215, 0, 0.5);
+    box-shadow: 0 0 15px rgba(255, 196, 0, 0.5);
   }
 }
 
