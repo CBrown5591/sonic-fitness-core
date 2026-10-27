@@ -366,7 +366,120 @@
             ]
           }
         ]
-      }    };
+      },
+      CH_1RM: {
+        id: "CH_1RM",
+        name: "The Apex Benchmark (1RM Strike)",
+        prehab: "Prehab: CNS Ramp & Dynamic Joint Mobilization",
+        prehabDetails: [
+          { name: "Bird-Dogs (Strict 5s Hold)", dose: "2 sets × 6 reps / side", cue: "Max core tension; lock spine in neutral before heavy loads." },
+          { name: "McGill Side Planks", dose: "2 sets × 20s hold / side", cue: "Fire lateral chain and lock ribcage to pelvic bowl." },
+          { name: "Band Pull-Aparts & Dislocates", dose: "2 sets × 15 reps", cue: "Prime rotator cuffs and retract shoulder girdle." }
+        ],
+        slots: [
+          {
+            slot: "X1",
+            target: "1x3-5 @ 88%",
+            primary: "Barbell Deadlift (Standard Bar)",
+            defaultLoad: 245,
+            alts: [
+              "Barbell Deadlift (Standard Bar)",
+              "Supported Romanian Deadlift (RDL)",
+              "B-Stance DB Hinge"
+            ]
+          },
+          {
+            slot: "X2",
+            target: "1x3-5 @ 88%",
+            primary: "Cybex VR2 Articulating Leg Press",
+            defaultLoad: 235,
+            alts: [
+              "Cybex VR2 Articulating Leg Press",
+              "Suitcase DB Squat",
+              "Goblet Squat (Tempo 3-0-1)"
+            ]
+          },
+          {
+            slot: "X3",
+            target: "1x3-5 @ 88%",
+            primary: "Neutral-Grip DB Floor Press",
+            defaultLoad: 75,
+            alts: [
+              "Neutral-Grip DB Floor Press",
+              "Cybex VR2 Converging Chest Press",
+              "Incline DB Bench Press (30°)"
+            ]
+          },
+          {
+            slot: "X4",
+            target: "1x3-5 @ 88%",
+            primary: "Chest-Supported Dumbbell Row",
+            defaultLoad: 60,
+            alts: [
+              "Chest-Supported Dumbbell Row",
+              "Cybex VR2 High Row (Chest Supported)",
+              "Lat Pulldown (Neutral/Mag-Grip)"
+            ]
+          }
+        ]
+      },
+      CH_AMRAP: {
+        id: "CH_AMRAP",
+        name: "Overdrive Protocol (Train-to-Failure AMRAP)",
+        prehab: "Prehab: Muscular Stamina & McGill Core Activation",
+        prehabDetails: [
+          { name: "Deadbugs (Wall Press)", dose: "2 sets × 8 reps / side", cue: "Exhale all air at extension; lock anterior abdominal wall." },
+          { name: "90/90 Hip Switches", dose: "2 sets × 8 reps / side", cue: "Open hip capsules smoothly without lumbar rotation." },
+          { name: "Tibialis Wall Raises", dose: "2 sets × 15 reps", cue: "Preload shins and ankles before high-rep leg press." }
+        ],
+        slots: [
+          {
+            slot: "Y1",
+            target: "AMRAP @ 70%",
+            primary: "Cybex VR2 Articulating Leg Press",
+            defaultLoad: 180,
+            alts: [
+              "Cybex VR2 Articulating Leg Press",
+              "Cybex VR2 Leg Extension",
+              "Suitcase DB Squat"
+            ]
+          },
+          {
+            slot: "Y2",
+            target: "AMRAP @ 70%",
+            primary: "Cybex VR2 Converging Chest Press",
+            defaultLoad: 100,
+            alts: [
+              "Cybex VR2 Converging Chest Press",
+              "Neutral-Grip DB Floor Press",
+              "Incline DB Bench Press (30°)"
+            ]
+          },
+          {
+            slot: "Y3",
+            target: "AMRAP @ 70%",
+            primary: "Lat Pulldown (Neutral/Mag-Grip)",
+            defaultLoad: 120,
+            alts: [
+              "Lat Pulldown (Neutral/Mag-Grip)",
+              "Chest-Supported Dumbbell Row",
+              "Cybex VR2 High Row (Chest Supported)"
+            ]
+          },
+          {
+            slot: "Y4",
+            target: "AMRAP @ 70%",
+            primary: "Cybex VR2 Seated Abdominal Crunch",
+            defaultLoad: 70,
+            alts: [
+              "Cybex VR2 Seated Abdominal Crunch",
+              "Cable Pallof Press (Bravo)",
+              "Med Ball Deadbug Compression"
+            ]
+          }
+        ]
+      }
+    };
 
     // -------------------------------------------------------------
     // MASTERY VAULT CATALOG (12 RELIC MOVEMENTS)
@@ -404,6 +517,8 @@
     function getTargetPercentage(targetStr) {
       if (!targetStr) return 0.70;
       const s = String(targetStr).toLowerCase();
+      if (s.includes('88%') || s.includes('3-5') || s.includes('1rm') || s.includes('strike')) return 0.88; // 1RM Test Bracket (~88% e1RM)
+      if (s.includes('amrap') || s.includes('70%') || s.includes('failure') || s.includes('overdrive')) return 0.70; // AMRAP Failure Bracket (~70% e1RM)
       if (s.includes('6-8')) return 0.78;   // Heavy compound strength (~78%)
       if (s.includes('8-10')) return 0.72;  // Hypertrophy & tempo bracket (~72%)
       if (s.includes('10-12')) return 0.65; // Volume / machine bracket (~65%)
@@ -590,7 +705,15 @@
       const stageDef = STAGES[activeStageKey];
       const slotDef = stageDef.slots[activeSlotIndex];
       const setsInThisSlot = activeSession.sets.filter(s => s.slot === slotDef.slot).length;
-      document.getElementById('logSetBtn').innerText = `LOG SET ${setsInThisSlot + 1} (${slotDef.slot}) & REST`;
+      const logBtn = document.getElementById('logSetBtn');
+      if (!logBtn) return;
+      if (activeStageKey === 'CH_1RM') {
+        logBtn.innerText = `LOG 1RM ATTEMPT (${slotDef.slot}) & REST`;
+      } else if (activeStageKey === 'CH_AMRAP') {
+        logBtn.innerText = `LOG AMRAP SET (${slotDef.slot}) & REST`;
+      } else {
+        logBtn.innerText = `LOG SET ${setsInThisSlot + 1} (${slotDef.slot}) & REST`;
+      }
     }
 
     // -------------------------------------------------------------
@@ -743,7 +866,9 @@
         "DAY_C": "Neutral-Grip Flat DB Bench",
         "DAY_D": "Cable Pallof Press",
         "DAY_E": "Goblet Squat (Tempo 3-0-1)",
-        "DAY_F": "Cable External Rotations"
+        "DAY_F": "Cable External Rotations",
+        "CH_1RM": "Barbell Deadlift (Standard Bar)",
+        "CH_AMRAP": "Cybex VR2 Articulating Leg Press"
       };
       const targetName = stageMap[stageKey] || "Barbell Deadlift (Standard Bar)";
       const target = vault.find(v => v.exercise.includes(targetName) || targetName.includes(v.exercise));
@@ -1343,12 +1468,27 @@
     // -------------------------------------------------------------
     // PILOT EXP & LEVEL PROGRESSION ENGINE
     // -------------------------------------------------------------
-    const EXP_TIERS = [
-      { level: 1, title: "JUGGERNAUT // RECRUIT", min: 0, max: 150000 },
-      { level: 2, title: "JUGGERNAUT // REINFORCED", min: 150000, max: 350000 },
-      { level: 3, title: "JUGGERNAUT // VETERAN", min: 350000, max: 650000 },
-      { level: 4, title: "JUGGERNAUT // OVERDRIVE", min: 650000, max: 1050000 },
-      { level: 5, title: "JUGGERNAUT // APEX MASTER", min: 1050000, max: 2000000 }
+        const EXP_TIERS = [
+      { level: 1,  title: "JUGGERNAUT // RECRUIT",         min: 0,         max: 160000 },
+      { level: 2,  title: "JUGGERNAUT // REINFORCED",      min: 160000,    max: 380000 },
+      { level: 3,  title: "JUGGERNAUT // VETERAN",         min: 380000,    max: 680000 },
+      { level: 4,  title: "JUGGERNAUT // OVERDRIVE",       min: 680000,    max: 1100000 },
+      { level: 5,  title: "JUGGERNAUT // APEX STRIKER",    min: 1100000,   max: 1700000 },
+      { level: 6,  title: "JUGGERNAUT // HYPER-DRIVE",     min: 1700000,   max: 2550000 },
+      { level: 7,  title: "JUGGERNAUT // SONIC SPEED",     min: 2550000,   max: 3750000 },
+      { level: 8,  title: "JUGGERNAUT // WARP RUNNER",     min: 3750000,   max: 5450000 },
+      { level: 9,  title: "JUGGERNAUT // TITAN BREAKER",   min: 5450000,   max: 7850000 },
+      { level: 10, title: "JUGGERNAUT // CHAOS PILOT",     min: 7850000,   max: 11250000 },
+      { level: 11, title: "JUGGERNAUT // CYBER MASTER",    min: 11250000,  max: 16000000 },
+      { level: 12, title: "JUGGERNAUT // ECLIPSE",         min: 16000000,  max: 22500000 },
+      { level: 13, title: "JUGGERNAUT // LIGHTNING FORCE", min: 22500000,  max: 31500000 },
+      { level: 14, title: "JUGGERNAUT // ZERO GRAVITY",    min: 31500000,  max: 43500000 },
+      { level: 15, title: "JUGGERNAUT // GRAND CHAMPION",  min: 43500000,  max: 59500000 },
+      { level: 16, title: "JUGGERNAUT // SOLAR FLARE",     min: 59500000,  max: 80500000 },
+      { level: 17, title: "JUGGERNAUT // NOVA PRIME",      min: 80500000,  max: 108000000 },
+      { level: 18, title: "JUGGERNAUT // TRANSCENDENT",    min: 108000000, max: 143500000 },
+      { level: 19, title: "JUGGERNAUT // SUPER FORM",      min: 143500000, max: 189500000 },
+      { level: 20, title: "JUGGERNAUT // APEX GOD OF WAR", min: 189500000, max: 250000000 }
     ];
 
     function getLifetimeExp() {
@@ -1374,7 +1514,7 @@
         }
       }
 
-      const isMax = tier.level >= 5;
+      const isMax = tier.level >= 20;
       const span = tier.max - tier.min;
       const progress = Math.min(100, Math.max(0, ((exp - tier.min) / span) * 100));
       const expToNext = isMax ? 0 : Math.max(0, tier.max - exp);
