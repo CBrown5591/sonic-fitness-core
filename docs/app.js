@@ -1488,48 +1488,256 @@
       syncSessionToSheets(syncPayload);
     }
 
-    function renderResultsOverlay(data) {
+    // -------------------------------------------------------------
+    // ARCADE RESULTS DOSSIER: CINEMATIC TALLY & GRADE STAMP
+    // -------------------------------------------------------------
+    function playScoreTickSound() {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+        const osc = ctx.createOscillator();
+        const gain = ctx.createGain();
+        osc.type = 'triangle';
+        osc.frequency.setValueAtTime(1200 + Math.random() * 400, now);
+        gain.gain.setValueAtTime(0.04, now);
+        gain.gain.exponentialRampToValueAtTime(0.001, now + 0.04);
+        osc.connect(gain);
+        gain.connect(ctx.destination);
+        osc.start(now);
+        osc.stop(now + 0.05);
+      } catch (e) {}
+    }
+
+    function playStampImpactSound(rank) {
+      try {
+        const ctx = getAudioContext();
+        if (!ctx) return;
+        const now = ctx.currentTime;
+
+        // Sub bass drop
+        const sub = ctx.createOscillator();
+        const subGain = ctx.createGain();
+        sub.type = 'sine';
+
+        if (rank === 'S') {
+          // Massive hydraulic slam & sub bass boom
+          sub.frequency.setValueAtTime(140, now);
+          sub.frequency.exponentialRampToValueAtTime(32, now + 0.45);
+          subGain.gain.setValueAtTime(0.7, now);
+          subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.55);
+
+          // Impact noise burst
+          const bufferSize = ctx.sampleRate * 0.15;
+          const buffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
+          const output = buffer.getChannelData(0);
+          for (let i = 0; i < bufferSize; i++) {
+            output[i] = Math.random() * 2 - 1;
+          }
+          const whiteNoise = ctx.createBufferSource();
+          whiteNoise.buffer = buffer;
+          const noiseGain = ctx.createGain();
+          noiseGain.gain.setValueAtTime(0.35, now);
+          noiseGain.gain.exponentialRampToValueAtTime(0.001, now + 0.18);
+          whiteNoise.connect(noiseGain);
+          noiseGain.connect(ctx.destination);
+          whiteNoise.start(now);
+        } else if (rank === 'A') {
+          // Solid martial punch
+          sub.frequency.setValueAtTime(160, now);
+          sub.frequency.exponentialRampToValueAtTime(45, now + 0.3);
+          subGain.gain.setValueAtTime(0.45, now);
+          subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.35);
+        } else {
+          // Standard clean thud
+          sub.frequency.setValueAtTime(180, now);
+          sub.frequency.exponentialRampToValueAtTime(60, now + 0.2);
+          subGain.gain.setValueAtTime(0.25, now);
+          subGain.gain.exponentialRampToValueAtTime(0.001, now + 0.22);
+        }
+
+        sub.connect(subGain);
+        subGain.connect(ctx.destination);
+        sub.start(now);
+        sub.stop(now + 0.6);
+      } catch (e) {}
+    }
+
+    function animateNumber(element, start, end, duration, prefix = '', suffix = '', onTick) {
+      const startTime = performance.now();
+      const diff = end - start;
+      if (diff === 0) {
+        element.innerText = `${prefix}${end.toLocaleString()}${suffix}`;
+        return Promise.resolve();
+      }
+
+      return new Promise((resolve) => {
+        function update(now) {
+          const elapsed = now - startTime;
+          const progress = Math.min(1, elapsed / duration);
+          // Ease-out cubic
+          const ease = 1 - Math.pow(1 - progress, 3);
+          const current = Math.floor(start + diff * ease);
+          element.innerText = `${prefix}${current.toLocaleString()}${suffix}`;
+
+          if (onTick && Math.random() > 0.45) onTick();
+
+          if (progress < 1) {
+            requestAnimationFrame(update);
+          } else {
+            element.innerText = `${prefix}${end.toLocaleString()}${suffix}`;
+            resolve();
+          }
+        }
+        requestAnimationFrame(update);
+      });
+    }
+
+    async function renderResultsOverlay(data) {
       const stageDef = STAGES[data.stage];
+      const modal = document.getElementById('resultsModal') || document.querySelector('.results-card') || document.getElementById('resultsOverlay');
+      const overlay = document.getElementById('resultsOverlay');
+      
       document.getElementById('resStageTitle').innerText = `${data.stage.replace('_', ' ')} // ${stageDef ? stageDef.name : ''}`;
 
       const lvlBadge = document.getElementById('resLevelUpBadge');
-      if (lvlBadge) {
-        if (data.didLevelUp) {
-          lvlBadge.style.display = 'inline-block';
-          lvlBadge.innerText = `★ LEVEL UP! PILOT PROMOTED TO LVL ${data.newLevel} ★`;
-        } else {
-          lvlBadge.style.display = 'none';
-        }
-      }
-      
+      if (lvlBadge) lvlBadge.style.display = 'none';
+
       const rankCircle = document.getElementById('resRankCircle');
-      rankCircle.innerText = data.rank;
+      const rankTier = document.getElementById('resRankTier');
+      const prehabEl = document.getElementById('resPrehabScore');
+      const timeEl = document.getElementById('resTimeScore');
+      const forceEl = document.getElementById('resForceScore');
+      const ringEl = document.getElementById('resRingScore');
+      const totalEl = document.getElementById('resTotalScore');
+      const ringsEarnedEl = document.getElementById('resRingsEarned');
+
+      // Reset initial visual states for dynamic sequencing
+      rankCircle.style.opacity = '0';
+      rankCircle.style.transform = 'scale(0)';
       rankCircle.className = 'rank-circle ' + (data.rank === 'S' ? 'rank-s' : (data.rank === 'A' ? 'rank-a' : 'rank-b'));
+      rankCircle.innerText = data.rank;
 
-      document.getElementById('resRankTier').innerText = `SONIC RANK: ${data.rank}-TIER`;
-      document.getElementById('resPrehabScore').innerText = `+${data.ringBonus.toLocaleString()} pts`;
-      document.getElementById('resTimeScore').innerText = `+${data.timeBonus.toLocaleString()} pts`;
-      document.getElementById('resForceScore').innerText = `+${data.forceBonus.toLocaleString()} pts`;
-      document.getElementById('resRingScore').innerText = `+${data.redRingBonus.toLocaleString()} pts`;
-      document.getElementById('resTotalScore').innerText = `${data.totalScore.toLocaleString()} PTS`;
+      rankTier.style.opacity = '0';
+      rankTier.innerText = `SONIC RANK: ${data.rank}-TIER`;
 
+      prehabEl.innerText = '+0 pts';
+      timeEl.innerText = '+0 pts';
+      forceEl.innerText = '+0 pts';
+      ringEl.innerText = '+0 pts';
+      totalEl.innerText = '0 PTS';
+      ringsEarnedEl.style.opacity = '0';
+
+      const rowPrehab = prehabEl.closest('.res-row') || prehabEl.parentElement;
+      const rowTime = timeEl.closest('.res-row') || timeEl.parentElement;
+      const rowForce = forceEl.closest('.res-row') || forceEl.parentElement;
+      const rowRing = ringEl.closest('.res-row') || ringEl.parentElement;
+
+      [rowPrehab, rowTime, rowForce, rowRing].forEach(el => {
+        if (el) {
+          el.classList.remove('slide-in-reveal');
+          el.style.opacity = '0';
+          el.style.transform = 'translateX(-24px)';
+        }
+      });
+
+      overlay.style.display = 'flex';
+
+      // 1. Reveal Subscore Rows with Sequential Slide-in and Tally Rollup
+      const sleep = ms => new Promise(res => setTimeout(res, ms));
+      let runningTotal = 0;
+
+      const subscores = [
+        { row: rowPrehab, el: prehabEl, val: data.ringBonus },
+        { row: rowTime, el: timeEl, val: data.timeBonus },
+        { row: rowForce, el: forceEl, val: data.forceBonus },
+        { row: rowRing, el: ringEl, val: data.redRingBonus }
+      ];
+
+      await sleep(150);
+
+      for (const item of subscores) {
+        if (item.row) {
+          item.row.style.transition = 'all 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+          item.row.style.opacity = '1';
+          item.row.style.transform = 'translateX(0)';
+        }
+
+        const startTotal = runningTotal;
+        runningTotal += item.val;
+
+        // Run subscore rollup and total accumulator concurrently
+        await Promise.all([
+          animateNumber(item.el, 0, item.val, 320, '+', ' pts', playScoreTickSound),
+          animateNumber(totalEl, startTotal, runningTotal, 320, '', ' PTS')
+        ]);
+
+        if (navigator.vibrate) navigator.vibrate(15);
+        await sleep(100);
+      }
+
+      // 2. Fade in banked rings line
       let stars = '';
       for (let i = 0; i < data.ringsBanked; i++) stars += '★ ';
       for (let i = data.ringsBanked; i < data.totalSets; i++) stars += '☆ ';
-      document.getElementById('resRingsEarned').innerText = `RINGS BANKED: ${stars}(${data.ringsBanked}/${data.totalSets})`;
+      ringsEarnedEl.innerText = `RINGS BANKED: ${stars}(${data.ringsBanked}/${data.totalSets})`;
+      ringsEarnedEl.style.transition = 'opacity 0.4s ease';
+      ringsEarnedEl.style.opacity = '1';
+
+      // 3. Anticipation Beat before Stamp
+      await sleep(280);
+
+      // 4. THE GRADE STAMP SLAM (Heaviness scales with Rank)
+      const rankClass = data.rank === 'S' 
+        ? 'stamp-slam-s' 
+        : (data.rank === 'A' ? 'stamp-slam-a' : 'stamp-slam-b');
+      
+      const shakeClass = data.rank === 'S' 
+        ? 'screen-shake-heavy' 
+        : (data.rank === 'A' ? 'screen-shake-medium' : 'screen-shake-light');
+
+      rankCircle.classList.remove('stamp-slam-s', 'stamp-slam-a', 'stamp-slam-b');
+      void rankCircle.offsetWidth; // Force CSS reflow
+      rankCircle.classList.add(rankClass);
+      rankCircle.style.opacity = '1';
+
+      if (modal) {
+        modal.classList.remove('screen-shake-heavy', 'screen-shake-medium', 'screen-shake-light');
+        void modal.offsetWidth;
+        modal.classList.add(shakeClass);
+      }
+
+      playStampImpactSound(data.rank);
+
+      // Haptic feedback profile
+      if (navigator.vibrate) {
+        if (data.rank === 'S') navigator.vibrate([100, 40, 300, 60, 180]);
+        else if (data.rank === 'A') navigator.vibrate([60, 30, 150]);
+        else navigator.vibrate(60);
+      }
+
+      rankTier.style.transition = 'opacity 0.3s ease';
+      rankTier.style.opacity = '1';
+
+      // 5. Level Up Banner (After Stamp Settles)
+      if (lvlBadge && data.didLevelUp) {
+        await sleep(400);
+        lvlBadge.style.display = 'inline-block';
+        lvlBadge.className = 'level-up-badge level-up-flare';
+        lvlBadge.innerText = `★ LEVEL UP! PILOT PROMOTED TO LVL ${data.newLevel} ★`;
+      }
 
       const webhookSet = !!getActiveWebhookUrl();
       const syncText = document.getElementById('resSyncText');
-      if (webhookSet) {
-        syncText.innerText = "TELEMETRY SYNCED TO COMMAND HUB [✓]";
-        syncText.style.color = "var(--accent-green)";
-      } else {
-        syncText.innerText = "LOCAL LOG RECORDED (STANDALONE)";
-        syncText.style.color = "var(--text-dim)";
+      if (syncText) {
+        if (webhookSet) {
+          syncText.innerText = "TELEMETRY SYNCED TO COMMAND HUB [✓]";
+          syncText.style.color = "var(--accent-green)";
+        } else {
+          syncText.innerText = "LOCAL LOG RECORDED (STANDALONE)";
+          syncText.style.color = "var(--text-dim)";
+        }
       }
-
-      const overlay = document.getElementById('resultsOverlay');
-      overlay.style.display = 'flex';
     }
 
     function closeResultsOverlay() {
