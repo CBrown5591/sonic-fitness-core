@@ -387,6 +387,71 @@
     ];
 
     // -------------------------------------------------------------
+    // CLOSED-LOOP PR VAULT & 1RM DYNAMIC LOAD ENGINE
+    // -------------------------------------------------------------
+    function calculateE1RM(load, reps) {
+      if (!load || load <= 0 || !reps || reps <= 0) return 0;
+      if (reps === 1) return Math.round(load);
+      if (reps <= 6) {
+        // Brzycki formula for heavy strength sets
+        return Math.round(load / (1.0278 - (0.0278 * reps)));
+      } else {
+        // Epley formula for higher rep / failure work
+        return Math.round(load * (1 + (reps / 30.0)));
+      }
+    }
+
+    function getTargetPercentage(targetStr) {
+      if (!targetStr) return 0.70;
+      const s = String(targetStr).toLowerCase();
+      if (s.includes('6-8')) return 0.78;   // Heavy compound strength (~78%)
+      if (s.includes('8-10')) return 0.72;  // Hypertrophy & tempo bracket (~72%)
+      if (s.includes('10-12')) return 0.65; // Volume / machine bracket (~65%)
+      if (s.includes('12-15')) return 0.58; // Endurance / joint prehab (~58%)
+      if (s.includes('paces') || s.includes('carry')) return 0.60;
+      return 0.70;
+    }
+
+    function calculateTargetLoad(e1rm, targetStr, defaultVal) {
+      if (!e1rm || e1rm <= 0) return defaultVal;
+      const pct = getTargetPercentage(targetStr);
+      const raw = e1rm * pct;
+      return Math.max(5, Math.round(raw / 5.0) * 5); // Round to nearest 5 lbs
+    }
+
+    function getPRVault() {
+      const stored = localStorage.getItem('sonic_pr_vault');
+      if (stored) {
+        try { return JSON.parse(stored); } catch (e) {}
+      }
+      return {};
+    }
+
+    function savePRVault(data) {
+      localStorage.setItem('sonic_pr_vault', JSON.stringify(data));
+    }
+
+    function applyDynamicWorkingLoad(exercise, targetStr, defaultLoad) {
+      const prVault = getPRVault();
+      const pr = prVault[exercise];
+      const loadInput = document.getElementById('loadInput');
+      const targetTag = document.getElementById('currentTargetTag');
+
+      if (pr && pr.e1rm > 0) {
+        const dynamicLoad = calculateTargetLoad(pr.e1rm, targetStr, defaultLoad);
+        if (loadInput) loadInput.value = dynamicLoad;
+        if (targetTag) {
+          targetTag.innerText = `TARGET: ${targetStr} [PR: ${pr.e1rm}# → LOAD: ${dynamicLoad}#]`;
+        }
+      } else {
+        if (loadInput) loadInput.value = defaultLoad;
+        if (targetTag) {
+          targetTag.innerText = `TARGET: ${targetStr}`;
+        }
+      }
+    }
+
+    // -------------------------------------------------------------
     // STATE ENGINE
     // -------------------------------------------------------------
     let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
@@ -507,13 +572,17 @@
       });
       select.value = slotDef.primary;
 
-      // Set default load
-      document.getElementById('loadInput').value = slotDef.defaultLoad;
+      // Apply dynamic working load from closed-loop 1RM
+      applyDynamicWorkingLoad(slotDef.primary, slotDef.target, slotDef.defaultLoad);
 
       updateLogButtonText();
     }
 
     function onExerciseChange() {
+      const stageDef = STAGES[activeStageKey];
+      const slotDef = stageDef.slots[activeSlotIndex];
+      const selectedEx = document.getElementById('exerciseSelect').value;
+      applyDynamicWorkingLoad(selectedEx, slotDef.target, slotDef.defaultLoad);
       updateLogButtonText();
     }
 
@@ -537,6 +606,26 @@
 
       const setsInSlot = activeSession.sets.filter(s => s.slot === slotDef.slot).length + 1;
 
+      // Calculate estimated 1RM for this completed set
+      const setE1RM = calculateE1RM(load, reps);
+      const prVault = getPRVault();
+      const currentPR = prVault[exercise] ? (prVault[exercise].e1rm || 0) : 0;
+      let isNewPR = false;
+
+      // Only clean reps without joint pain qualify for 1RM PR promotions
+      if (setE1RM > currentPR && tempoClean && !currentSetPain) {
+        prVault[exercise] = {
+          e1rm: setE1RM,
+          load: load,
+          reps: reps,
+          bestSet: `${load}lbs × ${reps}`,
+          date: new Date().toISOString().split('T')[0]
+        };
+        savePRVault(prVault);
+        isNewPR = true;
+        showToast(`★ NEW 1RM PR: ${exercise} → ${setE1RM} LBS!`);
+      }
+
       activeSession.sets.push({
         slot: slotDef.slot,
         exercise,
@@ -544,6 +633,8 @@
         load,
         reps,
         rpe,
+        e1rm: setE1RM,
+        isNewPR: isNewPR,
         tempoClean,
         jointPain: currentSetPain
       });
@@ -1512,6 +1603,15 @@
           if (data.vault && Array.isArray(data.vault) && data.vault.length > 0) {
             saveVaultData(data.vault);
             renderVault();
+          }
+
+          if (data.prVault && typeof data.prVault === 'object') {
+            savePRVault(data.prVault);
+            console.log('[Telemetry] Synchronized PR Vault from Command Core:', data.prVault);
+            // Refresh dynamic load for active slot
+            const curSlotDef = STAGES[activeStageKey].slots[activeSlotIndex];
+            const curEx = document.getElementById('exerciseSelect') ? document.getElementById('exerciseSelect').value : curSlotDef.primary;
+            applyDynamicWorkingLoad(curEx, curSlotDef.target, curSlotDef.defaultLoad);
           }
         }
       } catch (err) {
