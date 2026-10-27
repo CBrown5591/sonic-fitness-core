@@ -686,6 +686,17 @@
     .exp-footer span:first-child {
       color: var(--accent-blue);
     }
+.stage-tabs {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  white-space: nowrap;
+  padding-bottom: 4px;
+  scrollbar-width: none; /* Firefox */
+}
+.stage-tabs::-webkit-scrollbar {
+  display: none; /* Chrome/Android WebView */
+}
 
 
     /* Level Up Alert Badge */
