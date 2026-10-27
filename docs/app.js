@@ -1612,7 +1612,59 @@
       const totalEl = document.getElementById('resTotalScore') || document.querySelector('.total-val');
       const ringsEarnedEl = document.getElementById('resRingsEarned') || document.querySelector('.rings-earned-row');
 
-      // Reset initial visual states for dynamic sequencing
+      // Ensure In-Modal Experience Bar exists directly inside results card
+      let expBlock = document.getElementById('resInModalExpBlock');
+      if (!expBlock && modal) {
+        expBlock = document.createElement('div');
+        expBlock.id = 'resInModalExpBlock';
+        expBlock.className = 'results-exp-block';
+        expBlock.innerHTML = `
+          <div class="res-exp-header">
+            <span id="resInModalPilotTitle" class="res-exp-title">PILOT PROGRESS</span>
+            <span id="resInModalExpVal" class="res-exp-val">0 EXP</span>
+          </div>
+          <div class="res-exp-track">
+            <div id="resInModalExpFill" class="res-exp-fill"></div>
+          </div>
+          <div class="res-exp-footer">
+            <span id="resInModalLvl">LVL 1</span>
+            <span id="resInModalToNext">... EXP TO NEXT LEVEL</span>
+          </div>
+        `;
+        // Insert right after ringsEarnedEl or right before syncStatus
+        const syncRow = modal.querySelector('.sync-status-row');
+        if (syncRow) {
+          modal.insertBefore(expBlock, syncRow);
+        } else {
+          modal.appendChild(expBlock);
+        }
+      }
+
+      // Helper to update both in-modal and background EXP displays
+      function syncExpViews(currentExp) {
+        const info = calculatePilotProgress(currentExp);
+        setPilotExpDisplay(currentExp); // Updates main HUD behind modal
+
+        const inVal = document.getElementById('resInModalExpVal');
+        const inFill = document.getElementById('resInModalExpFill');
+        const inLvl = document.getElementById('resInModalLvl');
+        const inNext = document.getElementById('resInModalToNext');
+        const inTitle = document.getElementById('resInModalPilotTitle');
+
+        if (inVal) inVal.innerText = `${currentExp.toLocaleString()} EXP`;
+        if (inFill) inFill.style.width = `${info.progressPct}%`;
+        if (inLvl) inLvl.innerText = `LVL ${info.level} • ${info.title}`;
+        if (inNext) inNext.innerText = info.isMax ? "MAX LEVEL" : `${info.expToNext.toLocaleString()} EXP TO LVL ${info.level + 1}`;
+        if (inTitle) inTitle.innerText = `PILOT TELEMETRY // LVL ${info.level}`;
+      }
+
+      // Initial visual states
+      const startExp = data.oldExp !== undefined ? data.oldExp : getLifetimeExp();
+      const endExp = data.newLifetimeExp !== undefined ? data.newLifetimeExp : (startExp + data.totalScore);
+      syncExpViews(startExp);
+
+      if (expBlock) expBlock.classList.remove('exp-active');
+
       if (rankCircle) {
         rankCircle.style.opacity = '0';
         rankCircle.style.transform = 'scale(0)';
@@ -1646,7 +1698,6 @@
 
       overlay.style.display = 'flex';
 
-      // 1. Reveal Subscore Rows with Sequential Slide-in and Tally Rollup (Paced ~640ms each)
       const sleep = ms => new Promise(res => setTimeout(res, ms));
       let runningTotal = 0;
 
@@ -1657,11 +1708,12 @@
         { row: rowRing, el: ringEl, val: data.redRingBonus }
       ];
 
-      await sleep(300); // Measured opening gap
+      await sleep(400); // Measured opening gap
 
+      // 1. Slow, deliberate subscore slide-ins (800ms per tally)
       for (const item of subscores) {
         if (item.row) {
-          item.row.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
+          item.row.style.transition = 'all 0.65s cubic-bezier(0.16, 1, 0.3, 1)';
           item.row.style.opacity = '1';
           item.row.style.transform = 'translateX(0)';
         }
@@ -1669,30 +1721,29 @@
         const startTotal = runningTotal;
         runningTotal += item.val;
 
-        // Run subscore rollup and total accumulator concurrently at half-speed (640ms)
         await Promise.all([
-          animateNumber(item.el, 0, item.val, 640, '+', ' pts', playScoreTickSound),
-          animateNumber(totalEl, startTotal, runningTotal, 640, '', ' PTS')
+          animateNumber(item.el, 0, item.val, 800, '+', ' pts', playScoreTickSound),
+          animateNumber(totalEl, startTotal, runningTotal, 800, '', ' PTS')
         ]);
 
         if (navigator.vibrate) navigator.vibrate(15);
-        await sleep(250); // Measured gap between lines
+        await sleep(350); // Measured pause between subscores
       }
 
-      // 2. Fade in banked rings line
+      // 2. Rings banked fade-in
       let stars = '';
       for (let i = 0; i < data.ringsBanked; i++) stars += '★ ';
       for (let i = data.ringsBanked; i < data.totalSets; i++) stars += '☆ ';
       if (ringsEarnedEl) {
         ringsEarnedEl.innerText = `RINGS BANKED: ${stars}(${data.ringsBanked}/${data.totalSets})`;
-        ringsEarnedEl.style.transition = 'opacity 0.6s ease';
+        ringsEarnedEl.style.transition = 'opacity 0.7s ease';
         ringsEarnedEl.style.opacity = '1';
       }
 
-      // 3. Anticipation Beat before Stamp
-      await sleep(600);
+      // 3. Extended suspenseful anticipation pause before the stamp (1.0s)
+      await sleep(1000);
 
-      // 4. THE CLEAN UPRIGHT GRADE STAMP (No tilt, pure vertical power)
+      // 4. THE SLOW-MOTION HYDRAULIC GRADE STAMP (1.15s drop, crisp & upright)
       const rankClass = data.rank === 'S' 
         ? 'stamp-slam-s' 
         : (data.rank === 'A' ? 'stamp-slam-a' : 'stamp-slam-b');
@@ -1703,40 +1754,40 @@
 
       if (rankCircle) {
         rankCircle.classList.remove('stamp-slam-s', 'stamp-slam-a', 'stamp-slam-b');
-        void rankCircle.offsetWidth; // Force CSS reflow
+        void rankCircle.offsetWidth; // Force reflow
         rankCircle.classList.add(rankClass);
         rankCircle.style.opacity = '1';
       }
 
-      if (modal) {
-        modal.classList.remove('screen-shake-heavy', 'screen-shake-medium', 'screen-shake-light');
-        void modal.offsetWidth;
-        modal.classList.add(shakeClass);
-      }
+      // Delay impact sound & haptics slightly so it lands when stamp contacts the card (~700ms into the 1.15s animation)
+      setTimeout(() => {
+        playStampImpactSound(data.rank);
+        if (modal) {
+          modal.classList.remove('screen-shake-heavy', 'screen-shake-medium', 'screen-shake-light');
+          void modal.offsetWidth;
+          modal.classList.add(shakeClass);
+        }
+        if (navigator.vibrate) {
+          if (data.rank === 'S') navigator.vibrate([100, 40, 300, 60, 180]);
+          else if (data.rank === 'A') navigator.vibrate([60, 30, 150]);
+          else navigator.vibrate(60);
+        }
+      }, 720);
 
-      playStampImpactSound(data.rank);
-
-      // Haptic feedback profile
-      if (navigator.vibrate) {
-        if (data.rank === 'S') navigator.vibrate([100, 40, 300, 60, 180]);
-        else if (data.rank === 'A') navigator.vibrate([60, 30, 150]);
-        else navigator.vibrate(60);
-      }
+      await sleep(1150); // Let full stamp animation settle
 
       if (rankTier) {
-        rankTier.style.transition = 'opacity 0.4s ease';
+        rankTier.style.transition = 'opacity 0.5s ease';
         rankTier.style.opacity = '1';
       }
 
-      // 5. EXP BAR ROLL-UP (Watch points climb into the bar before level-up promotion)
-      await sleep(500);
+      // 5. EXPERIENCE BAR PROGRESSION (Visually rolling points directly on the results card)
+      await sleep(700);
+      if (expBlock) expBlock.classList.add('exp-active');
 
-      const startExp = data.oldExp !== undefined ? data.oldExp : getLifetimeExp();
-      const endExp = data.newLifetimeExp !== undefined ? data.newLifetimeExp : (startExp + data.totalScore);
       const expDiff = endExp - startExp;
-
       const expStartTime = performance.now();
-      const expDuration = 900; // Smooth 0.9s fill animation
+      const expDuration = 1400; // Smooth 1.4s deliberate fill animation
 
       await new Promise((resolve) => {
         function stepExp(now) {
@@ -1744,22 +1795,27 @@
           const p = Math.min(1, elapsed / expDuration);
           const ease = 1 - Math.pow(1 - p, 3);
           const currentVal = Math.floor(startExp + (expDiff * ease));
-          setPilotExpDisplay(currentVal);
+          syncExpViews(currentVal);
+
+          if (Math.random() > 0.6) playScoreTickSound();
 
           if (p < 1) {
             requestAnimationFrame(stepExp);
           } else {
             localStorage.setItem('sonic_lifetime_exp', endExp);
-            setPilotExpDisplay(endExp);
+            syncExpViews(endExp);
             resolve();
           }
         }
         requestAnimationFrame(stepExp);
       });
 
-      // 6. DEFERRED LEVEL UP PROMOTION (Fires strictly after the EXP bar is full)
+      if (expBlock) expBlock.classList.remove('exp-active');
+
+      // 6. DEFERRED PROMOTION FANFARE (Triggers strictly AFTER the EXP bar finishes filling)
+      await sleep(450);
+
       if (data.didLevelUp) {
-        await sleep(350);
         playLevelUpFanfare();
         if (navigator.vibrate) navigator.vibrate([120, 60, 120, 60, 450]);
 
