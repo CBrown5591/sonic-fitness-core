@@ -536,11 +536,11 @@
               "Farmer's Carries (Dual DB/KB)",
               "Kettlebell Suitcase March / Carry",
               "Overhead Waiter's Walk (Single DB)"
-          ]
-        }
-      ]
-    } // <-- Properly closes DAY_G
-  };  // <-- Closes STAGES
+            ]
+          }
+        ]
+      }
+    };
 
     // -------------------------------------------------------------
     // MASTERY VAULT CATALOG (12 RELIC MOVEMENTS)
@@ -2871,7 +2871,52 @@ Tap OK to close.`);
       }
     }
 
+    // -------------------------------------------------------------
+    // STAGE NAVIGATION DYNAMIC SYNC
+    // -------------------------------------------------------------
+    function ensureStageTabsExist() {
+      const stageNav = document.querySelector('.stage-nav') || document.querySelector('.stage-tabs');
+      if (!stageNav) return;
+
+      // Ensure tab for DAY_G exists
+      if (!document.getElementById('tab-DAY_G')) {
+        const tabG = document.createElement('div');
+        tabG.id = 'tab-DAY_G';
+        tabG.className = 'stage-tab';
+        tabG.innerText = 'DAY G';
+        tabG.onclick = () => selectStage('DAY_G');
+
+        // Insert right before challenge tabs if present, otherwise append
+        const ch1rmTab = document.getElementById('tab-CH_1RM');
+        if (ch1rmTab) {
+          stageNav.insertBefore(tabG, ch1rmTab);
+        } else {
+          stageNav.appendChild(tabG);
+        }
+      }
+
+      // Ensure Challenge Tabs exist
+      if (!document.getElementById('tab-CH_1RM')) {
+        const tab1rm = document.createElement('div');
+        tab1rm.id = 'tab-CH_1RM';
+        tab1rm.className = 'stage-tab challenge-tab-gold';
+        tab1rm.innerText = '⚡ 1RM TEST';
+        tab1rm.onclick = () => selectStage('CH_1RM');
+        stageNav.appendChild(tab1rm);
+      }
+
+      if (!document.getElementById('tab-CH_AMRAP')) {
+        const tabAmrap = document.createElement('div');
+        tabAmrap.id = 'tab-CH_AMRAP';
+        tabAmrap.className = 'stage-tab challenge-tab-red';
+        tabAmrap.innerText = '🔥 TO FAILURE';
+        tabAmrap.onclick = () => selectStage('CH_AMRAP');
+        stageNav.appendChild(tabAmrap);
+      }
+    }
+
     document.addEventListener('DOMContentLoaded', () => {
+      ensureStageTabsExist();
       syncStateFromSheet();
       updateAudioThemeBtnUI();
       setTimerDuration(configuredRestSeconds, false);
