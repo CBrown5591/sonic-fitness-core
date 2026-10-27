@@ -17,28 +17,49 @@
             target: "3x6-8",
             primary: "Barbell Deadlift (Standard Bar)",
             defaultLoad: 225,
-            alts: ["Barbell Deadlift (Standard Bar)", "Glute Bridge / DB RDL (to Bench)", "Supported Romanian Deadlift (RDL)"]
+            alts: [
+              "Barbell Deadlift (Standard Bar)",
+              "Supported Romanian Deadlift (RDL)",
+              "B-Stance DB Hinge",
+              "Glute Bridge / DB RDL (to Bench)"
+            ]
           },
           {
             slot: "A2",
             target: "3x8-10",
             primary: "Chest-Supported Dumbbell Row",
             defaultLoad: 50,
-            alts: ["Chest-Supported Dumbbell Row", "Seated Cable Row / Incline Machine Row", "Lat Pulldown (Neutral/Mag-Grip)"]
+            alts: [
+              "Chest-Supported Dumbbell Row",
+              "Cybex VR2 High Row (Chest Supported)",
+              "Bravo Dual-Cable Row (Mid-Height)",
+              "Lat Pulldown (Neutral/Mag-Grip)"
+            ]
           },
           {
             slot: "A3",
             target: "3x8-10",
             primary: "Neutral-Grip DB Floor Press",
             defaultLoad: 60,
-            alts: ["Neutral-Grip DB Floor Press", "Incline Push-Up (Hands on Bench)", "Incline DB Bench Press (30°)"]
+            alts: [
+              "Neutral-Grip DB Floor Press",
+              "Cybex VR2 Converging Chest Press",
+              "Incline DB Bench Press (30°)",
+              "Cybex VR2 Overhead Shoulder Press",
+              "Incline Push-Up (Hands on Bench)"
+            ]
           },
           {
             slot: "A4",
             target: "3x10-12",
             primary: "Cable Pallof Press",
             defaultLoad: 30,
-            alts: ["Cable Pallof Press", "Tall-Kneeling Pallof Hold", "Suitcase Carry (Single-Arm)"]
+            alts: [
+              "Cable Pallof Press",
+              "Tall-Kneeling Pallof Hold",
+              "Cybex VR2 Seated Abdominal Crunch",
+              "Suitcase Carry (Single-Arm)"
+            ]
           }
         ]
       },
@@ -55,30 +76,52 @@
           {
             slot: "B1",
             target: "3x8-10",
-            primary: "Goblet Squat (Tempo 3-0-1)",
+            primary: "Suitcase DB Squat",
             defaultLoad: 70,
-            alts: ["Goblet Squat (Tempo 3-0-1)", "Bodyweight Squat / TRX Squat", "DB Bulgarian Split Squat"]
+            alts: [
+              "Suitcase DB Squat",
+              "Goblet Squat (Tempo 3-0-1)",
+              "Cybex VR2 Articulating Leg Press",
+              "DB Bulgarian Split Squat",
+              "Bodyweight Squat / TRX Squat"
+            ]
           },
           {
             slot: "B2",
             target: "3x8-10",
             primary: "Half-Kneeling Landmine Press",
             defaultLoad: 45,
-            alts: ["Half-Kneeling Landmine Press", "Half-Kneeling Cable Press", "Neutral-Grip DB Floor Press"]
+            alts: [
+              "Half-Kneeling Landmine Press",
+              "Cybex VR2 Overhead Shoulder Press",
+              "Cybex VR2 Converging Chest Press",
+              "Bravo Half-Kneeling Cable Press",
+              "Neutral-Grip DB Floor Press"
+            ]
           },
           {
             slot: "B3",
             target: "3x8-10",
             primary: "Supported Romanian Deadlift (RDL)",
             defaultLoad: 65,
-            alts: ["Supported Romanian Deadlift (RDL)", "B-Stance DB Hinge", "Barbell Deadlift (Standard Bar)"]
+            alts: [
+              "Supported Romanian Deadlift (RDL)",
+              "Cybex VR2 Leg Curl",
+              "B-Stance DB Hinge",
+              "Barbell Deadlift (Standard Bar)"
+            ]
           },
           {
             slot: "B4",
             target: "3x12-15",
             primary: "Cable External Rotations",
             defaultLoad: 15,
-            alts: ["Cable External Rotations", "Side-Lying DB External Rotation", "Prone Scapular Y-T-W Raises"]
+            alts: [
+              "Cable External Rotations",
+              "Cybex VR2 Rear Delt Fly",
+              "Side-Lying DB External Rotation",
+              "Prone Scapular Y-T-W Raises"
+            ]
           }
         ]
       },
@@ -96,32 +139,234 @@
             target: "3x6-8",
             primary: "DB Bulgarian Split Squat",
             defaultLoad: 40,
-            alts: ["DB Bulgarian Split Squat", "Supported Reverse Lunge (Rack/Wall)", "Goblet Squat (Tempo 3-0-1)"]
+            alts: [
+              "DB Bulgarian Split Squat",
+              "Cybex VR2 Articulating Leg Press",
+              "Cybex VR2 Leg Extension",
+              "Supported Reverse Lunge (Rack/Wall)",
+              "Goblet Squat (Tempo 3-0-1)"
+            ]
           },
           {
             slot: "C2",
             target: "3x8-10",
             primary: "Lat Pulldown (Neutral/Mag-Grip)",
             defaultLoad: 130,
-            alts: ["Lat Pulldown (Neutral/Mag-Grip)", "Half-Kneeling Single-Arm Pulldown", "Chest-Supported Dumbbell Row"]
+            alts: [
+              "Lat Pulldown (Neutral/Mag-Grip)",
+              "Cybex VR2 High Row (Chest Supported)",
+              "Bravo Dual-Cable Pulldown",
+              "Half-Kneeling Single-Arm Pulldown",
+              "Chest-Supported Dumbbell Row"
+            ]
           },
           {
             slot: "C3",
             target: "3x8-10",
             primary: "Incline DB Bench Press (30°)",
             defaultLoad: 65,
-            alts: ["Incline DB Bench Press (30°)", "Neutral-Grip Flat DB Bench", "Neutral-Grip DB Floor Press"]
+            alts: [
+              "Incline DB Bench Press (30°)",
+              "Cybex VR2 Converging Chest Press",
+              "Cybex VR2 Pec Fly (Machine)",
+              "Neutral-Grip DB Floor Press"
+            ]
           },
           {
             slot: "C4",
             target: "3x40-50 paces",
             primary: "Farmer's Carries",
             defaultLoad: 70,
-            alts: ["Farmer's Carries", "Suitcase Carry (Single-Arm)", "Cable Pallof Press"]
+            alts: [
+              "Farmer's Carries",
+              "Suitcase Carry (Single-Arm)",
+              "Cybex VR2 Seated Hip Abductor/Adductor",
+              "Cable Pallof Press"
+            ]
           }
         ]
       }
-    };
+,
+      DAY_D: {
+        id: "DAY_D",
+        name: "Trunk Fortress & Core Integrity",
+        prehab: "Prehab: McGill Big 3 + Deadbugs & Band Pallof Warmup",
+        prehabDetails: [
+          { name: "Deadbugs (Wall or Med Ball Press)", dose: "2 sets × 8 reps / side", cue: "Lower back flush against floor. Exhale fully as opposite limbs extend." },
+          { name: "McGill Side Planks", dose: "2 sets × 15–20s hold / side", cue: "Straight line ankle to ear. Brace glutes and lateral obliques." },
+          { name: "Kettlebell Halos (10–15 lbs)", dose: "2 sets × 6 circles / direction", cue: "Tight ribcage. Circle head closely without shifting hips or neck." }
+        ],
+        slots: [
+          {
+            slot: "D1",
+            target: "3x10-12",
+            primary: "Cable Pallof Press (Bravo)",
+            defaultLoad: 35,
+            alts: [
+              "Cable Pallof Press (Bravo)",
+              "Bravo Cable Woodchoppers (High-to-Low)",
+              "Single-Arm DB Suitcase Carry",
+              "Tall-Kneeling Pallof Hold (20s)"
+            ]
+          },
+          {
+            slot: "D2",
+            target: "3x10-12",
+            primary: "Cybex VR2 Seated Abdominal Crunch",
+            defaultLoad: 70,
+            alts: [
+              "Cybex VR2 Seated Abdominal Crunch",
+              "Bravo Kneeling Cable Crunch",
+              "Med Ball Deadbug Compression (8-12 lbs)",
+              "Hollow Body Isometric Hold (30s)"
+            ]
+          },
+          {
+            slot: "D3",
+            target: "3x40-50 paces",
+            primary: "Kettlebell Suitcase March / Carry",
+            defaultLoad: 30,
+            alts: [
+              "Kettlebell Suitcase March / Carry",
+              "Farmer's Carries (Dual DB/KB)",
+              "Overhead Waiter's Walk (Single DB)",
+              "Bravo Anti-Extension Overhead Hold"
+            ]
+          },
+          {
+            slot: "D4",
+            target: "3x12-15",
+            primary: "Cybex VR2 Seated Hip Adduction / Abduction",
+            defaultLoad: 80,
+            alts: [
+              "Cybex VR2 Seated Hip Adduction / Abduction",
+              "Med Ball Rotational Wall Chest Pass",
+              "Cable Pull-Through (Bravo Low Pulley)",
+              "McGill Curl-Up (Strict Pause)"
+            ]
+          }
+        ]
+      },
+      DAY_E: {
+        id: "DAY_E",
+        name: "Hypertrophy & Machine Overload",
+        prehab: "Prehab: 90/90 Hip Switches + Band Shoulder Dislocates",
+        prehabDetails: [
+          { name: "90/90 Hip Switches", dose: "2 sets × 8 reps / side", cue: "Smoothly transition internal to external rotation. Keep chest tall." },
+          { name: "Band Shoulder Dislocates", dose: "2 sets × 10 passes", cue: "Straight arms, smooth overhead arc without flaring the ribcage." },
+          { name: "Tibialis Wall Raises", dose: "2 sets × 15 reps", cue: "Flex toes to shins hard; preload anterior tibialis before heavy leg press." }
+        ],
+        slots: [
+          {
+            slot: "E1",
+            target: "3x10-12",
+            primary: "Cybex VR2 Articulating Leg Press",
+            defaultLoad: 180,
+            alts: [
+              "Cybex VR2 Articulating Leg Press",
+              "Suitcase DB Squat",
+              "DB Bulgarian Split Squat",
+              "Goblet Squat (Tempo 3-0-1)"
+            ]
+          },
+          {
+            slot: "E2",
+            target: "3x10-12",
+            primary: "Cybex VR2 Converging Chest Press",
+            defaultLoad: 110,
+            alts: [
+              "Cybex VR2 Converging Chest Press",
+              "Cybex VR2 Pec Fly (Machine)",
+              "Incline DB Bench Press (30°)",
+              "Neutral-Grip DB Floor Press"
+            ]
+          },
+          {
+            slot: "E3",
+            target: "3x10-12",
+            primary: "Cybex VR2 Leg Curl",
+            defaultLoad: 90,
+            alts: [
+              "Cybex VR2 Leg Curl",
+              "Supported Romanian Deadlift (RDL)",
+              "B-Stance DB Hinge",
+              "Cable Pull-Through (Bravo Low Pulley)"
+            ]
+          },
+          {
+            slot: "E4",
+            target: "3x10-12",
+            primary: "Cybex VR2 High Row (Chest Supported)",
+            defaultLoad: 120,
+            alts: [
+              "Cybex VR2 High Row (Chest Supported)",
+              "Chest-Supported Dumbbell Row",
+              "Bravo Dual-Cable Row (Mid-Height)",
+              "Lat Pulldown (Neutral/Mag-Grip)"
+            ]
+          }
+        ]
+      },
+      DAY_F: {
+        id: "DAY_F",
+        name: "Joint Sparing & Deload Recon",
+        prehab: "Prehab: Deadbugs + Prone Y-T-W Raises & Hip Openers",
+        prehabDetails: [
+          { name: "Deadbugs (Wall Press)", dose: "2 sets × 6 reps / side", cue: "Glued lumbar spine; deep diaphragmatic exhale on each reach." },
+          { name: "Prone Scapular Y-T-W Raises", dose: "1–2 sets × 6 reps / pos", cue: "Thumbs to ceiling; isolate lower traps and posterior rotator cuff." },
+          { name: "Bird-Dogs (McGill)", dose: "2 sets × 6 reps / side", cue: "5s hold at peak extension; zero lumbar hyperextension." }
+        ],
+        slots: [
+          {
+            slot: "F1",
+            target: "3x12-15",
+            primary: "Cybex VR2 Leg Extension",
+            defaultLoad: 70,
+            alts: [
+              "Cybex VR2 Leg Extension",
+              "Cybex VR2 Articulating Leg Press (Light Tempo)",
+              "Bodyweight Squat / TRX Squat",
+              "Tibialis Wall Raises"
+            ]
+          },
+          {
+            slot: "F2",
+            target: "3x12-15",
+            primary: "Cybex VR2 Seated Hip Adduction / Abduction",
+            defaultLoad: 75,
+            alts: [
+              "Cybex VR2 Seated Hip Adduction / Abduction",
+              "Tall-Kneeling Pallof Hold (20s)",
+              "Single-Arm DB Suitcase Carry",
+              "Med Ball Deadbug Compression"
+            ]
+          },
+          {
+            slot: "F3",
+            target: "3x12-15",
+            primary: "Cybex VR2 Rear Delt Fly",
+            defaultLoad: 50,
+            alts: [
+              "Cybex VR2 Rear Delt Fly",
+              "Cable External Rotations (Bravo)",
+              "Bravo Dual-Cable Face Pulls",
+              "Side-Lying DB External Rotation"
+            ]
+          },
+          {
+            slot: "F4",
+            target: "3x10-12",
+            primary: "Cable Pallof Press (Bravo)",
+            defaultLoad: 30,
+            alts: [
+              "Cable Pallof Press (Bravo)",
+              "Cybex VR2 Seated Abdominal Crunch",
+              "Cable Pull-Through (Bravo Low Pulley)",
+              "Bravo Anti-Extension Overhead Hold"
+            ]
+          }
+        ]
+      }    };
 
     // -------------------------------------------------------------
     // MASTERY VAULT CATALOG (12 RELIC MOVEMENTS)
@@ -404,7 +649,10 @@
       const stageMap = {
         "DAY_A": "Barbell Deadlift (Standard Bar)",
         "DAY_B": "Goblet Squat (Tempo 3-0-1)",
-        "DAY_C": "Neutral-Grip Flat DB Bench"
+        "DAY_C": "Neutral-Grip Flat DB Bench",
+        "DAY_D": "Cable Pallof Press",
+        "DAY_E": "Goblet Squat (Tempo 3-0-1)",
+        "DAY_F": "Cable External Rotations"
       };
       const targetName = stageMap[stageKey] || "Barbell Deadlift (Standard Bar)";
       const target = vault.find(v => v.exercise.includes(targetName) || targetName.includes(v.exercise));
@@ -1243,43 +1491,34 @@
     // -------------------------------------------------------------
     // LIVE GOOGLE SHEETS TELEMETRY SYNC (GET ENDPOINT)
     // -------------------------------------------------------------
-   async function syncStateFromSheet() {
-  const webhookUrl = getActiveWebhookUrl();
-  if (!webhookUrl || webhookUrl.includes('YOUR_APPS_SCRIPT_WEBHOOK_URL_HERE')) return;
+    async function syncStateFromSheet() {
+      const webhookUrl = getActiveWebhookUrl();
+      if (!webhookUrl || webhookUrl.includes('YOUR_APPS_SCRIPT_WEBHOOK_URL_HERE')) return;
 
-  try {
-    console.log('[Telemetry] Querying Google Sheet for live pilot telemetry...');
-    
-    // Explicitly follow Google's 302 redirect
-    const res = await fetch(webhookUrl, {
-      method: 'GET',
-      redirect: 'follow'
-    });
+      try {
+        console.log('[Telemetry] Querying Google Sheet for live pilot telemetry...');
+        const res = await fetch(webhookUrl);
+        if (!res.ok) return;
+        const data = await res.json();
 
-    if (!res.ok) {
-      console.warn('[Telemetry] HTTP response not OK:', res.status);
-      return;
-    }
+        if (data && data.status === 'success') {
+          console.log('[Telemetry] Synchronized with Google Sheet:', data);
 
-    const data = await res.json();
+          if (data.lifetimeExp !== undefined) {
+            localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
+            updatePilotExpUI();
+          }
 
-    if (data && data.status === 'success') {
-      console.log('[Telemetry] Synchronized with Google Sheet:', data);
-
-      if (data.lifetimeExp !== undefined) {
-        localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
-        updatePilotExpUI();
-      }
-
-      if (data.vault && Array.isArray(data.vault) && data.vault.length > 0) {
-        saveVaultData(data.vault);
-        renderVault();
+          if (data.vault && Array.isArray(data.vault) && data.vault.length > 0) {
+            saveVaultData(data.vault);
+            renderVault();
+          }
+        }
+      } catch (err) {
+        console.warn('[Telemetry] Sync query error (offline mode active):', err);
       }
     }
-  } catch (err) {
-    console.warn('[Telemetry] Sync query error:', err);
-  }
-}
+
     document.addEventListener('DOMContentLoaded', () => {
       syncStateFromSheet();
       updateAudioThemeBtnUI();
