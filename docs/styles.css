@@ -948,27 +948,295 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
 .total-val, #resTotalScore, .exp-counter, .timer-val {
   font-variant-numeric: tabular-nums;
 }
-/* -------------------------------------------------------------
-   CHALLENGE STAGE TAB PILLS (OPTION B)
-   ------------------------------------------------------------- */
-.challenge-tab-gold {
-  border-color: rgba(255, 196, 0, 0.45) !important;
-  color: var(--accent-gold) !important;
-}
-.challenge-tab-gold.active {
-  background: rgba(255, 196, 0, 0.22) !important;
-  border-color: var(--accent-gold) !important;
-  color: var(--accent-gold) !important;
-  box-shadow: 0 0 12px rgba(255, 196, 0, 0.45) !important;
+
+
+/* =============================================================
+   TACTICAL FLIGHT PATH // RECOMMENDATION PROMPT CARD
+   ============================================================= */
+.flight-path-card {
+  background: linear-gradient(135deg, rgba(20, 28, 46, 0.98) 0%, rgba(6, 9, 17, 0.98) 100%);
+  border: 1.5px solid var(--accent-gold);
+  border-radius: 12px;
+  padding: 14px 16px;
+  margin-bottom: 14px;
+  box-shadow: 0 0 20px rgba(255, 196, 0, 0.18), 0 8px 25px rgba(0, 0, 0, 0.5);
+  position: relative;
+  overflow: hidden;
+  animation: promptSlideIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
 }
 
-.challenge-tab-red {
-  border-color: rgba(255, 61, 0, 0.45) !important;
-  color: var(--accent-red) !important;
+@keyframes promptSlideIn {
+  from { opacity: 0; transform: translateY(-12px); }
+  to { opacity: 1; transform: translateY(0); }
 }
-.challenge-tab-red.active {
-  background: rgba(255, 61, 0, 0.22) !important;
-  border-color: var(--accent-red) !important;
-  color: var(--accent-red) !important;
-  box-shadow: 0 0 12px rgba(255, 61, 0, 0.45) !important;
+
+.flight-path-card.shield-recovery {
+  border-color: var(--accent-green);
+  box-shadow: 0 0 20px rgba(0, 230, 118, 0.2);
+}
+
+.flight-path-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.flight-path-tag {
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1.5px;
+  color: var(--accent-gold);
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.flight-path-card.shield-recovery .flight-path-tag {
+  color: var(--accent-green);
+}
+
+.flight-path-stage-title {
+  font-size: 16px;
+  font-weight: 900;
+  color: #fff;
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.flight-path-rationale {
+  font-size: 11px;
+  color: var(--text-dim);
+  line-height: 1.4;
+  margin-bottom: 12px;
+}
+
+.flight-path-actions {
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 8px;
+}
+
+.btn-engage-path {
+  background: var(--accent-gold);
+  color: #000;
+  border: none;
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  text-align: center;
+  transition: transform 0.1s ease;
+}
+
+.flight-path-card.shield-recovery .btn-engage-path {
+  background: var(--accent-green);
+}
+
+.btn-engage-path:active {
+  transform: scale(0.97);
+}
+
+.btn-bypass-path {
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 10px 12px;
+  border-radius: 8px;
+  font-size: 11px;
+  font-weight: 700;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.btn-bypass-path:active {
+  background: rgba(255, 255, 255, 0.1);
+  color: #fff;
+}
+
+/* =============================================================
+   DUAL ARTIFACT SYSTEM // CHAOS VAULT & SECRET RINGS TRAYS
+   ============================================================= */
+.artifacts-container {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.artifact-tray-card {
+  background: linear-gradient(135deg, rgba(20, 28, 46, 0.95) 0%, rgba(11, 15, 25, 0.95) 100%);
+  border: 1.5px solid var(--border);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.4);
+}
+
+.artifact-tray-card.chaos-tray {
+  border-color: rgba(0, 229, 255, 0.4);
+}
+
+.artifact-tray-card.secret-rings-tray {
+  border-color: rgba(179, 136, 255, 0.4);
+}
+
+.artifact-tray-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+
+.artifact-tray-title {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.chaos-tray .artifact-tray-title {
+  color: var(--accent-blue);
+}
+
+.secret-rings-tray .artifact-tray-title {
+  color: var(--accent-purple);
+}
+
+.artifact-tray-counter {
+  font-size: 11px;
+  font-weight: 800;
+  color: var(--text-dim);
+}
+
+.artifact-sockets-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 6px;
+}
+
+.artifact-socket {
+  background: rgba(0, 0, 0, 0.5);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  height: 42px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  position: relative;
+}
+
+.artifact-socket.locked {
+  filter: grayscale(1);
+  opacity: 0.35;
+}
+
+.artifact-socket.unlocked {
+  filter: grayscale(0);
+  opacity: 1;
+}
+
+.artifact-socket.unlocked.emerald-green {
+  border-color: #00e676;
+  box-shadow: 0 0 10px rgba(0, 230, 118, 0.5);
+}
+.artifact-socket.unlocked.emerald-red {
+  border-color: #ff1744;
+  box-shadow: 0 0 10px rgba(255, 23, 68, 0.5);
+}
+.artifact-socket.unlocked.emerald-blue {
+  border-color: #00b0ff;
+  box-shadow: 0 0 10px rgba(0, 176, 255, 0.5);
+}
+.artifact-socket.unlocked.emerald-yellow {
+  border-color: #ffd600;
+  box-shadow: 0 0 10px rgba(255, 214, 0, 0.5);
+}
+.artifact-socket.unlocked.emerald-cyan {
+  border-color: #00e5ff;
+  box-shadow: 0 0 10px rgba(0, 229, 255, 0.5);
+}
+.artifact-socket.unlocked.emerald-purple {
+  border-color: #d500f9;
+  box-shadow: 0 0 10px rgba(213, 0, 249, 0.5);
+}
+.artifact-socket.unlocked.emerald-white {
+  border-color: #ffffff;
+  box-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+}
+
+.artifact-icon {
+  font-size: 15px;
+}
+
+.artifact-label {
+  font-size: 8px;
+  font-weight: 800;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  margin-top: 2px;
+}
+
+.transformation-badge-active {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 900;
+  letter-spacing: 1px;
+  text-align: center;
+  display: none;
+}
+
+.super-mode-active {
+  display: block !important;
+  background: linear-gradient(90deg, rgba(255, 196, 0, 0.25) 0%, rgba(255, 234, 0, 0.3) 100%);
+  border: 1px solid var(--accent-gold);
+  color: var(--accent-gold);
+  box-shadow: 0 0 15px rgba(255, 196, 0, 0.4);
+}
+
+.darkspine-mode-active {
+  display: block !important;
+  background: linear-gradient(90deg, rgba(213, 0, 249, 0.25) 0%, rgba(255, 23, 68, 0.3) 100%);
+  border: 1px solid #ff1744;
+  color: #ff80ab;
+  box-shadow: 0 0 15px rgba(255, 23, 68, 0.4);
+}
+
+/* DAY G 3-in-1 Protocol Switcher Bar */
+.day-g-protocol-bar {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.day-g-protocol-btn {
+  flex: 1;
+  background: #0b0f19;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+  padding: 7px 4px;
+  border-radius: 6px;
+  font-size: 10px;
+  font-weight: 800;
+  cursor: pointer;
+  text-align: center;
+  transition: all 0.15s ease;
+}
+
+.day-g-protocol-btn.active {
+  background: rgba(0, 229, 255, 0.2);
+  border-color: var(--accent-blue);
+  color: var(--accent-blue);
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
 }
