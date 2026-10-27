@@ -1,6 +1,6 @@
 /* =============================================================
    SONIC FITNESS HUD // TACTICAL ARCADE STYLESHEET
-   Harmonized Production Stylesheet (v3.1)
+   Harmonized Production Stylesheet (v3.2)
    ============================================================= */
 
 :root {
@@ -15,24 +15,9 @@
   --text-dim: #90a4ae;
   --border: #263238;
 }
+* { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
 
-* { 
-  box-sizing: border-box; 
-  margin: 0; 
-  padding: 0; 
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; 
-  -webkit-tap-highlight-color: transparent;
-}
-
-body { 
-  background: var(--bg); 
-  color: var(--text); 
-  padding-bottom: 90px; 
-}
-
-/* -------------------------------------------------------------
-   HUD HEADER
-   ------------------------------------------------------------- */
 .hud-header {
   background: #060911;
   padding: 12px 16px;
@@ -44,20 +29,8 @@ body {
   top: 0;
   z-index: 100;
 }
-
-.hud-left { 
-  display: flex; 
-  align-items: center; 
-  gap: 8px; 
-}
-
-.hud-title { 
-  font-size: 15px; 
-  font-weight: 800; 
-  letter-spacing: 1px; 
-  color: var(--accent-blue); 
-}
-
+.hud-left { display: flex; align-items: center; gap: 8px; }
+.hud-title { font-size: 15px; font-weight: 800; letter-spacing: 1px; color: var(--accent-blue); }
 .shield-badge {
   background: rgba(0, 230, 118, 0.15);
   border: 1px solid var(--accent-green);
@@ -69,49 +42,20 @@ body {
   white-space: nowrap;
 }
 
-.container { 
-  padding: 14px; 
-  max-width: 480px;
-  margin: 0 auto;
-}
+.container { padding: 14px; }
 
-/* -------------------------------------------------------------
-   STAGE SELECTOR BAR (SUPPORTS 6-STAGE SCROLL & GRID)
-   ------------------------------------------------------------- */
+/* Stage Selector Bar */
 .stage-nav {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
   gap: 6px;
-  overflow-x: auto;
-  white-space: nowrap;
-  padding-bottom: 4px;
   margin-bottom: 12px;
-  scrollbar-width: none; /* Firefox */
 }
-
-.stage-nav::-webkit-scrollbar {
-  display: none; /* Chrome/Android WebView */
-}
-
-.stage-tabs {
-  display: flex;
-  gap: 6px;
-  overflow-x: auto;
-  white-space: nowrap;
-  padding-bottom: 4px;
-  scrollbar-width: none;
-}
-
-.stage-tabs::-webkit-scrollbar {
-  display: none;
-}
-
 .stage-tab {
-  flex: 0 0 auto;
-  min-width: 68px;
   background: #141c2e;
   border: 1px solid var(--border);
   color: var(--text-dim);
-  padding: 8px 12px;
+  padding: 8px 4px;
   border-radius: 8px;
   font-size: 12px;
   font-weight: 800;
@@ -119,17 +63,13 @@ body {
   cursor: pointer;
   transition: all 0.15s ease;
 }
-
 .stage-tab.active {
   background: rgba(0, 229, 255, 0.15);
   border-color: var(--accent-blue);
   color: var(--accent-blue);
-  box-shadow: 0 0 10px rgba(0, 229, 255, 0.3);
 }
 
-/* -------------------------------------------------------------
-   STAGE MISSION CARD
-   ------------------------------------------------------------- */
+/* Stage Mission Card */
 .stage-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -140,20 +80,8 @@ body {
   justify-content: space-between;
   align-items: flex-start;
 }
-
-.stage-label { 
-  color: var(--accent-gold); 
-  font-size: 11px; 
-  font-weight: 700; 
-  text-transform: uppercase; 
-}
-
-.stage-name { 
-  font-size: 17px; 
-  font-weight: 800; 
-  margin-top: 2px; 
-}
-
+.stage-label { color: var(--accent-gold); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.stage-name { font-size: 17px; font-weight: 800; margin-top: 2px; }
 .tonnage-pill {
   background: rgba(179, 136, 255, 0.15);
   border: 1px solid var(--accent-purple);
@@ -163,93 +91,9 @@ body {
   font-size: 11px;
   font-weight: 800;
   text-align: right;
-  font-variant-numeric: tabular-nums;
 }
 
-/* -------------------------------------------------------------
-   PILOT EXP & LEVEL PROGRESSION COCKPIT
-   ------------------------------------------------------------- */
-.pilot-exp-card {
-  background: linear-gradient(135deg, rgba(20, 28, 46, 0.95) 0%, rgba(11, 15, 25, 0.95) 100%);
-  border: 1px solid rgba(0, 229, 255, 0.35);
-  border-radius: 12px;
-  padding: 12px 14px;
-  margin-bottom: 12px;
-  box-shadow: 0 4px 15px rgba(0, 229, 255, 0.1);
-}
-
-.pilot-exp-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 8px;
-}
-
-.pilot-lvl-tag {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.lvl-badge {
-  background: var(--accent-blue);
-  color: #000;
-  font-size: 11px;
-  font-weight: 900;
-  padding: 3px 7px;
-  border-radius: 5px;
-  letter-spacing: 0.5px;
-}
-
-.pilot-title {
-  font-size: 12px;
-  font-weight: 800;
-  color: #fff;
-  letter-spacing: 0.5px;
-}
-
-.exp-counter {
-  font-size: 12px;
-  font-weight: 800;
-  color: var(--accent-gold);
-  font-variant-numeric: tabular-nums;
-}
-
-.exp-bar-track {
-  width: 100%;
-  height: 7px;
-  background: rgba(255, 255, 255, 0.08);
-  border-radius: 6px;
-  overflow: hidden;
-  margin-bottom: 6px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-.exp-bar-fill {
-  height: 100%;
-  width: 0%;
-  background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-green) 100%);
-  border-radius: 6px;
-  transition: width 0.4s ease-out;
-  box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
-}
-
-.exp-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  font-size: 10px;
-  font-weight: 700;
-  color: var(--text-dim);
-}
-
-.exp-footer span:first-child {
-  color: var(--accent-blue);
-}
-
-/* -------------------------------------------------------------
-   PREHAB MISSION BANNER & INTEL DRAWER
-   ------------------------------------------------------------- */
+/* High-Visibility Prehab Mission Banner & Intel Drawer */
 .prehab-box {
   display: flex;
   align-items: center;
@@ -264,29 +108,24 @@ body {
   box-shadow: 0 0 10px rgba(255, 196, 0, 0.15);
   transition: all 0.2s ease;
 }
-
 .prehab-box.has-drawer-open {
   border-bottom-left-radius: 0;
   border-bottom-right-radius: 0;
   margin-bottom: 0;
 }
-
 .prehab-box.cleared {
   background: rgba(0, 230, 118, 0.12);
   border-color: var(--accent-green);
   box-shadow: 0 0 10px rgba(0, 230, 118, 0.15);
 }
-
 .prehab-box.cleared.has-drawer-open {
   border-bottom-color: rgba(0, 230, 118, 0.3);
 }
-
 .prehab-content {
   display: flex;
   flex-direction: column;
   gap: 2px;
 }
-
 .prehab-tag {
   font-size: 10px;
   font-weight: 800;
@@ -294,17 +133,14 @@ body {
   color: var(--accent-gold);
   text-transform: uppercase;
 }
-
 .prehab-box.cleared .prehab-tag {
   color: var(--accent-green);
 }
-
 .prehab-title {
   font-size: 13px;
   font-weight: 700;
   color: #fff;
 }
-
 .btn-prehab-info {
   background: rgba(255, 196, 0, 0.15);
   border: 1px solid var(--accent-gold);
@@ -316,13 +152,11 @@ body {
   cursor: pointer;
   transition: all 0.15s ease;
 }
-
 .prehab-box.cleared .btn-prehab-info {
   border-color: var(--accent-green);
   color: var(--accent-green);
   background: rgba(0, 230, 118, 0.15);
 }
-
 .prehab-status-pill {
   background: rgba(0, 0, 0, 0.4);
   border: 1px solid var(--accent-gold);
@@ -333,13 +167,13 @@ body {
   font-weight: 800;
   white-space: nowrap;
 }
-
 .prehab-box.cleared .prehab-status-pill {
   border-color: var(--accent-green);
   color: var(--accent-green);
   background: rgba(0, 230, 118, 0.15);
 }
 
+/* Expandable Prehab Intel Drawer */
 .prehab-drawer {
   display: none;
   background: #0b0f19;
@@ -351,26 +185,19 @@ body {
   box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
   animation: drawerSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
-.prehab-drawer.open { display: block !important; }
-
 .prehab-drawer.drawer-cleared {
   border-color: var(--accent-green);
 }
-
 @keyframes drawerSlideDown {
   from { opacity: 0; transform: translateY(-6px); }
   to { opacity: 1; transform: translateY(0); }
 }
-
 .prehab-drill-row {
   padding: 8px 0;
   border-bottom: 1px solid rgba(255, 255, 255, 0.07);
 }
-
 .prehab-drill-row:first-child { padding-top: 2px; }
 .prehab-drill-row:last-child { border-bottom: none; padding-bottom: 2px; }
-
 .prehab-drill-header {
   display: flex;
   justify-content: space-between;
@@ -379,7 +206,6 @@ body {
   font-weight: 800;
   color: #fff;
 }
-
 .prehab-drill-dose {
   color: var(--accent-gold);
   font-size: 11px;
@@ -388,12 +214,10 @@ body {
   padding: 2px 6px;
   border-radius: 4px;
 }
-
 .prehab-drawer.drawer-cleared .prehab-drill-dose {
   color: var(--accent-green);
   background: rgba(0, 230, 118, 0.1);
 }
-
 .prehab-drill-cue {
   color: var(--text-dim);
   font-size: 11px;
@@ -401,15 +225,12 @@ body {
   line-height: 1.35;
 }
 
-/* -------------------------------------------------------------
-   SLOT PROGRESS STEPPER (A1, A2, A3, A4...)
-   ------------------------------------------------------------- */
+/* Slot Progress Stepper (A1, A2, A3, A4) */
 .slot-stepper {
   display: flex;
   gap: 6px;
   margin-bottom: 12px;
 }
-
 .slot-btn {
   flex: 1;
   background: #141c2e;
@@ -421,21 +242,17 @@ body {
   font-weight: 800;
   cursor: pointer;
   text-align: center;
-  transition: all 0.15s ease;
 }
-
 .slot-btn.active {
   background: rgba(0, 229, 255, 0.2);
   border-color: var(--accent-blue);
   color: var(--accent-blue);
   box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
 }
-
 .slot-btn.completed {
   border-color: var(--accent-green);
   color: var(--accent-green);
 }
-
 .slot-btn.completed.active {
   border-color: var(--accent-blue);
   box-shadow: 0 0 8px rgba(0, 229, 255, 0.4);
@@ -443,9 +260,7 @@ body {
   color: var(--accent-green);
 }
 
-/* -------------------------------------------------------------
-   ACTIVE MOVEMENT CARD & INPUTS
-   ------------------------------------------------------------- */
+/* Active Movement Card */
 .movement-card {
   background: var(--card-bg);
   border: 1px solid var(--border);
@@ -453,25 +268,14 @@ body {
   padding: 14px;
   margin-bottom: 14px;
 }
-
 .move-meta {
   display: flex;
   justify-content: space-between;
   align-items: center;
   margin-bottom: 8px;
 }
-
-.slot-tag { 
-  color: var(--accent-blue); 
-  font-size: 12px; 
-  font-weight: 800; 
-}
-
-.target-tag { 
-  color: var(--accent-gold); 
-  font-size: 12px; 
-  font-weight: 700; 
-}
+.slot-tag { color: var(--accent-blue); font-size: 12px; font-weight: 800; }
+.target-tag { color: var(--accent-gold); font-size: 12px; font-weight: 700; }
 
 .exercise-select {
   width: 100%;
@@ -492,22 +296,8 @@ body {
   gap: 8px;
   margin-bottom: 10px;
 }
-
-.input-box { 
-  background: #0b0f19; 
-  padding: 6px 10px; 
-  border-radius: 8px; 
-  border: 1px solid var(--border); 
-}
-
-.input-box label { 
-  font-size: 10px; 
-  color: var(--text-dim); 
-  text-transform: uppercase; 
-  display: block; 
-  margin-bottom: 2px; 
-}
-
+.input-box { background: #0b0f19; padding: 6px 10px; border-radius: 8px; border: 1px solid var(--border); }
+.input-box label { font-size: 10px; color: var(--text-dim); text-transform: uppercase; display: block; margin-bottom: 2px; }
 .input-box input, .input-box select {
   background: transparent;
   border: none;
@@ -516,16 +306,9 @@ body {
   font-weight: 700;
   width: 100%;
   outline: none;
-  font-variant-numeric: tabular-nums;
 }
 
-.toggle-row { 
-  display: grid; 
-  grid-template-columns: 1fr 1fr; 
-  gap: 8px; 
-  margin-bottom: 12px; 
-}
-
+.toggle-row { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; }
 .btn-toggle {
   padding: 10px;
   border-radius: 8px;
@@ -536,20 +319,9 @@ body {
   font-size: 12px;
   cursor: pointer;
   text-align: center;
-  transition: all 0.15s ease;
 }
-
-.btn-toggle.active-green { 
-  background: rgba(0, 230, 118, 0.2); 
-  border-color: var(--accent-green); 
-  color: var(--accent-green); 
-}
-
-.btn-toggle.active-red { 
-  background: rgba(255, 61, 0, 0.2); 
-  border-color: var(--accent-red); 
-  color: var(--accent-red); 
-}
+.btn-toggle.active-green { background: rgba(0, 230, 118, 0.2); border-color: var(--accent-green); color: var(--accent-green); }
+.btn-toggle.active-red { background: rgba(255, 61, 0, 0.2); border-color: var(--accent-red); color: var(--accent-red); }
 
 .btn-log {
   width: 100%;
@@ -562,16 +334,9 @@ body {
   font-weight: 800;
   letter-spacing: 0.5px;
   cursor: pointer;
-  transition: transform 0.1s ease;
 }
 
-.btn-log:active {
-  transform: scale(0.98);
-}
-
-/* -------------------------------------------------------------
-   VAULT DRAWER & MASTERY
-   ------------------------------------------------------------- */
+/* Vault Drawer Toggle Bar */
 .vault-toggle-bar {
   display: flex;
   justify-content: space-between;
@@ -583,16 +348,9 @@ body {
   margin-bottom: 14px;
   cursor: pointer;
 }
+.vault-title { font-size: 13px; font-weight: 800; color: var(--accent-purple); display: flex; align-items: center; gap: 6px; }
 
-.vault-title { 
-  font-size: 13px; 
-  font-weight: 800; 
-  color: var(--accent-purple); 
-  display: flex; 
-  align-items: center; 
-  gap: 6px; 
-}
-
+/* Collapsible Vault Content */
 #vaultDrawer {
   display: none;
   background: var(--card-bg);
@@ -601,7 +359,6 @@ body {
   padding: 12px;
   margin-bottom: 16px;
 }
-
 .vault-item {
   display: flex;
   justify-content: space-between;
@@ -610,22 +367,18 @@ body {
   border-bottom: 1px solid rgba(255, 255, 255, 0.05);
   font-size: 12px;
 }
-
 .vault-item:last-child { border-bottom: none; }
 .vault-move { font-weight: 700; color: #fff; }
 .vault-focus { color: var(--text-dim); font-size: 10px; }
 .vault-rings { color: var(--accent-gold); font-weight: 800; letter-spacing: 2px; }
 
-/* -------------------------------------------------------------
-   LOGGED SETS FEED
-   ------------------------------------------------------------- */
+/* Logged Sets Feed */
 .logged-sets-list {
   display: flex;
   flex-direction: column;
   gap: 6px;
   margin-top: 8px;
 }
-
 .set-row {
   display: flex;
   justify-content: space-between;
@@ -636,14 +389,11 @@ body {
   border-radius: 6px;
   font-size: 12px;
 }
-
 .set-tag { font-weight: 800; color: var(--accent-blue); }
 .set-detail { color: var(--text-dim); }
 .set-badge-ring { color: var(--accent-gold); font-weight: 700; font-size: 11px; }
 
-/* -------------------------------------------------------------
-   BOTTOM RECOVERY DOCK
-   ------------------------------------------------------------- */
+/* Bottom Recovery Dock */
 .rest-dock {
   position: fixed;
   bottom: 0;
@@ -657,14 +407,7 @@ body {
   align-items: center;
   z-index: 90;
 }
-
-.timer-val { 
-  font-size: 22px; 
-  font-weight: 900; 
-  color: var(--accent-gold); 
-  font-family: monospace;
-}
-
+.timer-val { font-size: 22px; font-weight: 900; color: var(--accent-gold); }
 .btn-advance {
   background: var(--accent-green);
   color: #000;
@@ -675,9 +418,7 @@ body {
   font-size: 13px;
   cursor: pointer;
 }
-
 .timer-selector { display: flex; gap: 5px; align-items: center; }
-
 .btn-pill {
   background: #141c2e;
   border: 1px solid var(--border);
@@ -687,72 +428,14 @@ body {
   font-size: 11px;
   font-weight: 700;
   cursor: pointer;
-  transition: all 0.15s ease;
 }
-
 .btn-pill.active {
   background: rgba(0, 229, 255, 0.2);
   border-color: var(--accent-blue);
   color: var(--accent-blue);
 }
 
-/* -------------------------------------------------------------
-   MODALS (SYNC CONFIG) & TOAST
-   ------------------------------------------------------------- */
-#syncModal {
-  display: none;
-  position: fixed;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.75);
-  backdrop-filter: blur(4px);
-  z-index: 9999;
-  justify-content: center;
-  align-items: center;
-  padding: 16px;
-}
-
-.modal-card {
-  background: #141c2e;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  padding: 18px;
-  width: 100%;
-  max-width: 380px;
-}
-
-.modal-input {
-  width: 100%;
-  background: #0b0f19;
-  border: 1px solid var(--border);
-  color: #fff;
-  padding: 10px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-family: monospace;
-  margin-bottom: 12px;
-}
-
-#sonicToast {
-  position: fixed;
-  bottom: 80px;
-  left: 50%;
-  transform: translateX(-50%);
-  background: #141c2e;
-  border: 1px solid var(--accent-blue);
-  color: #fff;
-  padding: 10px 18px;
-  border-radius: 8px;
-  font-size: 12px;
-  font-weight: 700;
-  z-index: 99999;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.6);
-  transition: opacity 0.3s ease;
-  pointer-events: none;
-}
-
-/* =============================================================
-   INTEGRATED RESULTS DOSSIER & CINEMATIC STAMP FX
-   ============================================================= */
+/* Integrated Results Dossier Overlay */
 .results-overlay {
   position: fixed;
   inset: 0;
@@ -767,12 +450,10 @@ body {
   padding: 20px;
   animation: resultsFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
 }
-
 @keyframes resultsFadeIn {
   from { opacity: 0; transform: scale(0.96); }
   to { opacity: 1; transform: scale(1); }
 }
-
 .results-card {
   width: 100%;
   max-width: 400px;
@@ -788,7 +469,6 @@ body {
   position: relative;
   overflow: hidden;
 }
-
 .results-banner {
   font-size: 11px;
   font-weight: 800;
@@ -797,14 +477,12 @@ body {
   text-transform: uppercase;
   margin-bottom: 4px;
 }
-
 .results-stage-title {
   font-size: 18px;
   font-weight: 800;
   color: #fff;
   margin-bottom: 16px;
 }
-
 .rank-badge-wrap {
   display: flex;
   flex-direction: column;
@@ -814,7 +492,6 @@ body {
   height: 90px;
   justify-content: center;
 }
-
 .rank-circle {
   width: 80px;
   height: 80px;
@@ -830,26 +507,22 @@ body {
   box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
   margin-bottom: 8px;
 }
-
 .rank-circle.rank-s {
   border-color: var(--accent-gold);
   color: var(--accent-gold);
   background: radial-gradient(circle, rgba(255, 196, 0, 0.3) 0%, rgba(20, 28, 46, 0.8) 70%);
   box-shadow: 0 0 25px rgba(255, 196, 0, 0.5);
 }
-
 .rank-circle.rank-a {
   border-color: var(--accent-blue);
   color: var(--accent-blue);
   box-shadow: 0 0 20px rgba(0, 229, 255, 0.4);
 }
-
 .rank-circle.rank-b {
   border-color: var(--accent-purple);
   color: var(--accent-purple);
   box-shadow: 0 0 15px rgba(179, 136, 255, 0.4);
 }
-
 .rank-tier-text {
   font-size: 13px;
   font-weight: 800;
@@ -868,7 +541,6 @@ body {
   gap: 8px;
   margin-bottom: 16px;
 }
-
 .score-line {
   display: flex;
   justify-content: space-between;
@@ -877,7 +549,6 @@ body {
   color: var(--text-dim);
   font-weight: 600;
 }
-
 .score-line span:last-child {
   color: #fff;
   font-weight: 700;
@@ -892,14 +563,12 @@ body {
   padding: 12px;
   margin-bottom: 14px;
 }
-
 .total-label {
   font-size: 10px;
   font-weight: 800;
   letter-spacing: 1.5px;
   color: var(--accent-gold);
 }
-
 .total-val {
   font-size: 26px;
   font-weight: 900;
@@ -930,7 +599,6 @@ body {
   font-weight: 700;
   margin-bottom: 18px;
 }
-
 .sync-dot {
   width: 8px;
   height: 8px;
@@ -940,7 +608,6 @@ body {
   display: inline-block;
   animation: pulseSync 1.5s infinite ease-in-out;
 }
-
 @keyframes pulseSync {
   0%, 100% { opacity: 1; transform: scale(1); }
   50% { opacity: 0.4; transform: scale(0.85); }
@@ -959,11 +626,81 @@ body {
   cursor: pointer;
   transition: transform 0.1s ease;
 }
-
 .btn-return-rig:active {
   transform: scale(0.98);
 }
+.prehab-drawer.open { display: block !important; }
 
+/* Pilot EXP & Level Progression Cockpit */
+.pilot-exp-card {
+  background: linear-gradient(135deg, rgba(20, 28, 46, 0.95) 0%, rgba(11, 15, 25, 0.95) 100%);
+  border: 1px solid rgba(0, 229, 255, 0.35);
+  border-radius: 12px;
+  padding: 12px 14px;
+  margin-bottom: 12px;
+  box-shadow: 0 4px 15px rgba(0, 229, 255, 0.1);
+}
+.pilot-exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+}
+.pilot-lvl-tag {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.lvl-badge {
+  background: var(--accent-blue);
+  color: #000;
+  font-size: 11px;
+  font-weight: 900;
+  padding: 3px 7px;
+  border-radius: 5px;
+  letter-spacing: 0.5px;
+}
+.pilot-title {
+  font-size: 12px;
+  font-weight: 800;
+  color: #fff;
+  letter-spacing: 0.5px;
+}
+.exp-counter {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--accent-gold);
+  font-variant-numeric: tabular-nums;
+}
+.exp-bar-track {
+  width: 100%;
+  height: 7px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 6px;
+  border: 1px solid rgba(255, 255, 255, 0.05);
+}
+.exp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-blue) 0%, var(--accent-green) 100%);
+  border-radius: 6px;
+  transition: width 0.4s ease-out;
+  box-shadow: 0 0 8px rgba(0, 229, 255, 0.5);
+}
+.exp-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  font-weight: 700;
+  color: var(--text-dim);
+}
+.exp-footer span:first-child {
+  color: var(--accent-blue);
+}
+
+/* Level Up Alert Badge */
 .levelup-alert-badge {
   display: none;
   background: linear-gradient(90deg, rgba(255, 196, 0, 0.25) 0%, rgba(0, 229, 255, 0.25) 100%);
@@ -978,9 +715,28 @@ body {
   box-shadow: 0 0 15px rgba(255, 196, 0, 0.4);
 }
 
-/* -------------------------------------------------------------
-   DYNAMIC RESULTS ANIMATIONS: STAMP SLAM & SCREEN SHAKE
-   ------------------------------------------------------------- */
+/* =============================================================
+   TONIGHT'S ADDITIONS: 6-STAGE COMPATIBILITY & DYNAMIC RESULTS FX
+   ============================================================= */
+
+/* 1. STAGE TABS FLEX-SCROLL (SUPPORTS DAY A - DAY F CLEANLY) */
+.stage-tabs, .stage-nav {
+  display: flex !important;
+  gap: 6px !important;
+  overflow-x: auto !important;
+  white-space: nowrap !important;
+  padding-bottom: 4px !important;
+  scrollbar-width: none !important; /* Firefox */
+}
+.stage-tabs::-webkit-scrollbar, .stage-nav::-webkit-scrollbar {
+  display: none !important; /* Chrome/Android WebView */
+}
+.stage-tab {
+  flex: 0 0 auto !important;
+  min-width: 68px !important;
+}
+
+/* 2. GRADE STAMP SLAM ANIMATIONS */
 @keyframes stampSlamS {
   0% {
     opacity: 0;
@@ -1056,7 +812,7 @@ body {
   animation: stampSlamB 0.3s cubic-bezier(0.2, 0.85, 0.4, 1.1) forwards !important;
 }
 
-/* Camera Screen Shake FX */
+/* 3. CAMERA SCREEN SHAKE FX */
 @keyframes screenShakeHeavy {
   0% { transform: translate(0, 0) rotate(0deg); }
   15% { transform: translate(-8px, 9px) rotate(-1.5deg); }
@@ -1096,7 +852,7 @@ body {
   animation: screenShakeLight 0.25s ease-out;
 }
 
-/* Level Up Pulse */
+/* 4. LEVEL UP FLARE PULSE */
 @keyframes levelUpFlare {
   0% {
     transform: scale(0.6);
@@ -1117,4 +873,9 @@ body {
 
 .level-up-flare {
   animation: levelUpFlare 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+/* 5. TABULAR NUMS & GLOW FOR TALLY COUNTERS */
+.total-val, #resTotalScore, .exp-counter, .timer-val {
+  font-variant-numeric: tabular-nums;
 }
