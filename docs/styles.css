@@ -726,39 +726,39 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
   overflow-x: auto !important;
   white-space: nowrap !important;
   padding-bottom: 4px !important;
-  scrollbar-width: none !important; /* Firefox */
+  scrollbar-width: none !important;
 }
 .stage-tabs::-webkit-scrollbar, .stage-nav::-webkit-scrollbar {
-  display: none !important; /* Chrome/Android WebView */
+  display: none !important;
 }
 .stage-tab {
   flex: 0 0 auto !important;
   min-width: 68px !important;
 }
 
-/* 2. GRADE STAMP SLAM ANIMATIONS */
+/* 2. GRADE STAMP SLAM ANIMATIONS (UPRIGHT & CRISP S/A/B LETTERS) */
 @keyframes stampSlamS {
   0% {
     opacity: 0;
-    transform: scale(4.2) rotate(-28deg);
-    filter: blur(8px) brightness(3);
+    transform: scale(3.5);
+    filter: brightness(2.2);
   }
-  50% {
+  55% {
     opacity: 1;
-    transform: scale(0.9) rotate(-3deg);
-    filter: blur(0px) brightness(1.8);
-    box-shadow: 0 0 60px rgba(255, 196, 0, 0.9), 0 0 100px rgba(0, 229, 255, 0.6);
+    transform: scale(0.92);
+    filter: brightness(1.4);
+    box-shadow: 0 0 50px rgba(255, 196, 0, 0.9), 0 0 80px rgba(0, 229, 255, 0.5);
   }
-  70% {
-    transform: scale(1.12) rotate(-5deg);
+  75% {
+    transform: scale(1.06);
     box-shadow: 0 0 35px rgba(255, 196, 0, 0.7);
   }
-  85% {
-    transform: scale(0.98) rotate(-4deg);
+  90% {
+    transform: scale(0.98);
   }
   100% {
     opacity: 1;
-    transform: scale(1) rotate(-4deg);
+    transform: scale(1);
     box-shadow: 0 0 25px rgba(255, 196, 0, 0.6);
   }
 }
@@ -766,20 +766,20 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
 @keyframes stampSlamA {
   0% {
     opacity: 0;
-    transform: scale(2.8) rotate(-18deg);
-    filter: blur(4px);
+    transform: scale(2.8);
+    filter: brightness(1.8);
   }
   60% {
     opacity: 1;
-    transform: scale(0.94) rotate(-2deg);
+    transform: scale(0.94);
     box-shadow: 0 0 35px rgba(0, 229, 255, 0.8);
   }
   80% {
-    transform: scale(1.06) rotate(-3deg);
+    transform: scale(1.04);
   }
   100% {
     opacity: 1;
-    transform: scale(1) rotate(-3deg);
+    transform: scale(1);
     box-shadow: 0 0 20px rgba(0, 229, 255, 0.5);
   }
 }
@@ -787,29 +787,29 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
 @keyframes stampSlamB {
   0% {
     opacity: 0;
-    transform: scale(2.0) rotate(-10deg);
+    transform: scale(2.2);
   }
   70% {
     opacity: 1;
-    transform: scale(0.96) rotate(-1deg);
+    transform: scale(0.96);
   }
   100% {
     opacity: 1;
-    transform: scale(1) rotate(-1deg);
+    transform: scale(1);
     box-shadow: 0 0 15px rgba(179, 136, 255, 0.4);
   }
 }
 
 .stamp-slam-s {
-  animation: stampSlamS 0.45s cubic-bezier(0.2, 0.85, 0.4, 1.25) forwards !important;
+  animation: stampSlamS 0.65s cubic-bezier(0.18, 0.9, 0.35, 1.2) forwards !important;
 }
 
 .stamp-slam-a {
-  animation: stampSlamA 0.38s cubic-bezier(0.2, 0.85, 0.4, 1.2) forwards !important;
+  animation: stampSlamA 0.55s cubic-bezier(0.18, 0.9, 0.35, 1.15) forwards !important;
 }
 
 .stamp-slam-b {
-  animation: stampSlamB 0.3s cubic-bezier(0.2, 0.85, 0.4, 1.1) forwards !important;
+  animation: stampSlamB 0.45s cubic-bezier(0.18, 0.9, 0.35, 1.1) forwards !important;
 }
 
 /* 3. CAMERA SCREEN SHAKE FX */
