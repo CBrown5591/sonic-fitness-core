@@ -1340,6 +1340,7 @@
 
         
     // -------------------------------------------------------------
+    // -------------------------------------------------------------
     // PILOT EXP & LEVEL PROGRESSION ENGINE
     // -------------------------------------------------------------
     const EXP_TIERS = [
@@ -1390,14 +1391,12 @@
       };
     }
 
-    function updatePilotExpUI() {
-      const exp = getLifetimeExp();
+    function setPilotExpDisplay(exp) {
       const info = calculatePilotProgress(exp);
-
-      const lvlEl = document.getElementById('hudPilotLevel');
-      const titleEl = document.getElementById('hudPilotTitle');
-      const counterEl = document.getElementById('hudExpCounter');
-      const fillEl = document.getElementById('hudExpFill');
+      const lvlEl = document.getElementById('hudPilotLevel') || document.querySelector('.lvl-badge');
+      const titleEl = document.getElementById('hudPilotTitle') || document.querySelector('.pilot-title');
+      const counterEl = document.getElementById('hudExpCounter') || document.querySelector('.exp-counter');
+      const fillEl = document.getElementById('hudExpFill') || document.querySelector('.exp-bar-fill');
       const toNextEl = document.getElementById('hudExpToNext');
       const bracketEl = document.getElementById('hudExpBracket');
 
@@ -1413,6 +1412,11 @@
       if (bracketEl) {
         bracketEl.innerText = `${Math.floor(info.tierMin/1000)}K / ${Math.floor(info.tierMax/1000)}K`;
       }
+    }
+
+    function updatePilotExpUI() {
+      const exp = getLifetimeExp();
+      setPilotExpDisplay(exp);
     }
 
     let pendingStageClearData = null;
@@ -1434,20 +1438,12 @@
       const redRingBonus = ringsBanked * 10000;
       const totalScore = ringBonus + timeBonus + forceBonus + redRingBonus;
 
-      // Check for Level Up milestone
-      const oldProgress = calculatePilotProgress(getLifetimeExp());
-      const newLifetimeExp = addLifetimeExp(totalScore);
+      // Track old vs new EXP without triggering level-up alerts prematurely
+      const oldExp = getLifetimeExp();
+      const oldProgress = calculatePilotProgress(oldExp);
+      const newLifetimeExp = oldExp + totalScore;
       const newProgress = calculatePilotProgress(newLifetimeExp);
       const didLevelUp = newProgress.level > oldProgress.level;
-
-      if (didLevelUp) {
-        playLevelUpFanfare();
-        if (navigator.vibrate) navigator.vibrate([120, 60, 120, 60, 450]);
-        showToast(`PILOT PROMOTED TO LEVEL ${newProgress.level}!`);
-      } else {
-        playStageClearFanfare();
-        if (navigator.vibrate) navigator.vibrate([100, 50, 200]);
-      }
 
       const rank = totalScore >= 75000 ? "S" : (totalScore >= 55000 ? "A" : "B");
 
@@ -1469,7 +1465,7 @@
       // Stash pending clear data to reset upon closing results
       pendingStageClearData = { stage: activeStageKey };
 
-      // Render Integrated Results Dossier
+      // Render Integrated Results Dossier with sequenced EXP rollup
       renderResultsOverlay({
         stage: activeStageKey,
         totalScore,
@@ -1480,8 +1476,11 @@
         redRingBonus,
         ringsBanked,
         totalSets: activeSession.sets.length,
-        didLevelUp,
-        newLevel: newProgress.level
+        oldExp,
+        newLifetimeExp,
+        oldLevel: oldProgress.level,
+        newLevel: newProgress.level,
+        didLevelUp
       });
 
       // Transmit to Google Sheets in background
@@ -1567,7 +1566,7 @@
       const startTime = performance.now();
       const diff = end - start;
       if (diff === 0) {
-        element.innerText = `${prefix}${end.toLocaleString()}${suffix}`;
+        if (element) element.innerText = `${prefix}${end.toLocaleString()}${suffix}`;
         return Promise.resolve();
       }
 
@@ -1578,14 +1577,14 @@
           // Ease-out cubic
           const ease = 1 - Math.pow(1 - progress, 3);
           const current = Math.floor(start + diff * ease);
-          element.innerText = `${prefix}${current.toLocaleString()}${suffix}`;
+          if (element) element.innerText = `${prefix}${current.toLocaleString()}${suffix}`;
 
           if (onTick && Math.random() > 0.45) onTick();
 
           if (progress < 1) {
             requestAnimationFrame(update);
           } else {
-            element.innerText = `${prefix}${end.toLocaleString()}${suffix}`;
+            if (element) element.innerText = `${prefix}${end.toLocaleString()}${suffix}`;
             resolve();
           }
         }
@@ -1595,55 +1594,59 @@
 
     async function renderResultsOverlay(data) {
       const stageDef = STAGES[data.stage];
-      const modal = document.getElementById('resultsModal') || document.querySelector('.results-card') || document.getElementById('resultsOverlay');
+      const modal = document.querySelector('.results-card') || document.getElementById('resultsModal') || document.getElementById('resultsOverlay');
       const overlay = document.getElementById('resultsOverlay');
       
-      document.getElementById('resStageTitle').innerText = `${data.stage.replace('_', ' ')} // ${stageDef ? stageDef.name : ''}`;
+      const stageTitle = document.getElementById('resStageTitle') || document.querySelector('.results-stage-title');
+      if (stageTitle) stageTitle.innerText = `${data.stage.replace('_', ' ')} // ${stageDef ? stageDef.name : ''}`;
 
-      const lvlBadge = document.getElementById('resLevelUpBadge');
+      const lvlBadge = document.getElementById('resLevelUpBadge') || document.querySelector('.levelup-alert-badge');
       if (lvlBadge) lvlBadge.style.display = 'none';
 
-      const rankCircle = document.getElementById('resRankCircle');
-      const rankTier = document.getElementById('resRankTier');
+      const rankCircle = document.getElementById('resRankCircle') || document.querySelector('.rank-circle');
+      const rankTier = document.getElementById('resRankTier') || document.querySelector('.rank-tier-text');
       const prehabEl = document.getElementById('resPrehabScore');
       const timeEl = document.getElementById('resTimeScore');
       const forceEl = document.getElementById('resForceScore');
       const ringEl = document.getElementById('resRingScore');
-      const totalEl = document.getElementById('resTotalScore');
-      const ringsEarnedEl = document.getElementById('resRingsEarned');
+      const totalEl = document.getElementById('resTotalScore') || document.querySelector('.total-val');
+      const ringsEarnedEl = document.getElementById('resRingsEarned') || document.querySelector('.rings-earned-row');
 
       // Reset initial visual states for dynamic sequencing
-      rankCircle.style.opacity = '0';
-      rankCircle.style.transform = 'scale(0)';
-      rankCircle.className = 'rank-circle ' + (data.rank === 'S' ? 'rank-s' : (data.rank === 'A' ? 'rank-a' : 'rank-b'));
-      rankCircle.innerText = data.rank;
+      if (rankCircle) {
+        rankCircle.style.opacity = '0';
+        rankCircle.style.transform = 'scale(0)';
+        rankCircle.className = 'rank-circle ' + (data.rank === 'S' ? 'rank-s' : (data.rank === 'A' ? 'rank-a' : 'rank-b'));
+        rankCircle.innerText = data.rank;
+      }
 
-      rankTier.style.opacity = '0';
-      rankTier.innerText = `SONIC RANK: ${data.rank}-TIER`;
+      if (rankTier) {
+        rankTier.style.opacity = '0';
+        rankTier.innerText = `SONIC RANK: ${data.rank}-TIER`;
+      }
 
-      prehabEl.innerText = '+0 pts';
-      timeEl.innerText = '+0 pts';
-      forceEl.innerText = '+0 pts';
-      ringEl.innerText = '+0 pts';
-      totalEl.innerText = '0 PTS';
-      ringsEarnedEl.style.opacity = '0';
+      if (prehabEl) prehabEl.innerText = '+0 pts';
+      if (timeEl) timeEl.innerText = '+0 pts';
+      if (forceEl) forceEl.innerText = '+0 pts';
+      if (ringEl) ringEl.innerText = '+0 pts';
+      if (totalEl) totalEl.innerText = '0 PTS';
+      if (ringsEarnedEl) ringsEarnedEl.style.opacity = '0';
 
-      const rowPrehab = prehabEl.closest('.res-row') || prehabEl.parentElement;
-      const rowTime = timeEl.closest('.res-row') || timeEl.parentElement;
-      const rowForce = forceEl.closest('.res-row') || forceEl.parentElement;
-      const rowRing = ringEl.closest('.res-row') || ringEl.parentElement;
+      const rowPrehab = prehabEl ? (prehabEl.closest('.res-row') || prehabEl.parentElement) : null;
+      const rowTime = timeEl ? (timeEl.closest('.res-row') || timeEl.parentElement) : null;
+      const rowForce = forceEl ? (forceEl.closest('.res-row') || forceEl.parentElement) : null;
+      const rowRing = ringEl ? (ringEl.closest('.res-row') || ringEl.parentElement) : null;
 
       [rowPrehab, rowTime, rowForce, rowRing].forEach(el => {
         if (el) {
-          el.classList.remove('slide-in-reveal');
           el.style.opacity = '0';
-          el.style.transform = 'translateX(-24px)';
+          el.style.transform = 'translateX(-20px)';
         }
       });
 
       overlay.style.display = 'flex';
 
-      // 1. Reveal Subscore Rows with Sequential Slide-in and Tally Rollup
+      // 1. Reveal Subscore Rows with Sequential Slide-in and Tally Rollup (Paced ~640ms each)
       const sleep = ms => new Promise(res => setTimeout(res, ms));
       let runningTotal = 0;
 
@@ -1654,11 +1657,11 @@
         { row: rowRing, el: ringEl, val: data.redRingBonus }
       ];
 
-      await sleep(150);
+      await sleep(300); // Measured opening gap
 
       for (const item of subscores) {
         if (item.row) {
-          item.row.style.transition = 'all 0.35s cubic-bezier(0.16, 1, 0.3, 1)';
+          item.row.style.transition = 'all 0.6s cubic-bezier(0.16, 1, 0.3, 1)';
           item.row.style.opacity = '1';
           item.row.style.transform = 'translateX(0)';
         }
@@ -1666,28 +1669,30 @@
         const startTotal = runningTotal;
         runningTotal += item.val;
 
-        // Run subscore rollup and total accumulator concurrently
+        // Run subscore rollup and total accumulator concurrently at half-speed (640ms)
         await Promise.all([
-          animateNumber(item.el, 0, item.val, 320, '+', ' pts', playScoreTickSound),
-          animateNumber(totalEl, startTotal, runningTotal, 320, '', ' PTS')
+          animateNumber(item.el, 0, item.val, 640, '+', ' pts', playScoreTickSound),
+          animateNumber(totalEl, startTotal, runningTotal, 640, '', ' PTS')
         ]);
 
         if (navigator.vibrate) navigator.vibrate(15);
-        await sleep(100);
+        await sleep(250); // Measured gap between lines
       }
 
       // 2. Fade in banked rings line
       let stars = '';
       for (let i = 0; i < data.ringsBanked; i++) stars += '★ ';
       for (let i = data.ringsBanked; i < data.totalSets; i++) stars += '☆ ';
-      ringsEarnedEl.innerText = `RINGS BANKED: ${stars}(${data.ringsBanked}/${data.totalSets})`;
-      ringsEarnedEl.style.transition = 'opacity 0.4s ease';
-      ringsEarnedEl.style.opacity = '1';
+      if (ringsEarnedEl) {
+        ringsEarnedEl.innerText = `RINGS BANKED: ${stars}(${data.ringsBanked}/${data.totalSets})`;
+        ringsEarnedEl.style.transition = 'opacity 0.6s ease';
+        ringsEarnedEl.style.opacity = '1';
+      }
 
       // 3. Anticipation Beat before Stamp
-      await sleep(280);
+      await sleep(600);
 
-      // 4. THE GRADE STAMP SLAM (Heaviness scales with Rank)
+      // 4. THE CLEAN UPRIGHT GRADE STAMP (No tilt, pure vertical power)
       const rankClass = data.rank === 'S' 
         ? 'stamp-slam-s' 
         : (data.rank === 'A' ? 'stamp-slam-a' : 'stamp-slam-b');
@@ -1696,10 +1701,12 @@
         ? 'screen-shake-heavy' 
         : (data.rank === 'A' ? 'screen-shake-medium' : 'screen-shake-light');
 
-      rankCircle.classList.remove('stamp-slam-s', 'stamp-slam-a', 'stamp-slam-b');
-      void rankCircle.offsetWidth; // Force CSS reflow
-      rankCircle.classList.add(rankClass);
-      rankCircle.style.opacity = '1';
+      if (rankCircle) {
+        rankCircle.classList.remove('stamp-slam-s', 'stamp-slam-a', 'stamp-slam-b');
+        void rankCircle.offsetWidth; // Force CSS reflow
+        rankCircle.classList.add(rankClass);
+        rankCircle.style.opacity = '1';
+      }
 
       if (modal) {
         modal.classList.remove('screen-shake-heavy', 'screen-shake-medium', 'screen-shake-light');
@@ -1716,15 +1723,54 @@
         else navigator.vibrate(60);
       }
 
-      rankTier.style.transition = 'opacity 0.3s ease';
-      rankTier.style.opacity = '1';
+      if (rankTier) {
+        rankTier.style.transition = 'opacity 0.4s ease';
+        rankTier.style.opacity = '1';
+      }
 
-      // 5. Level Up Banner (After Stamp Settles)
-      if (lvlBadge && data.didLevelUp) {
-        await sleep(400);
-        lvlBadge.style.display = 'inline-block';
-        lvlBadge.className = 'level-up-badge level-up-flare';
-        lvlBadge.innerText = `★ LEVEL UP! PILOT PROMOTED TO LVL ${data.newLevel} ★`;
+      // 5. EXP BAR ROLL-UP (Watch points climb into the bar before level-up promotion)
+      await sleep(500);
+
+      const startExp = data.oldExp !== undefined ? data.oldExp : getLifetimeExp();
+      const endExp = data.newLifetimeExp !== undefined ? data.newLifetimeExp : (startExp + data.totalScore);
+      const expDiff = endExp - startExp;
+
+      const expStartTime = performance.now();
+      const expDuration = 900; // Smooth 0.9s fill animation
+
+      await new Promise((resolve) => {
+        function stepExp(now) {
+          const elapsed = now - expStartTime;
+          const p = Math.min(1, elapsed / expDuration);
+          const ease = 1 - Math.pow(1 - p, 3);
+          const currentVal = Math.floor(startExp + (expDiff * ease));
+          setPilotExpDisplay(currentVal);
+
+          if (p < 1) {
+            requestAnimationFrame(stepExp);
+          } else {
+            localStorage.setItem('sonic_lifetime_exp', endExp);
+            setPilotExpDisplay(endExp);
+            resolve();
+          }
+        }
+        requestAnimationFrame(stepExp);
+      });
+
+      // 6. DEFERRED LEVEL UP PROMOTION (Fires strictly after the EXP bar is full)
+      if (data.didLevelUp) {
+        await sleep(350);
+        playLevelUpFanfare();
+        if (navigator.vibrate) navigator.vibrate([120, 60, 120, 60, 450]);
+
+        if (lvlBadge) {
+          lvlBadge.style.display = 'inline-block';
+          lvlBadge.className = 'levelup-alert-badge level-up-flare';
+          lvlBadge.innerText = `★ LEVEL UP! PILOT PROMOTED TO LVL ${data.newLevel} ★`;
+        }
+        showToast(`PILOT PROMOTED TO LEVEL ${data.newLevel}!`);
+      } else {
+        playStageClearFanfare();
       }
 
       const webhookSet = !!getActiveWebhookUrl();
