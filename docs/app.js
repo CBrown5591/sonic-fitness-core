@@ -412,11 +412,13 @@
           },
           {
             slot: "X4",
-            target: "1x3-5 @ 88%",
+            target: "1x3-5 @ 88% (or Apex Metric)",
             primary: "Chest-Supported Dumbbell Row",
             defaultLoad: 60,
             alts: [
               "Chest-Supported Dumbbell Row",
+              "Rower 500m Apex Sprint (Sub-1:45 Pace)",
+              "Farmer's Carries (Dual DB/KB - Max Distance)",
               "Cybex VR2 High Row (Chest Supported)",
               "Lat Pulldown (Neutral/Mag-Grip)"
             ]
@@ -468,17 +470,76 @@
           },
           {
             slot: "Y4",
-            target: "AMRAP @ 70%",
+            target: "AMRAP @ 70% (or Engine Burnout)",
             primary: "Cybex VR2 Seated Abdominal Crunch",
             defaultLoad: 70,
             alts: [
               "Cybex VR2 Seated Abdominal Crunch",
+              "Single-Arm DB Suitcase Carry (AMRAP Laps to Failure)",
+              "Rower / Incline Treadmill (90s Max Effort AMRAP)",
               "Cable Pallof Press (Bravo)",
               "Med Ball Deadbug Compression"
             ]
           }
         ]
       }
+,
+      DAY_G: {
+        id: "DAY_G",
+        name: "Sonic Velocity // Ergo & Machine Cardio",
+        prehab: "Prehab: Tibialis Wall Raises + 90/90 Hip Switches & Cat-Camels",
+        prehabDetails: [
+          { name: "Tibialis Wall Raises", dose: "2 sets × 20 reps", cue: "Pump anterior shins to lubricate ankle dorsiflexion before gait work." },
+          { name: "90/90 Hip Switches", dose: "2 sets × 8 reps / side", cue: "Smoothly unlock hip internal/external rotation without lumbar torque." },
+          { name: "McGill Cat-Camel", dose: "1 set × 8 slow cycles", cue: "Gentle spinal flexion and extension to mobilize thoracolumbar fascia." }
+        ],
+        slots: [
+          {
+            slot: "G1",
+            target: "10-12 Mins @ Zone 2",
+            primary: "Incline Treadmill Walk (Zone 2)",
+            defaultLoad: 0,
+            alts: [
+              "Incline Treadmill Walk (Zone 2)",
+              "Stationary Bike (Zone 2 Cadence)",
+              "Rower (Zone 2 Steady State)"
+            ]
+          },
+          {
+            slot: "G2",
+            target: "6-8 Rounds (30s on / 60s off)",
+            primary: "Rower Sprints (30s on / 60s off)",
+            defaultLoad: 0,
+            alts: [
+              "Rower Sprints (30s on / 60s off)",
+              "Stationary Bike Surge Intervals",
+              "Incline Power Walk Surges"
+            ]
+          },
+          {
+            slot: "G3",
+            target: "3x12-15 / side",
+            primary: "Bravo Cable Woodchoppers (High-to-Low)",
+            defaultLoad: 35,
+            alts: [
+              "Bravo Cable Woodchoppers (High-to-Low)",
+              "Med Ball Rotational Wall Chest Pass",
+              "Cable Pallof Press (Bravo)"
+            ]
+          },
+          {
+            slot: "G4",
+            target: "3x40-50 paces",
+            primary: "Farmer's Carries (Dual DB/KB)",
+            defaultLoad: 60,
+            alts: [
+              "Farmer's Carries (Dual DB/KB)",
+              "Kettlebell Suitcase March / Carry",
+              "Overhead Waiter's Walk (Single DB)"
+            ]
+          }
+        ]
+ 
     };
 
     // -------------------------------------------------------------
@@ -599,6 +660,163 @@
       updateTonnageDisplay();
     }
 
+    // -------------------------------------------------------------
+    // TACTICAL FLIGHT PATH // AUTO-RECOMMENDATION ENGINE
+    // -------------------------------------------------------------
+    const FLIGHT_PATH_ROUTING = {
+      DAY_G: {
+        next: "DAY_A",
+        title: "DAY A // Hinge & Horizontal Power",
+        reason: "Aerobic Engine Flushed: Systemic blood flow maximized and DOMS cleared. Full-power compound strength cleared.",
+        tag: "⚡ TACTICAL RECON // MAXIMUM POWER"
+      },
+      DAY_H: {
+        next: "DAY_D",
+        title: "DAY D // Trunk Fortress & Core Integrity",
+        reason: "Metcon Completed: High-density machine & cable volume logged. Core pillar anti-rotation advised.",
+        tag: "🛡️ TACTICAL RECON // CORE FORTRESS"
+      },
+      DAY_I: {
+        next: "DAY_A",
+        title: "DAY A // Hinge & Horizontal Power",
+        reason: "Bodyweight Mobility Flow Complete: Active joint restoration cleared for heavy compound reloading.",
+        tag: "⚡ TACTICAL RECON // MAXIMUM POWER"
+      },
+      DAY_A: {
+        next: "DAY_B",
+        title: "DAY B // Knee Stability & Shoulder Rehab",
+        reason: "Antagonist Rotation: Posterior chain (hamstrings/glutes) and chest/lats from DAY A are in active protein synthesis. Quad tracking and rotator cuff prehab are fully primed.",
+        tag: "⚡ TACTICAL RECON // BALANCED SORTIE"
+      },
+      DAY_B: {
+        next: "DAY_C",
+        title: "DAY C // Full-Body Capacity & Hinge Resilience",
+        reason: "Volume Shift: Anterior quad and pressing load cleared. Full-body tension, heavy carries, and lat recruitment cleared for takeoff.",
+        tag: "⚡ TACTICAL RECON // SYSTEM ENGAGED"
+      },
+      DAY_C: {
+        next: "DAY_D",
+        title: "DAY D // Trunk Fortress & Core Integrity",
+        reason: "Axial Decompression: Heavy compound carries and leg work cleared. Anti-rotation core pillar and pelvic stabilization primed.",
+        tag: "🛡️ TACTICAL RECON // CORE FORTRESS"
+      },
+      DAY_D: {
+        next: "DAY_E",
+        title: "DAY E // Hypertrophy & Machine Overload",
+        reason: "Isolation Surge: Core stability secured. Machine-guided volume hypertrophy on Cybex track fully unlocked with zero spinal fatigue.",
+        tag: "⚡ TACTICAL RECON // HYPERTROPHY TRACK"
+      },
+      DAY_E: {
+        next: "DAY_F",
+        title: "DAY F // Joint Sparing & Deload Recon",
+        reason: "Connective Preservation: Heavy machine volume completed. Active joint sparing, rear delts, and adductor reset advised before heavy strike.",
+        tag: "🛡️ TACTICAL RECON // JOINT PRESERVATION"
+      },
+      DAY_F: {
+        next: "DAY_A",
+        title: "DAY A // Hinge & Horizontal Power",
+        reason: "System Recharged: Connective tissue and CNS fully restored from deload. Heavy hinge and horizontal pressing cleared for maximum output.",
+        tag: "⚡ TACTICAL RECON // MAXIMUM POWER"
+      },
+      CH_1RM: {
+        next: "DAY_F",
+        title: "DAY F // Joint Sparing & Deload Recon",
+        reason: "Neural Down-Regulation: Heavy CNS output expended on 1RM benchmark strikes. Low-intensity joint recon strictly advised to flush systemic fatigue.",
+        tag: "🛡️ TACTICAL RECON // CNS RECOVERY"
+      },
+      CH_AMRAP: {
+        next: "DAY_D",
+        title: "DAY D // Trunk Fortress & Core Integrity",
+        reason: "Metabolic Reset: Muscular failure reached on compound stations. Core anti-rotation and posture carries advised to reset biomechanical alignment.",
+        tag: "🛡️ TACTICAL RECON // ALIGNMENT RESET"
+      }
+    };
+
+    function getRecommendedFlightPath() {
+      const lastStage = localStorage.getItem('sonic_last_stage') || "DAY_A";
+      const hadStrain = localStorage.getItem('sonic_last_strain') === 'true';
+
+      if (hadStrain) {
+        return {
+          stageKey: "DAY_F",
+          title: "DAY F // Joint Sparing & Deload Recon",
+          reason: "SHIELD COMPROMISED: Joint strain was flagged during your previous session. High-load compounds are locked out; active deload and joint recon are required to restore 100% Shield.",
+          tag: "⚠️ SHIELD BUFFER // RECOVERY DIRECTIVE",
+          isRecovery: true
+        };
+      }
+
+      const route = FLIGHT_PATH_ROUTING[lastStage] || FLIGHT_PATH_ROUTING.DAY_A;
+      return {
+        stageKey: route.next,
+        title: route.title,
+        reason: route.reason,
+        tag: route.tag,
+        isRecovery: false
+      };
+    }
+
+    function checkAndRenderFlightPathPrompt() {
+      // Don't show if active session already has sets logged
+      if (activeSession.sets && activeSession.sets.length > 0) return;
+
+      // Don't show if user already acted on prompt in this session window (4 hours)
+      const lastActionTime = parseInt(localStorage.getItem('sonic_flight_prompt_dismissed'), 10) || 0;
+      if (Date.now() - lastActionTime < 4 * 60 * 60 * 1000) return;
+
+      const container = document.querySelector('.container');
+      const stageNav = document.querySelector('.stage-nav');
+      if (!container || !stageNav) return;
+
+      // Remove existing prompt if any
+      const existing = document.getElementById('flightPathPrompt');
+      if (existing) existing.remove();
+
+      const rec = getRecommendedFlightPath();
+
+      const promptCard = document.createElement('div');
+      promptCard.id = 'flightPathPrompt';
+      promptCard.className = `flight-path-card ${rec.isRecovery ? 'shield-recovery' : ''}`;
+      promptCard.innerHTML = `
+        <div class="flight-path-header">
+          <span class="flight-path-tag">${rec.tag}</span>
+          <span style="font-size: 10px; color: var(--text-dim); font-weight: 700;">AUTO-RECON</span>
+        </div>
+        <div class="flight-path-stage-title">${rec.title}</div>
+        <div class="flight-path-rationale">${rec.reason}</div>
+        <div class="flight-path-actions">
+          <button class="btn-engage-path" onclick="engageFlightPath('${rec.stageKey}')">ENGAGE FLIGHT PATH [✓]</button>
+          <button class="btn-bypass-path" onclick="bypassFlightPath()">CHOOSE OWN PATH [✕]</button>
+        </div>
+      `;
+
+      container.insertBefore(promptCard, stageNav);
+    }
+
+    function engageFlightPath(stageKey) {
+      localStorage.setItem('sonic_flight_prompt_dismissed', Date.now());
+      selectStage(stageKey);
+      dismissFlightPathPrompt();
+      if (navigator.vibrate) navigator.vibrate([40, 30, 80]);
+      showToast(`FLIGHT PATH ENGAGED: ${stageKey.replace('_', ' ')}!`);
+    }
+
+    function bypassFlightPath() {
+      localStorage.setItem('sonic_flight_prompt_dismissed', Date.now());
+      dismissFlightPathPrompt();
+      if (navigator.vibrate) navigator.vibrate(25);
+      showToast("MANUAL OVERRIDE: Select your desired stage.");
+    }
+
+    function dismissFlightPathPrompt() {
+      const prompt = document.getElementById('flightPathPrompt');
+      if (!prompt) return;
+      prompt.style.transition = 'all 0.25s ease';
+      prompt.style.opacity = '0';
+      prompt.style.transform = 'translateY(-10px)';
+      setTimeout(() => prompt.remove(), 250);
+    }
+
     function loadSessionState() {
       const saved = localStorage.getItem('sonic_active_session');
       if (saved) {
@@ -645,6 +863,7 @@
 
       renderSlotStepper();
       loadSlotData();
+      renderDayGProtocolButtons();
       saveSessionState();
       renderSessionUI();
     }
@@ -677,6 +896,57 @@
     // EXERCISE INTEL & BIOMECHANICAL CUE DATABASE
     // -------------------------------------------------------------
     const MOVEMENT_INTEL = {
+
+      "Incline Treadmill Walk (Zone 2)": {
+        setup: "Treadmill incline set to 8–12%, speed set to 2.8–3.5 mph (conversational nasal-breathing pace).",
+        cue: "Drive through heels, maintain tall upright spine without holding the handrails. Pure posterior aerobic flush.",
+        safety: "Do not lean back or grip the front console; maintain natural arm carriage."
+      },
+      "Stationary Bike (Zone 2 Cadence)": {
+        setup: "Seat height adjusted so knee has a slight 10–15° bend at the bottom of pedal stroke.",
+        cue: "Maintain smooth cadence of 80–90 RPM at moderate resistance. Nasal breathing focus.",
+        safety: "Do not let knees splay outward; keep knees tracking straight forward."
+      },
+      "Rower Sprints (30s on / 60s off)": {
+        setup: "Damper set to 4–6. Straps secured across widest part of foot. Shins vertical at the catch.",
+        cue: "Drive legs first (60%), swing hips (20%), pull arms to lower ribs (20%). Explode for 30s, glide for 60s.",
+        safety: "Never round lower back at the catch. Sequence: Legs-Body-Arms, then Arms-Body-Legs."
+      },
+      "Bravo Cable Woodchoppers (High-to-Low)": {
+        setup: "Pulley set above head height. Stand sideways in athletic stance holding handle with both hands.",
+        cue: "Pivot rear foot and drive handle across body down toward opposite knee using core torque. Return controlled.",
+        safety: "Initiate movement from thoracic and hip rotation, not by yanking with your arms."
+      },
+      "Cybex VR2 Articulating Leg Press (Light Tempo 25r)": {
+        setup: "Seat positioned comfortably. Light load (~40-50% e1RM). Feet shoulder-width.",
+        cue: "Continuous rhythmic pump: 1s down, 1s up with zero rest at top or bottom. Flush quads with oxygenated blood.",
+        safety: "NEVER lock out knees at top. Stop immediately if any patellar tracking strain occurs."
+      },
+      "Cable Pull-Through (Bravo Low Pulley)": {
+        setup: "Rope attachment on lowest pulley. Straddle cable facing away from stack. Walk out 3 feet.",
+        cue: "Hinge hips backward between knees, feeling deep hamstring stretch. Snap hips forward and squeeze glutes hard.",
+        safety: "Do not squat the weight; this is a pure horizontal hip-hinge with zero spinal shear."
+      },
+      "Bodyweight Squat / TRX Squat": {
+        setup: "Feet shoulder-width, toes slightly out. Arms held in front or lightly holding TRX handles.",
+        cue: "Descend smoothly to parallel, driving knees out over second toes. Stand and squeeze glutes.",
+        safety: "Keep chest tall and heels glued to the floor throughout all 25 reps."
+      },
+      "Incline Push-Up (Hands on Bench)": {
+        setup: "Hands placed slightly wider than shoulder-width on bench, sturdy table, or wall.",
+        cue: "Maintain a rigid plank from head to heels. Lower chest to bench edge, pause 1s, press away.",
+        safety: "Do not allow hips to sag or lumbar to arch. Lock glutes and brace core."
+      },
+      "Bird-Dogs (Strict 5s Hold)": {
+        setup: "Quadruped position on hands and knees. Hands under shoulders, knees under hips.",
+        cue: "Reach opposite arm and leg out horizontally. Hold rigid extension for a full 5-second count.",
+        safety: "Zero lumbar arching or hip tilting. Imagine balancing a glass of water on your lower back."
+      },
+      "Tall-Kneeling Pallof Hold (20s)": {
+        setup: "Kneel tall on both knees perpendicular to cable or band. Lock glutes hard.",
+        cue: "Press handle straight out in front of chest and hold statically for 20 seconds resisting all rotation.",
+        safety: "Keep hips fully open and ribs pulled down. Anti-rotation fortress."
+      },
       "Supported Romanian Deadlift (Heavy DBs)": {
         setup: "Stand tall, feet hip-width, holding dumbbells at sides/thighs. Soft knees, lats packed tight.",
         cue: "Hinge hips backward toward the wall like closing a car door with your glutes. Shave dumbbells down along your shins.",
@@ -1023,6 +1293,324 @@
       localStorage.setItem('sonic_mastery_vault', JSON.stringify(data));
     }
 
+    // -------------------------------------------------------------
+    // DAY G: 3-IN-1 PROTOCOL PRESETS
+    // -------------------------------------------------------------
+    const CARDIO_TRACKS = {
+      ERGO: {
+        id: "ERGO",
+        name: "Sonic Velocity // Ergo & Machine Cardio",
+        slots: [
+          {
+            slot: "G1",
+            target: "10-12 Mins @ Zone 2",
+            primary: "Incline Treadmill Walk (Zone 2)",
+            defaultLoad: 0,
+            alts: ["Incline Treadmill Walk (Zone 2)", "Stationary Bike (Zone 2 Cadence)", "Rower (Zone 2 Steady State)"]
+          },
+          {
+            slot: "G2",
+            target: "6-8 Rounds (30s on / 60s off)",
+            primary: "Rower Sprints (30s on / 60s off)",
+            defaultLoad: 0,
+            alts: ["Rower Sprints (30s on / 60s off)", "Stationary Bike Surge Intervals", "Incline Power Walk Surges"]
+          },
+          {
+            slot: "G3",
+            target: "3x12-15 / side",
+            primary: "Bravo Cable Woodchoppers (High-to-Low)",
+            defaultLoad: 35,
+            alts: ["Bravo Cable Woodchoppers (High-to-Low)", "Med Ball Rotational Wall Chest Pass", "Cable Pallof Press (Bravo)"]
+          },
+          {
+            slot: "G4",
+            target: "3x40-50 paces",
+            primary: "Farmer's Carries (Dual DB/KB)",
+            defaultLoad: 60,
+            alts: ["Farmer's Carries (Dual DB/KB)", "Kettlebell Suitcase March / Carry", "Overhead Waiter's Walk (Single DB)"]
+          }
+        ]
+      },
+      METCON: {
+        id: "METCON",
+        name: "Speed Highway // Non-Impact DB & Cable Metcon",
+        slots: [
+          {
+            slot: "G1",
+            target: "3x20-25 reps (Light Cadence)",
+            primary: "Cybex VR2 Articulating Leg Press (Light Tempo 25r)",
+            defaultLoad: 140,
+            alts: ["Cybex VR2 Articulating Leg Press (Light Tempo 25r)", "Cybex VR2 Leg Extension (Paced 20r)", "Suitcase DB Squat"]
+          },
+          {
+            slot: "G2",
+            target: "3x15-20 reps (Rhythmic Hinge)",
+            primary: "Cable Pull-Through (Bravo Low Pulley)",
+            defaultLoad: 45,
+            alts: ["Cable Pull-Through (Bravo Low Pulley)", "Supported Romanian Deadlift (RDL)", "B-Stance DB Hinge"]
+          },
+          {
+            slot: "G3",
+            target: "3x45s Time-Under-Tension",
+            primary: "Lat Pulldown (Neutral/Mag-Grip)",
+            defaultLoad: 100,
+            alts: ["Lat Pulldown (Neutral/Mag-Grip)", "Bravo Dual-Cable Row (Mid-Height)", "Chest-Supported Dumbbell Row"]
+          },
+          {
+            slot: "G4",
+            target: "3x40-50 paces / side",
+            primary: "Single-Arm DB Suitcase Carry",
+            defaultLoad: 50,
+            alts: ["Single-Arm DB Suitcase Carry", "Farmer's Carries (Dual DB/KB)", "Cable Pallof Press (Bravo)"]
+          }
+        ]
+      },
+      BODYWEIGHT: {
+        id: "BODYWEIGHT",
+        name: "Emerald Coast // 100% Zero-Equipment Bodyweight Flow",
+        slots: [
+          {
+            slot: "G1",
+            target: "3x20-25 reps (Paced)",
+            primary: "Bodyweight Squat / TRX Squat",
+            defaultLoad: 0,
+            alts: ["Bodyweight Squat / TRX Squat", "Supported Reverse Lunge (Rack/Wall)", "Single-Leg Glute Bridge (12r/side)"]
+          },
+          {
+            slot: "G2",
+            target: "3x12-15 reps (Strict Pause)",
+            primary: "Incline Push-Up (Hands on Bench)",
+            defaultLoad: 0,
+            alts: ["Incline Push-Up (Hands on Bench)", "Hollow Body Isometric Hold (30s)", "Prone Scapular Y-T-W Raises"]
+          },
+          {
+            slot: "G3",
+            target: "3x8-10 reps / side (5s Hold)",
+            primary: "Bird-Dogs (Strict 5s Hold)",
+            defaultLoad: 0,
+            alts: ["Bird-Dogs (Strict 5s Hold)", "Deadbugs (Wall Press)", "Prone Scapular Y-T-W Raises"]
+          },
+          {
+            slot: "G4",
+            target: "3x20-30s hold / side",
+            primary: "Tall-Kneeling Pallof Hold (20s)",
+            defaultLoad: 0,
+            alts: ["Tall-Kneeling Pallof Hold (20s)", "McGill Curl-Up (Strict Pause)", "Hollow Body Isometric Hold (30s)"]
+          }
+        ]
+      }
+    };
+
+    let activeCardioTrack = localStorage.getItem('sonic_cardio_track') || 'ERGO';
+
+    function setCardioTrack(trackKey) {
+      activeCardioTrack = trackKey;
+      localStorage.setItem('sonic_cardio_track', trackKey);
+      const trackDef = CARDIO_TRACKS[trackKey];
+      if (trackDef && STAGES.DAY_G) {
+        STAGES.DAY_G.name = trackDef.name;
+        STAGES.DAY_G.slots = trackDef.slots;
+      }
+      activeSlotIndex = 0;
+      saveSessionState();
+      renderSlotStepper();
+      loadSlotData();
+      renderDayGProtocolButtons();
+      showToast(`DAY G: ${trackDef.name.split('//')[0].trim()} ENGAGED!`);
+    }
+
+    function renderDayGProtocolButtons() {
+      const stepper = document.getElementById('slotStepper');
+      if (!stepper) return;
+
+      let bar = document.getElementById('dayGProtocolBar');
+      if (activeStageKey !== 'DAY_G') {
+        if (bar) bar.style.display = 'none';
+        return;
+      }
+
+      if (!bar) {
+        bar = document.createElement('div');
+        bar.id = 'dayGProtocolBar';
+        bar.className = 'day-g-protocol-bar';
+        stepper.parentNode.insertBefore(bar, stepper);
+      }
+
+      bar.style.display = 'flex';
+      bar.innerHTML = `
+        <div class="day-g-protocol-btn ${activeCardioTrack === 'ERGO' ? 'active' : ''}" onclick="setCardioTrack('ERGO')">⚡ MACHINES / ERGO</div>
+        <div class="day-g-protocol-btn ${activeCardioTrack === 'METCON' ? 'active' : ''}" onclick="setCardioTrack('METCON')">🔥 DB & CABLE METCON</div>
+        <div class="day-g-protocol-btn ${activeCardioTrack === 'BODYWEIGHT' ? 'active' : ''}" onclick="setCardioTrack('BODYWEIGHT')">🍃 BODYWEIGHT</div>
+      `;
+    }
+
+    // -------------------------------------------------------------
+    // DUAL ARTIFACT SYSTEM: CHAOS EMERALDS & SECRET RINGS
+    // -------------------------------------------------------------
+    const CHAOS_EMERALDS_CATALOG = [
+      { id: "emerald-green", name: "Green Emerald", icon: "🟢", colorClass: "emerald-green", trial: "Trial of Quad Iron: Hit 20+ reps on Cybex Leg Press @ 70% e1RM with zero knee lock & 100% Shield." },
+      { id: "emerald-red", name: "Red Emerald", icon: "🔴", colorClass: "emerald-red", trial: "Trial of Earth Anchor: Lock out 5 strict reps with 65 lb DBs on Supported RDL @ strict 3-0-1 tempo." },
+      { id: "emerald-blue", name: "Blue Emerald", icon: "🔵", colorClass: "emerald-blue", trial: "Trial of Kinetic Cadence: Complete a 1RM strike set of 5 strict reps on Cybex Leg Press @ 88% e1RM on attempt 1." },
+      { id: "emerald-yellow", name: "Yellow Emerald", icon: "🟡", colorClass: "emerald-yellow", trial: "Trial of Chest Compression: Drive 16+ reps on Cybex Converging Chest Press @ 70% e1RM to absolute technical failure." },
+      { id: "emerald-cyan", name: "Cyan Emerald", icon: "💎", colorClass: "emerald-cyan", trial: "Trial of the Bastion: Lock out 5 strict reps with 60-65 lb DBs on Floor Press with 1s floor pause." },
+      { id: "emerald-purple", name: "Purple Emerald", icon: "🟣", colorClass: "emerald-purple", trial: "Trial of Dead-Stop Lat Power: Complete 15+ strict reps @ 70% e1RM on Lat Pulldown with 1s clavicle pause." },
+      { id: "emerald-white", name: "White Emerald", icon: "⚪", colorClass: "emerald-white", trial: "Trial of the Grand Apex: Clear all 4 slots of CH_1RM or CH_AMRAP with S-Rank (>=85k), 100% Shield, and 4/4 Star Rings." }
+    ];
+
+    const SECRET_RINGS_CATALOG = [
+      { id: "ring-prayer", name: "Ring of Prayer", icon: "🟣", colorClass: "emerald-purple", trial: "Prayer (Nasal Cadence): Complete 12-15 mins of Zone 2 Incline Walk or Bike in DAY G with strict nasal breathing." },
+      { id: "ring-sadness", name: "Ring of Sadness", icon: "🔵", colorClass: "emerald-blue", trial: "Sadness (Acidosis Grind): Hit 25 continuous reps on Cybex Leg Press (Light Tempo) in DAY G/H with zero carriage rest." },
+      { id: "ring-rage", name: "Ring of Rage", icon: "🔴", colorClass: "emerald-red", trial: "Rage (Spin Dash): Complete 8 rounds of Rower Sprints (30s on / 60s off) in DAY G hitting max peak stroke power." },
+      { id: "ring-hatred", name: "Ring of Hatred", icon: "🟢", colorClass: "emerald-green", trial: "Hatred (Grip Crucible): Carry heaviest DBs (60-65 lbs) for 60+ unbroken paces in Farmer's Walks without setting down." },
+      { id: "ring-joy", name: "Ring of Joy", icon: "🟡", colorClass: "emerald-yellow", trial: "Joy (Unbroken Flow): Clear all 4 slots of DAY G (Emerald Coast Bodyweight) with rest intervals kept strictly under 45s." },
+      { id: "ring-pleasure", name: "Ring of Pleasure", icon: "💎", colorClass: "emerald-cyan", trial: "Pleasure (Threshold Flush): Complete a 45s TUT Lat Pulldown followed immediately by a 45s Tall-Kneeling Pallof Hold." },
+      { id: "ring-wishes", name: "Ring of Wishes", icon: "⚪", colorClass: "emerald-white", trial: "Wishes (World Master): Complete any DAY G conditioning sortie banking an S-Rank score (>=85k) and 100% Shield." }
+    ];
+
+    function getChaosEmeraldsState() {
+      const stored = localStorage.getItem('sonic_chaos_emeralds');
+      if (stored) {
+        try { return JSON.parse(stored); } catch (e) {}
+      }
+      return { "emerald-green": false, "emerald-red": false, "emerald-blue": false, "emerald-yellow": false, "emerald-cyan": false, "emerald-purple": false, "emerald-white": false };
+    }
+
+    function saveChaosEmeraldsState(state) {
+      localStorage.setItem('sonic_chaos_emeralds', JSON.stringify(state));
+    }
+
+    function getSecretRingsState() {
+      const stored = localStorage.getItem('sonic_secret_rings');
+      if (stored) {
+        try { return JSON.parse(stored); } catch (e) {}
+      }
+      return { "ring-prayer": false, "ring-sadness": false, "ring-rage": false, "ring-hatred": false, "ring-joy": false, "ring-pleasure": false, "ring-wishes": false };
+    }
+
+    function saveSecretRingsState(state) {
+      localStorage.setItem('sonic_secret_rings', JSON.stringify(state));
+    }
+
+    function isSuperModeUnlocked() {
+      const state = getChaosEmeraldsState();
+      return Object.values(state).every(v => v === true);
+    }
+
+    function isDarkspineModeUnlocked() {
+      const state = getSecretRingsState();
+      return Object.values(state).every(v => v === true);
+    }
+
+    function renderArtifactsTray() {
+      const container = document.querySelector('.container');
+      const pilotCard = document.querySelector('.pilot-exp-card');
+      if (!container || !pilotCard) return;
+
+      let trayWrap = document.getElementById('dualArtifactsWrapper');
+      if (!trayWrap) {
+        trayWrap = document.createElement('div');
+        trayWrap.id = 'dualArtifactsWrapper';
+        trayWrap.className = 'artifacts-container';
+        pilotCard.parentNode.insertBefore(trayWrap, pilotCard.nextSibling);
+      }
+
+      const emeraldState = getChaosEmeraldsState();
+      const ringState = getSecretRingsState();
+      const emeraldsClaimed = Object.values(emeraldState).filter(Boolean).length;
+      const ringsClaimed = Object.values(ringState).filter(Boolean).length;
+      const superActive = isSuperModeUnlocked();
+      const darkspineActive = isDarkspineModeUnlocked();
+
+      trayWrap.innerHTML = `
+        <!-- CHAOS VAULT TRAY -->
+        <div class="artifact-tray-card chaos-tray">
+          <div class="artifact-tray-header">
+            <span class="artifact-tray-title">💎 THE CHAOS VAULT // STRENGTH TRIALS</span>
+            <span class="artifact-tray-counter">${emeraldsClaimed}/7 CLAIMED</span>
+          </div>
+          <div class="artifact-sockets-row">
+            ${CHAOS_EMERALDS_CATALOG.map(item => `
+              <div class="artifact-socket ${emeraldState[item.id] ? 'unlocked ' + item.colorClass : 'locked'}" onclick="showArtifactIntel('emerald', '${item.id}')">
+                <span class="artifact-icon">${item.icon}</span>
+                <span class="artifact-label">${item.id.replace('emerald-', '')}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div id="superModeBadge" class="transformation-badge-active ${superActive ? 'super-mode-active' : ''}">
+            ⚡ SUPER MODE ACTIVE // 1.25x EXP MULTIPLIER UNLOCKED ⚡
+          </div>
+        </div>
+
+        <!-- SECRET RINGS TRAY -->
+        <div class="artifact-tray-card secret-rings-tray">
+          <div class="artifact-tray-header">
+            <span class="artifact-tray-title">💍 THE SECRET RINGS // ENDURANCE & WORK CAPACITY</span>
+            <span class="artifact-tray-counter">${ringsClaimed}/7 CLAIMED</span>
+          </div>
+          <div class="artifact-sockets-row">
+            ${SECRET_RINGS_CATALOG.map(item => `
+              <div class="artifact-socket ${ringState[item.id] ? 'unlocked ' + item.colorClass : 'locked'}" onclick="showArtifactIntel('ring', '${item.id}')">
+                <span class="artifact-icon">${item.icon}</span>
+                <span class="artifact-label">${item.id.replace('ring-', '')}</span>
+              </div>
+            `).join('')}
+          </div>
+          <div id="darkspineModeBadge" class="transformation-badge-active ${darkspineActive ? 'darkspine-mode-active' : ''}">
+            🔥 DARKSPINE MODE ACTIVE // TIME BRAKE REST FLUSH & +500 EXP SURGE 🔥
+          </div>
+        </div>
+      `;
+    }
+
+    function showArtifactIntel(type, id) {
+      const catalog = type === 'emerald' ? CHAOS_EMERALDS_CATALOG : SECRET_RINGS_CATALOG;
+      const state = type === 'emerald' ? getChaosEmeraldsState() : getSecretRingsState();
+      const item = catalog.find(x => x.id === id);
+      if (!item) return;
+
+      const isClaimed = !!state[id];
+      const statusText = isClaimed ? "STATUS: CLAIMED [✓]" : "STATUS: LOCKED [ ]";
+      alert(`${item.name} (${type === 'emerald' ? 'Chaos Emerald' : 'Secret World Ring'})
+
+${statusText}
+
+TRIAL OBJECTIVE:
+${item.trial}
+
+Tap OK to close.`);
+    }
+
+    // Toggle artifact for testing / validation
+    function debugToggleArtifact(type, id) {
+      if (type === 'emerald') {
+        const s = getChaosEmeraldsState();
+        s[id] = !s[id];
+        saveChaosEmeraldsState(s);
+      } else {
+        const s = getSecretRingsState();
+        s[id] = !s[id];
+        saveSecretRingsState(s);
+      }
+      renderArtifactsTray();
+    }
+
+    // Darkspine Mode Time Brake (Accelerates rest by 30 seconds instantly)
+    function applyTimeBrake() {
+      if (!isDarkspineModeUnlocked()) {
+        showToast("Darkspine Mode locked. Collect all 7 Secret Rings!");
+        return;
+      }
+      if (timerSeconds <= 5) return;
+      timerSeconds = Math.max(1, timerSeconds - 30);
+      if (timerEndTime) {
+        timerEndTime -= (30 * 1000);
+        localStorage.setItem('sonic_timer_end', timerEndTime);
+      }
+      updateTimerDisplay();
+      if (navigator.vibrate) navigator.vibrate([30, 20, 60]);
+      showToast("🔥 TIME BRAKE ENGAGED // -30S REST COOLDOWN!");
+    }
+
     function renderVault() {
       const container = document.getElementById('vaultItemsContainer');
       if (!container) return;
@@ -1064,7 +1652,10 @@
         "DAY_E": "Goblet Squat (Tempo 3-0-1)",
         "DAY_F": "Cable External Rotations",
         "CH_1RM": "Supported Romanian Deadlift (Heavy DBs)",
-        "CH_AMRAP": "Cybex VR2 Articulating Leg Press"
+        "CH_AMRAP": "Cybex VR2 Articulating Leg Press",
+        "DAY_G": "Farmer's Carries",
+        "DAY_H": "Lat Pulldown (Neutral/Mag-Grip)",
+        "DAY_I": "Goblet Squat (Tempo 3-0-1)"
       };
       const targetName = stageMap[stageKey] || "Supported Romanian Deadlift (Heavy DBs)";
       const target = vault.find(v => v.exercise.includes(targetName) || targetName.includes(v.exercise));
@@ -1772,7 +2363,19 @@
 
       const ringsBanked = activeSession.sets.filter(s => s.rpe <= 8.0 && s.tempoClean && !s.jointPain).length;
       const redRingBonus = ringsBanked * 10000;
-      const totalScore = ringBonus + timeBonus + forceBonus + redRingBonus;
+      let rawScore = ringBonus + timeBonus + forceBonus + redRingBonus;
+
+      // Darkspine Mode Surge (+500 pts per completed cardio interval)
+      if (typeof isDarkspineModeUnlocked === 'function' && isDarkspineModeUnlocked() && activeStageKey === 'DAY_G') {
+        rawScore += (activeSession.sets.length * 500);
+      }
+
+      // Super Mode Multiplier (1.25x permanent EXP surge across all cleared sorties)
+      if (typeof isSuperModeUnlocked === 'function' && isSuperModeUnlocked()) {
+        rawScore = Math.round(rawScore * 1.25);
+      }
+
+      const totalScore = rawScore;
 
       // Track old vs new EXP without triggering level-up alerts prematurely
       const oldExp = getLifetimeExp();
@@ -1798,8 +2401,11 @@
         sets: activeSession.sets
       };
 
-      // Stash pending clear data to reset upon closing results
+      // Stash pending clear data and log history for auto-recommendation engine
       pendingStageClearData = { stage: activeStageKey };
+      localStorage.setItem('sonic_last_stage', activeStageKey);
+      localStorage.setItem('sonic_last_clear_time', Date.now());
+      localStorage.setItem('sonic_last_strain', anyPain ? 'true' : 'false');
 
       // Render Integrated Results Dossier with sequenced EXP rollup
       renderResultsOverlay({
@@ -2271,6 +2877,9 @@
       setTimerDuration(configuredRestSeconds, false);
       loadSessionState();
       renderVault();
+      renderArtifactsTray();
+      renderDayGProtocolButtons();
+      checkAndRenderFlightPathPrompt();
 
       if ('Notification' in window) {
         updateNotificationBtnUI(Notification.permission);
