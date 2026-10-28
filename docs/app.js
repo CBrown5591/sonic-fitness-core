@@ -1,235 +1,3 @@
-// -------------------------------------------------------------
-    // STAGE DEFINITIONS & MOVEMENT CATALOG
-    // -------------------------------------------------------------
-        const STAGES = {
-      DAY_A: {
-        id: "DAY_A",
-        name: "Hinge & Horizontal Power",
-        prehab: "Prehab: McGill Big 3 + Band Pull-Aparts & Face Pulls",
-        prehabDetails: [
-          { name: "Bird-Dogs (McGill Big 3)", dose: "2 sets × 6 reps / side", cue: "5s hold at full extension. Neutral spine; do not hyperextend lumbar." },
-          { name: "Side Planks (McGill Big 3)", dose: "2 sets × 15–20s hold / side", cue: "Straight line from ankle to shoulder. Brace glutes & lateral obliques." },
-          { name: "Band Pull-Aparts & Face Pulls", dose: "2 sets × 15 reps", cue: "Pull band to clavicle/bridge of nose. Squeeze scaps together for 1s." }
-        ],
-        slots: [
-          {
-            slot: "A1",
-            target: "3x6-8",
-            primary: "Supported Romanian Deadlift (Heavy DBs)",
-            defaultLoad: 60,
-            alts: [
-              "Supported Romanian Deadlift (Heavy DBs)",
-              "Supported Romanian Deadlift (RDL)",
-              "B-Stance DB Hinge",
-              "Glute Bridge / DB RDL (to Bench)"
-            ]
-          },
-          {
-            slot: "A2",
-            target: "3x8-10",
-            primary: "Chest-Supported Dumbbell Row",
-            defaultLoad: 50,
-            alts: [
-              "Chest-Supported Dumbbell Row",
-              "Cybex VR2 High Row (Chest Supported)",
-              "Bravo Dual-Cable Row (Mid-Height)",
-              "Lat Pulldown (Neutral/Mag-Grip)"
-            ]
-          },
-          {
-            slot: "A3",
-            target: "3x8-10",
-            primary: "Neutral-Grip DB Floor Press",
-            defaultLoad: 60,
-            alts: [
-              "Neutral-Grip DB Floor Press",
-              "Cybex VR2 Converging Chest Press",
-              "Incline DB Bench Press (30°)",
-              "Cybex VR2 Overhead Shoulder Press",
-              "Incline Push-Up (Hands on Bench)"
-            ]
-          },
-          {
-            slot: "A4",
-            target: "3x10-12",
-            primary: "Cable Pallof Press",
-            defaultLoad: 30,
-            alts: [
-              "Cable Pallof Press",
-              "Tall-Kneeling Pallof Hold",
-              "Cybex VR2 Seated Abdominal Crunch",
-              "Suitcase Carry (Single-Arm)"
-            ]
-          }
-        ]
-      },
-      DAY_B: {
-        id: "DAY_B",
-        name: "Knee Stability & Shoulder Rehab",
-        prehab: "Prehab: Tibialis Wall Raises & 90/90 Hip Switches",
-        prehabDetails: [
-          { name: "Tibialis Wall Raises", dose: "2 sets × 15–20 reps", cue: "Heels 12 inches from wall. Flex toes hard to shins to buffer patellar load." },
-          { name: "90/90 Hip Switches", dose: "2 sets × 8 reps / side", cue: "Upright tall torso. Smoothly rotate internal & external hip capsules." },
-          { name: "Prone Scapular Y-T-W Raises", dose: "1–2 sets × 6 reps / position", cue: "Thumbs up to ceiling. Fire lower traps & posterior rotator cuff." }
-        ],
-        slots: [
-          {
-            slot: "B1",
-            target: "3x8-10",
-            primary: "Suitcase DB Squat",
-            defaultLoad: 55,
-            alts: [
-              "Suitcase DB Squat",
-              "Goblet Squat (Tempo 3-0-1)",
-              "Cybex VR2 Articulating Leg Press",
-              "DB Bulgarian Split Squat",
-              "Bodyweight Squat / TRX Squat"
-            ]
-          },
-          {
-            slot: "B2",
-            target: "3x8-10",
-            primary: "Half-Kneeling Landmine Press",
-            defaultLoad: 45,
-            alts: [
-              "Half-Kneeling Landmine Press",
-              "Cybex VR2 Overhead Shoulder Press",
-              "Cybex VR2 Converging Chest Press",
-              "Bravo Half-Kneeling Cable Press",
-              "Neutral-Grip DB Floor Press"
-            ]
-          },
-          {
-            slot: "B3",
-            target: "3x8-10",
-            primary: "Supported Romanian Deadlift (RDL)",
-            defaultLoad: 65,
-            alts: [
-              "Supported Romanian Deadlift (RDL)",
-              "Cybex VR2 Leg Curl",
-              "B-Stance DB Hinge",
-              "Supported Romanian Deadlift (Heavy DBs)"
-            ]
-          },
-          {
-            slot: "B4",
-            target: "3x12-15",
-            primary: "Cable External Rotations",
-            defaultLoad: 15,
-            alts: [
-              "Cable External Rotations",
-              "Cybex VR2 Rear Delt Fly",
-              "Side-Lying DB External Rotation",
-              "Prone Scapular Y-T-W Raises"
-            ]
-          }
-        ]
-      },
-      DAY_C: {
-        id: "DAY_C",
-        name: "Full-Body Capacity & Hinge Resilience",
-        prehab: "Prehab: Deadbug with Wall Press + Band Dislocates",
-        prehabDetails: [
-          { name: "Deadbug with Wall Press", dose: "2 sets × 6 reps / side", cue: "Press hands hard into wall to lock lats. Lower back glued flush to floor." },
-          { name: "Band Shoulder Dislocates", dose: "2 sets × 10 passes", cue: "Wide grip on light band. Keep elbows locked; smooth over-and-back arc." }
-        ],
-        slots: [
-          {
-            slot: "C1",
-            target: "3x6-8",
-            primary: "DB Bulgarian Split Squat",
-            defaultLoad: 40,
-            alts: [
-              "DB Bulgarian Split Squat",
-              "Cybex VR2 Articulating Leg Press",
-              "Cybex VR2 Leg Extension",
-              "Supported Reverse Lunge (Rack/Wall)",
-              "Goblet Squat (Tempo 3-0-1)"
-            ]
-          },
-          {
-            slot: "C2",
-            target: "3x8-10",
-            primary: "Lat Pulldown (Neutral/Mag-Grip)",
-            defaultLoad: 130,
-            alts: [
-              "Lat Pulldown (Neutral/Mag-Grip)",
-              "Cybex VR2 High Row (Chest Supported)",
-              "Bravo Dual-Cable Pulldown",
-              "Half-Kneeling Single-Arm Pulldown",
-              "Chest-Supported Dumbbell Row"
-            ]
-          },
-          {
-            slot: "C3",
-            target: "3x8-10",
-            primary: "Incline DB Bench Press (30°)",
-            defaultLoad: 65,
-            alts: [
-              "Incline DB Bench Press (30°)",
-              "Cybex VR2 Converging Chest Press",
-              "Cybex VR2 Pec Fly (Machine)",
-              "Neutral-Grip DB Floor Press"
-            ]
-          },
-          {
-            slot: "C4",
-            target: "3x40-50 paces",
-            primary: "Farmer's Carries",
-            defaultLoad: 60,
-            alts: [
-              "Farmer's Carries",
-              "Suitcase Carry (Single-Arm)",
-              "Cybex VR2 Seated Hip Abductor/Adductor",
-              "Cable Pallof Press"
-            ]
-          }
-        ]
-      }
-,
-      DAY_D: {
-        id: "DAY_D",
-        name: "Trunk Fortress & Core Integrity",
-        prehab: "Prehab: McGill Big 3 + Deadbugs & Band Pallof Warmup",
-        prehabDetails: [
-          { name: "Deadbugs (Wall or Med Ball Press)", dose: "2 sets × 8 reps / side", cue: "Lower back flush against floor. Exhale fully as opposite limbs extend." },
-          { name: "McGill Side Planks", dose: "2 sets × 15–20s hold / side", cue: "Straight line ankle to ear. Brace glutes and lateral obliques." },
-          { name: "Kettlebell Halos (10–15 lbs)", dose: "2 sets × 6 circles / direction", cue: "Tight ribcage. Circle head closely without shifting hips or neck." }
-        ],
-        slots: [
-          {
-            slot: "D1",
-            target: "3x10-12",
-            primary: "Cable Pallof Press (Bravo)",
-            defaultLoad: 35,
-            alts: [
-              "Cable Pallof Press (Bravo)",
-              "Bravo Cable Woodchoppers (High-to-Low)",
-              "Single-Arm DB Suitcase Carry",
-              "Tall-Kneeling Pallof Hold (20s)"
-            ]
-          },
-          {
-            slot: "D2",
-            target: "3x10-12",
-            primary: "Cybex VR2 Seated Abdominal Crunch",
-            defaultLoad: 70,
-            alts: [
-              "Cybex VR2 Seated Abdominal Crunch",
-              "Bravo Kneeling Cable Crunch",
-              "Med Ball Deadbug Compression (8-12 lbs)",
-              "Hollow Body Isometric Hold (30s)"
-            ]
-          },
-          {
-            slot: "D3",
-            target: "3x40-50 paces",
-            primary: "Kettlebell Suitcase March / Carry",
-            defaultLoad: 30,
-            alts: [
-              "Kettlebell Suitcase March / Carry",
-              "Farmer's Carries (Dual DB/KB)",
-              "Overhead Waiter's Walk (Single DB)",
               "Bravo Anti-Extension Overhead Hold"
             ]
           },
@@ -1131,6 +899,182 @@
       `;
     }
 
+    // -------------------------------------------------------------
+    // HYBRID CARDIO CONTEXTUAL INPUTS & METRIC TRANSLATOR
+    // -------------------------------------------------------------
+    const CARDIO_CONFIGS = {
+      "Incline Treadmill Walk (Zone 2)": {
+        label1: "INCLINE (%)",
+        label2: "MINUTES",
+        label3: "ZONE / RPE",
+        default1: 10,
+        default2: 12,
+        calcEquiv: (incline, mins) => ({
+          equivReps: Math.round(mins * 10),
+          equivVolume: Math.round(mins * 100 * Math.max(1, incline * 0.5)),
+          display: `${mins} mins @ ${incline}% inc`
+        })
+      },
+      "Stationary Bike (Zone 2 Cadence)": {
+        label1: "RESISTANCE (LVL)",
+        label2: "MINUTES",
+        label3: "ZONE / RPE",
+        default1: 8,
+        default2: 12,
+        calcEquiv: (lvl, mins) => ({
+          equivReps: Math.round(mins * 10),
+          equivVolume: Math.round(mins * 100 * Math.max(1, lvl * 0.4)),
+          display: `${mins} mins @ Lvl ${lvl}`
+        })
+      },
+      "Rower (Zone 2 Steady State)": {
+        label1: "DAMPER (LVL)",
+        label2: "MINUTES",
+        label3: "ZONE / RPE",
+        default1: 5,
+        default2: 12,
+        calcEquiv: (damper, mins) => ({
+          equivReps: Math.round(mins * 12),
+          equivVolume: Math.round(mins * 120 * Math.max(1, damper * 0.3)),
+          display: `${mins} mins @ Damper ${damper}`
+        })
+      },
+      "Rower Sprints (30s on / 60s off)": {
+        label1: "SPLIT PACE (s)",
+        label2: "ROUNDS",
+        label3: "RPE (1-10)",
+        default1: 105,
+        default2: 8,
+        calcEquiv: (split, rounds) => ({
+          equivReps: Math.round(rounds * 15),
+          equivVolume: Math.round(rounds * 850),
+          display: `${rounds} rounds (${split}s split)`
+        })
+      },
+      "Stationary Bike Surge Intervals": {
+        label1: "GEAR / LEVEL",
+        label2: "ROUNDS",
+        label3: "RPE (1-10)",
+        default1: 10,
+        default2: 8,
+        calcEquiv: (gear, rounds) => ({
+          equivReps: Math.round(rounds * 15),
+          equivVolume: Math.round(rounds * 800),
+          display: `${rounds} rounds @ Gear ${gear}`
+        })
+      },
+      "Incline Power Walk Surges": {
+        label1: "INCLINE (%)",
+        label2: "ROUNDS",
+        label3: "RPE (1-10)",
+        default1: 12,
+        default2: 8,
+        calcEquiv: (incline, rounds) => ({
+          equivReps: Math.round(rounds * 15),
+          equivVolume: Math.round(rounds * 800),
+          display: `${rounds} rounds @ ${incline}%`
+        })
+      },
+      "Rower / Incline Treadmill (90s Max Effort AMRAP)": {
+        label1: "PACE / INCLINE",
+        label2: "SECONDS / MINS",
+        label3: "RPE (1-10)",
+        default1: 10,
+        default2: 90,
+        calcEquiv: (p, s) => ({
+          equivReps: 35,
+          equivVolume: 4500,
+          display: `${s}s Max Effort`
+        })
+      },
+      "Rower 500m Apex Sprint (Sub-1:45 Pace)": {
+        label1: "SPLIT / WATTS",
+        label2: "TOTAL TIME (s)",
+        label3: "RPE (1-10)",
+        default1: 102,
+        default2: 102,
+        calcEquiv: (watts, s) => ({
+          equivReps: 40,
+          equivVolume: 5000,
+          display: `500m in ${s}s`
+        })
+      }
+    };
+
+    function updateInputLabelsForExercise(exerciseName) {
+      const cfg = CARDIO_CONFIGS[exerciseName];
+      const loadInput = document.getElementById('loadInput');
+      const repsInput = document.getElementById('repsInput');
+      const rpeSelect = document.getElementById('rpeSelect');
+
+      if (!loadInput || !repsInput) return;
+
+      const label1 = loadInput.parentElement ? loadInput.parentElement.querySelector('label') : null;
+      const label2 = repsInput.parentElement ? repsInput.parentElement.querySelector('label') : null;
+      const label3 = rpeSelect && rpeSelect.parentElement ? rpeSelect.parentElement.querySelector('label') : null;
+
+      if (cfg) {
+        if (label1) label1.innerText = cfg.label1;
+        if (label2) label2.innerText = cfg.label2;
+        if (label3) label3.innerText = cfg.label3;
+        if (loadInput.value === "0" || loadInput.value === "") loadInput.value = cfg.default1;
+        if (repsInput.value === "0" || repsInput.value === "") repsInput.value = cfg.default2;
+      } else {
+        if (label1) label1.innerText = "LOAD (LBS)";
+        if (label2) label2.innerText = "REPS";
+        if (label3) label3.innerText = "RPE";
+      }
+    }
+
+    function checkSecretRingTriggers(setObj) {
+      if (typeof getSecretRingsState !== 'function') return;
+      const rings = getSecretRingsState();
+      let changed = false;
+
+      // 1. Ring of Prayer: Zone 2 Incline Walk or Bike >= 12 mins, RPE <= 8.0, clean
+      if ((setObj.exercise.includes("Treadmill") || setObj.exercise.includes("Stationary Bike")) &&
+          setObj.reps >= 12 && setObj.rpe <= 8.0 && !setObj.jointPain && !rings["ring-prayer"]) {
+        rings["ring-prayer"] = true;
+        changed = true;
+        showToast("💍 SECRET RING UNLOCKED: Ring of Prayer (Mental Stillness)!");
+      }
+
+      // 2. Ring of Sadness: Cybex Leg Press >= 25 reps in DAY G or Metcon
+      if (setObj.exercise.includes("Leg Press") && setObj.reps >= 25 && !setObj.jointPain && !rings["ring-sadness"]) {
+        rings["ring-sadness"] = true;
+        changed = true;
+        showToast("💍 SECRET RING UNLOCKED: Ring of Sadness (Acidosis Grind)!");
+      }
+
+      // 3. Ring of Rage: Rower Sprints >= 8 rounds
+      if (setObj.exercise.includes("Rower Sprints") && setObj.reps >= 8 && !setObj.jointPain && !rings["ring-rage"]) {
+        rings["ring-rage"] = true;
+        changed = true;
+        showToast("💍 SECRET RING UNLOCKED: Ring of Rage (Spin Dash Intervals)!");
+      }
+
+      // 4. Ring of Hatred: Farmer's Carries >= 60 paces @ 60+ lbs
+      if (setObj.exercise.includes("Farmer") && setObj.load >= 60 && setObj.reps >= 60 && !setObj.jointPain && !rings["ring-hatred"]) {
+        rings["ring-hatred"] = true;
+        changed = true;
+        showToast("💍 SECRET RING UNLOCKED: Ring of Hatred (Grip Crucible)!");
+      }
+
+      // 5. Ring of Pleasure: 45s TUT Lat Pulldown or Cable Pallof Hold
+      if ((setObj.exercise.includes("Lat Pulldown") || setObj.exercise.includes("Pallof")) &&
+          setObj.reps >= 45 && !setObj.jointPain && !rings["ring-pleasure"]) {
+        rings["ring-pleasure"] = true;
+        changed = true;
+        showToast("💍 SECRET RING UNLOCKED: Ring of Pleasure (Lactic Threshold)!");
+      }
+
+      if (changed) {
+        saveSecretRingsState(rings);
+        renderArtifactsTray();
+        if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+      }
+    }
+
     function loadSlotData() {
       const stageDef = STAGES[activeStageKey];
       const slotDef = stageDef.slots[activeSlotIndex];
@@ -1154,6 +1098,7 @@
 
       // Render Tactical Cues & Setup Intel
       renderMovementIntel(slotDef.primary);
+      updateInputLabelsForExercise(slotDef.primary);
 
       updateLogButtonText();
     }
@@ -1164,6 +1109,7 @@
       const selectedEx = document.getElementById('exerciseSelect').value;
       applyDynamicWorkingLoad(selectedEx, slotDef.target, slotDef.defaultLoad);
       renderMovementIntel(selectedEx);
+      updateInputLabelsForExercise(selectedEx);
       updateLogButtonText();
     }
 
@@ -1215,18 +1161,36 @@
         showToast(`★ NEW 1RM PR: ${exercise} → ${setE1RM} LBS!`);
       }
 
-      activeSession.sets.push({
+      const isCardio = !!CARDIO_CONFIGS[exercise];
+      let equivReps = reps;
+      let equivVolume = Math.round(load * reps);
+      let displayMetric = `${load}lbs × ${reps}r`;
+
+      if (isCardio) {
+        const cMetrics = CARDIO_CONFIGS[exercise].calcEquiv(load, reps);
+        equivReps = cMetrics.equivReps;
+        equivVolume = cMetrics.equivVolume;
+        displayMetric = cMetrics.display;
+      }
+
+      const completedSetObj = {
         slot: slotDef.slot,
         exercise,
         setNum: setsInSlot,
         load,
         reps,
+        equivReps,
+        equivVolume,
+        displayMetric,
         rpe,
-        e1rm: setE1RM,
+        e1rm: isCardio ? 0 : setE1RM,
         isNewPR: isNewPR,
         tempoClean,
         jointPain: currentSetPain
-      });
+      };
+
+      activeSession.sets.push(completedSetObj);
+      checkSecretRingTriggers(completedSetObj);
 
       saveSessionState();
       renderSessionUI();
@@ -1261,7 +1225,7 @@
     // TONNAGE & MASTERY VAULT (SUITE D)
     // -------------------------------------------------------------
     function updateTonnageDisplay() {
-      const totalTonnage = activeSession.sets.reduce((sum, s) => sum + ((s.load || 0) * (s.reps || 0)), 0);
+      const totalTonnage = activeSession.sets.reduce((sum, s) => sum + (s.equivVolume !== undefined ? s.equivVolume : ((s.load || 0) * (s.reps || 0))), 0);
       const display = document.getElementById('tonnageDisplay');
       if (display) {
         display.innerText = `VOL: ${totalTonnage.toLocaleString()} LBS`;
@@ -2199,7 +2163,7 @@ Tap OK to close.`);
           const ringEarned = s.rpe <= 8.0 && s.tempoClean && !s.jointPain;
           row.innerHTML = `
             <span class="set-tag">${s.slot} • S${s.setNum}</span>
-            <span class="set-detail">${s.exercise}: ${s.load}lbs × ${s.reps}r @ RPE ${s.rpe}</span>
+            <span class="set-detail">${s.exercise}: ${s.displayMetric || `${s.load}lbs × ${s.reps}r`} @ RPE ${s.rpe}</span>
             <span class="set-badge-ring">${ringEarned ? '★ RING' : 'CHECK'}</span>
           `;
           listContainer.appendChild(row);
@@ -2358,8 +2322,30 @@ Tap OK to close.`);
       const anyPain = activeSession.jointPain || activeSession.sets.some(s => s.jointPain);
       const ringBonus = prehab ? (anyPain ? 7500 : 15000) : 0;
       const timeBonus = 20000;
-      const totalReps = activeSession.sets.reduce((sum, s) => sum + s.reps, 0);
+      const totalReps = activeSession.sets.reduce((sum, s) => sum + (s.equivReps !== undefined ? s.equivReps : s.reps), 0);
       const forceBonus = totalReps * 75;
+
+      // End-of-Session Secret Ring Checks
+      if (typeof getSecretRingsState === 'function') {
+        const rings = getSecretRingsState();
+        let ringUpdated = false;
+        // Ring of Joy: Clear DAY G BODYWEIGHT track with 4 sets & zero joint pain
+        if (activeStageKey === 'DAY_G' && activeCardioTrack === 'BODYWEIGHT' && activeSession.sets.length >= 4 && !anyPain && !rings['ring-joy']) {
+          rings['ring-joy'] = true;
+          ringUpdated = true;
+          showToast("💍 SECRET RING UNLOCKED: Ring of Joy (Unbroken Flow)!");
+        }
+        // Ring of Wishes: Clear DAY G with S-Rank & 100% Shield
+        if (activeStageKey === 'DAY_G' && rank === 'S' && !anyPain && !rings['ring-wishes']) {
+          rings['ring-wishes'] = true;
+          ringUpdated = true;
+          showToast("💍 SECRET RING UNLOCKED: Ring of Wishes (World Master)!");
+        }
+        if (ringUpdated) {
+          saveSecretRingsState(rings);
+          renderArtifactsTray();
+        }
+      }
 
       const ringsBanked = activeSession.sets.filter(s => s.rpe <= 8.0 && s.tempoClean && !s.jointPain).length;
       const redRingBonus = ringsBanked * 10000;
