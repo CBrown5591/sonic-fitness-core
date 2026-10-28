@@ -1,3 +1,235 @@
+// -------------------------------------------------------------
+    // STAGE DEFINITIONS & MOVEMENT CATALOG
+    // -------------------------------------------------------------
+        const STAGES = {
+      DAY_A: {
+        id: "DAY_A",
+        name: "Hinge & Horizontal Power",
+        prehab: "Prehab: McGill Big 3 + Band Pull-Aparts & Face Pulls",
+        prehabDetails: [
+          { name: "Bird-Dogs (McGill Big 3)", dose: "2 sets × 6 reps / side", cue: "5s hold at full extension. Neutral spine; do not hyperextend lumbar." },
+          { name: "Side Planks (McGill Big 3)", dose: "2 sets × 15–20s hold / side", cue: "Straight line from ankle to shoulder. Brace glutes & lateral obliques." },
+          { name: "Band Pull-Aparts & Face Pulls", dose: "2 sets × 15 reps", cue: "Pull band to clavicle/bridge of nose. Squeeze scaps together for 1s." }
+        ],
+        slots: [
+          {
+            slot: "A1",
+            target: "3x6-8",
+            primary: "Supported Romanian Deadlift (Heavy DBs)",
+            defaultLoad: 60,
+            alts: [
+              "Supported Romanian Deadlift (Heavy DBs)",
+              "Supported Romanian Deadlift (RDL)",
+              "B-Stance DB Hinge",
+              "Glute Bridge / DB RDL (to Bench)"
+            ]
+          },
+          {
+            slot: "A2",
+            target: "3x8-10",
+            primary: "Chest-Supported Dumbbell Row",
+            defaultLoad: 50,
+            alts: [
+              "Chest-Supported Dumbbell Row",
+              "Cybex VR2 High Row (Chest Supported)",
+              "Bravo Dual-Cable Row (Mid-Height)",
+              "Lat Pulldown (Neutral/Mag-Grip)"
+            ]
+          },
+          {
+            slot: "A3",
+            target: "3x8-10",
+            primary: "Neutral-Grip DB Floor Press",
+            defaultLoad: 60,
+            alts: [
+              "Neutral-Grip DB Floor Press",
+              "Cybex VR2 Converging Chest Press",
+              "Incline DB Bench Press (30°)",
+              "Cybex VR2 Overhead Shoulder Press",
+              "Incline Push-Up (Hands on Bench)"
+            ]
+          },
+          {
+            slot: "A4",
+            target: "3x10-12",
+            primary: "Cable Pallof Press",
+            defaultLoad: 30,
+            alts: [
+              "Cable Pallof Press",
+              "Tall-Kneeling Pallof Hold",
+              "Cybex VR2 Seated Abdominal Crunch",
+              "Suitcase Carry (Single-Arm)"
+            ]
+          }
+        ]
+      },
+      DAY_B: {
+        id: "DAY_B",
+        name: "Knee Stability & Shoulder Rehab",
+        prehab: "Prehab: Tibialis Wall Raises & 90/90 Hip Switches",
+        prehabDetails: [
+          { name: "Tibialis Wall Raises", dose: "2 sets × 15–20 reps", cue: "Heels 12 inches from wall. Flex toes hard to shins to buffer patellar load." },
+          { name: "90/90 Hip Switches", dose: "2 sets × 8 reps / side", cue: "Upright tall torso. Smoothly rotate internal & external hip capsules." },
+          { name: "Prone Scapular Y-T-W Raises", dose: "1–2 sets × 6 reps / position", cue: "Thumbs up to ceiling. Fire lower traps & posterior rotator cuff." }
+        ],
+        slots: [
+          {
+            slot: "B1",
+            target: "3x8-10",
+            primary: "Suitcase DB Squat",
+            defaultLoad: 55,
+            alts: [
+              "Suitcase DB Squat",
+              "Goblet Squat (Tempo 3-0-1)",
+              "Cybex VR2 Articulating Leg Press",
+              "DB Bulgarian Split Squat",
+              "Bodyweight Squat / TRX Squat"
+            ]
+          },
+          {
+            slot: "B2",
+            target: "3x8-10",
+            primary: "Half-Kneeling Landmine Press",
+            defaultLoad: 45,
+            alts: [
+              "Half-Kneeling Landmine Press",
+              "Cybex VR2 Overhead Shoulder Press",
+              "Cybex VR2 Converging Chest Press",
+              "Bravo Half-Kneeling Cable Press",
+              "Neutral-Grip DB Floor Press"
+            ]
+          },
+          {
+            slot: "B3",
+            target: "3x8-10",
+            primary: "Supported Romanian Deadlift (RDL)",
+            defaultLoad: 65,
+            alts: [
+              "Supported Romanian Deadlift (RDL)",
+              "Cybex VR2 Leg Curl",
+              "B-Stance DB Hinge",
+              "Supported Romanian Deadlift (Heavy DBs)"
+            ]
+          },
+          {
+            slot: "B4",
+            target: "3x12-15",
+            primary: "Cable External Rotations",
+            defaultLoad: 15,
+            alts: [
+              "Cable External Rotations",
+              "Cybex VR2 Rear Delt Fly",
+              "Side-Lying DB External Rotation",
+              "Prone Scapular Y-T-W Raises"
+            ]
+          }
+        ]
+      },
+      DAY_C: {
+        id: "DAY_C",
+        name: "Full-Body Capacity & Hinge Resilience",
+        prehab: "Prehab: Deadbug with Wall Press + Band Dislocates",
+        prehabDetails: [
+          { name: "Deadbug with Wall Press", dose: "2 sets × 6 reps / side", cue: "Press hands hard into wall to lock lats. Lower back glued flush to floor." },
+          { name: "Band Shoulder Dislocates", dose: "2 sets × 10 passes", cue: "Wide grip on light band. Keep elbows locked; smooth over-and-back arc." }
+        ],
+        slots: [
+          {
+            slot: "C1",
+            target: "3x6-8",
+            primary: "DB Bulgarian Split Squat",
+            defaultLoad: 40,
+            alts: [
+              "DB Bulgarian Split Squat",
+              "Cybex VR2 Articulating Leg Press",
+              "Cybex VR2 Leg Extension",
+              "Supported Reverse Lunge (Rack/Wall)",
+              "Goblet Squat (Tempo 3-0-1)"
+            ]
+          },
+          {
+            slot: "C2",
+            target: "3x8-10",
+            primary: "Lat Pulldown (Neutral/Mag-Grip)",
+            defaultLoad: 130,
+            alts: [
+              "Lat Pulldown (Neutral/Mag-Grip)",
+              "Cybex VR2 High Row (Chest Supported)",
+              "Bravo Dual-Cable Pulldown",
+              "Half-Kneeling Single-Arm Pulldown",
+              "Chest-Supported Dumbbell Row"
+            ]
+          },
+          {
+            slot: "C3",
+            target: "3x8-10",
+            primary: "Incline DB Bench Press (30°)",
+            defaultLoad: 65,
+            alts: [
+              "Incline DB Bench Press (30°)",
+              "Cybex VR2 Converging Chest Press",
+              "Cybex VR2 Pec Fly (Machine)",
+              "Neutral-Grip DB Floor Press"
+            ]
+          },
+          {
+            slot: "C4",
+            target: "3x40-50 paces",
+            primary: "Farmer's Carries",
+            defaultLoad: 60,
+            alts: [
+              "Farmer's Carries",
+              "Suitcase Carry (Single-Arm)",
+              "Cybex VR2 Seated Hip Abductor/Adductor",
+              "Cable Pallof Press"
+            ]
+          }
+        ]
+      }
+,
+      DAY_D: {
+        id: "DAY_D",
+        name: "Trunk Fortress & Core Integrity",
+        prehab: "Prehab: McGill Big 3 + Deadbugs & Band Pallof Warmup",
+        prehabDetails: [
+          { name: "Deadbugs (Wall or Med Ball Press)", dose: "2 sets × 8 reps / side", cue: "Lower back flush against floor. Exhale fully as opposite limbs extend." },
+          { name: "McGill Side Planks", dose: "2 sets × 15–20s hold / side", cue: "Straight line ankle to ear. Brace glutes and lateral obliques." },
+          { name: "Kettlebell Halos (10–15 lbs)", dose: "2 sets × 6 circles / direction", cue: "Tight ribcage. Circle head closely without shifting hips or neck." }
+        ],
+        slots: [
+          {
+            slot: "D1",
+            target: "3x10-12",
+            primary: "Cable Pallof Press (Bravo)",
+            defaultLoad: 35,
+            alts: [
+              "Cable Pallof Press (Bravo)",
+              "Bravo Cable Woodchoppers (High-to-Low)",
+              "Single-Arm DB Suitcase Carry",
+              "Tall-Kneeling Pallof Hold (20s)"
+            ]
+          },
+          {
+            slot: "D2",
+            target: "3x10-12",
+            primary: "Cybex VR2 Seated Abdominal Crunch",
+            defaultLoad: 70,
+            alts: [
+              "Cybex VR2 Seated Abdominal Crunch",
+              "Bravo Kneeling Cable Crunch",
+              "Med Ball Deadbug Compression (8-12 lbs)",
+              "Hollow Body Isometric Hold (30s)"
+            ]
+          },
+          {
+            slot: "D3",
+            target: "3x40-50 paces",
+            primary: "Kettlebell Suitcase March / Carry",
+            defaultLoad: 30,
+            alts: [
+              "Kettlebell Suitcase March / Carry",
+              "Farmer's Carries (Dual DB/KB)",
+              "Overhead Waiter's Walk (Single DB)",
               "Bravo Anti-Extension Overhead Hold"
             ]
           },
