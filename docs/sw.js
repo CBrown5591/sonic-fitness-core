@@ -19,6 +19,7 @@ const ASSETS_TO_CACHE = [
   // Calculation & Telemetry Engines
   './js/engine/calc.js',
   './js/engine/autoReg.js',
+  './js/engine/flightPath.js',
   './js/engine/records.js',
   // Core Subsystems
   './js/core/audio.js',
