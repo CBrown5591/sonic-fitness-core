@@ -460,6 +460,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
         updatePilotExpUI();
       }
+      if (data.stages) {
+        localStorage.setItem('sonic_stage_statuses', JSON.stringify(data.stages));
+        checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
+          selectStage(nextStage);
+          showToast(`FLIGHT PATH ENGAGED: ${nextStage.replace('_', ' ')}!`);
+        });
+      }
       if (data.prVault) savePRVault(data.prVault);
       renderVault();
     }
