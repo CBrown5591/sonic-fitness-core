@@ -1,44 +1,58 @@
-const CACHE_NAME = 'sonic-fitness-v15';
-const CORE_ASSETS = [
+// -------------------------------------------------------------
+// SERVICE WORKER // CACHE & OFFLINE RUNTIME (MODULAR ES6 BUILD)
+// -------------------------------------------------------------
+
+const CACHE_NAME = 'sonic-fitness-v14-esm';
+
+const ASSETS_TO_CACHE = [
   './',
   './index.html',
   './styles.css',
-  './app.js',
-  './manifest.json'
-];
-const OPTIONAL_ASSETS = [
-  './assets/icons/icon-192.png',
-  './assets/icons/icon-512.png',
-  './assets/audio/level_up.mp3',
+  './manifest.json',
+  // Root ES6 Module
+  './js/app.js',
+  // Data Catalogs
+  './js/data/stages.js',
+  './js/data/cardioConfigs.js',
+  './js/data/movementIntel.js',
+  './js/data/artifacts.js',
+  // Calculation & Telemetry Engines
+  './js/engine/calc.js',
+  './js/engine/autoReg.js',
+  './js/engine/records.js',
+  // Core Subsystems
+  './js/core/audio.js',
+  './js/core/timer.js',
+  './js/core/sync.js',
+  // UI Components
+  './js/ui/renderHud.js',
+  './js/ui/auditModal.js',
+  './js/ui/resultsOverlay.js',
+  // Audio Assets
   './assets/audio/sa2_clear.mp3',
-  './assets/audio/genesis_clear.mp3'
+  './assets/audio/genesis_clear.mp3',
+  './assets/audio/level_up.mp3',
+  // Icons
+  './assets/icons/icon-192.png',
+  './assets/icons/icon-512.png'
 ];
 
-self.addEventListener('install', (e) => {
-  self.skipWaiting();
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(async (cache) => {
-      console.log('[SW] Initializing cache for', CACHE_NAME);
-      // Cache core assets gracefully (won't throw if one is missing)
-      const allAssets = [...CORE_ASSETS, ...OPTIONAL_ASSETS];
-      await Promise.allSettled(
-        allAssets.map(url => 
-          cache.add(url).catch(err => {
-            console.warn('[SW] Non-critical asset cache skip:', url);
-          })
-        )
-      );
-    })
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME).then((cache) => {
+      console.log('[ServiceWorker] Pre-caching ES6 modular assets');
+      return cache.addAll(ASSETS_TO_CACHE);
+    }).then(() => self.skipWaiting())
   );
 });
 
-self.addEventListener('activate', (e) => {
-  e.waitUntil(
-    caches.keys().then((keys) => {
+self.addEventListener('activate', (event) => {
+  event.waitUntil(
+    caches.keys().then((keyList) => {
       return Promise.all(
-        keys.map((key) => {
+        keyList.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log('[SW] Purging outdated cache:', key);
+            console.log('[ServiceWorker] Removing legacy cache:', key);
             return caches.delete(key);
           }
         })
@@ -47,35 +61,27 @@ self.addEventListener('activate', (e) => {
   );
 });
 
-// Network-first for app code (HTML, JS, CSS) so updates appear immediately
-self.addEventListener('fetch', (e) => {
-  const url = new URL(e.request.url);
-
-  if (url.pathname.endsWith('.js') || url.pathname.endsWith('.css') || url.pathname.endsWith('.html') || url.pathname.endsWith('/')) {
-    e.respondWith(
-      fetch(e.request)
-        .then((response) => {
-          if (response && response.status === 200) {
-            const clone = response.clone();
-            caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
-          }
-          return response;
-        })
-        .catch(() => caches.match(e.request))
-    );
+self.addEventListener('fetch', (event) => {
+  // Pass Google Apps Script webhook calls directly to network
+  if (event.request.url.includes('script.google.com')) {
     return;
   }
 
-  // Cache-first for images, fonts, and audio
-  e.respondWith(
-    caches.match(e.request).then((cached) => {
-      return cached || fetch(e.request).then((response) => {
-        if (response && response.status === 200) {
-          const clone = response.clone();
-          caches.open(CACHE_NAME).then((cache) => cache.put(e.request, clone));
+  event.respondWith(
+    caches.match(event.request).then((cachedResponse) => {
+      if (cachedResponse) {
+        return cachedResponse;
+      }
+      return fetch(event.request).then((networkResponse) => {
+        if (!networkResponse || networkResponse.status !== 200 || networkResponse.type !== 'basic') {
+          return networkResponse;
         }
-        return response;
-      }).catch(() => null);
+        const responseToCache = networkResponse.clone();
+        caches.open(CACHE_NAME).then((cache) => {
+          cache.put(event.request, responseToCache);
+        });
+        return networkResponse;
+      });
     })
   );
 });
