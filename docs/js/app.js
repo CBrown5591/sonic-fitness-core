@@ -6,6 +6,7 @@ import { STAGES } from './data/stages.js';
 import { CARDIO_CONFIGS } from './data/cardioConfigs.js';
 import { calculateE1RM, calculateTargetLoad, calculatePilotProgress } from './engine/calc.js';
 import { autoRegulateNextSet } from './engine/autoReg.js';
+import { checkAndRenderFlightPathPrompt } from './engine/flightPath.js';
 import { getStageRecords, saveStageRecord, getPRVault, savePRVault } from './engine/records.js';
 import { playRingChime, toggleAudioTheme, getAudioTheme, stopAllFanfare } from './core/audio.js';
 import { setTimerDuration, startRestTimer, applyTimeBrake, initTimerBackgroundSync } from './core/timer.js';
@@ -423,6 +424,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderVault();
   renderArtifactsTray();
   initTimerBackgroundSync();
+  checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
+    selectStage(nextStage);
+    showToast(`FLIGHT PATH ENGAGED: ${nextStage.replace('_', ' ')}!`);
+  });
 
   const logBtn = document.getElementById('logSetBtn');
   if (logBtn) logBtn.onclick = logActiveSet;
@@ -480,6 +485,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const rank = totalScore >= 75000 ? "S" : (totalScore >= 55000 ? "A" : "B");
         const recordRes = saveStageRecord(activeStageKey, totalScore, rank);
+        localStorage.setItem('sonic_last_stage', activeStageKey);
+        localStorage.setItem('sonic_last_strain', (activeSession.jointPain || activeSession.sets.some(s => s.jointPain)) ? 'true' : 'false');
 
         const oldExp = getLifetimeExp();
         const newExp = oldExp + totalScore;
