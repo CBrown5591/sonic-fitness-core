@@ -1,5 +1,5 @@
 // -------------------------------------------------------------
-// STAGE DEFINITIONS & MOVEMENT CATALOG
+// STAGE DEFINITIONS & MOVEMENT CATALOG (TRAVEL-PROOF CALISTHENICS EXPANSION)
 // Modular Data Catalog: stages.js
 // -------------------------------------------------------------
 export const STAGES = {
@@ -22,7 +22,9 @@ export const STAGES = {
           "Supported Romanian Deadlift (Heavy DBs)",
           "Supported Romanian Deadlift (RDL)",
           "B-Stance DB Hinge",
-          "Glute Bridge / DB RDL (to Bench)"
+          "Glute Bridge / DB RDL (to Bench)",
+          "Bodyweight Single-Leg RDL (Wall Supported)",
+          "Single-Leg Glute Bridge (12r/side)"
         ]
       },
       {
@@ -34,7 +36,8 @@ export const STAGES = {
           "Chest-Supported Dumbbell Row",
           "Cybex VR2 High Row (Chest Supported)",
           "Bravo Dual-Cable Row (Mid-Height)",
-          "Lat Pulldown (Neutral/Mag-Grip)"
+          "Lat Pulldown (Neutral/Mag-Grip)",
+          "Doorframe Row (Single-Arm Strict Pause)"
         ]
       },
       {
@@ -47,7 +50,8 @@ export const STAGES = {
           "Cybex VR2 Converging Chest Press",
           "Incline DB Bench Press (30°)",
           "Cybex VR2 Overhead Shoulder Press",
-          "Incline Push-Up (Hands on Bench)"
+          "Incline Push-Up (Hands on Bench)",
+          "Tempo Push-Up (3-0-1 Pause)"
         ]
       },
       {
@@ -59,7 +63,8 @@ export const STAGES = {
           "Cable Pallof Press",
           "Tall-Kneeling Pallof Hold",
           "Cybex VR2 Seated Abdominal Crunch",
-          "Suitcase Carry (Single-Arm)"
+          "Suitcase Carry (Single-Arm)",
+          "Tall-Kneeling Pallof Hold (20s)"
         ]
       }
     ]
@@ -97,7 +102,9 @@ export const STAGES = {
           "Cybex VR2 Overhead Shoulder Press",
           "Cybex VR2 Converging Chest Press",
           "Bravo Half-Kneeling Cable Press",
-          "Neutral-Grip DB Floor Press"
+          "Neutral-Grip DB Floor Press",
+          "Pike Push-Up (Hands or Feet Elevated)",
+          "Incline Push-Up (Hands on Bench)"
         ]
       },
       {
@@ -109,7 +116,9 @@ export const STAGES = {
           "Supported Romanian Deadlift (RDL)",
           "Cybex VR2 Leg Curl",
           "B-Stance DB Hinge",
-          "Supported Romanian Deadlift (Heavy DBs)"
+          "Supported Romanian Deadlift (Heavy DBs)",
+          "Bodyweight Single-Leg RDL (Wall Supported)",
+          "Single-Leg Glute Bridge (12r/side)"
         ]
       },
       {
@@ -145,7 +154,8 @@ export const STAGES = {
           "Cybex VR2 Articulating Leg Press",
           "Cybex VR2 Leg Extension",
           "Supported Reverse Lunge (Rack/Wall)",
-          "Goblet Squat (Tempo 3-0-1)"
+          "Goblet Squat (Tempo 3-0-1)",
+          "Bodyweight Squat / TRX Squat"
         ]
       },
       {
@@ -158,7 +168,9 @@ export const STAGES = {
           "Cybex VR2 High Row (Chest Supported)",
           "Bravo Dual-Cable Pulldown",
           "Half-Kneeling Single-Arm Pulldown",
-          "Chest-Supported Dumbbell Row"
+          "Chest-Supported Dumbbell Row",
+          "Prone Floor Lat Pull (Towel Slide)",
+          "Doorframe Row (Single-Arm Strict Pause)"
         ]
       },
       {
@@ -170,7 +182,9 @@ export const STAGES = {
           "Incline DB Bench Press (30°)",
           "Cybex VR2 Converging Chest Press",
           "Cybex VR2 Pec Fly (Machine)",
-          "Neutral-Grip DB Floor Press"
+          "Neutral-Grip DB Floor Press",
+          "Incline Push-Up (Hands on Bench)",
+          "Tempo Push-Up (3-0-1 Pause)"
         ]
       },
       {
@@ -182,7 +196,9 @@ export const STAGES = {
           "Farmer's Carries",
           "Suitcase Carry (Single-Arm)",
           "Cybex VR2 Seated Hip Abductor/Adductor",
-          "Cable Pallof Press"
+          "Cable Pallof Press",
+          "Bear Crawl (Forward & Reverse Paced)",
+          "March in Place (Strict High Knees 45s)"
         ]
       }
     ]
@@ -230,7 +246,9 @@ export const STAGES = {
           "Kettlebell Suitcase March / Carry",
           "Farmer's Carries (Dual DB/KB)",
           "Overhead Waiter's Walk (Single DB)",
-          "Bravo Anti-Extension Overhead Hold"
+          "Bravo Anti-Extension Overhead Hold",
+          "March in Place (Strict High Knees 45s)",
+          "Bear Crawl (Forward & Reverse Paced)"
         ]
       },
       {
@@ -266,7 +284,9 @@ export const STAGES = {
           "Cybex VR2 Articulating Leg Press",
           "Suitcase DB Squat",
           "DB Bulgarian Split Squat",
-          "Goblet Squat (Tempo 3-0-1)"
+          "Goblet Squat (Tempo 3-0-1)",
+          "Bodyweight Squat / TRX Squat",
+          "Supported Reverse Lunge (Rack/Wall)"
         ]
       },
       {
@@ -278,7 +298,9 @@ export const STAGES = {
           "Cybex VR2 Converging Chest Press",
           "Cybex VR2 Pec Fly (Machine)",
           "Incline DB Bench Press (30°)",
-          "Neutral-Grip DB Floor Press"
+          "Neutral-Grip DB Floor Press",
+          "Incline Push-Up (Hands on Bench)",
+          "Tempo Push-Up (3-0-1 Pause)"
         ]
       },
       {
@@ -290,7 +312,9 @@ export const STAGES = {
           "Cybex VR2 Leg Curl",
           "Supported Romanian Deadlift (RDL)",
           "B-Stance DB Hinge",
-          "Cable Pull-Through (Bravo Low Pulley)"
+          "Cable Pull-Through (Bravo Low Pulley)",
+          "Single-Leg Glute Bridge (12r/side)",
+          "Bodyweight Single-Leg RDL (Wall Supported)"
         ]
       },
       {
@@ -302,7 +326,9 @@ export const STAGES = {
           "Cybex VR2 High Row (Chest Supported)",
           "Chest-Supported Dumbbell Row",
           "Bravo Dual-Cable Row (Mid-Height)",
-          "Lat Pulldown (Neutral/Mag-Grip)"
+          "Lat Pulldown (Neutral/Mag-Grip)",
+          "Doorframe Row (Single-Arm Strict Pause)",
+          "Prone Scapular Y-T-W Raises"
         ]
       }
     ]
@@ -350,7 +376,8 @@ export const STAGES = {
           "Cybex VR2 Rear Delt Fly",
           "Cable External Rotations (Bravo)",
           "Bravo Dual-Cable Face Pulls",
-          "Side-Lying DB External Rotation"
+          "Side-Lying DB External Rotation",
+          "Prone Scapular Y-T-W Raises"
         ]
       },
       {
@@ -362,7 +389,9 @@ export const STAGES = {
           "Cable Pallof Press (Bravo)",
           "Cybex VR2 Seated Abdominal Crunch",
           "Cable Pull-Through (Bravo Low Pulley)",
-          "Bravo Anti-Extension Overhead Hold"
+          "Bravo Anti-Extension Overhead Hold",
+          "Tall-Kneeling Pallof Hold (20s)",
+          "Hollow Body Isometric Hold (30s)"
         ]
       }
     ]
@@ -385,7 +414,9 @@ export const STAGES = {
         alts: [
           "Incline Treadmill Walk (Zone 2)",
           "Stationary Bike (Zone 2 Cadence)",
-          "Rower (Zone 2 Steady State)"
+          "Rower (Zone 2 Steady State)",
+          "March in Place (Strict High Knees 45s)",
+          "Low-Impact Shadow Boxing Flow (Zone 2)"
         ]
       },
       {
@@ -396,7 +427,9 @@ export const STAGES = {
         alts: [
           "Rower Sprints (30s on / 60s off)",
           "Stationary Bike Surge Intervals",
-          "Incline Power Walk Surges"
+          "Incline Power Walk Surges",
+          "Mountain Climbers (Hands on Bed - Low Shear)",
+          "Fast Step-Jacks (30s on / 60s off)"
         ]
       },
       {
@@ -407,7 +440,8 @@ export const STAGES = {
         alts: [
           "Bravo Cable Woodchoppers (High-to-Low)",
           "Med Ball Rotational Wall Chest Pass",
-          "Cable Pallof Press (Bravo)"
+          "Cable Pallof Press (Bravo)",
+          "Tall-Kneeling Pallof Hold (20s)"
         ]
       },
       {
@@ -418,7 +452,9 @@ export const STAGES = {
         alts: [
           "Farmer's Carries (Dual DB/KB)",
           "Kettlebell Suitcase March / Carry",
-          "Overhead Waiter's Walk (Single DB)"
+          "Overhead Waiter's Walk (Single DB)",
+          "Bear Crawl (Forward & Reverse Paced)",
+          "March in Place (Strict High Knees 45s)"
         ]
       }
     ]
@@ -454,7 +490,9 @@ export const STAGES = {
           "Cable Pull-Through (Bravo Low Pulley)",
           "Supported Romanian Deadlift (RDL)",
           "B-Stance DB Hinge",
-          "Glute Bridge / DB RDL (to Bench)"
+          "Glute Bridge / DB RDL (to Bench)",
+          "Single-Leg Glute Bridge (12r/side)",
+          "Bodyweight Single-Leg RDL (Wall Supported)"
         ]
       },
       {
@@ -466,7 +504,9 @@ export const STAGES = {
           "Lat Pulldown (Neutral/Mag-Grip)",
           "Bravo Dual-Cable Row (Mid-Height)",
           "Chest-Supported Dumbbell Row",
-          "Cybex VR2 High Row (Chest Supported)"
+          "Cybex VR2 High Row (Chest Supported)",
+          "Doorframe Row (Single-Arm Strict Pause)",
+          "Prone Floor Lat Pull (Towel Slide)"
         ]
       },
       {
@@ -478,7 +518,9 @@ export const STAGES = {
           "Single-Arm DB Suitcase Carry",
           "Farmer's Carries (Dual DB/KB)",
           "Cable Pallof Press (Bravo)",
-          "Kettlebell Suitcase March / Carry"
+          "Kettlebell Suitcase March / Carry",
+          "March in Place (Strict High Knees 45s)",
+          "Bear Crawl (Forward & Reverse Paced)"
         ]
       }
     ]
@@ -558,7 +600,8 @@ export const STAGES = {
         alts: [
           "Supported Romanian Deadlift (Heavy DBs)",
           "Supported Romanian Deadlift (RDL)",
-          "B-Stance DB Hinge"
+          "B-Stance DB Hinge",
+          "Bodyweight Single-Leg RDL (Strict 5s Eccentric)"
         ]
       },
       {
@@ -569,7 +612,8 @@ export const STAGES = {
         alts: [
           "Cybex VR2 Articulating Leg Press",
           "Suitcase DB Squat",
-          "Goblet Squat (Tempo 3-0-1)"
+          "Goblet Squat (Tempo 3-0-1)",
+          "Single-Leg Box Squat (Strict 3s Pause)"
         ]
       },
       {
@@ -580,7 +624,8 @@ export const STAGES = {
         alts: [
           "Neutral-Grip DB Floor Press",
           "Cybex VR2 Converging Chest Press",
-          "Incline DB Bench Press (30°)"
+          "Incline DB Bench Press (30°)",
+          "Feet-Elevated Decline Push-Up (Strict 1s Pause)"
         ]
       },
       {
@@ -593,7 +638,8 @@ export const STAGES = {
           "Rower 500m Apex Sprint (Sub-1:45 Pace)",
           "Farmer's Carries (Dual DB/KB - Max Distance)",
           "Cybex VR2 High Row (Chest Supported)",
-          "Lat Pulldown (Neutral/Mag-Grip)"
+          "Lat Pulldown (Neutral/Mag-Grip)",
+          "Doorframe Row (Single-Arm 3s Pause)"
         ]
       }
     ]
@@ -616,7 +662,8 @@ export const STAGES = {
         alts: [
           "Cybex VR2 Articulating Leg Press",
           "Cybex VR2 Leg Extension",
-          "Suitcase DB Squat"
+          "Suitcase DB Squat",
+          "Bodyweight Squat / TRX Squat (AMRAP to Failure)"
         ]
       },
       {
@@ -627,7 +674,8 @@ export const STAGES = {
         alts: [
           "Cybex VR2 Converging Chest Press",
           "Neutral-Grip DB Floor Press",
-          "Incline DB Bench Press (30°)"
+          "Incline DB Bench Press (30°)",
+          "Incline Push-Up (Hands on Bench - AMRAP)"
         ]
       },
       {
@@ -638,7 +686,8 @@ export const STAGES = {
         alts: [
           "Lat Pulldown (Neutral/Mag-Grip)",
           "Chest-Supported Dumbbell Row",
-          "Cybex VR2 High Row (Chest Supported)"
+          "Cybex VR2 High Row (Chest Supported)",
+          "Doorframe Row (Single-Arm AMRAP)"
         ]
       },
       {
@@ -651,7 +700,8 @@ export const STAGES = {
           "Single-Arm DB Suitcase Carry (AMRAP Laps to Failure)",
           "Rower / Incline Treadmill (90s Max Effort AMRAP)",
           "Cable Pallof Press (Bravo)",
-          "Med Ball Deadbug Compression"
+          "Med Ball Deadbug Compression",
+          "Hollow Body Isometric Hold (Max Seconds to Failure)"
         ]
       }
     ]
