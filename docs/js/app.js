@@ -549,3 +549,84 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.error('[SW] Registration failed:', err));
   });
 }
+/**
+ * DRY-RUN SIMULATION RUNNER (SAFE FOR VIDEO RECORDING)
+ * Executes full UI, sound, audit modal, and results tally with ZERO sheet writes.
+ */
+export function runSandboxedSimulation() {
+  // 1. Snapshot real local state so test points never persist
+  const originalState = {
+    exp: localStorage.getItem('sonic_lifetime_exp'),
+    records: localStorage.getItem('sonic_stage_records'),
+    lastStage: localStorage.getItem('sonic_last_stage'),
+    strain: localStorage.getItem('sonic_last_strain')
+  };
+
+  // 2. Load Day C and inject test sets
+  selectStage('DAY_C', true);
+
+  const mockSets = [
+    { slot: "C1", exercise: "DB Bulgarian Split Squat", setNum: 1, load: 45, reps: 8, rpe: 7.5, tempoClean: true, jointPain: false },
+    { slot: "C2", exercise: "Lat Pulldown (Neutral/Mag-Grip)", setNum: 1, load: 130, reps: 10, rpe: 8.0, tempoClean: true, jointPain: false },
+    { slot: "C3", exercise: "Incline DB Bench Press (30°)", setNum: 1, load: 65, reps: 8, rpe: 8.0, tempoClean: true, jointPain: false },
+    { slot: "C4", exercise: "Farmer's Carries", setNum: 1, load: 60, reps: 50, rpe: 8.0, tempoClean: true, jointPain: false }
+  ];
+
+  mockSets.forEach(s => {
+    s.equivReps = s.reps;
+    s.equivVolume = s.load * s.reps;
+    s.displayMetric = `${s.load}lbs × ${s.reps}r`;
+    s.e1rm = Math.round(s.load * (1 + s.reps / 30));
+    activeSession.sets.push(s);
+  });
+
+  activeSession.prehabChecked = true;
+  saveSessionState();
+  renderSessionUI();
+
+  // 3. Open Telemetry Audit Modal
+  openAuditModal(activeSession, () => {
+    showToast("⚡ DRY RUN: Outbound Sheet Sync MUTED");
+
+    const totalReps = activeSession.sets.reduce((sum, s) => sum + s.reps, 0);
+    const forceBonus = totalReps * 75;
+    const prehabBonus = 15000;
+    const ringsBanked = 4;
+    const redRingBonus = ringsBanked * 10000;
+    const totalScore = forceBonus + prehabBonus + 20000 + redRingBonus; // ~77,550 PTS -> S-Rank
+
+    // 4. Launch Results Overlay (Audio + Stamp + Rolling Tally)
+    renderResultsOverlay({
+      stage: 'DAY_C',
+      totalScore,
+      rank: 'S',
+      ringBonus: prehabBonus,
+      timeBonus: 20000,
+      forceBonus,
+      redRingBonus,
+      ringsBanked,
+      totalSets: 4,
+      didLevelUp: false,
+      newLevel: 1,
+      isNewRecord: true
+    }, () => {
+      // 5. RESTORE REAL STATE ON CLOSE: Clean up test artifacts
+      if (originalState.exp !== null) localStorage.setItem('sonic_lifetime_exp', originalState.exp);
+      if (originalState.records !== null) localStorage.setItem('sonic_stage_records', originalState.records);
+      if (originalState.lastStage !== null) localStorage.setItem('sonic_last_stage', originalState.lastStage);
+      if (originalState.strain !== null) localStorage.setItem('sonic_last_strain', originalState.strain);
+
+      activeSession = { stage: 'DAY_C', slotIndex: 0, prehabChecked: false, jointPain: false, sets: [] };
+      activeSlotIndex = 0;
+      saveSessionState();
+      renderSessionUI();
+      updatePilotExpUI();
+      showToast("Simulation Complete: Real state preserved [✓]");
+    });
+
+    // NOTE: syncSessionToSheets() is intentionally omitted here!
+  });
+}
+
+// Bind to window for mobile button trigger
+window.runSandboxedSimulation = runSandboxedSimulation;
