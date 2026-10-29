@@ -424,6 +424,28 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderVault();
   renderArtifactsTray();
   initTimerBackgroundSync();
+  // Mount In-Line Demo Button inside the status/header action row
+  const audioBtn = document.getElementById('audioThemeBtn') || document.getElementById('notifyBtn');
+  if (audioBtn && audioBtn.parentElement && !document.getElementById('demoSimBtn')) {
+    const demoBtn = document.createElement('button');
+    demoBtn.id = 'demoSimBtn';
+    demoBtn.innerText = '🎬 DEMO';
+    demoBtn.style.cssText = `
+      background: #141c2e;
+      border: 1px solid var(--accent-blue);
+      color: var(--accent-blue);
+      padding: 4px 8px;
+      border-radius: 6px;
+      font-size: 10px;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    `;
+    demoBtn.onclick = window.runSandboxedSimulation;
+    audioBtn.parentElement.insertBefore(demoBtn, audioBtn);
+  }
   checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
     selectStage(nextStage);
     showToast(`FLIGHT PATH ENGAGED: ${nextStage.replace('_', ' ')}!`);
