@@ -25,7 +25,7 @@ const ASSETS_TO_CACHE = [
   './js/core/timer.js',
   './js/core/sync.js',
   // UI Components
-  './js/ui/renderHud.js',
+  './js/ui/renderHud.js',\n  './js/ui/renderArtifacts.js',\n  './js/ui/renderVault.js',
   './js/ui/auditModal.js',
   './js/ui/resultsOverlay.js',
   // Audio Assets
