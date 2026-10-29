@@ -4,7 +4,6 @@
 // -------------------------------------------------------------
 import { STAGES } from './data/stages.js';
 import { CARDIO_CONFIGS } from './data/cardioConfigs.js';
-import { CHAOS_EMERALDS_CATALOG, SECRET_RINGS_CATALOG } from './data/artifacts.js';
 import { calculateE1RM, calculateTargetLoad, calculatePilotProgress } from './engine/calc.js';
 import { autoRegulateNextSet } from './engine/autoReg.js';
 import { getStageRecords, saveStageRecord, getPRVault, savePRVault } from './engine/records.js';
@@ -14,6 +13,8 @@ import { fetchSheetTelemetry, syncSessionToSheets } from './core/sync.js';
 import { showToast, renderStageRecordBanner, renderMovementIntel, updateInputLabelsForExercise } from './ui/renderHud.js';
 import { openAuditModal } from './ui/auditModal.js';
 import { renderResultsOverlay } from './ui/resultsOverlay.js';
+import { renderArtifactsTray, checkSecretRingTriggers, isDarkspineModeUnlocked, isSuperModeUnlocked } from './ui/renderArtifacts.js';
+import { renderVault, toggleVaultDrawer, creditVaultRings } from './ui/renderVault.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
 let activeSlotIndex = 0;
@@ -36,10 +37,10 @@ function getLifetimeExp() {
 function updatePilotExpUI() {
   const exp = getLifetimeExp();
   const info = calculatePilotProgress(exp);
-  const lvlEl = document.getElementById('hudPilotLevel');
-  const titleEl = document.getElementById('hudPilotTitle');
-  const counterEl = document.getElementById('hudExpCounter');
-  const fillEl = document.getElementById('hudExpFill');
+  const lvlEl = document.getElementById('hudPilotLevel') || document.querySelector('.lvl-badge');
+  const titleEl = document.getElementById('hudPilotTitle') || document.querySelector('.pilot-title');
+  const counterEl = document.getElementById('hudExpCounter') || document.querySelector('.exp-counter');
+  const fillEl = document.getElementById('hudExpFill') || document.querySelector('.exp-bar-fill');
   const toNextEl = document.getElementById('hudExpToNext');
 
   if (lvlEl) lvlEl.innerText = `LVL ${info.level}`;
@@ -68,32 +69,38 @@ function saveSessionState() {
 
 function loadSlotData() {
   const stageDef = STAGES[activeStageKey];
+  if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
   const slotDef = stageDef.slots[activeSlotIndex];
 
-  document.getElementById('currentSlotTag').innerText = `SLOT ${slotDef.slot}`;
-  document.getElementById('currentTargetTag').innerText = `TARGET: ${slotDef.target}`;
+  const currentSlotTag = document.getElementById('currentSlotTag');
+  const currentTargetTag = document.getElementById('currentTargetTag');
+  if (currentSlotTag) currentSlotTag.innerText = `SLOT ${slotDef.slot}`;
+  if (currentTargetTag) currentTargetTag.innerText = `TARGET: ${slotDef.target}`;
 
   const select = document.getElementById('exerciseSelect');
-  select.innerHTML = '';
-  slotDef.alts.forEach(alt => {
-    const opt = document.createElement('option');
-    opt.value = alt;
-    opt.innerText = alt;
-    select.appendChild(opt);
-  });
-  select.value = slotDef.primary;
+  if (select) {
+    select.innerHTML = '';
+    slotDef.alts.forEach(alt => {
+      const opt = document.createElement('option');
+      opt.value = alt;
+      opt.innerText = alt;
+      select.appendChild(opt);
+    });
+    select.value = slotDef.primary;
+  }
 
   const prVault = getPRVault();
   const pr = prVault[slotDef.primary];
   const dynamicLoad = pr && pr.e1rm > 0 ? calculateTargetLoad(pr.e1rm, slotDef.target, slotDef.defaultLoad, slotDef.primary) : slotDef.defaultLoad;
-  document.getElementById('loadInput').value = dynamicLoad;
+  const loadInput = document.getElementById('loadInput');
+  if (loadInput) loadInput.value = dynamicLoad;
 
   renderMovementIntel(slotDef.primary);
   updateInputLabelsForExercise(slotDef.primary);
   updateLogButtonText();
 }
 
-function selectStage(stageKey, resetIfNew = true) {
+export function selectStage(stageKey, resetIfNew = true) {
   if (resetIfNew && stageKey !== activeStageKey) {
     if (activeSession.sets.length > 0 && !confirm("Switching stages will start a new session. Proceed?")) return;
     activeSession = { stage: stageKey, slotIndex: 0, prehabChecked: false, jointPain: false, sets: [] };
@@ -106,9 +113,15 @@ function selectStage(stageKey, resetIfNew = true) {
   if (activeTab) activeTab.classList.add('active');
 
   const stageDef = STAGES[stageKey];
-  document.getElementById('stageFocus').innerText = `STAGE CLEAR ZONE // ${stageKey.replace('_', ' ')}`;
-  document.getElementById('stageName').innerText = stageDef.name;
-  document.getElementById('prehabLabel').innerText = stageDef.prehab.replace('Prehab: ', '');
+  if (stageDef) {
+    const stageFocus = document.getElementById('stageFocus');
+    const stageName = document.getElementById('stageName');
+    const prehabLabel = document.getElementById('prehabLabel');
+
+    if (stageFocus) stageFocus.innerText = `STAGE CLEAR ZONE // ${stageKey.replace('_', ' ')}`;
+    if (stageName) stageName.innerText = stageDef.name;
+    if (prehabLabel) prehabLabel.innerText = stageDef.prehab.replace('Prehab: ', '');
+  }
 
   renderStageRecordBanner(stageKey);
   renderSlotStepper();
@@ -122,6 +135,7 @@ function renderSlotStepper() {
   if (!stepper) return;
   stepper.innerHTML = '';
   const stageDef = STAGES[activeStageKey];
+  if (!stageDef) return;
 
   stageDef.slots.forEach((slotData, index) => {
     const btn = document.createElement('div');
@@ -141,6 +155,7 @@ function renderSlotStepper() {
 
 function updateLogButtonText() {
   const stageDef = STAGES[activeStageKey];
+  if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
   const slotDef = stageDef.slots[activeSlotIndex];
   const setsInThisSlot = activeSession.sets.filter(s => s.slot === slotDef.slot).length;
   const logBtn = document.getElementById('logSetBtn');
@@ -154,10 +169,11 @@ function updateLogButtonText() {
   }
 }
 
-function logActiveSet() {
+export function logActiveSet() {
   const stageDef = STAGES[activeStageKey];
+  if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
   const slotDef = stageDef.slots[activeSlotIndex];
-  const exercise = document.getElementById('exerciseSelect').value;
+  const exercise = document.getElementById('exerciseSelect') ? document.getElementById('exerciseSelect').value : slotDef.primary;
   const load = parseFloat(document.getElementById('loadInput').value) || 0;
   const reps = parseInt(document.getElementById('repsInput').value, 10) || 0;
   const rpe = parseFloat(document.getElementById('rpeSelect').value) || 7.5;
@@ -211,10 +227,13 @@ function logActiveSet() {
   };
 
   activeSession.sets.push(completedSetObj);
+  checkSecretRingTriggers(completedSetObj, showToast);
+
   saveSessionState();
   renderSessionUI();
   playRingChime();
   if (navigator.vibrate) navigator.vibrate(50);
+
   startRestTimer((secs) => {
     const mins = Math.floor(secs / 60);
     const rem = secs % 60;
@@ -233,8 +252,8 @@ function logActiveSet() {
     updateLogButtonText();
     const autoAdj = autoRegulateNextSet(completedSetObj);
     if (autoAdj) {
-      if (autoAdj.load) document.getElementById('loadInput').value = autoAdj.load;
-      if (autoAdj.reps) document.getElementById('repsInput').value = autoAdj.reps;
+      if (autoAdj.load && document.getElementById('loadInput')) document.getElementById('loadInput').value = autoAdj.load;
+      if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
       showToast(autoAdj.message);
     }
   }
@@ -247,7 +266,73 @@ function logActiveSet() {
   }
 }
 
+export function togglePrehab() {
+  activeSession.prehabChecked = !activeSession.prehabChecked;
+  if (activeSession.prehabChecked && navigator.vibrate) navigator.vibrate(35);
+  saveSessionState();
+  renderSessionUI();
+}
+
+export function toggleTempo() {
+  tempoClean = !tempoClean;
+  const btn = document.getElementById('tempoBtn');
+  if (btn) {
+    if (tempoClean) {
+      btn.classList.add('active-green');
+      btn.innerText = "Tempo: Clean (3-0-1)";
+    } else {
+      btn.classList.remove('active-green');
+      btn.innerText = "Tempo: Fast / Sloppy";
+    }
+  }
+}
+
+export function togglePain() {
+  currentSetPain = !currentSetPain;
+  const btn = document.getElementById('painBtn');
+  if (btn) {
+    if (currentSetPain) {
+      btn.classList.add('active-red');
+      btn.innerText = "Joint Strain: YES";
+      activeSession.jointPain = true;
+    } else {
+      btn.classList.remove('active-red');
+      btn.innerText = "Joint Strain: No";
+    }
+  }
+  saveSessionState();
+  renderSessionUI();
+}
+
 function renderSessionUI() {
+  const prehabBox = document.getElementById('prehabBox');
+  const statusPill = document.getElementById('prehabStatusPill');
+  const prehabTag = document.getElementById('prehabTag');
+  if (prehabBox && statusPill && prehabTag) {
+    if (activeSession.prehabChecked) {
+      prehabBox.classList.add('cleared');
+      statusPill.innerText = "CLEARED [✓]";
+      prehabTag.innerText = "MISSION COMPLETED";
+    } else {
+      prehabBox.classList.remove('cleared');
+      statusPill.innerText = "PENDING [ ]";
+      prehabTag.innerText = "PRE-FLIGHT MISSION";
+    }
+  }
+
+  const shield = document.getElementById('shieldStatus');
+  if (shield) {
+    if (activeSession.jointPain) {
+      shield.innerText = "SHIELD: 50%";
+      shield.style.borderColor = "var(--accent-red)";
+      shield.style.color = "var(--accent-red)";
+    } else {
+      shield.innerText = "SHIELD: 100%";
+      shield.style.borderColor = "var(--accent-green)";
+      shield.style.color = "var(--accent-green)";
+    }
+  }
+
   updateTonnageDisplay();
   renderSlotStepper();
   updateLogButtonText();
@@ -255,7 +340,7 @@ function renderSessionUI() {
   const listContainer = document.getElementById('loggedSetsList');
   if (listContainer) {
     listContainer.innerHTML = '';
-    activeSession.sets.forEach((s, idx) => {
+    activeSession.sets.forEach((s) => {
       const row = document.createElement('div');
       row.className = 'set-row';
       const ringEarned = s.rpe <= 8.0 && s.tempoClean && !s.jointPain;
@@ -313,14 +398,46 @@ function ensureStageTabsExist() {
   }
 }
 
+// Bind interactive handlers to window for HTML compatibility
+window.selectStage = selectStage;
+window.logActiveSet = logActiveSet;
+window.togglePrehab = togglePrehab;
+window.toggleTempo = toggleTempo;
+window.togglePain = togglePain;
+window.applyTimeBrake = () => applyTimeBrake((secs) => {
+  const mins = Math.floor(secs / 60);
+  const rem = secs % 60;
+  const clk = document.getElementById('timerClock');
+  if (clk) clk.innerText = `${String(mins).padStart(2,'0')}:${String(rem).padStart(2,'0')}`;
+});
+window.toggleAudioTheme = () => {
+  const next = toggleAudioTheme();
+  showToast(`Audio Theme: ${next === 'modern' ? 'MODERN SONIC ⚡' : '16-BIT CLASSIC 🕹️'}`);
+};
+
 // Global bootstrap
 document.addEventListener('DOMContentLoaded', async () => {
   ensureStageTabsExist();
   updatePilotExpUI();
   selectStage(activeStageKey, false);
+  renderVault();
+  renderArtifactsTray();
+  initTimerBackgroundSync();
 
   const logBtn = document.getElementById('logSetBtn');
   if (logBtn) logBtn.onclick = logActiveSet;
+
+  const prehabBox = document.getElementById('prehabBox');
+  if (prehabBox) prehabBox.onclick = togglePrehab;
+
+  const tempoBtn = document.getElementById('tempoBtn');
+  if (tempoBtn) tempoBtn.onclick = toggleTempo;
+
+  const painBtn = document.getElementById('painBtn');
+  if (painBtn) painBtn.onclick = togglePain;
+
+  const timeBrakeBtn = document.getElementById('timeBrakeBtn');
+  if (timeBrakeBtn) timeBrakeBtn.onclick = window.applyTimeBrake;
 
   const exSelect = document.getElementById('exerciseSelect');
   if (exSelect) {
@@ -331,6 +448,18 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
   }
 
+  // Live Sheet Telemetry Sync on boot
+  fetchSheetTelemetry().then(data => {
+    if (data && data.status === 'success') {
+      if (data.lifetimeExp !== undefined) {
+        localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
+        updatePilotExpUI();
+      }
+      if (data.prVault) savePRVault(data.prVault);
+      renderVault();
+    }
+  });
+
   const clearBtn = document.getElementById('finishSessionBtn') || document.getElementById('stageClearBtn');
   if (clearBtn) {
     clearBtn.onclick = () => {
@@ -340,10 +469,18 @@ document.addEventListener('DOMContentLoaded', async () => {
         const prehabBonus = activeSession.prehabChecked ? 15000 : 0;
         const ringsBanked = activeSession.sets.filter(s => s.rpe <= 8.0 && s.tempoClean && !s.jointPain).length;
         const redRingBonus = ringsBanked * 10000;
-        const totalScore = forceBonus + prehabBonus + 20000 + redRingBonus;
-        const rank = totalScore >= 75000 ? "S" : (totalScore >= 55000 ? "A" : "B");
+        let totalScore = forceBonus + prehabBonus + 20000 + redRingBonus;
 
+        if (isDarkspineModeUnlocked() && activeStageKey === 'DAY_G') {
+          totalScore += (activeSession.sets.length * 500);
+        }
+        if (isSuperModeUnlocked()) {
+          totalScore = Math.round(totalScore * 1.25);
+        }
+
+        const rank = totalScore >= 75000 ? "S" : (totalScore >= 55000 ? "A" : "B");
         const recordRes = saveStageRecord(activeStageKey, totalScore, rank);
+
         const oldExp = getLifetimeExp();
         const newExp = oldExp + totalScore;
         localStorage.setItem('sonic_lifetime_exp', newExp);
@@ -351,6 +488,10 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         const oldProg = calculatePilotProgress(oldExp);
         const newProg = calculatePilotProgress(newExp);
+
+        creditVaultRings(activeSession.sets);
+        renderVault();
+        renderArtifactsTray();
 
         renderResultsOverlay({
           stage: activeStageKey,
@@ -386,3 +527,11 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
   }
 });
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('[SW] Registered:', reg.scope))
+      .catch(err => console.error('[SW] Registration failed:', err));
+  });
+}
