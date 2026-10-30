@@ -5,7 +5,6 @@
 import { playStageClearFanfare, stopAllFanfare } from '../core/audio.js';
 
 export function renderResultsOverlay(data, onClose) {
-  // Remove existing overlay if present
   const existing = document.getElementById('resultsOverlay');
   if (existing) existing.remove();
 
@@ -19,7 +18,7 @@ export function renderResultsOverlay(data, onClose) {
   let emeraldHtml = '';
   if (data.awardedEmerald) {
     emeraldHtml = `
-      <div class="results-emerald-banner animate-pop">
+      <div id="resultsEmeraldBanner" class="results-emerald-banner" style="display: none;">
         <div class="emerald-banner-title">✨ SPECIAL STAGE CLEAR ✨</div>
         <div class="emerald-banner-detail">💎 ${data.awardedEmerald}</div>
       </div>
@@ -44,57 +43,79 @@ export function renderResultsOverlay(data, onClose) {
   let recordHtml = data.isNewRecord ? `<div class="results-record-badge">★ NEW STAGE RECORD ★</div>` : '';
   let levelUpHtml = data.didLevelUp ? `<div class="results-levelup-badge">▲ PILOT LEVEL UP → LVL ${data.newLevel} ▲</div>` : '';
 
+  // Experience Bar data
+  const expGained = data.totalScore || 0;
+  const currentLevel = data.newLevel || 1;
+  const expProgressPct = data.expProgressPct !== undefined ? data.expProgressPct : 65;
+
   overlay.innerHTML = `
-    <div class="results-card animate-slam">
+    <div class="results-card animate-card-enter">
       <div class="results-header">
         <span class="results-stage-tag">${data.stage.replace('_', ' ')} // SORTIE CLEARED</span>
         <button id="closeResultsXBtn" class="results-x-btn">✕</button>
       </div>
 
       <div class="results-body">
-        <div class="results-rank-container">
-          <div class="results-rank-stamp animate-stamp" style="color: ${rankColor}; border-color: ${rankColor};">
-            ${data.rank}
-          </div>
-          <div class="results-rank-label">SONIC RATING</div>
-        </div>
-
         ${recordHtml}
         ${levelUpHtml}
         ${transformMultiplierHtml}
-        ${emeraldHtml}
 
-        <div class="results-breakdown-list">
-          <div class="breakdown-row">
-            <span>KINETIC FORCE BONUS (${data.totalSets || 4} SETS)</span>
-            <span class="breakdown-val">+${(data.forceBonus || 0).toLocaleString()} PTS</span>
+        <!-- 1. SIDE-BY-SIDE: Individual Breakdown Scores (Left) & Sonic Rank Stamp (Right) -->
+        <div class="results-split-row">
+          <div class="results-breakdown-list">
+            <div class="breakdown-row">
+              <span class="breakdown-lbl">FORCE BONUS (${data.totalSets || 4}S)</span>
+              <span class="breakdown-val">+${(data.forceBonus || 0).toLocaleString()}</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-lbl">PREHAB CLEAR</span>
+              <span class="breakdown-val">+${(data.ringBonus || 0).toLocaleString()}</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-lbl">TIME CLEARANCE</span>
+              <span class="breakdown-val">+${(data.timeBonus || 20000).toLocaleString()}</span>
+            </div>
+            <div class="breakdown-row">
+              <span class="breakdown-lbl">RED STAR RINGS (${data.ringsBanked || 0}★)</span>
+              <span class="breakdown-val highlight-red">+${(data.redRingBonus || 0).toLocaleString()}</span>
+            </div>
           </div>
-          <div class="breakdown-row">
-            <span>PRE-FLIGHT ARMOR CLEAR</span>
-            <span class="breakdown-val">+${(data.ringBonus || 0).toLocaleString()} PTS</span>
-          </div>
-          <div class="breakdown-row">
-            <span>SORTIE COMPLETION BONUS</span>
-            <span class="breakdown-val">+${(data.timeBonus || 20000).toLocaleString()} PTS</span>
-          </div>
-          <div class="breakdown-row">
-            <span>RED STAR RINGS (${data.ringsBanked || 0} BANKED)</span>
-            <span class="breakdown-val" style="color: #f87171;">+${(data.redRingBonus || 0).toLocaleString()} PTS</span>
+
+          <div class="results-rank-column">
+            <div id="resultsRankStamp" class="results-rank-stamp-hidden" style="color: ${rankColor}; border-color: ${rankColor};">
+              ${data.rank}
+            </div>
+            <div id="resultsRankLabel" class="results-rank-label" style="opacity: 0;">SONIC RATING</div>
           </div>
         </div>
 
-        <div class="results-gold-ring-payout animate-pulse">
-          <div class="gold-ring-payout-label">STANDARD GOLD RINGS BANKED</div>
-          <div class="gold-ring-payout-val">🪙 +${goldRings} RINGS</div>
-        </div>
-
+        <!-- 2. TOTAL SCORE (Underneath the side-by-side section) -->
         <div class="results-total-container">
           <div class="results-total-lbl">TOTAL SCORE</div>
-          <div id="resultsScoreCounter" class="results-total-num">0</div>
+          <div id="resultsScoreCounter" class="results-total-num">0 PTS</div>
         </div>
 
-        <button id="continueResultsBtn" class="results-continue-btn">
-          CONTINUE TO COMMAND HUB ▶
+        <!-- 3. EXPERIENCE BAR (Underneath Total Score) -->
+        <div class="results-exp-block">
+          <div class="results-exp-header">
+            <span class="results-exp-lvl">PILOT LVL ${currentLevel}</span>
+            <span class="results-exp-gained">+${expGained.toLocaleString()} EXP GAINED</span>
+          </div>
+          <div class="results-exp-bar-track">
+            <div id="resultsExpFill" class="results-exp-bar-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <!-- 4. REWARDS: Standard Gold Rings & Chaos Emeralds -->
+        <div class="results-gold-ring-payout">
+          <div class="gold-ring-payout-label">STANDARD GOLD RINGS BANKED</div>
+          <div id="resultsGoldRingsCounter" class="gold-ring-payout-val">🪙 +0 RINGS</div>
+        </div>
+
+        ${emeraldHtml}
+
+        <button id="continueResultsBtn" class="results-continue-btn" style="opacity: 0.5; pointer-events: none;">
+          CALCULATING RATING...
         </button>
       </div>
     </div>
@@ -102,36 +123,79 @@ export function renderResultsOverlay(data, onClose) {
 
   document.body.appendChild(overlay);
 
-  // Play stage clear fanfare
+  // 1. Kick off Stage Clear Fanfare in the background
   try {
     playStageClearFanfare(data.rank);
   } catch (e) {
     console.warn("Audio fanfare bypassed:", e);
   }
 
-  // Rolling counter animation for total score
+  // 2. Rolling score, gold ring tally & animated EXP bar
   const counterEl = document.getElementById('resultsScoreCounter');
-  if (counterEl) {
-    const target = data.totalScore || 0;
-    const duration = 1200; // ms
-    const startTime = performance.now();
+  const goldEl = document.getElementById('resultsGoldRingsCounter');
+  const expFillEl = document.getElementById('resultsExpFill');
+  const targetScore = data.totalScore || 0;
+  const targetGold = goldRings;
+  const tallyDuration = 1400; // ms
+  const startTime = performance.now();
 
-    function updateScore(now) {
-      const elapsed = now - startTime;
-      const progress = Math.min(1, elapsed / duration);
-      // Ease out quad
-      const eased = 1 - (1 - progress) * (1 - progress);
-      const current = Math.floor(eased * target);
-      counterEl.innerText = `${current.toLocaleString()} PTS`;
+  function runRollingTally(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(1, elapsed / tallyDuration);
+    const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
 
-      if (progress < 1) {
-        requestAnimationFrame(updateScore);
-      } else {
-        counterEl.innerText = `${target.toLocaleString()} PTS`;
-      }
+    const currentScore = Math.floor(eased * targetScore);
+    const currentGold = Math.floor(eased * targetGold);
+
+    if (counterEl) counterEl.innerText = `${currentScore.toLocaleString()} PTS`;
+    if (goldEl) goldEl.innerText = `🪙 +${currentGold} RINGS`;
+    if (expFillEl) expFillEl.style.width = `${Math.min(100, Math.floor(eased * expProgressPct))}%`;
+
+    if (progress < 1) {
+      requestAnimationFrame(runRollingTally);
+    } else {
+      // 3. Tally finished -> SLAM THE RANK STAMP DOWN!
+      if (counterEl) counterEl.innerText = `${targetScore.toLocaleString()} PTS`;
+      if (goldEl) goldEl.innerText = `🪙 +${targetGold} RINGS`;
+      if (expFillEl) expFillEl.style.width = `${expProgressPct}%`;
+      triggerRankStampSlam();
     }
-    requestAnimationFrame(updateScore);
   }
+
+  function triggerRankStampSlam() {
+    const stampEl = document.getElementById('resultsRankStamp');
+    const labelEl = document.getElementById('resultsRankLabel');
+    const btn = document.getElementById('continueResultsBtn');
+    const emeraldBanner = document.getElementById('resultsEmeraldBanner');
+
+    if (stampEl) {
+      stampEl.className = 'results-rank-stamp animate-stamp-slam';
+    }
+    if (labelEl) {
+      labelEl.style.transition = 'opacity 0.3s ease';
+      labelEl.style.opacity = '1';
+    }
+
+    if (navigator.vibrate) {
+      navigator.vibrate([80, 40, 140]);
+    }
+
+    if (emeraldBanner) {
+      setTimeout(() => {
+        emeraldBanner.style.display = 'block';
+        emeraldBanner.classList.add('animate-pop-in');
+        if (navigator.vibrate) navigator.vibrate([50, 30, 80]);
+      }, 300);
+    }
+
+    if (btn) {
+      btn.style.opacity = '1';
+      btn.style.pointerEvents = 'auto';
+      btn.innerText = 'CONTINUE TO COMMAND HUB ▶';
+    }
+  }
+
+  requestAnimationFrame(runRollingTally);
 
   const dismiss = () => {
     stopAllFanfare();
