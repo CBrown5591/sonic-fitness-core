@@ -13,8 +13,8 @@ export function renderResultsOverlay(data, onClose) {
   overlay.className = 'results-overlay-backdrop';
 
   const metallicLetterClass = data.rank === 'S' 
-    ? 'letter-metallic-s' 
-    : (data.rank === 'A' ? 'letter-metallic-a' : 'letter-metallic-b');
+    ? 'rank-letter-gold' 
+    : (data.rank === 'A' ? 'rank-letter-chrome' : 'rank-letter-emerald');
   const goldRings = data.goldRingsEarned || Math.floor((data.totalScore || 0) / 1000);
 
   let emeraldHtml = '';
@@ -61,42 +61,41 @@ export function renderResultsOverlay(data, onClose) {
         ${levelUpHtml}
         ${transformMultiplierHtml}
 
-        <!-- 1. SIDE-BY-SIDE: Individual Breakdown Scores (Left) & Sonic Rank Stamp (Right) -->
-        <div class="results-split-row">
-          <div class="results-breakdown-list">
-            <div class="breakdown-row">
-              <span class="breakdown-lbl">FORCE BONUS (${data.totalSets || 4}S)</span>
-              <span class="breakdown-val">+${(data.forceBonus || 0).toLocaleString()}</span>
-            </div>
-            <div class="breakdown-row">
-              <span class="breakdown-lbl">PREHAB CLEAR</span>
-              <span class="breakdown-val">+${(data.ringBonus || 0).toLocaleString()}</span>
-            </div>
-            <div class="breakdown-row">
-              <span class="breakdown-lbl">TIME CLEARANCE</span>
-              <span class="breakdown-val">+${(data.timeBonus || 20000).toLocaleString()}</span>
-            </div>
-            <div class="breakdown-row">
-              <span class="breakdown-lbl">RED STAR RINGS (${data.ringsBanked || 0}★)</span>
-              <span class="breakdown-val highlight-red">+${(data.redRingBonus || 0).toLocaleString()}</span>
-            </div>
+        <!-- 1. HERO RANK SECTION (SPACIOUS, CENTERED, 3D METALLIC) -->
+        <div class="results-hero-rank-container">
+          <div id="resultsRankStamp" class="results-rank-stamp-hidden">
+            <span class="rank-letter-text ${metallicLetterClass}">${data.rank}</span>
           </div>
+          <div id="resultsRankLabel" class="results-rank-label" style="opacity: 0;">SONIC RATING</div>
+        </div>
 
-          <div class="results-rank-column">
-            <div id="resultsRankStamp" class="results-rank-stamp-hidden">
-              <span class="rank-letter-text ${metallicLetterClass}">${data.rank}</span>
-            </div>
-            <div id="resultsRankLabel" class="results-rank-label" style="opacity: 0;">SONIC RATING</div>
+        <!-- 2. FULL-WIDTH BREAKDOWN CARD (GENEROUS HORIZONTAL SPACING) -->
+        <div class="results-breakdown-card">
+          <div class="breakdown-row">
+            <span class="breakdown-lbl">FORCE BONUS (${data.totalSets || 4} SETS)</span>
+            <span class="breakdown-val">+${(data.forceBonus || 0).toLocaleString()} PTS</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-lbl">PRE-FLIGHT ARMOR CLEAR</span>
+            <span class="breakdown-val">+${(data.ringBonus || 0).toLocaleString()} PTS</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-lbl">SORTIE COMPLETION BONUS</span>
+            <span class="breakdown-val">+${(data.timeBonus || 20000).toLocaleString()} PTS</span>
+          </div>
+          <div class="breakdown-row">
+            <span class="breakdown-lbl">RED STAR RINGS (${data.ringsBanked || 0} BANKED)</span>
+            <span class="breakdown-val highlight-red">+${(data.redRingBonus || 0).toLocaleString()} PTS</span>
           </div>
         </div>
 
-        <!-- 2. TOTAL SCORE (Underneath side-by-side) -->
+        <!-- 3. TOTAL SCORE BANNER -->
         <div class="results-total-container">
           <div class="results-total-lbl">TOTAL SCORE</div>
           <div id="resultsScoreCounter" class="results-total-num">0 PTS</div>
         </div>
 
-        <!-- 3. EXPERIENCE BAR (Underneath Total Score) -->
+        <!-- 4. EXPERIENCE BAR (FULL WIDTH) -->
         <div class="results-exp-block">
           <div class="results-exp-header">
             <span class="results-exp-lvl">PILOT LVL ${currentLevel}</span>
@@ -107,7 +106,7 @@ export function renderResultsOverlay(data, onClose) {
           </div>
         </div>
 
-        <!-- 4. REWARDS: Standard Gold Rings & Chaos Emeralds -->
+        <!-- 5. STANDARD GOLD RINGS BANKED -->
         <div class="results-gold-ring-payout">
           <div class="gold-ring-payout-label">STANDARD GOLD RINGS BANKED</div>
           <div id="resultsGoldRingsCounter" class="gold-ring-payout-val">🪙 +0 RINGS</div>
