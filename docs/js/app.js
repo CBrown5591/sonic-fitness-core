@@ -475,11 +475,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Live Sheet Telemetry Sync on boot
   fetchSheetTelemetry().then(data => {
-    if (data && data.status === 'success') {
-      if (data.lifetimeExp !== undefined) {
-        localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
-        updatePilotExpUI();
-      }
+  if (data && data.status === 'success') {
+    if (data.lifetimeExp !== undefined) {
+      localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
+      updatePilotExpUI();
+    }
+    if (data.goldRings !== undefined && localStorage.getItem('sonic_standard_rings') === null) {
+      saveStandardRings(data.goldRings);
+    }
       if (data.stages) {
         localStorage.setItem('sonic_stage_statuses', JSON.stringify(data.stages));
         checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
