@@ -31,6 +31,8 @@ const ASSETS_TO_CACHE = [
   './js/ui/renderVault.js',
   './js/ui/auditModal.js',
   './js/ui/resultsOverlay.js',
+  './js/data/skillTree.js',
+  './js/ui/renderSkillTree.js',
   // Audio Assets
   './assets/audio/sa2_clear.mp3',
   './assets/audio/genesis_clear.mp3',
