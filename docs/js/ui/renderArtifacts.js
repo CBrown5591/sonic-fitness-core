@@ -1,6 +1,6 @@
 // -------------------------------------------------------------
 // ARTIFACTS TRAY & DUAL RING HUD CONTROLS // renderArtifacts.js
-// Modular UI Component: renderArtifacts.js
+// Modular UI Component: renderArtifacts.js (Unified Complete Build)
 // -------------------------------------------------------------
 import { playStageClearFanfare } from '../core/audio.js';
 
@@ -33,7 +33,6 @@ export const WORLD_RINGS = [
 export function getStandardRings() {
   const val = localStorage.getItem('sonic_standard_rings');
   if (val !== null) return parseInt(val, 10) || 0;
-  // Fallback: derive from lifetime EXP if not yet separately initialized
   const exp = parseInt(localStorage.getItem('sonic_lifetime_exp') || '0', 10);
   return Math.floor(exp / 1000);
 }
@@ -48,6 +47,33 @@ export function saveStandardRings(count) {
 export function addStandardRings(amount) {
   const current = getStandardRings();
   return saveStandardRings(current + amount);
+}
+
+export function getTotalRedRings() {
+  const raw = localStorage.getItem('sonic_total_red_rings');
+  if (raw !== null) return parseInt(raw, 10) || 0;
+  // Fallback: check vault items
+  try {
+    const vRaw = localStorage.getItem('sonic_mastery_vault');
+    if (vRaw) {
+      const v = JSON.parse(vRaw);
+      return v.reduce((acc, row) => acc + (Number(row.stars) || 0), 0);
+    }
+  } catch(e) {}
+  return 0;
+}
+
+export function getSpendableRedRings() {
+  const raw = localStorage.getItem('sonic_red_rings_unallocated');
+  if (raw !== null) return Math.max(0, parseInt(raw, 10) || 0);
+  return getTotalRedRings();
+}
+
+export function saveSpendableRedRings(amount) {
+  const safe = Math.max(0, parseInt(amount, 10) || 0);
+  localStorage.setItem('sonic_red_rings_unallocated', safe.toString());
+  updateHudRingBar();
+  return safe;
 }
 
 export function getChaosEmeralds() {
@@ -83,20 +109,6 @@ export function saveSecretRings(ringsObj) {
   localStorage.setItem('sonic_secret_rings', JSON.stringify(ringsObj));
 }
 
-export function getSpendableRedRings() {
-  const raw = localStorage.getItem('sonic_red_rings_unallocated');
-  if (raw !== null) return Math.max(0, parseInt(raw, 10) || 0);
-  // Default to vault rings if unallocated not yet set
-  const vaultRings = parseInt(localStorage.getItem('sonic_total_red_rings') || '0', 10);
-  return vaultRings;
-}
-
-export function saveSpendableRedRings(amount) {
-  const safe = Math.max(0, parseInt(amount, 10) || 0);
-  localStorage.setItem('sonic_red_rings_unallocated', safe.toString());
-  return safe;
-}
-
 // -------------------------------------------------------------
 // UNLOCK & TRANSFORMATION STATE CHECKS
 // -------------------------------------------------------------
@@ -106,8 +118,7 @@ export function isSuperModeUnlocked() {
 }
 
 export function isSuperSonic2Unlocked() {
-  const totalRed = parseInt(localStorage.getItem('sonic_total_red_rings') || '0', 10);
-  return isSuperModeUnlocked() && totalRed >= 50;
+  return isSuperModeUnlocked() && getTotalRedRings() >= 50;
 }
 
 export function isDarkspineModeUnlocked() {
@@ -172,7 +183,7 @@ export function deactivateSuperModeSession() {
 export function applySuperSonicDamagePenalty(showToast) {
   if (!isSuperModeSessionActive()) return;
   const currentRings = getStandardRings();
-  const penalty = 15; // Strain drops rings
+  const penalty = 15;
   const updated = Math.max(0, currentRings - penalty);
   saveStandardRings(updated);
 
@@ -194,7 +205,7 @@ export function evaluatePerfectDayEmerald(stageKey, isPerfectDay, showToast) {
 
   const emeralds = getChaosEmeralds();
   
-  // 1. Direct deterministic reward match (e.g. Day A -> Green, Day B -> Yellow, etc.)
+  // 1. Direct deterministic reward match (Day A -> Green, Day B -> Yellow, etc.)
   const directMatch = CHAOS_EMERALDS.find(em => em.day === stageKey && !emeralds[em.id]);
   if (directMatch) {
     emeralds[directMatch.id] = true;
@@ -267,38 +278,25 @@ export function checkSecretRingTriggers(sessionData, showToast) {
   const secretRings = getSecretRings();
   let awarded = null;
 
-  // 1. Ring of Prayers: Complete prehab with 100% Shield & clean form
   if (!secretRings['prayers'] && sessionData.prehab && !sessionData.jointPain) {
     secretRings['prayers'] = true;
     awarded = 'Ring of Prayers (Purple)';
-  }
-  // 2. Ring of Sadness: Recover from a prior strain set without failing sortie
-  else if (!secretRings['sadness'] && sessionData.recoveredStrain) {
+  } else if (!secretRings['sadness'] && sessionData.recoveredStrain) {
     secretRings['sadness'] = true;
     awarded = 'Ring of Sadness (Blue)';
-  }
-  // 3. Ring of Rage: Log an RPE 8.0 set with pristine tempo
-  else if (!secretRings['rage'] && sessionData.maxRpeHit && sessionData.tempoClean) {
+  } else if (!secretRings['rage'] && sessionData.maxRpeHit && sessionData.tempoClean) {
     secretRings['rage'] = true;
     awarded = 'Ring of Rage (Red)';
-  }
-  // 4. Ring of Hatred: Bank 4/4 Red Star Rings in a single sortie
-  else if (!secretRings['hatred'] && sessionData.ringsBanked >= 4) {
+  } else if (!secretRings['hatred'] && sessionData.ringsBanked >= 4) {
     secretRings['hatred'] = true;
     awarded = 'Ring of Hatred (Green)';
-  }
-  // 5. Ring of Joy: Achieve an S-Rank with zero joint pain
-  else if (!secretRings['joy'] && sessionData.rank === 'S' && !sessionData.jointPain) {
+  } else if (!secretRings['joy'] && sessionData.rank === 'S' && !sessionData.jointPain) {
     secretRings['joy'] = true;
     awarded = 'Ring of Joy (Yellow)';
-  }
-  // 6. Ring of Pleasure: Complete conditioning interval at full cadence
-  else if (!secretRings['pleasure'] && sessionData.conditioningSurge) {
+  } else if (!secretRings['pleasure'] && sessionData.conditioningSurge) {
     secretRings['pleasure'] = true;
     awarded = 'Ring of Pleasure (Cyan)';
-  }
-  // 7. Ring of Wishes: Clear a stage with a new personal PR
-  else if (!secretRings['wishes'] && sessionData.isNewRecord) {
+  } else if (!secretRings['wishes'] && sessionData.isNewRecord) {
     secretRings['wishes'] = true;
     awarded = 'Ring of Wishes (White)';
   }
@@ -317,36 +315,35 @@ export function checkSecretRingTriggers(sessionData, showToast) {
 }
 
 // -------------------------------------------------------------
-// UI RENDERING: ARTIFACTS TRAY & DUAL RING HUD
+// UI RENDERING: FULL ARTIFACTS TRAY & DUAL RING HUD
 // -------------------------------------------------------------
 export function renderArtifactsTray() {
+  // Find or create the main artifacts container
   let container = document.getElementById('artifactsTrayMount') || 
                   document.querySelector('.artifacts-container') ||
                   document.getElementById('artifactsContainer') ||
-                  document.getElementById('artifactTray') ||
-                  document.querySelector('[data-artifacts]');
+                  document.getElementById('artifactTray');
 
-  // Resilient Auto-Mount: if no static placeholder exists in index.html, auto-inject it
   if (!container) {
     const parentContainer = document.querySelector('.container') || document.body;
     container = document.createElement('div');
     container.id = 'artifactsTrayMount';
     container.className = 'artifacts-container';
     
-    // Position cleanly right after the Ring Bar or Pilot Card, or before Stage Nav
-    const ref = document.querySelector('.hud-ring-economy-bar') || 
-                document.querySelector('.pilot-exp-card') ||
-                document.querySelector('.stage-nav');
+    const ref = document.querySelector('.pilot-exp-card') || document.querySelector('.stage-nav');
     if (ref && ref.parentNode) {
       ref.parentNode.insertBefore(container, ref.nextSibling);
     } else {
-      parentContainer.appendChild(container);
+      parentContainer.prepend(container);
     }
   }
 
   const emeralds = getChaosEmeralds();
   const secretRings = getSecretRings();
+  const goldRings = getStandardRings();
+  const totalRed = getTotalRedRings();
   const spendableRed = getSpendableRedRings();
+  
   const totalEmeraldsEarned = CHAOS_EMERALDS.filter(em => !!emeralds[em.id]).length;
   const totalRingsEarned = WORLD_RINGS.filter(r => !!secretRings[r.id]).length;
 
@@ -355,9 +352,39 @@ export function renderArtifactsTray() {
     ? 'background: #1e293b; border: 1px solid #f87171; color: #f87171; cursor: pointer;' 
     : 'background: #0d1524; border: 1px solid #334155; color: #64748b; cursor: not-allowed; opacity: 0.6;';
 
+  const isDarkspine = isDarkspineModeUnlocked();
+
   container.innerHTML = `
-    <!-- CHAOS VAULT CARD -->
-    <div class="artifact-tray-card">
+    <!-- 1. DUAL RING ECONOMY HUD BAR -->
+    <div class="hud-ring-economy-bar" id="hudRingEconomyBar">
+      <div class="ring-counter-block">
+        <span class="ring-icon-symbol">🪙</span>
+        <div class="ring-counter-meta">
+          <span id="hudGoldRingsVal" class="ring-count-val">${goldRings.toLocaleString()}</span>
+          <span class="ring-counter-lbl">STANDARD RINGS</span>
+        </div>
+      </div>
+
+      <div class="ring-counter-block">
+        <span class="ring-icon-symbol">⭐</span>
+        <div class="ring-counter-meta">
+          <span id="hudRedRingsVal" class="ring-count-val" style="color: #f87171;">${totalRed} / 50</span>
+          <span class="ring-counter-lbl">RED STAR RINGS</span>
+        </div>
+      </div>
+
+      <button id="hudSuperModeBtn" class="ring-bar-btn">
+        ⚡ ENGAGE SUPER SONIC (50🪙)
+      </button>
+    </div>
+
+    <!-- 2. DARKSPINE TRANSFORMATION BADGE -->
+    <div id="hudDarkspineBadge" class="transformation-badge-active darkspine-mode-active" style="display: ${isDarkspine ? 'block' : 'none'}; margin-top: 6px; background: rgba(192, 132, 252, 0.15); border: 1px solid #c084fc; color: #c084fc; border-radius: 6px; padding: 6px; text-align: center; font-size: 11px; font-weight: 800;">
+      🔥 DARKSPINE SONIC ACTIVE // 3-CHARGE SOUL GAUGE READY 🔥
+    </div>
+
+    <!-- 3. CHAOS VAULT (EMERALDS) -->
+    <div class="artifact-tray-card" style="margin-top: 8px;">
       <div class="artifact-tray-header">
         <span class="artifact-tray-title">CHAOS VAULT // EMERALDS</span>
         <span class="artifact-tray-counter">${totalEmeraldsEarned} / 7</span>
@@ -381,7 +408,7 @@ export function renderArtifactsTray() {
       <!-- PILLAR 2: 10 RED STAR RING FORGE ACTION -->
       <div class="chaos-forge-action-row" style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center; padding-top: 6px; border-top: 1px solid #1e293b;">
         <span style="font-size: 10px; font-weight: 800; color: #94a3b8;">
-          RED RINGS: <strong style="color: #f87171; font-family: monospace;">${spendableRed}★</strong>
+          SPENDABLE: <strong style="color: #f87171; font-family: monospace;">${spendableRed}★</strong>
         </span>
         <button id="forgeEmeraldBtn" style="
           font-size: 10px;
@@ -397,7 +424,7 @@ export function renderArtifactsTray() {
       </div>
     </div>
 
-    <!-- SECRET RINGS / WORLD RINGS TRAY (DARKSPINE) -->
+    <!-- 4. WORLD RINGS / SECRET RINGS TRAY (DARKSPINE) -->
     <div class="artifact-tray-card" style="margin-top: 8px;">
       <div class="artifact-tray-header">
         <span class="artifact-tray-title">WORLD RINGS // SECRET RINGS</span>
@@ -438,6 +465,11 @@ export function updateHudRingBar() {
     goldEl.innerText = getStandardRings().toLocaleString();
   }
 
+  const redEl = document.getElementById('hudRedRingsVal');
+  if (redEl) {
+    redEl.innerText = `${getTotalRedRings()} / 50`;
+  }
+
   const superBtn = document.getElementById('hudSuperModeBtn');
   if (superBtn) {
     const isSuperUnlocked = isSuperModeUnlocked();
@@ -465,7 +497,6 @@ export function updateHudRingBar() {
     }
   }
 
-  // Update Transformation Indicators
   const darkspineBadge = document.getElementById('hudDarkspineBadge');
   if (darkspineBadge) {
     darkspineBadge.style.display = isDarkspineModeUnlocked() ? 'block' : 'none';
