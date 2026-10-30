@@ -1,8 +1,33 @@
 // -------------------------------------------------------------
-// ARTIFACTS TRAY & SECRET RINGS UI COMPONENT
+// ARTIFACTS TRAY, SECRET RINGS & HUD RING COUNTER COMPONENT
 // Modular UI Component: renderArtifacts.js
 // -------------------------------------------------------------
 import { CHAOS_EMERALDS_CATALOG, SECRET_RINGS_CATALOG } from '../data/artifacts.js';
+import { getTotalRedRings } from './renderVault.js';
+
+export function getStandardRings() {
+  const stored = localStorage.getItem('sonic_standard_rings');
+  return stored !== null ? (parseInt(stored, 10) || 0) : 0;
+}
+
+export function saveStandardRings(amount) {
+  const val = Math.max(0, parseInt(amount, 10) || 0);
+  localStorage.setItem('sonic_standard_rings', val);
+  updateHudRingBar();
+  return val;
+}
+
+export function addStandardRings(amount) {
+  const cur = getStandardRings();
+  return saveStandardRings(cur + amount);
+}
+
+export function spendStandardRings(amount) {
+  const cur = getStandardRings();
+  if (cur < amount) return false;
+  saveStandardRings(cur - amount);
+  return true;
+}
 
 export function getChaosEmeraldsState() {
   const stored = localStorage.getItem('sonic_chaos_emeralds');
@@ -39,22 +64,151 @@ export function isSuperModeUnlocked() {
   return Object.values(state).every(v => v === true);
 }
 
+export function isSuperSonic2Unlocked() {
+  return isSuperModeUnlocked() && getTotalRedRings() >= 50;
+}
+
+export function isSuperModeSessionActive() {
+  return localStorage.getItem('sonic_super_session_active') === 'true';
+}
+
+export function activateSuperModeSession() {
+  if (!isSuperModeUnlocked()) {
+    alert("Super Mode locked! Gather all 7 Chaos Emeralds first.");
+    return false;
+  }
+  if (!spendStandardRings(50)) {
+    alert("Insufficient Rings! 50 Standard Gold Rings required to transform.");
+    return false;
+  }
+  localStorage.setItem('sonic_super_session_active', 'true');
+  applySuperSonicHudEffects();
+  updateHudRingBar();
+  return true;
+}
+
+export function deactivateSuperModeSession() {
+  localStorage.removeItem('sonic_super_session_active');
+  removeSuperSonicHudEffects();
+  updateHudRingBar();
+}
+
+export function applySuperSonicDamagePenalty(type) {
+  if (!isSuperModeSessionActive()) return;
+  const isSS2 = isSuperSonic2Unlocked();
+  // Super Sonic 2 has damage resistance (-10 for strain, -5 for tempo)
+  const penalty = type === 'strain' ? (isSS2 ? 10 : 15) : (isSS2 ? 5 : 10);
+  const cur = getStandardRings();
+  const next = Math.max(0, cur - penalty);
+  saveStandardRings(next);
+
+  if (next === 0) {
+    deactivateSuperModeSession();
+    alert("⚡ ZERO RINGS REMAINING: Reverted to Base Form!");
+  }
+}
+
 export function isDarkspineModeUnlocked() {
   const state = getSecretRingsState();
   return Object.values(state).every(v => v === true);
 }
 
-export function renderArtifactsTray() {
-  const container = document.querySelector('.container');
+// -------------------------------------------------------------
+// VISIBLE HUD RING BAR (MOUNTED BELOW PILOT EXP CARD)
+// -------------------------------------------------------------
+export function updateHudRingBar() {
   const pilotCard = document.querySelector('.pilot-exp-card');
-  if (!container || !pilotCard) return;
+  if (!pilotCard) return;
+
+  let ringBar = document.getElementById('hudRingEconomyBar');
+  if (!ringBar) {
+    ringBar = document.createElement('div');
+    ringBar.id = 'hudRingEconomyBar';
+    ringBar.className = 'hud-ring-economy-bar';
+    pilotCard.parentNode.insertBefore(ringBar, pilotCard.nextSibling);
+  }
+
+  const standardRings = getStandardRings();
+  const redRings = getTotalRedRings();
+  const hasEmeralds = isSuperModeUnlocked();
+  const isSS2Unlocked = isSuperSonic2Unlocked();
+  const isSuperActive = isSuperModeSessionActive();
+
+  let transformBtnHtml = '';
+  if (hasEmeralds) {
+    if (isSuperActive) {
+      transformBtnHtml = `
+        <button id="toggleSuperBtn" class="ring-bar-btn active-super ${isSS2Unlocked ? 'super-2' : ''}" onclick="window.deactivateSuperModeSession()">
+          ${isSS2Unlocked ? '⚡ SS2 ACTIVE (1.50x)' : '⚡ SUPER ACTIVE (1.25x)'}
+        </button>
+      `;
+    } else {
+      transformBtnHtml = `
+        <button id="toggleSuperBtn" class="ring-bar-btn ${standardRings >= 50 ? 'can-activate' : 'locked'}" onclick="window.activateSuperModeSession()">
+          ${isSS2Unlocked ? '⚡ ENGAGE SS2 (50 🪙)' : '⚡ ENGAGE SUPER (50 🪙)'}
+        </button>
+      `;
+    }
+  }
+
+  ringBar.innerHTML = `
+    <div class="ring-counter-block gold-rings">
+      <span class="ring-icon-symbol">🪙</span>
+      <div class="ring-counter-meta">
+        <span class="ring-count-val">${standardRings}</span>
+        <span class="ring-counter-lbl">GOLD RINGS</span>
+      </div>
+    </div>
+
+    <div class="ring-counter-block red-rings">
+      <span class="ring-icon-symbol">⭐</span>
+      <div class="ring-counter-meta">
+        <span class="ring-count-val">${redRings}<span style="font-size: 11px; opacity: 0.7;">/50</span></span>
+        <span class="ring-counter-lbl">${isSS2Unlocked ? 'SS2 MASTERED' : 'RED STAR RINGS'}</span>
+      </div>
+    </div>
+
+    ${transformBtnHtml}
+  `;
+
+  if (isSuperActive) {
+    applySuperSonicHudEffects();
+  } else {
+    removeSuperSonicHudEffects();
+  }
+}
+
+export function applySuperSonicHudEffects() {
+  const container = document.querySelector('.container');
+  if (!container) return;
+  const isSS2 = isSuperSonic2Unlocked();
+
+  container.classList.add('super-mode-active');
+  if (isSS2) {
+    container.classList.add('super-sonic-2-active');
+  } else {
+    container.classList.remove('super-sonic-2-active');
+  }
+}
+
+export function removeSuperSonicHudEffects() {
+  const container = document.querySelector('.container');
+  if (!container) return;
+  container.classList.remove('super-mode-active', 'super-sonic-2-active');
+}
+
+export function renderArtifactsTray() {
+  updateHudRingBar();
+
+  const ringBar = document.getElementById('hudRingEconomyBar');
+  if (!ringBar) return;
 
   let trayWrap = document.getElementById('dualArtifactsWrapper');
   if (!trayWrap) {
     trayWrap = document.createElement('div');
     trayWrap.id = 'dualArtifactsWrapper';
     trayWrap.className = 'artifacts-container';
-    pilotCard.parentNode.insertBefore(trayWrap, pilotCard.nextSibling);
+    ringBar.parentNode.insertBefore(trayWrap, ringBar.nextSibling);
   }
 
   const emeraldState = getChaosEmeraldsState();
@@ -63,10 +217,12 @@ export function renderArtifactsTray() {
   const ringsClaimed = Object.values(ringState).filter(Boolean).length;
   const superActive = isSuperModeUnlocked();
   const darkspineActive = isDarkspineModeUnlocked();
+  const isSS2 = isSuperSonic2Unlocked();
+  const isSessionSuper = isSuperModeSessionActive();
 
   trayWrap.innerHTML = `
     <!-- CHAOS VAULT TRAY -->
-    <div class="artifact-tray-card chaos-tray">
+    <div class="artifact-tray-card chaos-tray ${isSessionSuper ? (isSS2 ? 'ss2-glow' : 'super-glow') : ''}">
       <div class="artifact-tray-header">
         <span class="artifact-tray-title">💎 THE CHAOS VAULT // STRENGTH TRIALS</span>
         <span class="artifact-tray-counter">${emeraldsClaimed}/7 CLAIMED</span>
@@ -79,8 +235,10 @@ export function renderArtifactsTray() {
           </div>
         `).join('')}
       </div>
-      <div id="superModeBadge" class="transformation-badge-active ${superActive ? 'super-mode-active' : ''}">
-        ⚡ SUPER MODE ACTIVE // 1.25x EXP MULTIPLIER UNLOCKED ⚡
+      <div id="superModeBadge" class="transformation-badge-active ${superActive ? 'super-mode-active' : ''} ${isSS2 ? 'ss2-badge' : ''}">
+        ${isSS2 
+          ? '⚡ SUPER SONIC 2 ENGAGED // CYBER ENERGY UNLEASHED (1.50x EXP) ⚡'
+          : '⚡ SUPER MODE READY // 50 RINGS TO ENGAGE (1.25x EXP) ⚡'}
       </div>
     </div>
 
@@ -99,7 +257,7 @@ export function renderArtifactsTray() {
         `).join('')}
       </div>
       <div id="darkspineModeBadge" class="transformation-badge-active ${darkspineActive ? 'darkspine-mode-active' : ''}">
-        🔥 DARKSPINE MODE ACTIVE // TIME BRAKE REST FLUSH & +500 EXP SURGE 🔥
+        🔥 DARKSPINE MODE ACTIVE // TIME BRAKE (3 SOUL CHARGES) & +500 EXP SURGE 🔥
       </div>
     </div>
   `;
@@ -173,5 +331,65 @@ export function checkSecretRingTriggers(setObj, showToastCallback) {
   }
 }
 
-// Bind to window for global access/debugging
+/**
+ * Evaluates Perfect Day completion for Chaos Emerald acquisition.
+ * 1. Targeted Day mapping for Days A-F
+ * 2. 15% RNG Special Stage Warp Ring fallback for unearned emeralds
+ * 3. White Emerald is 100% exclusive to CH_1RM / CH_AMRAP
+ */
+export function evaluatePerfectDayEmerald(stageKey, isPerfectDay, showToastCallback) {
+  if (!isPerfectDay) return null;
+
+  const emeralds = getChaosEmeraldsState();
+  let awardedEmerald = null;
+
+  // Challenge Modes: Guaranteed White Emerald
+  if (stageKey === 'CH_1RM' || stageKey === 'CH_AMRAP') {
+    if (!emeralds["emerald-white"]) {
+      emeralds["emerald-white"] = true;
+      awardedEmerald = "White Emerald (The Grand Apex)";
+    }
+  } else {
+    // Deterministic Day Mapping:
+    const targetMap = {
+      DAY_A: "emerald-red",
+      DAY_B: "emerald-green",
+      DAY_C: "emerald-blue",
+      DAY_D: "emerald-cyan",
+      DAY_E: "emerald-yellow",
+      DAY_F: "emerald-purple"
+    };
+
+    const targetKey = targetMap[stageKey];
+    if (targetKey && !emeralds[targetKey]) {
+      emeralds[targetKey] = true;
+      const item = CHAOS_EMERALDS_CATALOG.find(x => x.id === targetKey);
+      awardedEmerald = item ? item.name : "Chaos Emerald";
+    } else {
+      // Hybrid Option: If deterministic emerald is already claimed, 15% Special Stage Warp Ring roll!
+      const unearned = CHAOS_EMERALDS_CATALOG.filter(x => x.id !== "emerald-white" && !emeralds[x.id]);
+      if (unearned.length > 0) {
+        const roll = Math.random();
+        if (roll <= 0.15) { // 15% Special Stage Drop Rate
+          const lucky = unearned[Math.floor(Math.random() * unearned.length)];
+          emeralds[lucky.id] = true;
+          awardedEmerald = `${lucky.name} (Special Stage Warp Ring 15% Drop!)`;
+        }
+      }
+    }
+  }
+
+  if (awardedEmerald) {
+    saveChaosEmeraldsState(emeralds);
+    renderArtifactsTray();
+    if (showToastCallback) showToastCallback(`💎 CHAOS EMERALD CLAIMED: ${awardedEmerald}!`);
+    if (navigator.vibrate) navigator.vibrate([150, 50, 150, 50, 300]);
+  }
+
+  return awardedEmerald;
+}
+
+// Window bindings
 window.showArtifactIntel = showArtifactIntel;
+window.activateSuperModeSession = activateSuperModeSession;
+window.deactivateSuperModeSession = deactivateSuperModeSession;
