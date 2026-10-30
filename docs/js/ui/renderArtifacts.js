@@ -320,8 +320,29 @@ export function checkSecretRingTriggers(sessionData, showToast) {
 // UI RENDERING: ARTIFACTS TRAY & DUAL RING HUD
 // -------------------------------------------------------------
 export function renderArtifactsTray() {
-  const container = document.getElementById('artifactsTrayMount') || document.querySelector('.artifacts-container');
-  if (!container) return;
+  let container = document.getElementById('artifactsTrayMount') || 
+                  document.querySelector('.artifacts-container') ||
+                  document.getElementById('artifactsContainer') ||
+                  document.getElementById('artifactTray') ||
+                  document.querySelector('[data-artifacts]');
+
+  // Resilient Auto-Mount: if no static placeholder exists in index.html, auto-inject it
+  if (!container) {
+    const parentContainer = document.querySelector('.container') || document.body;
+    container = document.createElement('div');
+    container.id = 'artifactsTrayMount';
+    container.className = 'artifacts-container';
+    
+    // Position cleanly right after the Ring Bar or Pilot Card, or before Stage Nav
+    const ref = document.querySelector('.hud-ring-economy-bar') || 
+                document.querySelector('.pilot-exp-card') ||
+                document.querySelector('.stage-nav');
+    if (ref && ref.parentNode) {
+      ref.parentNode.insertBefore(container, ref.nextSibling);
+    } else {
+      parentContainer.appendChild(container);
+    }
+  }
 
   const emeralds = getChaosEmeralds();
   const secretRings = getSecretRings();
