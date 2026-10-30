@@ -145,3 +145,6 @@ export function renderResultsOverlay(data, onClose) {
   document.getElementById('continueResultsBtn').onclick = dismiss;
   document.getElementById('closeResultsXBtn').onclick = dismiss;
 }
+
+// Bind to window for Chrome DevTools Console testing
+window.renderResultsOverlay = renderResultsOverlay;
