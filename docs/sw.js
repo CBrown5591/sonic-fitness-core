@@ -1,8 +1,8 @@
 // -------------------------------------------------------------
-// SERVICE WORKER // CACHE & OFFLINE RUNTIME (MODULAR ES6 BUILD)
+// SERVICE WORKER // CACHE & OFFLINE RUNTIME (RESILIENT ES6 BUILD)
 // -------------------------------------------------------------
 
-const CACHE_NAME = 'sonic-fitness-v17-esm';
+const CACHE_NAME = 'sonic-fitness-v18-esm';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -43,8 +43,8 @@ const ASSETS_TO_CACHE = [
 self.addEventListener('install', (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then(async (cache) => {
-      console.log('[ServiceWorker] Pre-caching ES6 modular assets...');
-      const results = await Promise.allSettled(
+      console.log('[ServiceWorker] Pre-caching assets individually...');
+      await Promise.allSettled(
         ASSETS_TO_CACHE.map(async (url) => {
           try {
             const response = await fetch(url);
@@ -53,7 +53,7 @@ self.addEventListener('install', (event) => {
             }
             await cache.put(url, response);
           } catch (err) {
-            console.warn(`[ServiceWorker] Failed to cache asset: ${url}`, err);
+            console.warn(`[ServiceWorker] Skipping missing asset: ${url}`);
           }
         })
       );
@@ -67,7 +67,7 @@ self.addEventListener('activate', (event) => {
       return Promise.all(
         keyList.map((key) => {
           if (key !== CACHE_NAME) {
-            console.log('[ServiceWorker] Removing legacy cache:', key);
+            console.log('[ServiceWorker] Purging legacy cache:', key);
             return caches.delete(key);
           }
         })
@@ -77,7 +77,6 @@ self.addEventListener('activate', (event) => {
 });
 
 self.addEventListener('fetch', (event) => {
-  // Pass Google Apps Script webhook calls directly to network
   if (event.request.url.includes('script.google.com')) {
     return;
   }
