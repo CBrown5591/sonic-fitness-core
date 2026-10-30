@@ -29,7 +29,7 @@ import {
   updateHudRingBar
 } from './ui/renderArtifacts.js';
 import { getTotalRedRings } from './ui/renderVault.js';
-import { renderVault, toggleVaultDrawer, creditVaultRings } from './ui/renderVault.js';
+import { renderVault, toggleVaultDrawer, creditVaultRings, saveVaultData } from './ui/renderVault.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
 let activeSlotIndex = 0;
@@ -475,14 +475,14 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   // Live Sheet Telemetry Sync on boot
   fetchSheetTelemetry().then(data => {
-  if (data && data.status === 'success') {
-    if (data.lifetimeExp !== undefined) {
-      localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
-      updatePilotExpUI();
-    }
-    if (data.goldRings !== undefined && localStorage.getItem('sonic_standard_rings') === null) {
-      saveStandardRings(data.goldRings);
-    }
+    if (data && data.status === 'success') {
+      if (data.lifetimeExp !== undefined) {
+        localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
+        updatePilotExpUI();
+      }
+      if (data.goldRings !== undefined) {
+        saveStandardRings(data.goldRings);
+      }
       if (data.stages) {
         localStorage.setItem('sonic_stage_statuses', JSON.stringify(data.stages));
         checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
@@ -491,7 +491,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
       }
       if (data.prVault) savePRVault(data.prVault);
+      if (data.vault && Array.isArray(data.vault) && data.vault.length > 0) {
+        saveVaultData(data.vault);
+      }
       renderVault();
+      renderArtifactsTray();
+      updateHudRingBar();
     }
   });
 
