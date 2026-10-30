@@ -30,6 +30,7 @@ import {
 } from './ui/renderArtifacts.js';
 import { getTotalRedRings } from './ui/renderVault.js';
 import { renderVault, toggleVaultDrawer, creditVaultRings, saveVaultData } from './ui/renderVault.js';
+import { toggleSkillTreeDrawer, hasPerk, getUnlockedPerks } from './ui/renderSkillTree.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
 let activeSlotIndex = 0;
@@ -694,3 +695,12 @@ window.__sonicDev = {
   revertSuper: () => window.deactivateSuperModeSession()
 };
 console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicDev');
+// Expose toggleSkillTreeDrawer globally for any template button clicks
+window.toggleSkillTreeDrawer = toggleSkillTreeDrawer;
+window.hasPerk = hasPerk;
+
+// Expand window.__sonicDev with Skill Tree inspection
+if (window.__sonicDev) {
+  window.__sonicDev.getPerks = () => getUnlockedPerks();
+  window.__sonicDev.openSkills = () => toggleSkillTreeDrawer();
+}
