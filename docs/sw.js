@@ -2,7 +2,7 @@
 // SERVICE WORKER // CACHE & OFFLINE RUNTIME (MODULAR ES6 BUILD)
 // -------------------------------------------------------------
 
-const CACHE_NAME = 'sonic-fitness-v14-esm';
+const CACHE_NAME = 'sonic-fitness-v15-esm';
 
 const ASSETS_TO_CACHE = [
   './',
