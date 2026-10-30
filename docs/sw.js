@@ -2,7 +2,7 @@
 // SERVICE WORKER // CACHE & OFFLINE RUNTIME (MODULAR ES6 BUILD)
 // -------------------------------------------------------------
 
-const CACHE_NAME = 'sonic-fitness-v16-esm';
+const CACHE_NAME = 'sonic-fitness-v17-esm';
 
 const ASSETS_TO_CACHE = [
   './',
@@ -42,9 +42,21 @@ const ASSETS_TO_CACHE = [
 
 self.addEventListener('install', (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      console.log('[ServiceWorker] Pre-caching ES6 modular assets');
-      return cache.addAll(ASSETS_TO_CACHE);
+    caches.open(CACHE_NAME).then(async (cache) => {
+      console.log('[ServiceWorker] Pre-caching ES6 modular assets...');
+      const results = await Promise.allSettled(
+        ASSETS_TO_CACHE.map(async (url) => {
+          try {
+            const response = await fetch(url);
+            if (!response.ok) {
+              throw new Error(`HTTP ${response.status}`);
+            }
+            await cache.put(url, response);
+          } catch (err) {
+            console.warn(`[ServiceWorker] Failed to cache asset: ${url}`, err);
+          }
+        })
+      );
     }).then(() => self.skipWaiting())
   );
 });
