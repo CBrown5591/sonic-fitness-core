@@ -122,10 +122,15 @@ export function isSuperSonic2Unlocked() {
 }
 
 export function isDarkspineModeUnlocked() {
-  const explicit = localStorage.getItem('sonic_darkspine_unlocked') === 'true';
-  if (explicit) return true;
+  const explicit = localStorage.getItem('sonic_darkspine_unlocked');
+  if (explicit === 'false') return false;
+  if (explicit === 'true') return true;
+  
   const rings = getSecretRings();
-  return WORLD_RINGS.every(r => !!rings[r.id]);
+  if (!rings || typeof rings !== 'object' || Object.keys(rings).length < 7) {
+    return false;
+  }
+  return WORLD_RINGS.every(r => rings[r.id] === true);
 }
 
 export function isSuperModeSessionActive() {
@@ -348,6 +353,13 @@ export function renderArtifactsTray() {
 
   const isDarkspine = isDarkspineModeUnlocked();
 
+  // CONDITIONAL BADGE: only injected into HTML if isDarkspine is strictly true!
+  const darkspineBadgeHtml = isDarkspine ? `
+    <div id="hudDarkspineBadge" class="transformation-badge-active darkspine-mode-active" style="margin-top: 6px; background: rgba(192, 132, 252, 0.15); border: 1px solid #c084fc; color: #c084fc; border-radius: 6px; padding: 6px; text-align: center; font-size: 11px; font-weight: 800;">
+      🔥 DARKSPINE SONIC ACTIVE // 3-CHARGE SOUL GAUGE READY 🔥
+    </div>
+  ` : '';
+
   container.innerHTML = `
     <!-- 1. DUAL RING ECONOMY HUD BAR -->
     <div class="hud-ring-economy-bar" id="hudRingEconomyBar">
@@ -378,10 +390,8 @@ export function renderArtifactsTray() {
       </div>
     </div>
 
-    <!-- 2. DARKSPINE TRANSFORMATION BADGE -->
-    <div id="hudDarkspineBadge" class="transformation-badge-active darkspine-mode-active" style="display: ${isDarkspine ? 'block' : 'none'}; margin-top: 6px; background: rgba(192, 132, 252, 0.15); border: 1px solid #c084fc; color: #c084fc; border-radius: 6px; padding: 6px; text-align: center; font-size: 11px; font-weight: 800;">
-      🔥 DARKSPINE SONIC ACTIVE // 3-CHARGE SOUL GAUGE READY 🔥
-    </div>
+    <!-- 2. DARKSPINE TRANSFORMATION BADGE (ONLY PRESENT IF UNLOCKED) -->
+    ${darkspineBadgeHtml}
 
     <!-- 3. CHAOS VAULT (EMERALDS) -->
     <div class="artifact-tray-card" style="margin-top: 8px;">
@@ -507,9 +517,12 @@ export function updateHudRingBar() {
     }
   }
 
+  // Strictly enforce removal if locked
   const darkspineBadge = document.getElementById('hudDarkspineBadge');
   if (darkspineBadge) {
-    darkspineBadge.style.display = isDarkspineModeUnlocked() ? 'block' : 'none';
+    if (!isDarkspineModeUnlocked()) {
+      darkspineBadge.remove();
+    }
   }
 }
 
@@ -525,20 +538,5 @@ if (typeof window !== 'undefined') {
   window.saveStandardRings = saveStandardRings;
   window.addStandardRings = addStandardRings;
   window.updateHudRingBar = updateHudRingBar;
-}
-export function deactivateDarkspine() {
-  localStorage.removeItem('sonic_darkspine_unlocked');
-  localStorage.setItem('sonic_secret_rings', '{}');
-  localStorage.setItem('sonic_darkspine_unlocked', 'false');
-  sessionStorage.removeItem('sonic_soul_gauge_max');
-  
-  const badge = document.getElementById('hudDarkspineBadge');
-  if (badge) badge.style.display = 'none';
-  
-  renderArtifactsTray();
-  if (window.showToast) window.showToast('🌑 DARKSPINE FORM DEACTIVATED');
-}
-
-if (typeof window !== 'undefined') {
-  window.deactivateDarkspine = deactivateDarkspine;
+  window.isDarkspineModeUnlocked = isDarkspineModeUnlocked;
 }
