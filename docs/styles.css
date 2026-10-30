@@ -1298,14 +1298,15 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
 .results-overlay-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(10, 14, 23, 0.92);
-  backdrop-filter: blur(8px);
+  background: rgba(10, 14, 23, 0.94);
+  backdrop-filter: blur(10px);
   z-index: 99999;
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 8px 6px;
+  padding: 12px;
   animation: fadeIn 0.2s ease-out;
+  overflow-y: auto;
 }
 
 .results-card {
