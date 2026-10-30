@@ -13,6 +13,7 @@ export function renderResultsOverlay(data, onClose) {
   overlay.className = 'results-overlay-backdrop';
 
   const rankColor = data.rank === 'S' ? '#facc15' : (data.rank === 'A' ? '#38bdf8' : '#4ade80');
+  const metallicClass = data.rank === 'S' ? 'rank-metallic-s' : (data.rank === 'A' ? 'rank-metallic-a' : 'rank-metallic-b');
   const goldRings = data.goldRingsEarned || Math.floor((data.totalScore || 0) / 1000);
 
   let emeraldHtml = '';
@@ -82,7 +83,7 @@ export function renderResultsOverlay(data, onClose) {
           </div>
 
           <div class="results-rank-column">
-            <div id="resultsRankStamp" class="results-rank-stamp-hidden" style="color: ${rankColor}; border-color: ${rankColor};">
+            <div id="resultsRankStamp" class="results-rank-stamp-hidden ${metallicClass}">
               ${data.rank}
             </div>
             <div id="resultsRankLabel" class="results-rank-label" style="opacity: 0;">SONIC RATING</div>
@@ -169,7 +170,7 @@ export function renderResultsOverlay(data, onClose) {
     const emeraldBanner = document.getElementById('resultsEmeraldBanner');
 
     if (stampEl) {
-      stampEl.className = 'results-rank-stamp animate-stamp-slam';
+      stampEl.className = `results-rank-stamp animate-stamp-slam ${metallicClass}`;
     }
     if (labelEl) {
       labelEl.style.transition = 'opacity 0.3s ease';
