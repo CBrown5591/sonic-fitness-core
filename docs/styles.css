@@ -1293,7 +1293,7 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
   box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
 }
 /* ------------------------------------------------------------- */
-/* STAGE CLEAR RESULTS OVERLAY // ARCADE SCORECARD               */
+/* STAGE CLEAR RESULTS OVERLAY // SIDE-BY-SIDE ARCADE SCORECARD  */
 /* ------------------------------------------------------------- */
 .results-overlay-backdrop {
   position: fixed;
@@ -1344,99 +1344,42 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
 }
 
 .results-body {
-  padding: 20px;
+  padding: 16px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
 }
 
-.results-rank-container {
+/* Row 1: Side-by-Side Breakdown & Rank Column */
+.results-split-row {
   display: flex;
-  flex-direction: column;
-  align-items: center;
-  margin-bottom: 5px;
-}
-
-.results-rank-stamp {
-  font-size: 64px;
-  font-weight: 900;
-  line-height: 1;
-  padding: 10px 24px;
-  border: 4px solid;
-  border-radius: 12px;
-  transform: rotate(-4deg);
-  text-shadow: 0 0 20px currentColor;
-  box-shadow: 0 0 25px rgba(0,0,0,0.5);
-}
-
-.results-rank-label {
-  font-size: 10px;
-  font-weight: 800;
-  color: #94a3b8;
-  letter-spacing: 2px;
-  margin-top: 6px;
-}
-
-.results-transform-pill {
-  padding: 6px 12px;
-  border-radius: 6px;
-  font-size: 11px;
-  font-weight: 800;
-  text-align: center;
-}
-
-.results-transform-pill.super {
-  background: rgba(250, 204, 21, 0.15);
-  border: 1px solid #facc15;
-  color: #facc15;
-}
-
-.results-transform-pill.ss2 {
-  background: rgba(56, 189, 248, 0.15);
-  border: 1px solid #38bdf8;
-  color: #38bdf8;
-  box-shadow: 0 0 15px rgba(56, 189, 248, 0.3);
-}
-
-.results-emerald-banner {
-  background: rgba(16, 185, 129, 0.15);
-  border: 1px solid #10b981;
-  border-radius: 8px;
-  padding: 10px;
-  text-align: center;
-  box-shadow: 0 0 15px rgba(16, 185, 129, 0.3);
-}
-
-.emerald-banner-title {
-  font-size: 10px;
-  font-weight: 800;
-  color: #10b981;
-  letter-spacing: 1px;
-}
-
-.emerald-banner-detail {
-  font-size: 13px;
-  font-weight: 800;
-  color: #f8fafc;
-  margin-top: 4px;
+  align-items: stretch;
+  gap: 10px;
 }
 
 .results-breakdown-list {
+  flex: 1;
   background: #141d2e;
   border: 1px solid #1e293b;
   border-radius: 8px;
-  padding: 10px 14px;
+  padding: 10px 12px;
   display: flex;
   flex-direction: column;
+  justify-content: space-around;
   gap: 6px;
 }
 
 .breakdown-row {
   display: flex;
   justify-content: space-between;
-  font-size: 11px;
+  align-items: center;
+  font-size: 10px;
   font-weight: 700;
   color: #94a3b8;
+}
+
+.breakdown-lbl {
+  letter-spacing: 0.5px;
 }
 
 .breakdown-val {
@@ -1444,48 +1387,144 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
   font-family: monospace;
 }
 
-.results-gold-ring-payout {
-  background: #101726;
-  border: 1px dashed #facc15;
+.breakdown-val.highlight-red {
+  color: #f87171;
+}
+
+.results-rank-column {
+  width: 110px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #141d2e;
+  border: 1px solid #1e293b;
   border-radius: 8px;
-  padding: 10px;
-  text-align: center;
+  padding: 8px;
 }
 
-.gold-ring-payout-label {
-  font-size: 10px;
-  font-weight: 800;
-  color: #facc15;
-  letter-spacing: 1px;
-}
-
-.gold-ring-payout-val {
-  font-size: 18px;
+.results-rank-stamp-hidden {
+  opacity: 0;
+  transform: scale(2.8) rotate(-18deg);
+  font-size: 54px;
   font-weight: 900;
-  color: #facc15;
-  margin-top: 2px;
+  line-height: 1;
+  padding: 8px 16px;
+  border: 4px solid;
+  border-radius: 10px;
 }
 
+.results-rank-stamp {
+  font-size: 54px;
+  font-weight: 900;
+  line-height: 1;
+  padding: 8px 16px;
+  border: 4px solid;
+  border-radius: 10px;
+  transform: rotate(-4deg);
+}
+
+.results-rank-label {
+  font-size: 9px;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 1.5px;
+  margin-top: 6px;
+}
+
+/* Row 2: Total Score */
 .results-total-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 4px;
+  background: #101726;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 10px;
 }
 
 .results-total-lbl {
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 800;
   color: #94a3b8;
   letter-spacing: 2px;
 }
 
 .results-total-num {
-  font-size: 28px;
+  font-size: 30px;
   font-weight: 900;
   color: #38bdf8;
   font-family: monospace;
-  text-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+  text-shadow: 0 0 15px rgba(56, 189, 248, 0.45);
+}
+
+/* Row 3: Experience Bar */
+.results-exp-block {
+  background: #141d2e;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 10px 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.results-exp-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+.results-exp-lvl {
+  color: #38bdf8;
+  letter-spacing: 1px;
+}
+
+.results-exp-gained {
+  color: #facc15;
+  font-family: monospace;
+}
+
+.results-exp-bar-track {
+  width: 100%;
+  height: 10px;
+  background: #0b0f19;
+  border-radius: 5px;
+  overflow: hidden;
+  border: 1px solid #334155;
+}
+
+.results-exp-bar-fill {
+  height: 100%;
+  background: linear-gradient(90deg, #38bdf8, #facc15);
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
+  transition: width 0.1s linear;
+}
+
+/* Rewards & Bottom Controls */
+.results-gold-ring-payout {
+  background: #101726;
+  border: 1px dashed #facc15;
+  border-radius: 8px;
+  padding: 8px;
+  text-align: center;
+}
+
+.gold-ring-payout-label {
+  font-size: 9px;
+  font-weight: 800;
+  color: #facc15;
+  letter-spacing: 1px;
+}
+
+.gold-ring-payout-val {
+  font-size: 16px;
+  font-weight: 900;
+  color: #facc15;
+  margin-top: 2px;
 }
 
 .results-continue-btn {
@@ -1498,10 +1537,14 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
   font-weight: 900;
   letter-spacing: 1px;
   cursor: pointer;
-  margin-top: 8px;
 }
 
-@keyframes fadeIn {
-  from { opacity: 0; }
-  to { opacity: 1; }
+.animate-stamp-slam {
+  animation: stampSlam 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+}
+
+@keyframes stampSlam {
+  0% { opacity: 0; transform: scale(2.8) rotate(-18deg); }
+  70% { opacity: 1; transform: scale(0.92) rotate(-4deg); }
+  100% { opacity: 1; transform: scale(1) rotate(-4deg); text-shadow: 0 0 25px currentColor; box-shadow: 0 0 30px rgba(0,0,0,0.6); }
 }
