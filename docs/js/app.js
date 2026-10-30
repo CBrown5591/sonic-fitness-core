@@ -582,12 +582,87 @@ document.addEventListener('DOMContentLoaded', async () => {
   }
 });
 
+// -------------------------------------------------------------
+// AUTOMATIC PWA SERVICE WORKER UPDATE ENGINE
+// Prompts the user with an in-app banner whenever new code is deployed
+// -------------------------------------------------------------
 if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('./sw.js')
-      .then(reg => console.log('[SW] Registered:', reg.scope))
-      .catch(err => console.error('[SW] Registration failed:', err));
+  let refreshing = false;
+  navigator.serviceWorker.addEventListener('controllerchange', () => {
+    if (!refreshing) {
+      refreshing = true;
+      window.location.reload();
+    }
   });
+
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js').then(reg => {
+      // 1. If an updated worker is already waiting, prompt immediately
+      if (reg.waiting) {
+        showUpdateBanner(reg.waiting);
+        return;
+      }
+
+      // 2. Listen for newly discovered updates
+      reg.addEventListener('updatefound', () => {
+        const newWorker = reg.installing;
+        if (!newWorker) return;
+
+        newWorker.addEventListener('statechange', () => {
+          if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+            showUpdateBanner(newWorker);
+          }
+        });
+      });
+    }).catch(err => console.error('[SW] Registration error:', err));
+  });
+}
+
+function showUpdateBanner(worker) {
+  if (document.getElementById('pwaUpdateBanner')) return;
+
+  const banner = document.createElement('div');
+  banner.id = 'pwaUpdateBanner';
+  banner.style.cssText = `
+    position: fixed;
+    bottom: 20px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: #0f172a;
+    border: 1px solid var(--accent-blue, #38bdf8);
+    box-shadow: 0 0 20px rgba(56, 189, 248, 0.4);
+    color: #f8fafc;
+    padding: 10px 16px;
+    border-radius: 8px;
+    z-index: 999999;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-family: inherit;
+    font-size: 12px;
+    font-weight: 700;
+  `;
+
+  banner.innerHTML = `
+    <span>⚡ SYSTEM UPDATE READY</span>
+    <button id="pwaReloadBtn" style="
+      background: var(--accent-blue, #38bdf8);
+      color: #0b0f19;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 4px;
+      font-weight: 800;
+      font-size: 11px;
+      cursor: pointer;
+    ">RELOAD ↻</button>
+  `;
+
+  document.body.appendChild(banner);
+
+  document.getElementById('pwaReloadBtn').onclick = () => {
+    worker.postMessage({ action: 'skipWaiting' });
+    banner.remove();
+  };
 }
 
 // -------------------------------------------------------------
