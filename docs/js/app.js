@@ -14,7 +14,21 @@ import { fetchSheetTelemetry, syncSessionToSheets } from './core/sync.js';
 import { showToast, renderStageRecordBanner, renderMovementIntel, updateInputLabelsForExercise } from './ui/renderHud.js';
 import { openAuditModal } from './ui/auditModal.js';
 import { renderResultsOverlay } from './ui/resultsOverlay.js';
-import { renderArtifactsTray, checkSecretRingTriggers, isDarkspineModeUnlocked, isSuperModeUnlocked } from './ui/renderArtifacts.js';
+import { 
+  renderArtifactsTray, 
+  checkSecretRingTriggers, 
+  isDarkspineModeUnlocked, 
+  isSuperModeUnlocked,
+  isSuperSonic2Unlocked,
+  isSuperModeSessionActive,
+  applySuperSonicDamagePenalty,
+  evaluatePerfectDayEmerald,
+  getStandardRings,
+  saveStandardRings,
+  addStandardRings,
+  updateHudRingBar
+} from './ui/renderArtifacts.js';
+import { getTotalRedRings } from './ui/renderVault.js';
 import { renderVault, toggleVaultDrawer, creditVaultRings } from './ui/renderVault.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
@@ -230,6 +244,12 @@ export function logActiveSet() {
   activeSession.sets.push(completedSetObj);
   checkSecretRingTriggers(completedSetObj, showToast);
 
+  if (currentSetPain) {
+    applySuperSonicDamagePenalty('strain');
+  } else if (!tempoClean) {
+    applySuperSonicDamagePenalty('tempo');
+  }
+
   saveSessionState();
   renderSessionUI();
   playRingChime();
@@ -424,28 +444,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderVault();
   renderArtifactsTray();
   initTimerBackgroundSync();
-  // Mount In-Line Demo Button inside the status/header action row
-  const audioBtn = document.getElementById('audioThemeBtn') || document.getElementById('notifyBtn');
-  if (audioBtn && audioBtn.parentElement && !document.getElementById('demoSimBtn')) {
-    const demoBtn = document.createElement('button');
-    demoBtn.id = 'demoSimBtn';
-    demoBtn.innerText = '🎬 DEMO';
-    demoBtn.style.cssText = `
-      background: #141c2e;
-      border: 1px solid var(--accent-blue);
-      color: var(--accent-blue);
-      padding: 4px 8px;
-      border-radius: 6px;
-      font-size: 10px;
-      font-weight: 800;
-      cursor: pointer;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-    `;
-    demoBtn.onclick = window.runSandboxedSimulation;
-    audioBtn.parentElement.insertBefore(demoBtn, audioBtn);
-  }
   checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
     selectStage(nextStage);
     showToast(`FLIGHT PATH ENGAGED: ${nextStage.replace('_', ' ')}!`);
@@ -505,14 +503,26 @@ document.addEventListener('DOMContentLoaded', async () => {
         const redRingBonus = ringsBanked * 10000;
         let totalScore = forceBonus + prehabBonus + 20000 + redRingBonus;
 
-        if (isDarkspineModeUnlocked() && activeStageKey === 'DAY_G') {
+        // Darkspine Conditioning Surge (+500 pts per interval on Days G, H, I)
+        if (isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I'].includes(activeStageKey)) {
           totalScore += (activeSession.sets.length * 500);
         }
-        if (isSuperModeUnlocked()) {
-          totalScore = Math.round(totalScore * 1.25);
+
+        // Super Sonic / Super Sonic 2 Multiplier (Session Active)
+        if (isSuperModeSessionActive()) {
+          const mult = isSuperSonic2Unlocked() ? 1.50 : 1.25;
+          totalScore = Math.round(totalScore * mult);
         }
 
         const rank = totalScore >= 75000 ? "S" : (totalScore >= 55000 ? "A" : "B");
+
+        // Award Standard Gold Rings (Total Score / 1000)
+        const standardRingsEarned = Math.floor(totalScore / 1000);
+        addStandardRings(standardRingsEarned);
+
+        // Check Perfect Day for Chaos Emerald Award (Deterministic or 15% Special Stage)
+        const isPerfectDay = rank === 'S' && !activeSession.jointPain && !activeSession.sets.some(s => s.jointPain) && ringsBanked >= activeSession.sets.length;
+        evaluatePerfectDayEmerald(activeStageKey, isPerfectDay, showToast);
         const recordRes = saveStageRecord(activeStageKey, totalScore, rank);
         localStorage.setItem('sonic_last_stage', activeStageKey);
         localStorage.setItem('sonic_last_strain', (activeSession.jointPain || activeSession.sets.some(s => s.jointPain)) ? 'true' : 'false');
@@ -571,84 +581,28 @@ if ('serviceWorker' in navigator) {
       .catch(err => console.error('[SW] Registration failed:', err));
   });
 }
-/**
- * DRY-RUN SIMULATION RUNNER (SAFE FOR VIDEO RECORDING)
- * Executes full UI, sound, audit modal, and results tally with ZERO sheet writes.
- */
-export function runSandboxedSimulation() {
-  // 1. Snapshot real local state so test points never persist
-  const originalState = {
-    exp: localStorage.getItem('sonic_lifetime_exp'),
-    records: localStorage.getItem('sonic_stage_records'),
-    lastStage: localStorage.getItem('sonic_last_stage'),
-    strain: localStorage.getItem('sonic_last_strain')
-  };
 
-  // 2. Load Day C and inject test sets
-  selectStage('DAY_C', true);
-
-  const mockSets = [
-    { slot: "C1", exercise: "DB Bulgarian Split Squat", setNum: 1, load: 45, reps: 8, rpe: 7.5, tempoClean: true, jointPain: false },
-    { slot: "C2", exercise: "Lat Pulldown (Neutral/Mag-Grip)", setNum: 1, load: 130, reps: 10, rpe: 8.0, tempoClean: true, jointPain: false },
-    { slot: "C3", exercise: "Incline DB Bench Press (30°)", setNum: 1, load: 65, reps: 8, rpe: 8.0, tempoClean: true, jointPain: false },
-    { slot: "C4", exercise: "Farmer's Carries", setNum: 1, load: 60, reps: 50, rpe: 8.0, tempoClean: true, jointPain: false }
-  ];
-
-  mockSets.forEach(s => {
-    s.equivReps = s.reps;
-    s.equivVolume = s.load * s.reps;
-    s.displayMetric = `${s.load}lbs × ${s.reps}r`;
-    s.e1rm = Math.round(s.load * (1 + s.reps / 30));
-    activeSession.sets.push(s);
-  });
-
-  activeSession.prehabChecked = true;
-  saveSessionState();
-  renderSessionUI();
-
-  // 3. Open Telemetry Audit Modal
-  openAuditModal(activeSession, () => {
-    showToast("⚡ DRY RUN: Outbound Sheet Sync MUTED");
-
-    const totalReps = activeSession.sets.reduce((sum, s) => sum + s.reps, 0);
-    const forceBonus = totalReps * 75;
-    const prehabBonus = 15000;
-    const ringsBanked = 4;
-    const redRingBonus = ringsBanked * 10000;
-    const totalScore = forceBonus + prehabBonus + 20000 + redRingBonus; // ~77,550 PTS -> S-Rank
-
-    // 4. Launch Results Overlay (Audio + Stamp + Rolling Tally)
-    renderResultsOverlay({
-      stage: 'DAY_C',
-      totalScore,
-      rank: 'S',
-      ringBonus: prehabBonus,
-      timeBonus: 20000,
-      forceBonus,
-      redRingBonus,
-      ringsBanked,
-      totalSets: 4,
-      didLevelUp: false,
-      newLevel: 1,
-      isNewRecord: true
-    }, () => {
-      // 5. RESTORE REAL STATE ON CLOSE: Clean up test artifacts
-      if (originalState.exp !== null) localStorage.setItem('sonic_lifetime_exp', originalState.exp);
-      if (originalState.records !== null) localStorage.setItem('sonic_stage_records', originalState.records);
-      if (originalState.lastStage !== null) localStorage.setItem('sonic_last_stage', originalState.lastStage);
-      if (originalState.strain !== null) localStorage.setItem('sonic_last_strain', originalState.strain);
-
-      activeSession = { stage: 'DAY_C', slotIndex: 0, prehabChecked: false, jointPain: false, sets: [] };
-      activeSlotIndex = 0;
-      saveSessionState();
-      renderSessionUI();
-      updatePilotExpUI();
-      showToast("Simulation Complete: Real state preserved [✓]");
-    });
-
-    // NOTE: syncSessionToSheets() is intentionally omitted here!
-  });
-}
-
-// Bind to window for mobile button trigger
-window.runSandboxedSimulation = runSandboxedSimulation;
+// -------------------------------------------------------------
+// CHROME DEVTOOLS TESTING CONSOLE HARNESS
+// Run in Google Chrome DevTools (F12 / Inspect -> Console)
+// -------------------------------------------------------------
+window.__sonicDev = {
+  // 1. Economy & Wallet inspection
+  getWallet: () => ({
+    goldRings: getStandardRings(),
+    redStarRings: getTotalRedRings(),
+    isSuperSonic2Unlocked: isSuperSonic2Unlocked(),
+    isSuperActive: isSuperModeSessionActive()
+  }),
+  // 2. Set Gold Rings directly
+  setGoldRings: (amount) => saveStandardRings(amount),
+  // 3. Test Perfect Day 15% roll
+  testEmeraldRoll: (stageKey = 'DAY_A') => evaluatePerfectDayEmerald(stageKey, true, (msg) => console.log('EMERALD TOAST:', msg)),
+  // 4. Test Damage Penalty on Super Form
+  testStrainDamage: () => applySuperSonicDamagePenalty('strain'),
+  testTempoDamage: () => applySuperSonicDamagePenalty('tempo'),
+  // 5. Test Super Transformation
+  engageSuper: () => window.activateSuperModeSession(),
+  revertSuper: () => window.deactivateSuperModeSession()
+};
+console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicDev');
