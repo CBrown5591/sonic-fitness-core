@@ -22,9 +22,9 @@ export function getVaultData() {
           else if (name.includes("RDL") || name.includes("Hinge") || name.includes("Curl") || name.includes("Bridge")) focus = "Hinge / Posterior";
           else if (name.includes("Press") || name.includes("Push-Up")) focus = "Push / Chest / Shoulders";
           else if (name.includes("Row") || name.includes("Pulldown")) focus = "Pull / Lats";
-          else if (name.includes("Pallof") || name.includes("Crunch") || name.includes("Deadbug") || name.includes("Bird-Dog") || name.includes("Hold") || name.includes("Woodchopper")) focus = "Core / Pillar";
-          else if (name.includes("Carry") || name.includes("March")) focus = "Loaded Carry";
-          else if (name.includes("Rotation") || name.includes("Fly") || name.includes("Raises") || name.includes("Tibialis")) focus = "Joint Armor";
+          else if (name.includes("Pallof") || name.includes("Crunch") || name.includes("Deadbug") || name.includes("Bird-Dog") || name.includes("Hold") || name.includes("Woodchopper") || name.includes("Windmill")) focus = "Core / Pillar";
+          else if (name.includes("Carry") || name.includes("March") || name.includes("Crawl")) focus = "Loaded Carry / Locomotion";
+          else if (name.includes("Rotation") || name.includes("Fly") || name.includes("Raises") || name.includes("Tibialis") || name.includes("Plank")) focus = "Joint Armor";
           catalog.set(name, focus);
         }
       });
@@ -47,6 +47,11 @@ export function getVaultData() {
 
 export function saveVaultData(data) {
   localStorage.setItem('sonic_mastery_vault', JSON.stringify(data));
+}
+
+export function getTotalRedRings() {
+  const vault = getVaultData();
+  return vault.reduce((sum, item) => sum + (item.rings || 0), 0);
 }
 
 export function renderVault() {
@@ -78,6 +83,11 @@ export function renderVault() {
     `;
     container.appendChild(row);
   });
+
+  const totalCounter = document.getElementById('vaultTotalRedRings');
+  if (totalCounter) {
+    totalCounter.innerText = `${getTotalRedRings()} RED STAR RINGS`;
+  }
 }
 
 export function toggleVaultDrawer() {
@@ -95,7 +105,7 @@ export function toggleVaultDrawer() {
 }
 
 export function creditVaultRings(sets) {
-  if (!sets || sets.length === 0) return;
+  if (!sets || !Array.isArray(sets) || sets.length === 0) return;
   const vault = getVaultData();
 
   sets.forEach(s => {
