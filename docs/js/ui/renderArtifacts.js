@@ -1,8 +1,9 @@
 // -------------------------------------------------------------
 // ARTIFACTS TRAY & DUAL RING HUD CONTROLS // renderArtifacts.js
-// Modular UI Component: renderArtifacts.js (Unified Complete Build)
+// Modular UI Component: renderArtifacts.js
 // -------------------------------------------------------------
 import { playStageClearFanfare } from '../core/audio.js';
+import { toggleSkillTreeDrawer } from './renderSkillTree.js';
 
 // -------------------------------------------------------------
 // CONSTANTS & CATALOGS
@@ -52,14 +53,13 @@ export function addStandardRings(amount) {
 export function getTotalRedRings() {
   const raw = localStorage.getItem('sonic_total_red_rings');
   if (raw !== null) return parseInt(raw, 10) || 0;
-  // Fallback: check vault items
   try {
     const vRaw = localStorage.getItem('sonic_mastery_vault');
     if (vRaw) {
       const v = JSON.parse(vRaw);
       return v.reduce((acc, row) => acc + (Number(row.stars) || 0), 0);
     }
-  } catch(e) {}
+  } catch (e) {}
   return 0;
 }
 
@@ -147,12 +147,10 @@ export function activateSuperModeSession(showToast) {
     return false;
   }
 
-  // Deduct 50 Gold Rings to transform
   saveStandardRings(currentRings - 50);
   sessionStorage.setItem('sonic_super_mode_active', 'true');
   sessionStorage.setItem('sonic_gold_rings_spent', '50');
 
-  // Visual cues on container
   const container = document.querySelector('.container');
   if (container) {
     if (isSuperSonic2Unlocked()) {
@@ -205,7 +203,6 @@ export function evaluatePerfectDayEmerald(stageKey, isPerfectDay, showToast) {
 
   const emeralds = getChaosEmeralds();
   
-  // 1. Direct deterministic reward match (Day A -> Green, Day B -> Yellow, etc.)
   const directMatch = CHAOS_EMERALDS.find(em => em.day === stageKey && !emeralds[em.id]);
   if (directMatch) {
     emeralds[directMatch.id] = true;
@@ -215,7 +212,6 @@ export function evaluatePerfectDayEmerald(stageKey, isPerfectDay, showToast) {
     return directMatch.name;
   }
 
-  // 2. 35% Special Stage RNG roll for any remaining locked Emerald
   const lockedEmeralds = CHAOS_EMERALDS.filter(em => !emeralds[em.id]);
   if (lockedEmeralds.length > 0) {
     const roll = Math.random();
@@ -250,7 +246,6 @@ export function forgeChaosEmeraldWithRedRings(showToast) {
     return false;
   }
 
-  // Target next chronological unearned Emerald
   const target = locked[0];
   saveSpendableRedRings(spendable - 10);
   emeralds[target.id] = true;
@@ -318,7 +313,6 @@ export function checkSecretRingTriggers(sessionData, showToast) {
 // UI RENDERING: FULL ARTIFACTS TRAY & DUAL RING HUD
 // -------------------------------------------------------------
 export function renderArtifactsTray() {
-  // Find or create the main artifacts container
   let container = document.getElementById('artifactsTrayMount') || 
                   document.querySelector('.artifacts-container') ||
                   document.getElementById('artifactsContainer') ||
@@ -365,17 +359,23 @@ export function renderArtifactsTray() {
         </div>
       </div>
 
-      <div class="ring-counter-block">
+      <!-- CLICKABLE RED RING COUNTER + PERKS ACTION -->
+      <div class="ring-counter-block" id="hudRedRingsBlock" style="cursor: pointer;" title="Open Frontiers Skill Tree">
         <span class="ring-icon-symbol">⭐</span>
         <div class="ring-counter-meta">
           <span id="hudRedRingsVal" class="ring-count-val" style="color: #f87171;">${totalRed} / 50</span>
-          <span class="ring-counter-lbl">RED STAR RINGS</span>
+          <span class="ring-counter-lbl">RED STAR RINGS ▾</span>
         </div>
       </div>
 
-      <button id="hudSuperModeBtn" class="ring-bar-btn">
-        ⚡ ENGAGE SUPER SONIC (50🪙)
-      </button>
+      <div style="display: flex; gap: 6px; align-items: center;">
+        <button id="openSkillTreeHudBtn" class="ring-bar-btn" style="border-color: #f87171; color: #f87171; padding: 7px 10px;" title="Frontiers Skill Tree">
+          🌳 PERKS
+        </button>
+        <button id="hudSuperModeBtn" class="ring-bar-btn">
+          ⚡ ENGAGE SUPER SONIC (50🪙)
+        </button>
+      </div>
     </div>
 
     <!-- 2. DARKSPINE TRANSFORMATION BADGE -->
@@ -448,12 +448,22 @@ export function renderArtifactsTray() {
     </div>
   `;
 
-  // Attach Forge button handler
+  // Attach button handlers
   const forgeBtn = document.getElementById('forgeEmeraldBtn');
   if (forgeBtn && canForge) {
     forgeBtn.onclick = () => {
       forgeChaosEmeraldWithRedRings(window.showToast || console.log);
     };
+  }
+
+  const perksBtn = document.getElementById('openSkillTreeHudBtn');
+  if (perksBtn) {
+    perksBtn.onclick = () => toggleSkillTreeDrawer();
+  }
+
+  const redBlock = document.getElementById('hudRedRingsBlock');
+  if (redBlock) {
+    redBlock.onclick = () => toggleSkillTreeDrawer();
   }
 
   updateHudRingBar();
