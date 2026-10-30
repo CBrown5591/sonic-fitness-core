@@ -1,4 +1,4 @@
-// -------------------------------------------------------------
+F// -------------------------------------------------------------
 // SONIC FITNESS HUD // COMMAND CORE RUNTIME ENTRY POINT
 // Root Application Module: app.js
 // -------------------------------------------------------------
@@ -547,6 +547,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderVault();
         renderArtifactsTray();
 
+        // Award Standard Gold Rings (Total Score / 1000)
+        const standardRingsEarned = Math.floor(totalScore / 1000);
+        addStandardRings(standardRingsEarned);
+
+        // Check Perfect Day for Chaos Emerald Award (Deterministic or 15% Special Stage)
+        const isPerfectDay = rank === 'S' && !activeSession.jointPain && !activeSession.sets.some(s => s.jointPain) && ringsBanked >= activeSession.sets.length;
+        const emeraldWon = evaluatePerfectDayEmerald(activeStageKey, isPerfectDay, showToast);
+
+        // Launch Results Card
         renderResultsOverlay({
           stage: activeStageKey,
           totalScore,
@@ -559,7 +568,11 @@ document.addEventListener('DOMContentLoaded', async () => {
           totalSets: activeSession.sets.length,
           didLevelUp: newProg.level > oldProg.level,
           newLevel: newProg.level,
-          isNewRecord: recordRes.isNew
+          isNewRecord: recordRes.isNew,
+          goldRingsEarned: standardRingsEarned,
+          awardedEmerald: emeraldWon,
+          isSuperActive: isSuperModeSessionActive(),
+          isSS2: isSuperSonic2Unlocked()
         }, () => {
           activeSession = { stage: activeStageKey, slotIndex: 0, prehabChecked: false, jointPain: false, sets: [] };
           activeSlotIndex = 0;
