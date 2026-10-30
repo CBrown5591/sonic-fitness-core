@@ -526,3 +526,19 @@ if (typeof window !== 'undefined') {
   window.addStandardRings = addStandardRings;
   window.updateHudRingBar = updateHudRingBar;
 }
+export function deactivateDarkspine() {
+  localStorage.removeItem('sonic_darkspine_unlocked');
+  localStorage.setItem('sonic_secret_rings', '{}');
+  localStorage.setItem('sonic_darkspine_unlocked', 'false');
+  sessionStorage.removeItem('sonic_soul_gauge_max');
+  
+  const badge = document.getElementById('hudDarkspineBadge');
+  if (badge) badge.style.display = 'none';
+  
+  renderArtifactsTray();
+  if (window.showToast) window.showToast('🌑 DARKSPINE FORM DEACTIVATED');
+}
+
+if (typeof window !== 'undefined') {
+  window.deactivateDarkspine = deactivateDarkspine;
+}
