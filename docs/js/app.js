@@ -421,7 +421,6 @@ function ensureStageTabsExist() {
 
 // Bind interactive handlers to window for HTML compatibility
 window.selectStage = selectStage;
-window.renderResultsOverlay = renderResultsOverlay;
 window.logActiveSet = logActiveSet;
 window.togglePrehab = togglePrehab;
 window.toggleTempo = toggleTempo;
@@ -531,7 +530,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Check Perfect Day for Chaos Emerald Award (Deterministic or 15% Special Stage)
         const isPerfectDay = rank === 'S' && !activeSession.jointPain && !activeSession.sets.some(s => s.jointPain) && ringsBanked >= activeSession.sets.length;
-        evaluatePerfectDayEmerald(activeStageKey, isPerfectDay, showToast);
+        const emeraldWon = evaluatePerfectDayEmerald(activeStageKey, isPerfectDay, showToast);
+
         const recordRes = saveStageRecord(activeStageKey, totalScore, rank);
         localStorage.setItem('sonic_last_stage', activeStageKey);
         localStorage.setItem('sonic_last_strain', (activeSession.jointPain || activeSession.sets.some(s => s.jointPain)) ? 'true' : 'false');
@@ -560,8 +560,13 @@ document.addEventListener('DOMContentLoaded', async () => {
           totalSets: activeSession.sets.length,
           didLevelUp: newProg.level > oldProg.level,
           newLevel: newProg.level,
-          isNewRecord: recordRes.isNew
-        }, () => {
+          expProgressPct: newProg.progressPct,
+          isNewRecord: recordRes.isNew,
+          goldRingsEarned: standardRingsEarned,
+          awardedEmerald: emeraldWon,
+          isSuperActive: isSuperModeSessionActive(),
+          isSS2: isSuperSonic2Unlocked()
+        }}, () => {
           activeSession = { stage: activeStageKey, slotIndex: 0, prehabChecked: false, jointPain: false, sets: [] };
           activeSlotIndex = 0;
           saveSessionState();
@@ -582,7 +587,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
   }
 });
-
 // -------------------------------------------------------------
 // AUTOMATIC PWA SERVICE WORKER UPDATE ENGINE
 // Prompts the user with an in-app banner whenever new code is deployed
@@ -687,7 +691,6 @@ window.__sonicDev = {
   testTempoDamage: () => applySuperSonicDamagePenalty('tempo'),
   // 5. Test Super Transformation
   engageSuper: () => window.activateSuperModeSession(),
-  revertSuper: () => window.deactivateSuperModeSession(),
-  renderResultsOverlay: (data) => renderResultsOverlay(data)
+  revertSuper: () => window.deactivateSuperModeSession()
 };
 console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicDev');
