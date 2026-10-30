@@ -566,7 +566,7 @@ document.addEventListener('DOMContentLoaded', async () => {
           awardedEmerald: emeraldWon,
           isSuperActive: isSuperModeSessionActive(),
           isSS2: isSuperSonic2Unlocked()
-        }}, () => {
+          }, () => {
           activeSession = { stage: activeStageKey, slotIndex: 0, prehabChecked: false, jointPain: false, sets: [] };
           activeSlotIndex = 0;
           saveSessionState();
