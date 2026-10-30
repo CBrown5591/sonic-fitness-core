@@ -1,395 +1,466 @@
 // -------------------------------------------------------------
-// ARTIFACTS TRAY, SECRET RINGS & HUD RING COUNTER COMPONENT
+// ARTIFACTS TRAY & DUAL RING HUD CONTROLS // renderArtifacts.js
 // Modular UI Component: renderArtifacts.js
 // -------------------------------------------------------------
-import { CHAOS_EMERALDS_CATALOG, SECRET_RINGS_CATALOG } from '../data/artifacts.js';
-import { getTotalRedRings } from './renderVault.js';
+import { playStageClearFanfare } from '../core/audio.js';
 
+// -------------------------------------------------------------
+// CONSTANTS & CATALOGS
+// -------------------------------------------------------------
+export const CHAOS_EMERALDS = [
+  { id: 'green',  name: 'Green Chaos Emerald',  color: '#4ade80', symbol: '💎', day: 'DAY_A' },
+  { id: 'yellow', name: 'Yellow Chaos Emerald', color: '#facc15', symbol: '💎', day: 'DAY_B' },
+  { id: 'purple', name: 'Purple Chaos Emerald', color: '#c084fc', symbol: '💎', day: 'DAY_C' },
+  { id: 'blue',   name: 'Blue Chaos Emerald',   color: '#38bdf8', symbol: '💎', day: 'DAY_D' },
+  { id: 'cyan',   name: 'Cyan Chaos Emerald',   color: '#22d3ee', symbol: '💎', day: 'DAY_E' },
+  { id: 'red',    name: 'Red Chaos Emerald',    color: '#f87171', symbol: '💎', day: 'DAY_F' },
+  { id: 'white',  name: 'White Chaos Emerald',  color: '#f8fafc', symbol: '💎', day: 'CH_1RM' }
+];
+
+export const WORLD_RINGS = [
+  { id: 'prayers',  name: 'Ring of Prayers',  color: '#c084fc', symbol: '💍', emotion: 'Prayers' },
+  { id: 'sadness',  name: 'Ring of Sadness',  color: '#38bdf8', symbol: '💍', emotion: 'Sadness' },
+  { id: 'rage',     name: 'Ring of Rage',     color: '#f87171', symbol: '💍', emotion: 'Rage' },
+  { id: 'hatred',   name: 'Ring of Hatred',   color: '#4ade80', symbol: '💍', emotion: 'Hatred' },
+  { id: 'joy',      name: 'Ring of Joy',      color: '#facc15', symbol: '💍', emotion: 'Joy' },
+  { id: 'pleasure', name: 'Ring of Pleasure', color: '#22d3ee', symbol: '💍', emotion: 'Pleasure' },
+  { id: 'wishes',   name: 'Ring of Wishes',   color: '#f8fafc', symbol: '💍', emotion: 'Wishes' }
+];
+
+// -------------------------------------------------------------
+// LOCAL STORAGE GETTERS & SETTERS
+// -------------------------------------------------------------
 export function getStandardRings() {
-  const stored = localStorage.getItem('sonic_standard_rings');
-  return stored !== null ? (parseInt(stored, 10) || 0) : 0;
+  const val = localStorage.getItem('sonic_standard_rings');
+  if (val !== null) return parseInt(val, 10) || 0;
+  // Fallback: derive from lifetime EXP if not yet separately initialized
+  const exp = parseInt(localStorage.getItem('sonic_lifetime_exp') || '0', 10);
+  return Math.floor(exp / 1000);
 }
 
-export function saveStandardRings(amount) {
-  const val = Math.max(0, parseInt(amount, 10) || 0);
-  localStorage.setItem('sonic_standard_rings', val);
+export function saveStandardRings(count) {
+  const safeCount = Math.max(0, parseInt(count, 10) || 0);
+  localStorage.setItem('sonic_standard_rings', safeCount.toString());
   updateHudRingBar();
-  return val;
+  return safeCount;
 }
 
 export function addStandardRings(amount) {
-  const cur = getStandardRings();
-  return saveStandardRings(cur + amount);
+  const current = getStandardRings();
+  return saveStandardRings(current + amount);
 }
 
-export function spendStandardRings(amount) {
-  const cur = getStandardRings();
-  if (cur < amount) return false;
-  saveStandardRings(cur - amount);
-  return true;
-}
-
-export function getChaosEmeraldsState() {
-  const stored = localStorage.getItem('sonic_chaos_emeralds');
-  if (stored) {
-    try { return JSON.parse(stored); } catch (e) {}
+export function getChaosEmeralds() {
+  try {
+    const raw = localStorage.getItem('sonic_chaos_emeralds');
+    return raw ? JSON.parse(raw) : {};
+  } catch (e) {
+    return {};
   }
-  return {
-    "emerald-green": false, "emerald-red": false, "emerald-blue": false,
-    "emerald-yellow": false, "emerald-cyan": false, "emerald-purple": false, "emerald-white": false
-  };
 }
 
-export function saveChaosEmeraldsState(state) {
-  localStorage.setItem('sonic_chaos_emeralds', JSON.stringify(state));
+export function saveChaosEmeralds(emeraldsObj) {
+  localStorage.setItem('sonic_chaos_emeralds', JSON.stringify(emeraldsObj));
 }
 
-export function getSecretRingsState() {
-  const stored = localStorage.getItem('sonic_secret_rings');
-  if (stored) {
-    try { return JSON.parse(stored); } catch (e) {}
+export function getSecretRings() {
+  try {
+    const raw = localStorage.getItem('sonic_secret_rings');
+    if (!raw) return {};
+    const parsed = JSON.parse(raw);
+    if (Array.isArray(parsed)) {
+      const obj = {};
+      parsed.forEach(k => { obj[k] = true; });
+      return obj;
+    }
+    return parsed;
+  } catch (e) {
+    return {};
   }
-  return {
-    "ring-prayer": false, "ring-sadness": false, "ring-rage": false,
-    "ring-hatred": false, "ring-joy": false, "ring-pleasure": false, "ring-wishes": false
-  };
 }
 
-export function saveSecretRingsState(state) {
-  localStorage.setItem('sonic_secret_rings', JSON.stringify(state));
+export function saveSecretRings(ringsObj) {
+  localStorage.setItem('sonic_secret_rings', JSON.stringify(ringsObj));
 }
 
+export function getSpendableRedRings() {
+  const raw = localStorage.getItem('sonic_red_rings_unallocated');
+  if (raw !== null) return Math.max(0, parseInt(raw, 10) || 0);
+  // Default to vault rings if unallocated not yet set
+  const vaultRings = parseInt(localStorage.getItem('sonic_total_red_rings') || '0', 10);
+  return vaultRings;
+}
+
+export function saveSpendableRedRings(amount) {
+  const safe = Math.max(0, parseInt(amount, 10) || 0);
+  localStorage.setItem('sonic_red_rings_unallocated', safe.toString());
+  return safe;
+}
+
+// -------------------------------------------------------------
+// UNLOCK & TRANSFORMATION STATE CHECKS
+// -------------------------------------------------------------
 export function isSuperModeUnlocked() {
-  const state = getChaosEmeraldsState();
-  return Object.values(state).every(v => v === true);
+  const emeralds = getChaosEmeralds();
+  return CHAOS_EMERALDS.every(em => !!emeralds[em.id]);
 }
 
 export function isSuperSonic2Unlocked() {
-  return isSuperModeUnlocked() && getTotalRedRings() >= 50;
+  const totalRed = parseInt(localStorage.getItem('sonic_total_red_rings') || '0', 10);
+  return isSuperModeUnlocked() && totalRed >= 50;
+}
+
+export function isDarkspineModeUnlocked() {
+  const explicit = localStorage.getItem('sonic_darkspine_unlocked') === 'true';
+  if (explicit) return true;
+  const rings = getSecretRings();
+  return WORLD_RINGS.every(r => !!rings[r.id]);
 }
 
 export function isSuperModeSessionActive() {
-  return localStorage.getItem('sonic_super_session_active') === 'true';
+  return sessionStorage.getItem('sonic_super_mode_active') === 'true';
 }
 
-export function activateSuperModeSession() {
+// -------------------------------------------------------------
+// IN-SESSION TRANSFORMATION ACTIVATION
+// -------------------------------------------------------------
+export function activateSuperModeSession(showToast) {
   if (!isSuperModeUnlocked()) {
-    alert("Super Mode locked! Gather all 7 Chaos Emeralds first.");
+    if (showToast) showToast('⚠️ 7 CHAOS EMERALDS REQUIRED FOR SUPER SONIC');
     return false;
   }
-  if (!spendStandardRings(50)) {
-    alert("Insufficient Rings! 50 Standard Gold Rings required to transform.");
+
+  const currentRings = getStandardRings();
+  if (currentRings < 50) {
+    if (showToast) showToast(`⚠️ INSUFFICIENT GOLD RINGS: Need 50 (You have ${currentRings})`);
     return false;
   }
-  localStorage.setItem('sonic_super_session_active', 'true');
-  applySuperSonicHudEffects();
+
+  // Deduct 50 Gold Rings to transform
+  saveStandardRings(currentRings - 50);
+  sessionStorage.setItem('sonic_super_mode_active', 'true');
+  sessionStorage.setItem('sonic_gold_rings_spent', '50');
+
+  // Visual cues on container
+  const container = document.querySelector('.container');
+  if (container) {
+    if (isSuperSonic2Unlocked()) {
+      container.classList.add('super-sonic-2-active');
+    } else {
+      container.classList.add('super-mode-active');
+    }
+  }
+
   updateHudRingBar();
+  if (showToast) {
+    const modeName = isSuperSonic2Unlocked() ? '⚡ SUPER SONIC 2' : '⚡ SUPER SONIC';
+    showToast(`${modeName} ACTIVATED! (-50 GOLD RINGS)`);
+  }
   return true;
 }
 
 export function deactivateSuperModeSession() {
-  localStorage.removeItem('sonic_super_session_active');
-  removeSuperSonicHudEffects();
-  updateHudRingBar();
-}
-
-export function applySuperSonicDamagePenalty(type) {
-  if (!isSuperModeSessionActive()) return;
-  const isSS2 = isSuperSonic2Unlocked();
-  // Super Sonic 2 has damage resistance (-10 for strain, -5 for tempo)
-  const penalty = type === 'strain' ? (isSS2 ? 10 : 15) : (isSS2 ? 5 : 10);
-  const cur = getStandardRings();
-  const next = Math.max(0, cur - penalty);
-  saveStandardRings(next);
-
-  if (next === 0) {
-    deactivateSuperModeSession();
-    alert("⚡ ZERO RINGS REMAINING: Reverted to Base Form!");
-  }
-}
-
-export function isDarkspineModeUnlocked() {
-  const state = getSecretRingsState();
-  return Object.values(state).every(v => v === true);
-}
-
-// -------------------------------------------------------------
-// VISIBLE HUD RING BAR (MOUNTED BELOW PILOT EXP CARD)
-// -------------------------------------------------------------
-export function updateHudRingBar() {
-  const pilotCard = document.querySelector('.pilot-exp-card');
-  if (!pilotCard) return;
-
-  let ringBar = document.getElementById('hudRingEconomyBar');
-  if (!ringBar) {
-    ringBar = document.createElement('div');
-    ringBar.id = 'hudRingEconomyBar';
-    ringBar.className = 'hud-ring-economy-bar';
-    pilotCard.parentNode.insertBefore(ringBar, pilotCard.nextSibling);
-  }
-
-  const standardRings = getStandardRings();
-  const redRings = getTotalRedRings();
-  const hasEmeralds = isSuperModeUnlocked();
-  const isSS2Unlocked = isSuperSonic2Unlocked();
-  const isSuperActive = isSuperModeSessionActive();
-
-  let transformBtnHtml = '';
-  if (hasEmeralds) {
-    if (isSuperActive) {
-      transformBtnHtml = `
-        <button id="toggleSuperBtn" class="ring-bar-btn active-super ${isSS2Unlocked ? 'super-2' : ''}" onclick="window.deactivateSuperModeSession()">
-          ${isSS2Unlocked ? '⚡ SS2 ACTIVE (1.50x)' : '⚡ SUPER ACTIVE (1.25x)'}
-        </button>
-      `;
-    } else {
-      transformBtnHtml = `
-        <button id="toggleSuperBtn" class="ring-bar-btn ${standardRings >= 50 ? 'can-activate' : 'locked'}" onclick="window.activateSuperModeSession()">
-          ${isSS2Unlocked ? '⚡ ENGAGE SS2 (50 🪙)' : '⚡ ENGAGE SUPER (50 🪙)'}
-        </button>
-      `;
-    }
-  }
-
-  ringBar.innerHTML = `
-    <div class="ring-counter-block gold-rings">
-      <span class="ring-icon-symbol">🪙</span>
-      <div class="ring-counter-meta">
-        <span class="ring-count-val">${standardRings}</span>
-        <span class="ring-counter-lbl">GOLD RINGS</span>
-      </div>
-    </div>
-
-    <div class="ring-counter-block red-rings">
-      <span class="ring-icon-symbol">⭐</span>
-      <div class="ring-counter-meta">
-        <span class="ring-count-val">${redRings}<span style="font-size: 11px; opacity: 0.7;">/50</span></span>
-        <span class="ring-counter-lbl">${isSS2Unlocked ? 'SS2 MASTERED' : 'RED STAR RINGS'}</span>
-      </div>
-    </div>
-
-    ${transformBtnHtml}
-  `;
-
-  if (isSuperActive) {
-    applySuperSonicHudEffects();
-  } else {
-    removeSuperSonicHudEffects();
-  }
-}
-
-export function applySuperSonicHudEffects() {
+  sessionStorage.removeItem('sonic_super_mode_active');
   const container = document.querySelector('.container');
-  if (!container) return;
-  const isSS2 = isSuperSonic2Unlocked();
-
-  container.classList.add('super-mode-active');
-  if (isSS2) {
-    container.classList.add('super-sonic-2-active');
-  } else {
+  if (container) {
+    container.classList.remove('super-mode-active');
     container.classList.remove('super-sonic-2-active');
   }
-}
-
-export function removeSuperSonicHudEffects() {
-  const container = document.querySelector('.container');
-  if (!container) return;
-  container.classList.remove('super-mode-active', 'super-sonic-2-active');
-}
-
-export function renderArtifactsTray() {
   updateHudRingBar();
-
-  const ringBar = document.getElementById('hudRingEconomyBar');
-  if (!ringBar) return;
-
-  let trayWrap = document.getElementById('dualArtifactsWrapper');
-  if (!trayWrap) {
-    trayWrap = document.createElement('div');
-    trayWrap.id = 'dualArtifactsWrapper';
-    trayWrap.className = 'artifacts-container';
-    ringBar.parentNode.insertBefore(trayWrap, ringBar.nextSibling);
-  }
-
-  const emeraldState = getChaosEmeraldsState();
-  const ringState = getSecretRingsState();
-  const emeraldsClaimed = Object.values(emeraldState).filter(Boolean).length;
-  const ringsClaimed = Object.values(ringState).filter(Boolean).length;
-  const superActive = isSuperModeUnlocked();
-  const darkspineActive = isDarkspineModeUnlocked();
-  const isSS2 = isSuperSonic2Unlocked();
-  const isSessionSuper = isSuperModeSessionActive();
-
-  trayWrap.innerHTML = `
-    <!-- CHAOS VAULT TRAY -->
-    <div class="artifact-tray-card chaos-tray ${isSessionSuper ? (isSS2 ? 'ss2-glow' : 'super-glow') : ''}">
-      <div class="artifact-tray-header">
-        <span class="artifact-tray-title">💎 THE CHAOS VAULT // STRENGTH TRIALS</span>
-        <span class="artifact-tray-counter">${emeraldsClaimed}/7 CLAIMED</span>
-      </div>
-      <div class="artifact-sockets-row">
-        ${CHAOS_EMERALDS_CATALOG.map(item => `
-          <div class="artifact-socket ${emeraldState[item.id] ? 'unlocked ' + item.colorClass : 'locked'}" data-type="emerald" data-id="${item.id}">
-            <span class="artifact-icon">${item.icon}</span>
-            <span class="artifact-label">${item.id.replace('emerald-', '')}</span>
-          </div>
-        `).join('')}
-      </div>
-      <div id="superModeBadge" class="transformation-badge-active ${superActive ? 'super-mode-active' : ''} ${isSS2 ? 'ss2-badge' : ''}">
-        ${isSS2 
-          ? '⚡ SUPER SONIC 2 ENGAGED // CYBER ENERGY UNLEASHED (1.50x EXP) ⚡'
-          : '⚡ SUPER MODE READY // 50 RINGS TO ENGAGE (1.25x EXP) ⚡'}
-      </div>
-    </div>
-
-    <!-- SECRET RINGS TRAY -->
-    <div class="artifact-tray-card secret-rings-tray">
-      <div class="artifact-tray-header">
-        <span class="artifact-tray-title">💍 THE SECRET RINGS // ENDURANCE & WORK CAPACITY</span>
-        <span class="artifact-tray-counter">${ringsClaimed}/7 CLAIMED</span>
-      </div>
-      <div class="artifact-sockets-row">
-        ${SECRET_RINGS_CATALOG.map(item => `
-          <div class="artifact-socket ${ringState[item.id] ? 'unlocked ' + item.colorClass : 'locked'}" data-type="ring" data-id="${item.id}">
-            <span class="artifact-icon">${item.icon}</span>
-            <span class="artifact-label">${item.id.replace('ring-', '')}</span>
-          </div>
-        `).join('')}
-      </div>
-      <div id="darkspineModeBadge" class="transformation-badge-active ${darkspineActive ? 'darkspine-mode-active' : ''}">
-        🔥 DARKSPINE MODE ACTIVE // TIME BRAKE (3 SOUL CHARGES) & +500 EXP SURGE 🔥
-      </div>
-    </div>
-  `;
-
-  // Attach click handlers to all artifact sockets
-  trayWrap.querySelectorAll('.artifact-socket').forEach(el => {
-    el.onclick = () => {
-      const type = el.getAttribute('data-type');
-      const id = el.getAttribute('data-id');
-      showArtifactIntel(type, id);
-    };
-  });
 }
 
-export function showArtifactIntel(type, id) {
-  const catalog = type === 'emerald' ? CHAOS_EMERALDS_CATALOG : SECRET_RINGS_CATALOG;
-  const state = type === 'emerald' ? getChaosEmeraldsState() : getSecretRingsState();
-  const item = catalog.find(x => x.id === id);
-  if (!item) return;
+export function applySuperSonicDamagePenalty(showToast) {
+  if (!isSuperModeSessionActive()) return;
+  const currentRings = getStandardRings();
+  const penalty = 15; // Strain drops rings
+  const updated = Math.max(0, currentRings - penalty);
+  saveStandardRings(updated);
 
-  const isClaimed = !!state[id];
-  const statusText = isClaimed ? "STATUS: CLAIMED [✓]" : "STATUS: LOCKED [ ]";
-  alert(`${item.name} (${type === 'emerald' ? 'Chaos Emerald' : 'Secret World Ring'})\n\n${statusText}\n\nTRIAL OBJECTIVE:\n${item.trial}\n\nTap OK to close.`);
-}
-
-export function checkSecretRingTriggers(setObj, showToastCallback) {
-  const rings = getSecretRingsState();
-  let changed = false;
-
-  // 1. Ring of Prayer: Zone 2 Incline Walk or Bike >= 12 mins, RPE <= 8.0, clean
-  if ((setObj.exercise.includes("Treadmill") || setObj.exercise.includes("Stationary Bike")) &&
-      setObj.reps >= 12 && setObj.rpe <= 8.0 && !setObj.jointPain && !rings["ring-prayer"]) {
-    rings["ring-prayer"] = true;
-    changed = true;
-    if (showToastCallback) showToastCallback("💍 SECRET RING UNLOCKED: Ring of Prayer (Mental Stillness)!");
+  if (showToast) {
+    showToast(`💥 HULL STRAIN! Super Sonic lost ${penalty} Gold Rings!`);
   }
 
-  // 2. Ring of Sadness: Cybex Leg Press >= 25 reps
-  if (setObj.exercise.includes("Leg Press") && setObj.reps >= 25 && !setObj.jointPain && !rings["ring-sadness"]) {
-    rings["ring-sadness"] = true;
-    changed = true;
-    if (showToastCallback) showToastCallback("💍 SECRET RING UNLOCKED: Ring of Sadness (Acidosis Grind)!");
-  }
-
-  // 3. Ring of Rage: Rower Sprints >= 8 rounds
-  if (setObj.exercise.includes("Rower Sprints") && setObj.reps >= 8 && !setObj.jointPain && !rings["ring-rage"]) {
-    rings["ring-rage"] = true;
-    changed = true;
-    if (showToastCallback) showToastCallback("💍 SECRET RING UNLOCKED: Ring of Rage (Spin Dash Intervals)!");
-  }
-
-  // 4. Ring of Hatred: Farmer's Carries >= 60 paces @ 60+ lbs
-  if (setObj.exercise.includes("Farmer") && setObj.load >= 60 && setObj.reps >= 60 && !setObj.jointPain && !rings["ring-hatred"]) {
-    rings["ring-hatred"] = true;
-    changed = true;
-    if (showToastCallback) showToastCallback("💍 SECRET RING UNLOCKED: Ring of Hatred (Grip Crucible)!");
-  }
-
-  // 5. Ring of Pleasure: 45s TUT Lat Pulldown or Cable Pallof Hold
-  if ((setObj.exercise.includes("Lat Pulldown") || setObj.exercise.includes("Pallof")) &&
-      setObj.reps >= 45 && !setObj.jointPain && !rings["ring-pleasure"]) {
-    rings["ring-pleasure"] = true;
-    changed = true;
-    if (showToastCallback) showToastCallback("💍 SECRET RING UNLOCKED: Ring of Pleasure (Lactic Threshold)!");
-  }
-
-  if (changed) {
-    saveSecretRingsState(rings);
-    renderArtifactsTray();
-    if (navigator.vibrate) navigator.vibrate([100, 50, 100, 50, 200]);
+  if (updated === 0) {
+    deactivateSuperModeSession();
+    if (showToast) showToast('⚠️ RING DEPLETION: Super Sonic Reverted!');
   }
 }
 
-/**
- * Evaluates Perfect Day completion for Chaos Emerald acquisition.
- * 1. Targeted Day mapping for Days A-F
- * 2. 15% RNG Special Stage Warp Ring fallback for unearned emeralds
- * 3. White Emerald is 100% exclusive to CH_1RM / CH_AMRAP
- */
-export function evaluatePerfectDayEmerald(stageKey, isPerfectDay, showToastCallback) {
+// -------------------------------------------------------------
+// POST-SORTIE REWARD LOGIC: PERFECT DAY EMERALD ROLL
+// -------------------------------------------------------------
+export function evaluatePerfectDayEmerald(stageKey, isPerfectDay, showToast) {
   if (!isPerfectDay) return null;
 
-  const emeralds = getChaosEmeraldsState();
-  let awardedEmerald = null;
+  const emeralds = getChaosEmeralds();
+  
+  // 1. Direct deterministic reward match (e.g. Day A -> Green, Day B -> Yellow, etc.)
+  const directMatch = CHAOS_EMERALDS.find(em => em.day === stageKey && !emeralds[em.id]);
+  if (directMatch) {
+    emeralds[directMatch.id] = true;
+    saveChaosEmeralds(emeralds);
+    renderArtifactsTray();
+    if (showToast) showToast(`✨ PERFECT SORTIE: ${directMatch.name} Acquired!`);
+    return directMatch.name;
+  }
 
-  // Challenge Modes: Guaranteed White Emerald
-  if (stageKey === 'CH_1RM' || stageKey === 'CH_AMRAP') {
-    if (!emeralds["emerald-white"]) {
-      emeralds["emerald-white"] = true;
-      awardedEmerald = "White Emerald (The Grand Apex)";
+  // 2. 35% Special Stage RNG roll for any remaining locked Emerald
+  const lockedEmeralds = CHAOS_EMERALDS.filter(em => !emeralds[em.id]);
+  if (lockedEmeralds.length > 0) {
+    const roll = Math.random();
+    if (roll < 0.35) {
+      const awarded = lockedEmeralds[Math.floor(Math.random() * lockedEmeralds.length)];
+      emeralds[awarded.id] = true;
+      saveChaosEmeralds(emeralds);
+      renderArtifactsTray();
+      if (showToast) showToast(`🎲 SPECIAL STAGE CLEAR: ${awarded.name} Won!`);
+      return awarded.name;
     }
-  } else {
-    // Deterministic Day Mapping:
-    const targetMap = {
-      DAY_A: "emerald-red",
-      DAY_B: "emerald-green",
-      DAY_C: "emerald-blue",
-      DAY_D: "emerald-cyan",
-      DAY_E: "emerald-yellow",
-      DAY_F: "emerald-purple"
-    };
+  }
 
-    const targetKey = targetMap[stageKey];
-    if (targetKey && !emeralds[targetKey]) {
-      emeralds[targetKey] = true;
-      const item = CHAOS_EMERALDS_CATALOG.find(x => x.id === targetKey);
-      awardedEmerald = item ? item.name : "Chaos Emerald";
-    } else {
-      // Hybrid Option: If deterministic emerald is already claimed, 15% Special Stage Warp Ring roll!
-      const unearned = CHAOS_EMERALDS_CATALOG.filter(x => x.id !== "emerald-white" && !emeralds[x.id]);
-      if (unearned.length > 0) {
-        const roll = Math.random();
-        if (roll <= 0.15) { // 15% Special Stage Drop Rate
-          const lucky = unearned[Math.floor(Math.random() * unearned.length)];
-          emeralds[lucky.id] = true;
-          awardedEmerald = `${lucky.name} (Special Stage Warp Ring 15% Drop!)`;
-        }
+  return null;
+}
+
+// -------------------------------------------------------------
+// PILLAR 2: RED STAR RING CHAOS EMERALD FORGE
+// -------------------------------------------------------------
+export function forgeChaosEmeraldWithRedRings(showToast) {
+  const spendable = getSpendableRedRings();
+  if (spendable < 10) {
+    if (showToast) showToast(`⚠️ INSUFFICIENT RED RINGS: Need 10★ (You have ${spendable}★)`);
+    return false;
+  }
+
+  const emeralds = getChaosEmeralds();
+  const locked = CHAOS_EMERALDS.filter(em => !emeralds[em.id]);
+
+  if (locked.length === 0) {
+    if (showToast) showToast('✨ ALL 7 CHAOS EMERALDS ARE ALREADY FORGED!');
+    return false;
+  }
+
+  // Target next chronological unearned Emerald
+  const target = locked[0];
+  saveSpendableRedRings(spendable - 10);
+  emeralds[target.id] = true;
+  saveChaosEmeralds(emeralds);
+
+  renderArtifactsTray();
+
+  if (showToast) {
+    showToast(`💎 EMERALD FORGED: ${target.name}! (-10★ Red Rings)`);
+  }
+
+  if (isSuperModeUnlocked()) {
+    if (showToast) {
+      setTimeout(() => showToast('⚡ ALL 7 EMERALDS SECURED // SUPER SONIC PROTOCOL ONLINE!'), 800);
+    }
+  }
+
+  return true;
+}
+
+// -------------------------------------------------------------
+// SECRET RINGS GAMEPLAY TRIGGERS (DARKSPINE PROGRESSION)
+// -------------------------------------------------------------
+export function checkSecretRingTriggers(sessionData, showToast) {
+  const secretRings = getSecretRings();
+  let awarded = null;
+
+  // 1. Ring of Prayers: Complete prehab with 100% Shield & clean form
+  if (!secretRings['prayers'] && sessionData.prehab && !sessionData.jointPain) {
+    secretRings['prayers'] = true;
+    awarded = 'Ring of Prayers (Purple)';
+  }
+  // 2. Ring of Sadness: Recover from a prior strain set without failing sortie
+  else if (!secretRings['sadness'] && sessionData.recoveredStrain) {
+    secretRings['sadness'] = true;
+    awarded = 'Ring of Sadness (Blue)';
+  }
+  // 3. Ring of Rage: Log an RPE 8.0 set with pristine tempo
+  else if (!secretRings['rage'] && sessionData.maxRpeHit && sessionData.tempoClean) {
+    secretRings['rage'] = true;
+    awarded = 'Ring of Rage (Red)';
+  }
+  // 4. Ring of Hatred: Bank 4/4 Red Star Rings in a single sortie
+  else if (!secretRings['hatred'] && sessionData.ringsBanked >= 4) {
+    secretRings['hatred'] = true;
+    awarded = 'Ring of Hatred (Green)';
+  }
+  // 5. Ring of Joy: Achieve an S-Rank with zero joint pain
+  else if (!secretRings['joy'] && sessionData.rank === 'S' && !sessionData.jointPain) {
+    secretRings['joy'] = true;
+    awarded = 'Ring of Joy (Yellow)';
+  }
+  // 6. Ring of Pleasure: Complete conditioning interval at full cadence
+  else if (!secretRings['pleasure'] && sessionData.conditioningSurge) {
+    secretRings['pleasure'] = true;
+    awarded = 'Ring of Pleasure (Cyan)';
+  }
+  // 7. Ring of Wishes: Clear a stage with a new personal PR
+  else if (!secretRings['wishes'] && sessionData.isNewRecord) {
+    secretRings['wishes'] = true;
+    awarded = 'Ring of Wishes (White)';
+  }
+
+  if (awarded) {
+    saveSecretRings(secretRings);
+    renderArtifactsTray();
+    if (showToast) showToast(`💍 SECRET RING CLAIMED: ${awarded}!`);
+    if (isDarkspineModeUnlocked()) {
+      localStorage.setItem('sonic_darkspine_unlocked', 'true');
+      if (showToast) {
+        setTimeout(() => showToast('🔥 ALL 7 WORLD RINGS CLAIMED // DARKSPINE FORM UNLOCKED!'), 800);
       }
     }
   }
-
-  if (awardedEmerald) {
-    saveChaosEmeraldsState(emeralds);
-    renderArtifactsTray();
-    if (showToastCallback) showToastCallback(`💎 CHAOS EMERALD CLAIMED: ${awardedEmerald}!`);
-    if (navigator.vibrate) navigator.vibrate([150, 50, 150, 50, 300]);
-  }
-
-  return awardedEmerald;
 }
 
-// Window bindings
-window.showArtifactIntel = showArtifactIntel;
-window.activateSuperModeSession = activateSuperModeSession;
-window.deactivateSuperModeSession = deactivateSuperModeSession;
+// -------------------------------------------------------------
+// UI RENDERING: ARTIFACTS TRAY & DUAL RING HUD
+// -------------------------------------------------------------
+export function renderArtifactsTray() {
+  const container = document.getElementById('artifactsTrayMount') || document.querySelector('.artifacts-container');
+  if (!container) return;
+
+  const emeralds = getChaosEmeralds();
+  const secretRings = getSecretRings();
+  const spendableRed = getSpendableRedRings();
+  const totalEmeraldsEarned = CHAOS_EMERALDS.filter(em => !!emeralds[em.id]).length;
+  const totalRingsEarned = WORLD_RINGS.filter(r => !!secretRings[r.id]).length;
+
+  const canForge = spendableRed >= 10 && totalEmeraldsEarned < 7;
+  const forgeBtnStyle = canForge 
+    ? 'background: #1e293b; border: 1px solid #f87171; color: #f87171; cursor: pointer;' 
+    : 'background: #0d1524; border: 1px solid #334155; color: #64748b; cursor: not-allowed; opacity: 0.6;';
+
+  container.innerHTML = `
+    <!-- CHAOS VAULT CARD -->
+    <div class="artifact-tray-card">
+      <div class="artifact-tray-header">
+        <span class="artifact-tray-title">CHAOS VAULT // EMERALDS</span>
+        <span class="artifact-tray-counter">${totalEmeraldsEarned} / 7</span>
+      </div>
+
+      <div class="artifact-sockets-row">
+        ${CHAOS_EMERALDS.map(em => {
+          const unlocked = !!emeralds[em.id];
+          const style = unlocked
+            ? `border-color: ${em.color}; box-shadow: 0 0 10px ${em.color}66; opacity: 1; filter: none;`
+            : `opacity: 0.35; filter: grayscale(1);`;
+          return `
+            <div class="artifact-socket ${unlocked ? 'unlocked' : 'locked'}" style="${style}" title="${em.name} (${em.day})">
+              <span class="artifact-icon" style="${unlocked ? `color: ${em.color}; text-shadow: 0 0 8px ${em.color};` : ''}">${em.symbol}</span>
+              <span class="artifact-label" style="${unlocked ? `color: ${em.color};` : ''}">${em.id}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+
+      <!-- PILLAR 2: 10 RED STAR RING FORGE ACTION -->
+      <div class="chaos-forge-action-row" style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center; padding-top: 6px; border-top: 1px solid #1e293b;">
+        <span style="font-size: 10px; font-weight: 800; color: #94a3b8;">
+          RED RINGS: <strong style="color: #f87171; font-family: monospace;">${spendableRed}★</strong>
+        </span>
+        <button id="forgeEmeraldBtn" style="
+          font-size: 10px;
+          font-weight: 800;
+          padding: 5px 12px;
+          border-radius: 6px;
+          letter-spacing: 0.5px;
+          transition: 0.15s ease;
+          ${forgeBtnStyle}
+        " ${!canForge ? 'disabled' : ''}>
+          ⚡ FORGE EMERALD (10★)
+        </button>
+      </div>
+    </div>
+
+    <!-- SECRET RINGS / WORLD RINGS TRAY (DARKSPINE) -->
+    <div class="artifact-tray-card" style="margin-top: 8px;">
+      <div class="artifact-tray-header">
+        <span class="artifact-tray-title">WORLD RINGS // SECRET RINGS</span>
+        <span class="artifact-tray-counter" style="color: #c084fc;">${totalRingsEarned} / 7</span>
+      </div>
+
+      <div class="artifact-sockets-row">
+        ${WORLD_RINGS.map(r => {
+          const unlocked = !!secretRings[r.id];
+          const style = unlocked
+            ? `border-color: ${r.color}; box-shadow: 0 0 10px ${r.color}66; opacity: 1; filter: none;`
+            : `opacity: 0.35; filter: grayscale(1);`;
+          return `
+            <div class="artifact-socket ${unlocked ? 'unlocked' : 'locked'}" style="${style}" title="${r.name} (${r.emotion})">
+              <span class="artifact-icon" style="${unlocked ? `color: ${r.color}; text-shadow: 0 0 8px ${r.color};` : ''}">${r.symbol}</span>
+              <span class="artifact-label" style="${unlocked ? `color: ${r.color};` : ''}">${r.id}</span>
+            </div>
+          `;
+        }).join('')}
+      </div>
+    </div>
+  `;
+
+  // Attach Forge button handler
+  const forgeBtn = document.getElementById('forgeEmeraldBtn');
+  if (forgeBtn && canForge) {
+    forgeBtn.onclick = () => {
+      forgeChaosEmeraldWithRedRings(window.showToast || console.log);
+    };
+  }
+
+  updateHudRingBar();
+}
+
+export function updateHudRingBar() {
+  const goldEl = document.getElementById('hudGoldRingsVal');
+  if (goldEl) {
+    goldEl.innerText = getStandardRings().toLocaleString();
+  }
+
+  const superBtn = document.getElementById('hudSuperModeBtn');
+  if (superBtn) {
+    const isSuperUnlocked = isSuperModeUnlocked();
+    const isSS2 = isSuperSonic2Unlocked();
+    const isActive = isSuperModeSessionActive();
+    const goldCount = getStandardRings();
+
+    if (isActive) {
+      superBtn.className = 'ring-bar-btn active-super';
+      superBtn.innerText = isSS2 ? '⚡ SUPER SONIC 2 ACTIVE' : '⚡ SUPER SONIC ACTIVE';
+      superBtn.disabled = true;
+    } else if (!isSuperUnlocked) {
+      superBtn.className = 'ring-bar-btn locked';
+      superBtn.innerText = '🔒 SUPER FORM LOCKED (0/7 💎)';
+      superBtn.disabled = true;
+    } else if (goldCount < 50) {
+      superBtn.className = 'ring-bar-btn locked';
+      superBtn.innerText = `🔒 NEED 50 GOLD RINGS (${goldCount}/50)`;
+      superBtn.disabled = true;
+    } else {
+      superBtn.className = isSS2 ? 'ring-bar-btn super-2' : 'ring-bar-btn';
+      superBtn.innerText = isSS2 ? '⚡ ENGAGE SUPER SONIC 2 (50🪙)' : '⚡ ENGAGE SUPER SONIC (50🪙)';
+      superBtn.disabled = false;
+      superBtn.onclick = () => activateSuperModeSession(window.showToast || console.log);
+    }
+  }
+
+  // Update Transformation Indicators
+  const darkspineBadge = document.getElementById('hudDarkspineBadge');
+  if (darkspineBadge) {
+    darkspineBadge.style.display = isDarkspineModeUnlocked() ? 'block' : 'none';
+  }
+}
+
+// -------------------------------------------------------------
+// WINDOW EXPOSURE FOR DEVTOOLS TESTING
+// -------------------------------------------------------------
+if (typeof window !== 'undefined') {
+  window.renderArtifactsTray = renderArtifactsTray;
+  window.activateSuperModeSession = activateSuperModeSession;
+  window.deactivateSuperModeSession = deactivateSuperModeSession;
+  window.forgeChaosEmeraldWithRedRings = forgeChaosEmeraldWithRedRings;
+  window.getStandardRings = getStandardRings;
+  window.saveStandardRings = saveStandardRings;
+  window.addStandardRings = addStandardRings;
+  window.updateHudRingBar = updateHudRingBar;
+}
