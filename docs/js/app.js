@@ -1,4 +1,4 @@
-F// -------------------------------------------------------------
+// -------------------------------------------------------------
 // SONIC FITNESS HUD // COMMAND CORE RUNTIME ENTRY POINT
 // Root Application Module: app.js
 // -------------------------------------------------------------
@@ -530,7 +530,8 @@ document.addEventListener('DOMContentLoaded', async () => {
 
         // Check Perfect Day for Chaos Emerald Award (Deterministic or 15% Special Stage)
         const isPerfectDay = rank === 'S' && !activeSession.jointPain && !activeSession.sets.some(s => s.jointPain) && ringsBanked >= activeSession.sets.length;
-        evaluatePerfectDayEmerald(activeStageKey, isPerfectDay, showToast);
+        const emeraldWon = evaluatePerfectDayEmerald(activeStageKey, isPerfectDay, showToast);
+
         const recordRes = saveStageRecord(activeStageKey, totalScore, rank);
         localStorage.setItem('sonic_last_stage', activeStageKey);
         localStorage.setItem('sonic_last_strain', (activeSession.jointPain || activeSession.sets.some(s => s.jointPain)) ? 'true' : 'false');
@@ -547,15 +548,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         renderVault();
         renderArtifactsTray();
 
-        // Award Standard Gold Rings (Total Score / 1000)
-        const standardRingsEarned = Math.floor(totalScore / 1000);
-        addStandardRings(standardRingsEarned);
-
-        // Check Perfect Day for Chaos Emerald Award (Deterministic or 15% Special Stage)
-        const isPerfectDay = rank === 'S' && !activeSession.jointPain && !activeSession.sets.some(s => s.jointPain) && ringsBanked >= activeSession.sets.length;
-        const emeraldWon = evaluatePerfectDayEmerald(activeStageKey, isPerfectDay, showToast);
-
-        // Launch Results Card
         renderResultsOverlay({
           stage: activeStageKey,
           totalScore,
@@ -594,7 +586,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
   }
 });
-
 // -------------------------------------------------------------
 // AUTOMATIC PWA SERVICE WORKER UPDATE ENGINE
 // Prompts the user with an in-app banner whenever new code is deployed
