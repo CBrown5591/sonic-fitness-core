@@ -12,8 +12,9 @@ export function renderResultsOverlay(data, onClose) {
   overlay.id = 'resultsOverlay';
   overlay.className = 'results-overlay-backdrop';
 
-  const rankColor = data.rank === 'S' ? '#facc15' : (data.rank === 'A' ? '#38bdf8' : '#4ade80');
-  const metallicClass = data.rank === 'S' ? 'rank-metallic-s' : (data.rank === 'A' ? 'rank-metallic-a' : 'rank-metallic-b');
+  const metallicLetterClass = data.rank === 'S' 
+    ? 'letter-metallic-s' 
+    : (data.rank === 'A' ? 'letter-metallic-a' : 'letter-metallic-b');
   const goldRings = data.goldRingsEarned || Math.floor((data.totalScore || 0) / 1000);
 
   let emeraldHtml = '';
@@ -44,7 +45,6 @@ export function renderResultsOverlay(data, onClose) {
   let recordHtml = data.isNewRecord ? `<div class="results-record-badge">★ NEW STAGE RECORD ★</div>` : '';
   let levelUpHtml = data.didLevelUp ? `<div class="results-levelup-badge">▲ PILOT LEVEL UP → LVL ${data.newLevel} ▲</div>` : '';
 
-  // Experience Bar data
   const expGained = data.totalScore || 0;
   const currentLevel = data.newLevel || 1;
   const expProgressPct = data.expProgressPct !== undefined ? data.expProgressPct : 65;
@@ -83,14 +83,14 @@ export function renderResultsOverlay(data, onClose) {
           </div>
 
           <div class="results-rank-column">
-            <div id="resultsRankStamp" class="results-rank-stamp-hidden ${metallicClass}">
-              ${data.rank}
+            <div id="resultsRankStamp" class="results-rank-stamp-hidden">
+              <span class="rank-letter-text ${metallicLetterClass}">${data.rank}</span>
             </div>
             <div id="resultsRankLabel" class="results-rank-label" style="opacity: 0;">SONIC RATING</div>
           </div>
         </div>
 
-        <!-- 2. TOTAL SCORE (Underneath the side-by-side section) -->
+        <!-- 2. TOTAL SCORE (Underneath side-by-side) -->
         <div class="results-total-container">
           <div class="results-total-lbl">TOTAL SCORE</div>
           <div id="resultsScoreCounter" class="results-total-num">0 PTS</div>
@@ -170,7 +170,7 @@ export function renderResultsOverlay(data, onClose) {
     const emeraldBanner = document.getElementById('resultsEmeraldBanner');
 
     if (stampEl) {
-      stampEl.className = `results-rank-stamp animate-stamp-slam ${metallicClass}`;
+      stampEl.className = 'results-rank-stamp animate-stamp-slam';
     }
     if (labelEl) {
       labelEl.style.transition = 'opacity 0.3s ease';
