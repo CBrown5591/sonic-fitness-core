@@ -1240,3 +1240,55 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
   color: var(--accent-blue);
   box-shadow: 0 0 8px rgba(0, 229, 255, 0.3);
 }
+/* ------------------------------------------------------------- */
+/* SUPER SONIC 2 CYBER-ELECTRIC SHADERS                          */
+/* ------------------------------------------------------------- */
+.super-sonic-2-active {
+  border-color: #38bdf8 !important;
+  box-shadow: 0 0 25px rgba(250, 204, 21, 0.45), 0 0 50px rgba(56, 189, 248, 0.35) !important;
+  animation: ss2CyberPulse 2s infinite alternate ease-in-out;
+}
+
+@keyframes ss2CyberPulse {
+  0% { box-shadow: 0 0 20px rgba(250, 204, 21, 0.3), 0 0 35px rgba(56, 189, 248, 0.25); }
+  100% { box-shadow: 0 0 35px rgba(250, 204, 21, 0.65), 0 0 65px rgba(56, 189, 248, 0.55); }
+}
+
+.hud-ring-economy-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: #101726;
+  border: 1px solid #1e293b;
+  border-radius: 8px;
+  padding: 8px 12px;
+  margin: 10px 0;
+}
+
+.ring-counter-block {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.ring-icon-symbol { font-size: 18px; }
+.ring-count-val { font-size: 14px; font-weight: 800; color: #facc15; }
+.ring-counter-lbl { font-size: 9px; font-weight: 700; color: #94a3b8; display: block; }
+
+.ring-bar-btn {
+  background: #1e293b;
+  border: 1px solid #facc15;
+  color: #facc15;
+  padding: 5px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.ring-bar-btn.super-2 {
+  border-color: #38bdf8;
+  color: #38bdf8;
+  box-shadow: 0 0 10px rgba(56, 189, 248, 0.4);
+}
