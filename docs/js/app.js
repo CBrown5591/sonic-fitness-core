@@ -11,7 +11,7 @@ import { getStageRecords, saveStageRecord, getPRVault, savePRVault } from './eng
 import { playRingChime, toggleAudioTheme, getAudioTheme, stopAllFanfare } from './core/audio.js';
 import { setTimerDuration, startRestTimer, applyTimeBrake, initTimerBackgroundSync } from './core/timer.js';
 import { fetchSheetTelemetry, syncSessionToSheets } from './core/sync.js';
-import { showToast, renderStageRecordBanner, renderMovementIntel, updateInputLabelsForExercise } from './ui/renderHud.js';
+import { showToast, renderStageRecordBanner, renderMovementIntel, updateInputLabelsForExercise, togglePrehabDrawer } from './ui/renderHud.js';
 import { openAuditModal } from './ui/auditModal.js';
 import { renderResultsOverlay } from './ui/resultsOverlay.js';
 import { 
@@ -698,6 +698,7 @@ console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicD
 // Expose toggleSkillTreeDrawer globally for any template button clicks
 window.toggleSkillTreeDrawer = toggleSkillTreeDrawer;
 window.hasPerk = hasPerk;
+window.togglePrehabDrawer = togglePrehabDrawer;
 
 // Expand window.__sonicDev with Skill Tree inspection
 if (window.__sonicDev) {
