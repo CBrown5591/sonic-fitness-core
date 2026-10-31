@@ -1672,3 +1672,101 @@ body { background: var(--bg); color: var(--text); padding-bottom: 90px; }
   70% { opacity: 1; transform: scale(0.92) rotate(-4deg); }
   100% { opacity: 1; transform: scale(1) rotate(-4deg); }
 }
+/* =============================================================
+   PRE-FLIGHT MISSION ACCORDION & BUTTON STYLES
+   ============================================================= */
+
+.prehab-card {
+  margin-bottom: 12px;
+}
+
+/* Accordion Header Button */
+.prehab-toggle-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(255, 196, 0, 0.12);
+  border: 1.5px solid var(--accent-gold, #ffc400);
+  color: #ffffff;
+  padding: 12px 14px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 0 10px rgba(255, 196, 0, 0.15);
+  transition: all 0.2s ease;
+}
+
+.prehab-toggle-btn:active {
+  transform: scale(0.99);
+}
+
+.prehab-toggle-btn.expanded {
+  border-bottom-left-radius: 0;
+  border-bottom-right-radius: 0;
+  background: rgba(255, 196, 0, 0.18);
+}
+
+/* Status Badge inside button */
+.prehab-toggle-btn .badge {
+  font-size: 10px;
+  font-weight: 800;
+  padding: 3px 8px;
+  border-radius: 12px;
+  letter-spacing: 0.5px;
+}
+
+.prehab-toggle-btn .badge.pending {
+  background: rgba(0, 0, 0, 0.4);
+  border: 1px solid var(--accent-gold, #ffc400);
+  color: var(--accent-gold, #ffc400);
+}
+
+.prehab-toggle-btn .badge.cleared {
+  background: rgba(0, 230, 118, 0.2);
+  border: 1px solid var(--accent-green, #00e676);
+  color: var(--accent-green, #00e676);
+}
+
+.prehab-toggle-btn .chevron {
+  font-size: 12px;
+  color: var(--accent-gold, #ffc400);
+  transition: transform 0.2s ease;
+}
+
+.prehab-toggle-btn.expanded .chevron {
+  transform: rotate(180deg);
+}
+
+/* Drawer Container */
+.prehab-drawer-content {
+  background: #0b0f19;
+  border: 1.5px solid var(--accent-gold, #ffc400);
+  border-top: none;
+  border-radius: 0 0 10px 10px;
+  padding: 14px;
+  box-shadow: 0 8px 18px rgba(0, 0, 0, 0.5);
+  animation: drawerSlideDown 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+/* Completion Action Button */
+.btn-clear-prehab {
+  width: 100%;
+  background: rgba(0, 230, 118, 0.15);
+  border: 1px solid var(--accent-green, #00e676);
+  color: var(--accent-green, #00e676);
+  padding: 11px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-clear-prehab:active {
+  transform: scale(0.98);
+}
