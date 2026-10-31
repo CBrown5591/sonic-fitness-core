@@ -127,11 +127,52 @@ export function updateInputLabelsForExercise(exerciseName) {
   }
 }
 // -------------------------------------------------------------
+// PRE-FLIGHT MISSION INSTRUCTIONS RENDERER
+// -------------------------------------------------------------
+export function renderPrehabInstructions(targetStageKey) {
+  const mount = document.getElementById('prehabInstructionsMount');
+  if (!mount) return;
+
+  // Resolve stage: passed argument -> active tab ID -> session state -> fallback
+  const stageKey = targetStageKey 
+    || (document.querySelector('.stage-tab.active')?.id || '').replace('tab-', '')
+    || window.activeSession?.stage 
+    || localStorage.getItem('sonic_active_stage')
+    || 'DAY_A';
+
+  const stageData = STAGES?.[stageKey];
+  const items = stageData?.prehabDetails || [];
+
+  if (items.length > 0) {
+    mount.innerHTML = `
+      <div class="prehab-instructions" style="display: flex; flex-direction: column; gap: 8px;">
+        ${items.map((item, idx) => `
+          <div class="prehab-item" style="background: rgba(15, 23, 42, 0.7); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #38bdf8;">
+            <div style="font-weight: 800; font-size: 13px; color: #f8fafc;">
+              ${idx + 1}. ${item.name}
+            </div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 3px;">
+              <span style="color: #38bdf8; font-weight: 700;">${item.dose || item.protocol || ''}</span>
+              ${item.cue ? `<span style="color: #cbd5e1;"> — ${item.cue}</span>` : ''}
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else {
+    mount.innerHTML = `
+      <div style="font-size: 12px; color: #94a3b8; padding: 8px;">
+        ${stageData?.prehab || 'No specific prehab protocol registered for this stage.'}
+      </div>
+    `;
+  }
+}
+
+// -------------------------------------------------------------
 // PRE-FLIGHT MISSION ACCORDION DRAWER TOGGLE
 // -------------------------------------------------------------
 export function togglePrehabDrawer() {
   const drawer = document.getElementById('prehabDrawer');
-  const mount = document.getElementById('prehabInstructionsMount');
   const btn = document.getElementById('prehabDrawerBtn');
 
   if (!drawer) return;
@@ -149,39 +190,6 @@ export function togglePrehabDrawer() {
   drawer.classList.add('open');
   if (btn) btn.classList.add('expanded');
 
-  // Derive the active stage dynamically from runtime state or active tab
-  const currentStageKey = window.activeSession?.stage 
-    || window.activeSession?.stageKey 
-    || localStorage.getItem('sonic_active_stage')
-    || (document.querySelector('.stage-tab.active')?.id || '').replace('tab-', '')
-    || 'DAY_A';
-
-  const stageData = STAGES?.[currentStageKey];
-  const items = stageData?.prehabDetails || [];
-
-  if (mount) {
-    if (items.length > 0) {
-      mount.innerHTML = `
-        <div class="prehab-instructions" style="display: flex; flex-direction: column; gap: 8px;">
-          ${items.map((item, idx) => `
-            <div class="prehab-item" style="background: rgba(15, 23, 42, 0.7); padding: 8px 12px; border-radius: 6px; border-left: 3px solid #38bdf8;">
-              <div style="font-weight: 800; font-size: 13px; color: #f8fafc;">
-                ${idx + 1}. ${item.name}
-              </div>
-              <div style="font-size: 11px; color: #94a3b8; margin-top: 3px;">
-                <span style="color: #38bdf8; font-weight: 700;">${item.dose || item.protocol || ''}</span>
-                ${item.cue ? `<span style="color: #cbd5e1;"> — ${item.cue}</span>` : ''}
-              </div>
-            </div>
-          `).join('')}
-        </div>
-      `;
-    } else {
-      mount.innerHTML = `
-        <div style="font-size: 12px; color: #94a3b8; padding: 8px;">
-          ${stageData?.prehab || 'No specific prehab protocol registered for this stage.'}
-        </div>
-      `;
-    }
-  }
+  // Immediately render instructions for whichever tab is currently active
+  renderPrehabInstructions();
 }
