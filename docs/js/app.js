@@ -44,8 +44,10 @@ let activeSession = {
   jointPain: false,
   sets: []
 };
-// Around line 47 in docs/js/app.js:
+
+// Mirror activeSession to window immediately for runtime cross-module access
 window.activeSession = activeSession;
+
 function getLifetimeExp() {
   const stored = localStorage.getItem("sonic_lifetime_exp");
   return stored !== null ? (parseInt(stored, 10) || 0) : 0;
@@ -79,6 +81,7 @@ function updateTonnageDisplay() {
 function saveSessionState() {
   activeSession.stage = activeStageKey;
   activeSession.slotIndex = activeSlotIndex;
+  window.activeSession = activeSession;
   localStorage.setItem('sonic_active_session', JSON.stringify(activeSession));
   localStorage.setItem('sonic_active_stage', activeStageKey);
   updateTonnageDisplay();
@@ -122,10 +125,12 @@ export function selectStage(stageKey, resetIfNew = true) {
     if (activeSession.sets.length > 0 && !confirm("Switching stages will start a new session. Proceed?")) return;
     activeSession = { stage: stageKey, slotIndex: 0, prehabChecked: false, jointPain: false, sets: [] };
     activeSlotIndex = 0;
+    window.activeSession = activeSession;
   }
-  // In selectStage():
-activeSession.stage = stageKey;
-window.activeSession = activeSession;
+  activeStageKey = stageKey;
+  activeSession.stage = stageKey;
+  window.activeSession = activeSession;
+
   document.querySelectorAll('.stage-tab').forEach(tab => tab.classList.remove('active'));
   const activeTab = document.getElementById(`tab-${stageKey}`);
   if (activeTab) activeTab.classList.add('active');
@@ -144,6 +149,7 @@ window.activeSession = activeSession;
   renderStageRecordBanner(stageKey);
   renderSlotStepper();
   loadSlotData();
+  renderPrehabInstructions(stageKey);
   saveSessionState();
   renderSessionUI();
 }
@@ -298,7 +304,6 @@ export function togglePrehab() {
     navigator.vibrate(35);
   }
 
-  // Update badge UI
   const badge = document.getElementById('prehabStatusBadge');
   const clearBtn = document.getElementById('prehabClearBtn');
   if (badge) {
@@ -313,9 +318,6 @@ export function togglePrehab() {
   saveSessionState();
   renderSessionUI();
 }
-
-window.togglePrehab = togglePrehab;
-window.togglePrehabDrawer = togglePrehabDrawer;
 
 export function toggleTempo() {
   tempoClean = !tempoClean;
@@ -442,24 +444,118 @@ function ensureStageTabsExist() {
   }
 }
 
-// Bind interactive handlers to window for HTML compatibility
+// -------------------------------------------------------------
+// CORE STAGE CLEAR WORKFLOW
+// -------------------------------------------------------------
+export function finishSession() {
+  openAuditModal(activeSession, async () => {
+    const totalReps = activeSession.sets.reduce((sum, s) => sum + (s.equivReps !== undefined ? s.equivReps : s.reps), 0);
+    const forceBonus = totalReps * 75;
+    const prehabBonus = activeSession.prehabChecked ? 15000 : 0;
+    const ringsBanked = activeSession.sets.filter(s => s.rpe <= 8.0 && s.tempoClean && !s.jointPain).length;
+    const redRingBonus = ringsBanked * 10000;
+    let totalScore = forceBonus + prehabBonus + 20000 + redRingBonus;
+
+    // Darkspine Conditioning Surge (+500 pts per interval on Days G, H, I)
+    if (isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I'].includes(activeStageKey)) {
+      totalScore += (activeSession.sets.length * 500);
+    }
+
+    // Super Sonic / Super Sonic 2 Multiplier (Session Active)
+    if (isSuperModeSessionActive()) {
+      const mult = isSuperSonic2Unlocked() ? 1.50 : 1.25;
+      totalScore = Math.round(totalScore * mult);
+    }
+
+    const rank = totalScore >= 75000 ? "S" : (totalScore >= 55000 ? "A" : "B");
+
+    // Award Standard Gold Rings (Total Score / 1000)
+    const standardRingsEarned = Math.floor(totalScore / 1000);
+    addStandardRings(standardRingsEarned);
+
+    // Check Perfect Day for Chaos Emerald Award
+    const isPerfectDay = rank === 'S' && !activeSession.jointPain && !activeSession.sets.some(s => s.jointPain) && ringsBanked >= activeSession.sets.length;
+    const emeraldWon = evaluatePerfectDayEmerald(activeStageKey, isPerfectDay, showToast);
+
+    const recordRes = saveStageRecord(activeStageKey, totalScore, rank);
+    localStorage.setItem('sonic_last_stage', activeStageKey);
+    localStorage.setItem('sonic_last_strain', (activeSession.jointPain || activeSession.sets.some(s => s.jointPain)) ? 'true' : 'false');
+
+    const oldExp = getLifetimeExp();
+    const newExp = oldExp + totalScore;
+    localStorage.setItem('sonic_lifetime_exp', newExp);
+    updatePilotExpUI();
+
+    const oldProg = calculatePilotProgress(oldExp);
+    const newProg = calculatePilotProgress(newExp);
+
+    creditVaultRings(activeSession.sets);
+    renderVault();
+    renderArtifactsTray();
+
+    renderResultsOverlay({
+      stage: activeStageKey,
+      totalScore,
+      rank,
+      ringBonus: prehabBonus,
+      timeBonus: 20000,
+      forceBonus,
+      redRingBonus,
+      ringsBanked,
+      totalSets: activeSession.sets.length,
+      didLevelUp: newProg.level > oldProg.level,
+      newLevel: newProg.level,
+      expProgressPct: newProg.progressPct,
+      isNewRecord: recordRes.isNew,
+      goldRingsEarned: standardRingsEarned,
+      awardedEmerald: emeraldWon,
+      isSuperActive: isSuperModeSessionActive(),
+      isSS2: isSuperSonic2Unlocked()
+    }, () => {
+      activeSession = { stage: activeStageKey, slotIndex: 0, prehabChecked: false, jointPain: false, sets: [] };
+      activeSlotIndex = 0;
+      saveSessionState();
+      renderSessionUI();
+    });
+
+    syncSessionToSheets({
+      stage: activeStageKey,
+      totalScore,
+      rank,
+      ringsBanked,
+      totalReps,
+      prehab: activeSession.prehabChecked,
+      jointPain: activeSession.jointPain,
+      sets: activeSession.sets
+    });
+  });
+}
+
+// Global scope window bindings
 window.selectStage = selectStage;
 window.logActiveSet = logActiveSet;
 window.togglePrehab = togglePrehab;
+window.togglePrehabDrawer = togglePrehabDrawer;
+window.renderPrehabInstructions = renderPrehabInstructions;
+window.finishSession = finishSession;
 window.toggleTempo = toggleTempo;
 window.togglePain = togglePain;
+window.toggleSkillTreeDrawer = toggleSkillTreeDrawer;
+window.hasPerk = hasPerk;
+
 window.applyTimeBrake = () => applyTimeBrake((secs) => {
   const mins = Math.floor(secs / 60);
   const rem = secs % 60;
   const clk = document.getElementById('timerClock');
   if (clk) clk.innerText = `${String(mins).padStart(2,'0')}:${String(rem).padStart(2,'0')}`;
 });
+
 window.toggleAudioTheme = () => {
   const next = toggleAudioTheme();
   showToast(`Audio Theme: ${next === 'modern' ? 'MODERN SONIC ⚡' : '16-BIT CLASSIC 🕹️'}`);
 };
 
-// Global bootstrap
+// Global DOM Bootstrap
 document.addEventListener('DOMContentLoaded', async () => {
   ensureStageTabsExist();
   updatePilotExpUI();
@@ -523,96 +619,15 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  const clearBtn = document.getElementById('finishSessionBtn') || document.getElementById('stageClearBtn');
+  // Attach clear stage listener to the advance button
+  const clearBtn = document.getElementById('stageClearBtn') || document.querySelector('.btn-advance');
   if (clearBtn) {
-    clearBtn.onclick = () => {
-      openAuditModal(activeSession, async () => {
-        const totalReps = activeSession.sets.reduce((sum, s) => sum + (s.equivReps !== undefined ? s.equivReps : s.reps), 0);
-        const forceBonus = totalReps * 75;
-        const prehabBonus = activeSession.prehabChecked ? 15000 : 0;
-        const ringsBanked = activeSession.sets.filter(s => s.rpe <= 8.0 && s.tempoClean && !s.jointPain).length;
-        const redRingBonus = ringsBanked * 10000;
-        let totalScore = forceBonus + prehabBonus + 20000 + redRingBonus;
-
-        // Darkspine Conditioning Surge (+500 pts per interval on Days G, H, I)
-        if (isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I'].includes(activeStageKey)) {
-          totalScore += (activeSession.sets.length * 500);
-        }
-
-        // Super Sonic / Super Sonic 2 Multiplier (Session Active)
-        if (isSuperModeSessionActive()) {
-          const mult = isSuperSonic2Unlocked() ? 1.50 : 1.25;
-          totalScore = Math.round(totalScore * mult);
-        }
-
-        const rank = totalScore >= 75000 ? "S" : (totalScore >= 55000 ? "A" : "B");
-
-        // Award Standard Gold Rings (Total Score / 1000)
-        const standardRingsEarned = Math.floor(totalScore / 1000);
-        addStandardRings(standardRingsEarned);
-
-        // Check Perfect Day for Chaos Emerald Award (Deterministic or 15% Special Stage)
-        const isPerfectDay = rank === 'S' && !activeSession.jointPain && !activeSession.sets.some(s => s.jointPain) && ringsBanked >= activeSession.sets.length;
-        const emeraldWon = evaluatePerfectDayEmerald(activeStageKey, isPerfectDay, showToast);
-
-        const recordRes = saveStageRecord(activeStageKey, totalScore, rank);
-        localStorage.setItem('sonic_last_stage', activeStageKey);
-        localStorage.setItem('sonic_last_strain', (activeSession.jointPain || activeSession.sets.some(s => s.jointPain)) ? 'true' : 'false');
-
-        const oldExp = getLifetimeExp();
-        const newExp = oldExp + totalScore;
-        localStorage.setItem('sonic_lifetime_exp', newExp);
-        updatePilotExpUI();
-
-        const oldProg = calculatePilotProgress(oldExp);
-        const newProg = calculatePilotProgress(newExp);
-
-        creditVaultRings(activeSession.sets);
-        renderVault();
-        renderArtifactsTray();
-
-        renderResultsOverlay({
-          stage: activeStageKey,
-          totalScore,
-          rank,
-          ringBonus: prehabBonus,
-          timeBonus: 20000,
-          forceBonus,
-          redRingBonus,
-          ringsBanked,
-          totalSets: activeSession.sets.length,
-          didLevelUp: newProg.level > oldProg.level,
-          newLevel: newProg.level,
-          expProgressPct: newProg.progressPct,
-          isNewRecord: recordRes.isNew,
-          goldRingsEarned: standardRingsEarned,
-          awardedEmerald: emeraldWon,
-          isSuperActive: isSuperModeSessionActive(),
-          isSS2: isSuperSonic2Unlocked()
-          }, () => {
-          activeSession = { stage: activeStageKey, slotIndex: 0, prehabChecked: false, jointPain: false, sets: [] };
-          activeSlotIndex = 0;
-          saveSessionState();
-          renderSessionUI();
-        });
-
-        syncSessionToSheets({
-          stage: activeStageKey,
-          totalScore,
-          rank,
-          ringsBanked,
-          totalReps,
-          prehab: activeSession.prehabChecked,
-          jointPain: activeSession.jointPain,
-          sets: activeSession.sets
-        });
-      });
-    };
+    clearBtn.onclick = finishSession;
   }
 });
+
 // -------------------------------------------------------------
 // AUTOMATIC PWA SERVICE WORKER UPDATE ENGINE
-// Prompts the user with an in-app banner whenever new code is deployed
 // -------------------------------------------------------------
 if ('serviceWorker' in navigator) {
   let refreshing = false;
@@ -625,13 +640,10 @@ if ('serviceWorker' in navigator) {
 
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('./sw.js').then(reg => {
-      // 1. If an updated worker is already waiting, prompt immediately
       if (reg.waiting) {
         showUpdateBanner(reg.waiting);
         return;
       }
-
-      // 2. Listen for newly discovered updates
       reg.addEventListener('updatefound', () => {
         const newWorker = reg.installing;
         if (!newWorker) return;
@@ -695,35 +707,21 @@ function showUpdateBanner(worker) {
 
 // -------------------------------------------------------------
 // CHROME DEVTOOLS TESTING CONSOLE HARNESS
-// Run in Google Chrome DevTools (F12 / Inspect -> Console)
 // -------------------------------------------------------------
 window.__sonicDev = {
-  // 1. Economy & Wallet inspection
   getWallet: () => ({
     goldRings: getStandardRings(),
     redStarRings: getTotalRedRings(),
     isSuperSonic2Unlocked: isSuperSonic2Unlocked(),
     isSuperActive: isSuperModeSessionActive()
   }),
-  // 2. Set Gold Rings directly
   setGoldRings: (amount) => saveStandardRings(amount),
-  // 3. Test Perfect Day 15% roll
   testEmeraldRoll: (stageKey = 'DAY_A') => evaluatePerfectDayEmerald(stageKey, true, (msg) => console.log('EMERALD TOAST:', msg)),
-  // 4. Test Damage Penalty on Super Form
   testStrainDamage: () => applySuperSonicDamagePenalty('strain'),
   testTempoDamage: () => applySuperSonicDamagePenalty('tempo'),
-  // 5. Test Super Transformation
   engageSuper: () => window.activateSuperModeSession(),
-  revertSuper: () => window.deactivateSuperModeSession()
+  revertSuper: () => window.deactivateSuperModeSession(),
+  getPerks: () => getUnlockedPerks(),
+  openSkills: () => toggleSkillTreeDrawer()
 };
 console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicDev');
-// Expose toggleSkillTreeDrawer globally for any template button clicks
-window.toggleSkillTreeDrawer = toggleSkillTreeDrawer;
-window.hasPerk = hasPerk;
-window.togglePrehabDrawer = togglePrehabDrawer;
-
-// Expand window.__sonicDev with Skill Tree inspection
-if (window.__sonicDev) {
-  window.__sonicDev.getPerks = () => getUnlockedPerks();
-  window.__sonicDev.openSkills = () => toggleSkillTreeDrawer();
-}
