@@ -69,23 +69,25 @@
     </div>
 
         <!-- Prehab Checklist Banner with Expandable Intel Drawer -->
-    <div class="prehab-box" id="prehabBox" onclick="togglePrehab()">
-      <div class="prehab-content">
-        <span class="prehab-tag" id="prehabTag">PRE-FLIGHT MISSION</span>
-        <span class="prehab-title" id="prehabLabel">McGill Big 3 + Band Pull-Aparts & Face Pulls</span>
-      </div>
-      <div style="display: flex; align-items: center; gap: 8px;">
-        <button class="btn-prehab-info" id="prehabInfoBtn" onclick="togglePrehabDrawer(event)" title="View Movement Cues & Prescription">INTEL ▾</button>
-        <div class="prehab-status-pill" id="prehabStatusPill">PENDING [ ]</div>
-      </div>
-    </div>
+    <!-- The Accordion Header Button: ONLY opens/closes the drawer -->
+<div class="prehab-card">
+  <button type="button" id="prehabDrawerBtn" class="prehab-toggle-btn" onclick="togglePrehabDrawer()">
+    <span>🛡️ PRE-FLIGHT MISSION</span>
+    <span id="prehabStatusBadge" class="badge">PENDING</span>
+    <span class="chevron">▾</span>
+  </button>
 
-    <!-- Expandable Prehab Intel Drawer -->
-    <div id="prehabDrawer" class="prehab-drawer">
-      <div id="prehabDrawerContent">
-        <!-- Rendered dynamically per stage -->
-      </div>
+  <!-- The Drawer Container: Contains the movement instructions & completion button -->
+  <div id="prehabDrawer" class="prehab-drawer-content" style="display: none;">
+    <div id="prehabInstructionsMount"></div>
+    
+    <div class="prehab-action-row" style="margin-top: 12px; padding-top: 8px; border-top: 1px solid var(--border-subtle, #334155);">
+      <button type="button" id="prehabClearBtn" class="btn-clear-prehab" onclick="togglePrehab()">
+        MARK PRE-FLIGHT CLEARED (+100% SHIELD)
+      </button>
     </div>
+  </div>
+</div>
 
     <!-- Slot Progression Stepper -->
     <div class="slot-stepper" id="slotStepper">
