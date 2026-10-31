@@ -44,7 +44,8 @@ let activeSession = {
   jointPain: false,
   sets: []
 };
-
+// Around line 47 in docs/js/app.js:
+window.activeSession = activeSession;
 function getLifetimeExp() {
   const stored = localStorage.getItem("sonic_lifetime_exp");
   return stored !== null ? (parseInt(stored, 10) || 0) : 0;
@@ -122,8 +123,9 @@ export function selectStage(stageKey, resetIfNew = true) {
     activeSession = { stage: stageKey, slotIndex: 0, prehabChecked: false, jointPain: false, sets: [] };
     activeSlotIndex = 0;
   }
-  activeStageKey = stageKey;
-
+  // In selectStage():
+activeSession.stage = stageKey;
+window.activeSession = activeSession;
   document.querySelectorAll('.stage-tab').forEach(tab => tab.classList.remove('active'));
   const activeTab = document.getElementById(`tab-${stageKey}`);
   if (activeTab) activeTab.classList.add('active');
