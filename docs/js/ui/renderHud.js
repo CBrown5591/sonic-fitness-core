@@ -129,23 +129,45 @@ export function updateInputLabelsForExercise(exerciseName) {
 // -------------------------------------------------------------
 // PRE-FLIGHT MISSION ACCORDION DRAWER TOGGLE
 // -------------------------------------------------------------
+
 export function togglePrehabDrawer() {
-  const drawer = document.getElementById('prehabDrawer') || 
-                 document.getElementById('prehabContainer') ||
-                 document.querySelector('.prehab-drawer-content') ||
-                 document.querySelector('.prehab-tray');
+  const drawer = document.getElementById('prehabDrawer');
+  const mount = document.getElementById('prehabInstructionsMount');
+  const btn = document.getElementById('prehabDrawerBtn');
 
-  const btn = document.querySelector('.prehab-toggle-btn') || 
-              document.getElementById('prehabToggleBtn');
+  if (!drawer) return;
 
-  if (drawer) {
-    const isExpanded = drawer.classList.toggle('expanded');
-    drawer.classList.toggle('open', isExpanded);
+  const isCurrentlyOpen = drawer.style.display !== 'none';
 
-    if (btn) {
-      btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
-    }
-  } else {
-    console.warn('[renderHud] Prehab drawer element not found in DOM.');
+  if (isCurrentlyOpen) {
+    drawer.style.display = 'none';
+    drawer.classList.remove('open');
+    if (btn) btn.classList.remove('expanded');
+    return;
+  }
+
+  drawer.style.display = 'block';
+  drawer.classList.add('open');
+  if (btn) btn.classList.add('expanded');
+
+  // Derive the active stage dynamically from runtime state
+  const currentStageKey = window.activeSession?.stageKey 
+    || document.querySelector('.stage-btn.active')?.dataset?.stageKey;
+
+  const stageData = STAGES?.[currentStageKey];
+
+  if (mount && stageData?.prehab) {
+    mount.innerHTML = `
+      <div class="prehab-instructions" style="display: flex; flex-direction: column; gap: 8px;">
+        ${stageData.prehab.map((item, idx) => `
+          <div class="prehab-item" style="background: rgba(15, 23, 42, 0.6); padding: 8px 10px; border-radius: 6px; border-left: 3px solid #38bdf8;">
+            <div style="font-weight: 800; font-size: 13px; color: #f8fafc;">${idx + 1}. ${item.name}</div>
+            <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">${item.reps || item.protocol || ''} ${item.cues ? `— ${item.cues}` : ''}</div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  } else if (mount && (!stageData || !stageData.prehab)) {
+    mount.innerHTML = `<div style="font-size: 11px; color: #94a3b8; padding: 6px;">Select a stage to view pre-flight specs.</div>`;
   }
 }
