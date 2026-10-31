@@ -126,3 +126,26 @@ export function updateInputLabelsForExercise(exerciseName) {
     if (label3) label3.innerText = "RPE";
   }
 }
+// -------------------------------------------------------------
+// PRE-FLIGHT MISSION ACCORDION DRAWER TOGGLE
+// -------------------------------------------------------------
+export function togglePrehabDrawer() {
+  const drawer = document.getElementById('prehabDrawer') || 
+                 document.getElementById('prehabContainer') ||
+                 document.querySelector('.prehab-drawer-content') ||
+                 document.querySelector('.prehab-tray');
+
+  const btn = document.querySelector('.prehab-toggle-btn') || 
+              document.getElementById('prehabToggleBtn');
+
+  if (drawer) {
+    const isExpanded = drawer.classList.toggle('expanded');
+    drawer.classList.toggle('open', isExpanded);
+
+    if (btn) {
+      btn.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
+    }
+  } else {
+    console.warn('[renderHud] Prehab drawer element not found in DOM.');
+  }
+}
