@@ -289,11 +289,31 @@ export function logActiveSet() {
 }
 
 export function togglePrehab() {
+  if (!window.activeSession) return;
+
   activeSession.prehabChecked = !activeSession.prehabChecked;
-  if (activeSession.prehabChecked && navigator.vibrate) navigator.vibrate(35);
+  if (activeSession.prehabChecked && navigator.vibrate) {
+    navigator.vibrate(35);
+  }
+
+  // Update badge UI
+  const badge = document.getElementById('prehabStatusBadge');
+  const clearBtn = document.getElementById('prehabClearBtn');
+  if (badge) {
+    badge.textContent = activeSession.prehabChecked ? 'CLEARED' : 'PENDING';
+    badge.className = activeSession.prehabChecked ? 'badge cleared' : 'badge pending';
+  }
+  if (clearBtn) {
+    clearBtn.textContent = activeSession.prehabChecked ? '✓ PRE-FLIGHT CLEARED' : 'MARK PRE-FLIGHT CLEARED (+100% SHIELD)';
+    clearBtn.style.background = activeSession.prehabChecked ? '#166534' : '';
+  }
+
   saveSessionState();
   renderSessionUI();
 }
+
+window.togglePrehab = togglePrehab;
+window.togglePrehabDrawer = togglePrehabDrawer;
 
 export function toggleTempo() {
   tempoClean = !tempoClean;
