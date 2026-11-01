@@ -595,13 +595,12 @@ document.addEventListener('DOMContentLoaded', async () => {
         localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
         updatePilotExpUI();
       }
-      if (data.goldRings !== undefined) {
-        saveStandardRings(data.goldRings);
-      }
-      // ---> HYDRATE RED STAR RINGS FROM COMMAND HUB TELEMETRY
-      if (data.totalRedRings !== undefined || data.redRings !== undefined || data.redStarRings !== undefined) {
-        const remoteRed = data.totalRedRings ?? data.redRings ?? data.redStarRings;
-        localStorage.setItem('sonic_total_red_rings', remoteRed);
+       if (data.goldRings !== undefined) {
+         saveStandardRings(data.goldRings);
+       }
+      // Hydrate Red Star Ring ground truth directly from COMMAND_HUB!G3
+      if (data.totalRedRings !== undefined) {
+        localStorage.setItem('sonic_total_red_rings', data.totalRedRings);
       }
       if (data.stages) {
         localStorage.setItem('sonic_stage_statuses', JSON.stringify(data.stages));
