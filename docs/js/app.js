@@ -622,13 +622,36 @@ document.addEventListener('DOMContentLoaded', async () => {
   if (timeBrakeBtn) timeBrakeBtn.onclick = window.applyTimeBrake;
 
   const exSelect = document.getElementById('exerciseSelect');
-  if (exSelect) {
-    exSelect.onchange = () => {
-      const val = exSelect.value;
-      renderMovementIntel(val);
-      updateInputLabelsForExercise(val);
-    };
-  }
+  // File: docs/js/app.js (inside DOMContentLoaded listener)
+
+   const exSelect = document.getElementById('exerciseSelect');
+   if (exSelect) {
+     exSelect.onchange = () => {
+       const val = exSelect.value;
+      const stageDef = STAGES[activeStageKey];
+      const slotDef = stageDef?.slots?.[activeSlotIndex];
+      const defaultTarget = slotDef ? slotDef.target : "3x8-10";
+
+      // Update dynamic target and reps
+      const resolved = resolveExerciseTarget(val, defaultTarget);
+      const targetTag = document.getElementById('currentTargetTag');
+      if (targetTag) targetTag.innerText = resolved.targetText.startsWith('TARGET:') ? resolved.targetText : `TARGET: ${resolved.targetText}`;
+
+      const repsInput = document.getElementById('repsInput');
+      if (repsInput) repsInput.value = resolved.defaultReps;
+
+      // Recalculate dynamic load for selected exercise
+      const prVault = getPRVault();
+      const pr = prVault[val];
+      const baseLoad = slotDef ? slotDef.defaultLoad : 50;
+      const dynamicLoad = pr && pr.e1rm > 0 ? calculateTargetLoad(pr.e1rm, defaultTarget, baseLoad, val) : baseLoad;
+      const loadInput = document.getElementById('loadInput');
+      if (loadInput) loadInput.value = dynamicLoad;
+
+       renderMovementIntel(val);
+       updateInputLabelsForExercise(val);
+     };
+   }
 
   // Live Sheet Telemetry Sync on boot
   fetchSheetTelemetry().then(data => {
