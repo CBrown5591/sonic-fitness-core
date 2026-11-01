@@ -835,13 +835,21 @@ window.__sonicDev = {
   getPerks: () => getUnlockedPerks(),
   openSkills: () => toggleSkillTreeDrawer(),
 
-  // Darkspine & Time Brake Test Harness
   toggleDarkspine: (forceState) => {
     devDarkspineOverride = typeof forceState === 'boolean' ? forceState : !devDarkspineOverride;
+    
+    const timeBrakeBtn = document.getElementById('timeBrakeBtn');
+    if (timeBrakeBtn) {
+      if (devDarkspineOverride) {
+        timeBrakeBtn.style.setProperty('display', 'inline-block', 'important');
+      } else {
+        timeBrakeBtn.style.setProperty('display', 'none', 'important');
+      }
+    }
+    
     renderSessionUI();
-    const active = devDarkspineOverride;
-    console.log(`⚡ [SONIC DEV] Darkspine Mode Override: ${active ? 'ENGAGED (Time Brake Visible)' : 'DISENGAGED (Time Brake Hidden)'}`);
-    return active;
+    console.log(`⚡ [SONIC DEV] Darkspine Mode Override: ${devDarkspineOverride ? 'ENGAGED (Time Brake Visible)' : 'DISENGAGED (Time Brake Hidden)'}`);
+    return devDarkspineOverride;
   },
   resetDarkspineOverride: () => {
     devDarkspineOverride = null;
