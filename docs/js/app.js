@@ -37,6 +37,7 @@ let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
 let activeSlotIndex = 0;
 let tempoClean = true;
 let currentSetPain = false;
+let devDarkspineOverride = null; // null: follow standard logic; true/false: manual force
 
 let activeSession = {
   stage: activeStageKey,
@@ -451,9 +452,12 @@ function renderSessionUI() {
     });
   }
 }
-const timeBrakeBtn = document.getElementById('timeBrakeBtn');
+// Toggle Time Brake visibility strictly when Darkspine Sonic is active
+  const timeBrakeBtn = document.getElementById('timeBrakeBtn');
   if (timeBrakeBtn) {
-    const isDarkspineActive = isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I'].includes(activeStageKey);
+    const isDarkspineActive = devDarkspineOverride !== null 
+      ? devDarkspineOverride 
+      : (isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I'].includes(activeStageKey));
     timeBrakeBtn.style.display = isDarkspineActive ? 'inline-block' : 'none';
   }
 function ensureStageTabsExist() {
@@ -808,6 +812,8 @@ function showUpdateBanner(worker) {
 // -------------------------------------------------------------
 // CHROME DEVTOOLS TESTING CONSOLE HARNESS
 // -------------------------------------------------------------
+// File: docs/js/app.js inside window.__sonicDev object
+
 window.__sonicDev = {
   getWallet: () => ({
     goldRings: getStandardRings(),
@@ -822,6 +828,26 @@ window.__sonicDev = {
   engageSuper: () => window.activateSuperModeSession(),
   revertSuper: () => window.deactivateSuperModeSession(),
   getPerks: () => getUnlockedPerks(),
-  openSkills: () => toggleSkillTreeDrawer()
+  openSkills: () => toggleSkillTreeDrawer(),
+
+  // Darkspine & Time Brake Test Harness
+  toggleDarkspine: (forceState) => {
+    devDarkspineOverride = typeof forceState === 'boolean' ? forceState : !devDarkspineOverride;
+    renderSessionUI();
+    const active = devDarkspineOverride;
+    console.log(`⚡ [SONIC DEV] Darkspine Mode Override: ${active ? 'ENGAGED (Time Brake Visible)' : 'DISENGAGED (Time Brake Hidden)'}`);
+    return active;
+  },
+  resetDarkspineOverride: () => {
+    devDarkspineOverride = null;
+    renderSessionUI();
+    console.log('⚡ [SONIC DEV] Darkspine Mode Override Cleared: Following natural stage/unlock rules.');
+  },
+  testTimeBrake: () => {
+    if (window.applyTimeBrake) {
+      window.applyTimeBrake();
+      console.log('⚡ [SONIC DEV] Time Brake triggered (-15s rest).');
+    }
+  }
 };
 console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicDev');
