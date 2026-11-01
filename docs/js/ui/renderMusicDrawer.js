@@ -198,7 +198,7 @@ export async function initMusicDrawer() {
 
     </div>
   `;
-
+  
   attachMusicDrawerEvents();
   setupMediaSessionApi();
 
@@ -214,6 +214,49 @@ export function toggleMusicDrawer() {
   const isOpen = tray.style.display !== 'none';
   tray.style.display = isOpen ? 'none' : 'block';
   if (chevron) chevron.innerText = isOpen ? '▲' : '▼';
+}
+
+// -------------------------------------------------------------
+// RECURSIVE SUBFOLDER SCANNER ENGINE
+// -------------------------------------------------------------
+
+// Method A: Recursive traversal using modern File System Access API
+async function scanDirectoryRecursively(dirHandle, path = '') {
+  let foundTracks = [];
+
+  for await (const entry of dirHandle.values()) {
+    if (entry.kind === 'file') {
+      const file = await entry.getFile();
+      if (file.type.startsWith('audio/') || /\.(mp3|m4a|wav|ogg|flac|aac|wma)$/i.test(file.name)) {
+        foundTracks.push({
+          name: (path ? `${path} / ` : '') + file.name.replace(/\.[^/.]+$/, ""),
+          blob: file
+        });
+      }
+    } else if (entry.kind === 'directory') {
+      // Recursively step into nested subfolders
+      const subTracks = await scanDirectoryRecursively(entry, path ? `${path}/${entry.name}` : entry.name);
+      foundTracks = foundTracks.concat(subTracks);
+    }
+  }
+
+  return foundTracks;
+}
+
+// Method B: Parse nested subfolders from webkitRelativePath
+function parseRelativeFileList(fileArray) {
+  return fileArray
+    .filter(f => f.type.startsWith('audio/') || /\.(mp3|m4a|wav|ogg|flac|aac|wma)$/i.test(f.name))
+    .map(file => {
+      // Use directory path if available, or fall back to file name
+      const displayPath = file.webkitRelativePath 
+        ? file.webkitRelativePath.replace(/\.[^/.]+$/, '').replace(/\//g, ' / ')
+        : file.name.replace(/\.[^/.]+$/, '');
+      return {
+        name: displayPath,
+        blob: file
+      };
+    });
 }
 
 function attachMusicDrawerEvents() {
@@ -237,9 +280,46 @@ function attachMusicDrawerEvents() {
   });
 
   // Folder Ingest (webkitdirectory)
-  const folderInput = document.getElementById('localAudioFolderInput');
-  if (folderInput) {
-    folderInput.onchange = (e) => ingestAudioFiles(Array.from(e.target.files));
+  // Folder Ingest: Primary = showDirectoryPicker (full subfolder recursion), Fallback = webkitdirectory
+  const pickFolderBtn = document.getElementById('pickFolderBtn');
+  const fallbackFolderInput = document.getElementById('localAudioFolderFallback');
+
+  if (pickFolderBtn) {
+    pickFolderBtn.onclick = async () => {
+      if ('showDirectoryPicker' in window) {
+        try {
+          const dirHandle = await window.showDirectoryPicker();
+          const countEl = document.getElementById('localQueueCount');
+          if (countEl) countEl.innerText = 'Scanning all subfolders for audio...';
+
+          const tracks = await scanDirectoryRecursively(dirHandle);
+          if (tracks.length > 0) {
+            await commitTracksToPlaylist(tracks);
+          } else {
+            if (countEl) countEl.innerText = 'No audio files found in selected folder or subfolders.';
+          }
+        } catch (err) {
+          // User canceled or permission rejected
+          if (err.name !== 'AbortError') {
+            console.warn('[DirectoryPicker] Fallback triggered:', err);
+            fallbackFolderInput?.click();
+          }
+        }
+      } else {
+        // Fallback for browsers without showDirectoryPicker
+        fallbackFolderInput?.click();
+      }
+    };
+  }
+
+  if (fallbackFolderInput) {
+    fallbackFolderInput.onchange = async (e) => {
+      const files = Array.from(e.target.files);
+      const tracks = parseRelativeFileList(files);
+      if (tracks.length > 0) {
+        await commitTracksToPlaylist(tracks);
+      }
+    };
   }
 
   // Multi-file Ingest
@@ -347,19 +427,26 @@ function attachMusicDrawerEvents() {
 }
 
 // Ingest, store in IndexedDB, and set active playlist
-async function ingestAudioFiles(rawFiles) {
-  const audioFiles = rawFiles.filter(f => f.type.startsWith('audio/') || /\.(mp3|m4a|wav|ogg|flac|aac)$/i.test(f.name));
-  if (audioFiles.length === 0) return;
-
+async function commitTracksToPlaylist(trackObjects) {
   const countEl = document.getElementById('localQueueCount');
-  if (countEl) countEl.innerText = `Saving ${audioFiles.length} tracks to offline vault...`;
+  if (countEl) countEl.innerText = `Saving ${trackObjects.length} tracks (with subfolders) to offline vault...`;
 
+  // Free previous object URLs
   localPlaylist.forEach(t => URL.revokeObjectURL(t.url));
 
-  const trackObjectsToStore = audioFiles.map(file => ({
-    name: file.name.replace(/\.[^/.]+$/, ""),
-    blob: file
+  // Store raw blobs into IndexedDB
+  await saveTracksToIDB(trackObjects);
+
+  // Hydrate playable playlist
+  localPlaylist = trackObjects.map(t => ({
+    name: t.name,
+    url: URL.createObjectURL(t.blob)
   }));
+
+  currentTrackIndex = 0;
+  if (countEl) countEl.innerText = `Queue: ${localPlaylist.length} tracks cached (All subfolders included)`;
+  loadTrack(currentTrackIndex, true);
+}
 
   await saveTracksToIDB(trackObjectsToStore);
 
