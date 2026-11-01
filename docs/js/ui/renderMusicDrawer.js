@@ -95,7 +95,8 @@ export async function initMusicDrawer() {
     localAudio.addEventListener('pause', () => updatePlayPauseState(false));
   }
 
-  const savedYtId = localStorage.getItem('sonic_music_yt_id') || 'PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D';
+  // Change the default saved ID to your Anime OST playlist:
+  const savedYtId = localStorage.getItem('sonic_music_yt_id') || 'PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr';
 
   mount.innerHTML = `
     <!-- Slide-Up Drawer Tray -->
@@ -157,9 +158,9 @@ export async function initMusicDrawer() {
         <div class="yt-box">
           <!-- Preset Quick Mixes -->
           <div class="yt-presets-row">
-            <button class="yt-preset-btn" data-yt-id="PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D" type="button">⚡ SONIC OST</button>
+            <button class="yt-preset-btn active" data-yt-id="PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr" type="button">⚡ ANIME OSTS</button>
+            <button class="yt-preset-btn" data-yt-id="PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D" type="button">🌀 SONIC OST</button>
             <button class="yt-preset-btn" data-yt-id="RDCLAK5uy_kfd5lT4u6Vq3q6p5Fq_h8E1l2m3n4o5p" type="button">🔥 GYM HYPE</button>
-            <button class="yt-preset-btn" data-yt-id="RDCLAK5uy_l0Yd8XgOqvz6XkZ5U8x2_G8o3P1q" type="button">🌀 SYNTHWAVE</button>
           </div>
 
           <!-- URL / ID Ingest Bar -->
