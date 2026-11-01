@@ -136,14 +136,54 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
   return { targetText: `TARGET: ${defaultSlotTarget}`, defaultReps: fallbackReps };
 }
 
+// -------------------------------------------------------------
+// DYNAMIC MOVEMENT TARGET & REP PARAMETER RESOLVER
+// -------------------------------------------------------------
+function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
+  if (!exerciseName) return { targetText: defaultSlotTarget, defaultReps: 8 };
+
+  const name = exerciseName.toLowerCase();
+
+  // Embedded specific rep/hold notes in name (e.g. 12r/side, 5s Hold)
+  const matchReps = exerciseName.match(/\((\d+r\/side|\d+-\d+|\d+s hold|\d+ reps?)/i);
+  if (matchReps) {
+    const raw = matchReps[1];
+    const numMatch = raw.match(/\d+/);
+    return {
+      targetText: `3 × ${raw}`,
+      defaultReps: numMatch ? parseInt(numMatch[0], 10) : 10
+    };
+  }
+
+  // Carries (Paces)
+  if (name.includes('carry') || (name.includes('walk') && !name.includes('treadmill'))) {
+    return { targetText: "3 × 40–50 paces", defaultReps: 50 };
+  }
+
+  // Isometric Core Holds
+  if (name.includes('hold') || name.includes('plank')) {
+    return { targetText: "3 × 20–30s hold", defaultReps: 30 };
+  }
+
+  // Isolation & Machine Accessories
+  if (name.includes('fly') || name.includes('lateral') || name.includes('curl') || name.includes('extension')) {
+    return { targetText: "3 × 12–15", defaultReps: 15 };
+  }
+
+  // Default to slot bracket
+  const slotMatch = (defaultSlotTarget || '').match(/(\d+)-(\d+)/);
+  const fallbackReps = slotMatch ? parseInt(slotMatch[2], 10) : 8;
+  return { targetText: defaultSlotTarget, defaultReps: fallbackReps };
+}
+
 function loadSlotData() {
   const stageDef = STAGES[activeStageKey];
   if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
   const slotDef = stageDef.slots[activeSlotIndex];
 
   const currentSlotTag = document.getElementById('currentSlotTag');
+  const currentTargetTag = document.getElementById('currentTargetTag');
   if (currentSlotTag) currentSlotTag.innerText = `SLOT ${slotDef.slot}`;
-  if (currentTargetTag) currentTargetTag.innerText = `TARGET: ${slotDef.target}`;
 
   const select = document.getElementById('exerciseSelect');
   if (select) {
@@ -156,16 +196,25 @@ function loadSlotData() {
     });
     select.value = slotDef.primary;
   }
+
+  // Resolve dynamic target and auto-preload rep count for primary movement
   const resolved = resolveExerciseTarget(slotDef.primary, slotDef.target);
-  if (currentTargetTag) currentTargetTag.innerText = resolved.targetText.startsWith('TARGET:') ? resolved.targetText : `TARGET: ${resolved.targetText}`;
-  
+  if (currentTargetTag) {
+    currentTargetTag.innerText = resolved.targetText.startsWith('TARGET:')
+      ? resolved.targetText 
+      : `TARGET: ${resolved.targetText}`;
+  }
+
   const prVault = getPRVault();
   const pr = prVault[slotDef.primary];
-  const dynamicLoad = pr && pr.e1rm > 0 ? calculateTargetLoad(pr.e1rm, slotDef.target, slotDef.defaultLoad, slotDef.primary) : slotDef.defaultLoad;
+  const dynamicLoad = pr && pr.e1rm > 0 
+    ? calculateTargetLoad(pr.e1rm, slotDef.target, slotDef.defaultLoad, slotDef.primary) 
+    : slotDef.defaultLoad;
+
   const loadInput = document.getElementById('loadInput');
   const repsInput = document.getElementById('repsInput');
   if (loadInput) loadInput.value = dynamicLoad;
-  if (repsInput && (!repsInput.value || repsInput.value === "0")) repsInput.value = resolved.defaultReps;
+  if (repsInput) repsInput.value = resolved.defaultReps;
 
   renderMovementIntel(slotDef.primary);
   updateInputLabelsForExercise(slotDef.primary);
