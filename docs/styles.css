@@ -2664,3 +2664,41 @@ body {
   border-color: #38bdf8 !important;
   background: rgba(56, 189, 248, 0.1);
 }
+/* -------------------------------------------------------------
+   YOUTUBE MUSIC PRESET DECK
+------------------------------------------------------------- */
+.yt-presets-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.yt-preset-btn {
+  flex: 1;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  padding: 5px 6px;
+  border-radius: 4px;
+  font-size: 9px;
+  font-weight: 800;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.yt-preset-btn:hover,
+.yt-preset-btn:active {
+  background: rgba(225, 29, 72, 0.2);
+  border-color: #e11d48;
+  color: #fb7185;
+}
+
+.yt-actions-row {
+  margin-top: 8px;
+}
+
+.yt-actions-row .yt-link {
+  cursor: pointer;
+  width: 100%;
+}
