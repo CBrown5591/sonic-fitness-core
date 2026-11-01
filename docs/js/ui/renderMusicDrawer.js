@@ -131,18 +131,18 @@ export async function initMusicDrawer() {
             <button id="nextTrackBtn" class="ctrl-btn" type="button" title="Next Track">⏭</button>
             <button id="repeatBtn" class="ctrl-btn mode-btn" type="button" title="Toggle Repeat (Off / All / One)">🔁</button>
             
-            <button id="pickFolderBtn" class="ctrl-btn folder-btn" type="button" title="Select folder and all subfolders">
-              📁 FOLDER
-            </button>
+<!-- Inside .transport-controls in renderMusicDrawer.js -->
+<button id="pickFolderBtn" class="ctrl-btn folder-btn" type="button" title="Select entire folder">
+  📁 FOLDER
+</button>
 
-            <label class="file-load-btn" title="Pick individual files">
-              📂 FILES
-              <input type="file" id="localAudioFileInput" multiple accept="audio/*" style="display: none;">
-            </label>
+<label class="file-load-btn" title="Pick individual files">
+  📂 FILES
+  <input type="file" id="localAudioFileInput" multiple accept="audio/*" style="display: none;">
+</label>
 
-            <!-- Hidden fallback input for browsers without showDirectoryPicker -->
-            <input type="file" id="localAudioFolderFallback" webkitdirectory directory multiple style="display: none;">
-          </div>
+<!-- MUST omit accept="" and include webkitdirectory to enable Android "Use this folder" -->
+<input type="file" id="localAudioFolderFallback" webkitdirectory directory mozdirectory style="display: none;">
 
           <!-- Queue Management Row -->
           <div class="queue-manage-row">
@@ -282,44 +282,36 @@ function attachMusicDrawerEvents() {
     };
   });
 
- // Mobile-safe Ingest: Checks for real desktop API first; falls back immediately on mobile
-  const pickFolderBtn = document.getElementById('pickFolderBtn');
+ const pickFolderBtn = document.getElementById('pickFolderBtn');
   const fallbackFolderInput = document.getElementById('localAudioFolderFallback');
   const fileInput = document.getElementById('localAudioFileInput');
 
   if (pickFolderBtn) {
     pickFolderBtn.onclick = async () => {
       const countEl = document.getElementById('localQueueCount');
-
-      // Check if showDirectoryPicker exists AND is supported on this platform
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
+      // On desktop Chromium, use showDirectoryPicker if available
       if (!isMobile && 'showDirectoryPicker' in window) {
         try {
-          if (countEl) countEl.innerText = 'Opening system folder picker...';
+          if (countEl) countEl.innerText = 'Scanning folder tree...';
           const dirHandle = await window.showDirectoryPicker();
-          if (countEl) countEl.innerText = 'Scanning subfolders...';
-
           const tracks = await scanDirectoryRecursively(dirHandle);
           if (tracks.length > 0) {
             await commitTracksToPlaylist(tracks);
           } else {
-            if (countEl) countEl.innerText = 'No audio files found in chosen folder.';
+            if (countEl) countEl.innerText = 'No audio tracks found.';
           }
         } catch (err) {
-          if (err.name === 'AbortError') {
-            if (countEl) countEl.innerText = 'Folder selection canceled.';
-          } else {
-            // Unhandled desktop error: fallback to input picker
-            if (countEl) countEl.innerText = `Folder API notice: Switching to multi-file picker...`;
-            fallbackFolderInput ? fallbackFolderInput.click() : fileInput?.click();
+          if (err.name !== 'AbortError') {
+            fallbackFolderInput?.click();
           }
         }
       } else {
-        // Mobile platform (Android / iOS): trigger direct file picker immediately
-        if (countEl) countEl.innerText = 'Select all workout tracks from your music folder...';
-        // Open the native file chooser
+        // Mobile (Android): Reset input value and trigger directory picker
         if (fallbackFolderInput) {
+          fallbackFolderInput.value = ''; // Clear prior selection cache
+          if (countEl) countEl.innerText = 'Open folder and tap "Use this folder"...';
           fallbackFolderInput.click();
         } else if (fileInput) {
           fileInput.click();
@@ -327,18 +319,26 @@ function attachMusicDrawerEvents() {
       }
     };
   }
-
-  // Mobile multi-select / WebKit fallback handler
-  if (fallbackFolderInput) {
+ if (fallbackFolderInput) {
     fallbackFolderInput.onchange = async (e) => {
-      handleIncomingFiles(Array.from(e.target.files));
-    };
-  }
+      const files = Array.from(e.target.files);
+      if (!files || files.length === 0) return;
 
-  // Standard Files button handler
-  if (fileInput) {
-    fileInput.onchange = async (e) => {
-      handleIncomingFiles(Array.from(e.target.files));
+      const countEl = document.getElementById('localQueueCount');
+      if (countEl) countEl.innerText = `Ingesting ${files.length} items from folder...`;
+
+      // Filter only audio formats from the directory payload
+      const audioFiles = files.filter(f => 
+        f.type.startsWith('audio/') || /\.(mp3|m4a|wav|ogg|flac|aac|wma)$/i.test(f.name)
+      );
+
+      if (audioFiles.length === 0) {
+        if (countEl) countEl.innerText = 'No audio files found in selected folder.';
+        return;
+      }
+
+      const tracks = parseRelativeFileList(audioFiles);
+      await commitTracksToPlaylist(tracks);
     };
   }
 
@@ -479,6 +479,30 @@ function attachMusicDrawerEvents() {
       e.preventDefault();
     };
   });
+}
+
+async function handleIncomingFiles(rawFiles) {
+  const countEl = document.getElementById('localQueueCount');
+  
+  if (!rawFiles || rawFiles.length === 0) {
+    if (countEl) countEl.innerText = 'No files selected.';
+    return;
+  }
+
+  if (countEl) countEl.innerText = `Processing ${rawFiles.length} files...`;
+
+  const tracks = parseRelativeFileList(rawFiles);
+
+  if (tracks.length === 0) {
+    if (countEl) countEl.innerText = 'No supported audio files (.mp3, .m4a, .flac) found in selection.';
+    return;
+  }
+
+  try {
+    await commitTracksToPlaylist(tracks);
+  } catch (err) {
+    if (countEl) countEl.innerText = `Save error: ${err.message || 'Storage full'}`;
+  }
 }
 
 // Ingest, store in IndexedDB, and set active playlist
