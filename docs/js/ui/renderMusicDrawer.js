@@ -282,43 +282,63 @@ function attachMusicDrawerEvents() {
     };
   });
 
-  // Folder Ingest: Primary = showDirectoryPicker (full subfolder recursion), Fallback = webkitdirectory
+ // Mobile-safe Ingest: Checks for real desktop API first; falls back immediately on mobile
   const pickFolderBtn = document.getElementById('pickFolderBtn');
   const fallbackFolderInput = document.getElementById('localAudioFolderFallback');
+  const fileInput = document.getElementById('localAudioFileInput');
 
   if (pickFolderBtn) {
     pickFolderBtn.onclick = async () => {
-      if ('showDirectoryPicker' in window) {
+      const countEl = document.getElementById('localQueueCount');
+
+      // Check if showDirectoryPicker exists AND is supported on this platform
+      const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
+
+      if (!isMobile && 'showDirectoryPicker' in window) {
         try {
+          if (countEl) countEl.innerText = 'Opening system folder picker...';
           const dirHandle = await window.showDirectoryPicker();
-          const countEl = document.getElementById('localQueueCount');
-          if (countEl) countEl.innerText = 'Scanning all subfolders for audio...';
+          if (countEl) countEl.innerText = 'Scanning subfolders...';
 
           const tracks = await scanDirectoryRecursively(dirHandle);
           if (tracks.length > 0) {
             await commitTracksToPlaylist(tracks);
           } else {
-            if (countEl) countEl.innerText = 'No audio files found in selected folder or subfolders.';
+            if (countEl) countEl.innerText = 'No audio files found in chosen folder.';
           }
         } catch (err) {
-          if (err.name !== 'AbortError') {
-            console.warn('[DirectoryPicker] Fallback triggered:', err);
-            fallbackFolderInput?.click();
+          if (err.name === 'AbortError') {
+            if (countEl) countEl.innerText = 'Folder selection canceled.';
+          } else {
+            // Unhandled desktop error: fallback to input picker
+            if (countEl) countEl.innerText = `Folder API notice: Switching to multi-file picker...`;
+            fallbackFolderInput ? fallbackFolderInput.click() : fileInput?.click();
           }
         }
       } else {
-        fallbackFolderInput?.click();
+        // Mobile platform (Android / iOS): trigger direct file picker immediately
+        if (countEl) countEl.innerText = 'Select all workout tracks from your music folder...';
+        // Open the native file chooser
+        if (fallbackFolderInput) {
+          fallbackFolderInput.click();
+        } else if (fileInput) {
+          fileInput.click();
+        }
       }
     };
   }
 
+  // Mobile multi-select / WebKit fallback handler
   if (fallbackFolderInput) {
     fallbackFolderInput.onchange = async (e) => {
-      const files = Array.from(e.target.files);
-      const tracks = parseRelativeFileList(files);
-      if (tracks.length > 0) {
-        await commitTracksToPlaylist(tracks);
-      }
+      handleIncomingFiles(Array.from(e.target.files));
+    };
+  }
+
+  // Standard Files button handler
+  if (fileInput) {
+    fileInput.onchange = async (e) => {
+      handleIncomingFiles(Array.from(e.target.files));
     };
   }
 
