@@ -189,27 +189,32 @@ export async function initMusicDrawer() {
             <button id="ytLoadBtn" class="yt-btn" type="button" style="padding: 6px 12px; background: #e11d48; color: #fff; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">LOAD</button>
           </div>
 
-          <!-- In-App Audio Control HUD -->
-          <div class="yt-inapp-deck" style="background: rgba(15, 23, 42, 0.7); border: 1px solid #334155; border-radius: 6px; padding: 10px; margin-bottom: 8px;">
+          <!-- In-App Transport Deck -->
+          <div class="yt-inapp-deck" style="background: rgba(15, 23, 42, 0.85); border: 1px solid #334155; border-radius: 6px; padding: 10px; margin-bottom: 8px;">
             <div class="track-info-row" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-              <span id="ytTrackTitle" class="track-title-text" style="color: #f8fafc; font-size: 11px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 85%;">⚡ READY TO PLAY</span>
-              <span id="ytPlayStateIndicator" style="font-size: 10px; color: #94a3b8;">STOPPED</span>
+              <span id="ytTrackTitle" class="track-title-text" style="color: #38bdf8; font-size: 11px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">⚡ READY: ANIME OSTS</span>
+              <span id="ytPlayStateIndicator" style="font-size: 10px; color: #94a3b8;">STANDBY</span>
             </div>
 
-            <!-- In-App Transport Controls -->
-            <div class="transport-controls" style="display: flex; gap: 6px; justify-content: center;">
-              <button id="ytPrevBtn" class="ctrl-btn" type="button" title="Previous Track">⏮</button>
-              <button id="ytPlayPauseBtn" class="ctrl-btn play-btn" type="button" title="Play / Pause">▶</button>
-              <button id="ytNextBtn" class="ctrl-btn" type="button" title="Next Track">⏭</button>
+            <!-- Transport Controls -->
+            <div class="transport-controls" style="display: flex; gap: 8px; justify-content: center;">
+              <button id="ytPrevBtn" class="ctrl-btn" type="button" title="Previous Track" style="padding: 6px 12px;">⏮</button>
+              <button id="ytPlayPauseBtn" class="ctrl-btn play-btn" type="button" title="Play / Pause" style="padding: 6px 16px;">▶</button>
+              <button id="ytNextBtn" class="ctrl-btn" type="button" title="Next Track" style="padding: 6px 12px;">⏭</button>
             </div>
           </div>
 
-          <!-- Hidden Headless Video Anchor (Audio Plays, Zero Screen Space Used) -->
-          <div id="ytHeadlessContainer" style="position: absolute; width: 1px; height: 1px; opacity: 0.01; pointer-events: none; overflow: hidden;">
-            <div id="ytPlayerAnchor"></div>
+          <!-- Compact Audio Dock Frame (Standard Mobile-Compliant Embed) -->
+          <div id="ytFrameWrapper" style="position: relative; width: 100%; height: 75px; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #1e293b; background: #000;">
+            <iframe id="ytPlayerFrame"
+              src="https://www.youtube.com/embed/videoseries?list=${savedYtId}&enablejsapi=1&playsinline=1"
+              style="width: 100%; height: 100%; border: none;"
+              allow="autoplay; encrypted-media; picture-in-picture"
+              allowfullscreen>
+            </iframe>
           </div>
 
-          <!-- Optional Native App Handoff Link -->
+          <!-- Native App Launch Button -->
           <div class="yt-actions-row">
             <button id="ytOpenAppBtn" class="app-launch-link yt-link" type="button" style="width: 100%; text-align: center; padding: 8px; background: #1e293b; border: 1px solid #334155; color: #38bdf8; font-weight: bold; border-radius: 4px; cursor: pointer;">
               🚀 OPEN IN YOUTUBE MUSIC APP
