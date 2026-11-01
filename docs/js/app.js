@@ -45,7 +45,17 @@ let activeSession = {
   sets: []
 };
 
-// Mirror activeSession to window immediately for runtime cross-module access
+// Hydrate saved session from storage so reloads preserve prehabChecked and sets
+const savedSession = localStorage.getItem('sonic_active_session');
+if (savedSession) {
+  try {
+    const parsed = JSON.parse(savedSession);
+    if (parsed && typeof parsed === 'object') {
+      Object.assign(activeSession, parsed);
+    }
+  } catch (e) {}
+}
+
 window.activeSession = activeSession;
 
 function getLifetimeExp() {
@@ -304,17 +314,6 @@ export function togglePrehab() {
     navigator.vibrate(35);
   }
 
-  const badge = document.getElementById('prehabStatusBadge');
-  const clearBtn = document.getElementById('prehabClearBtn');
-  if (badge) {
-    badge.textContent = activeSession.prehabChecked ? 'CLEARED' : 'PENDING';
-    badge.className = activeSession.prehabChecked ? 'badge cleared' : 'badge pending';
-  }
-  if (clearBtn) {
-    clearBtn.textContent = activeSession.prehabChecked ? '✓ PRE-FLIGHT CLEARED' : 'MARK PRE-FLIGHT CLEARED (+100% SHIELD)';
-    clearBtn.style.background = activeSession.prehabChecked ? '#166534' : '';
-  }
-
   saveSessionState();
   renderSessionUI();
 }
@@ -351,19 +350,16 @@ export function togglePain() {
 }
 
 function renderSessionUI() {
-  const prehabBox = document.getElementById('prehabBox');
-  const statusPill = document.getElementById('prehabStatusPill');
-  const prehabTag = document.getElementById('prehabTag');
-  if (prehabBox && statusPill && prehabTag) {
-    if (activeSession.prehabChecked) {
-      prehabBox.classList.add('cleared');
-      statusPill.innerText = "CLEARED [✓]";
-      prehabTag.innerText = "MISSION COMPLETED";
-    } else {
-      prehabBox.classList.remove('cleared');
-      statusPill.innerText = "PENDING [ ]";
-      prehabTag.innerText = "PRE-FLIGHT MISSION";
-    }
+  // Update Pre-Flight Mission Badge & Button State
+  const badge = document.getElementById('prehabStatusBadge');
+  const clearBtn = document.getElementById('prehabClearBtn');
+  if (badge) {
+    badge.textContent = activeSession.prehabChecked ? 'CLEARED' : 'PENDING';
+    badge.className = activeSession.prehabChecked ? 'badge cleared' : 'badge pending';
+  }
+  if (clearBtn) {
+    clearBtn.textContent = activeSession.prehabChecked ? '✓ PRE-FLIGHT CLEARED' : 'MARK PRE-FLIGHT CLEARED (+100% SHIELD)';
+    clearBtn.style.background = activeSession.prehabChecked ? '#166534' : '';
   }
 
   const shield = document.getElementById('shieldStatus');
