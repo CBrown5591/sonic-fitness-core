@@ -126,17 +126,17 @@ export function updateInputLabelsForExercise(exerciseName) {
     if (label3) label3.innerText = "RPE";
   }
 }
+
 // -------------------------------------------------------------
-// PRE-FLIGHT MISSION INSTRUCTIONS RENDERER
+// PRE-FLIGHT MISSION INSTRUCTIONS RENDERER & ACCORDION TOGGLE
 // -------------------------------------------------------------
 export function renderPrehabInstructions(targetStageKey) {
   const mount = document.getElementById('prehabInstructionsMount');
   if (!mount) return;
 
-  // Resolve stage: passed argument -> active tab ID -> session state -> fallback
   const stageKey = targetStageKey 
-    || (document.querySelector('.stage-tab.active')?.id || '').replace('tab-', '')
     || window.activeSession?.stage 
+    || (document.querySelector('.stage-tab.active')?.id || '').replace('tab-', '')
     || localStorage.getItem('sonic_active_stage')
     || 'DAY_A';
 
@@ -168,9 +168,6 @@ export function renderPrehabInstructions(targetStageKey) {
   }
 }
 
-// -------------------------------------------------------------
-// PRE-FLIGHT MISSION ACCORDION DRAWER TOGGLE
-// -------------------------------------------------------------
 export function togglePrehabDrawer() {
   const drawer = document.getElementById('prehabDrawer');
   const btn = document.getElementById('prehabDrawerBtn');
@@ -190,6 +187,5 @@ export function togglePrehabDrawer() {
   drawer.classList.add('open');
   if (btn) btn.classList.add('expanded');
 
-  // Immediately render instructions for whichever tab is currently active
   renderPrehabInstructions();
 }
