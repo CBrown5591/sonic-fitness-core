@@ -1,5 +1,5 @@
 // -------------------------------------------------------------
-// PERSISTENT COCKPIT DOCK & 3-WAY MEDIA ENGINE (WITH IDB CACHING)
+// PERSISTENT COCKPIT DOCK & 3-WAY MEDIA ENGINE
 // Modular Component: renderMusicDrawer.js
 // -------------------------------------------------------------
 
@@ -11,8 +11,6 @@ let localPlaylist = [];
 let currentTrackIndex = 0;
 let localAudio = null;
 let dbInstance = null;
-let ytPlayerInstance = null;
-let ytApiReady = false;
 
 // Playback Modes State
 let isShuffle = false;
@@ -115,8 +113,8 @@ export async function initMusicDrawer() {
     localAudio.addEventListener('pause', () => updatePlayPauseState(false));
   }
 
-  // Default to Anime OSTs playlist
   const savedYtId = localStorage.getItem('sonic_music_yt_id') || 'PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr';
+  const initialStationLabel = savedYtId === 'PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr' ? 'ANIME OSTS' : 'CUSTOM TARGET';
 
   mount.innerHTML = `
     <!-- Slide-Up Drawer Tray -->
@@ -173,53 +171,35 @@ export async function initMusicDrawer() {
         </div>
       </div>
 
-      <!-- SOURCE 2: YOUTUBE MUSIC -->
+      <!-- SOURCE 2: YOUTUBE MUSIC (STATION LAUNCHER) -->
       <div id="musicPaneYoutube" class="music-pane" style="display: none;">
         <div class="yt-box">
           <!-- Preset Quick Mixes -->
-          <div class="yt-presets-row" style="display: flex; gap: 6px; margin-bottom: 8px;">
+          <div class="yt-presets-row" style="display: flex; gap: 6px; margin-bottom: 10px;">
             <button class="yt-preset-btn active" data-yt-id="PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr" type="button">⚡ ANIME OSTS</button>
             <button class="yt-preset-btn" data-yt-id="PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D" type="button">🌀 SONIC OST</button>
             <button class="yt-preset-btn" data-yt-id="RDCLAK5uy_kfd5lT4u6Vq3q6p5Fq_h8E1l2m3n4o5p" type="button">🔥 GYM HYPE</button>
           </div>
 
           <!-- URL / ID Ingest Bar -->
-          <div class="yt-input-row" style="display: flex; gap: 6px; margin-bottom: 8px;">
-            <input type="text" id="ytPlaylistInput" class="yt-input" placeholder="Paste YouTube / YT Music URL or ID" value="${savedYtId}" style="flex: 1; padding: 6px 8px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 4px;">
-            <button id="ytLoadBtn" class="yt-btn" type="button" style="padding: 6px 12px; background: #e11d48; color: #fff; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">LOAD</button>
+          <div class="yt-input-row" style="display: flex; gap: 6px; margin-bottom: 12px;">
+            <input type="text" id="ytPlaylistInput" class="yt-input" placeholder="Paste YouTube / YT Music URL or ID" value="${savedYtId}" style="flex: 1; padding: 7px 10px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 4px; font-size: 11px;">
+            <button id="ytLoadBtn" class="yt-btn" type="button" style="padding: 7px 14px; background: #e11d48; color: #fff; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; font-size: 11px;">SET</button>
           </div>
 
-          <!-- In-App Transport Deck -->
-          <div class="yt-inapp-deck" style="background: rgba(15, 23, 42, 0.85); border: 1px solid #334155; border-radius: 6px; padding: 10px; margin-bottom: 8px;">
-            <div class="track-info-row" style="display: flex; justify-content: space-between; margin-bottom: 8px;">
-              <span id="ytTrackTitle" class="track-title-text" style="color: #38bdf8; font-size: 11px; font-weight: bold; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;">⚡ READY: ANIME OSTS</span>
-              <span id="ytPlayStateIndicator" style="font-size: 10px; color: #94a3b8;">STANDBY</span>
-            </div>
-
-            <!-- Transport Controls -->
-            <div class="transport-controls" style="display: flex; gap: 8px; justify-content: center;">
-              <button id="ytPrevBtn" class="ctrl-btn" type="button" title="Previous Track" style="padding: 6px 12px;">⏮</button>
-              <button id="ytPlayPauseBtn" class="ctrl-btn play-btn" type="button" title="Play / Pause" style="padding: 6px 16px;">▶</button>
-              <button id="ytNextBtn" class="ctrl-btn" type="button" title="Next Track" style="padding: 6px 12px;">⏭</button>
-            </div>
-          </div>
-
-          <!-- Compact Audio Dock Frame (Standard Mobile-Compliant Embed) -->
-          <div id="ytFrameWrapper" style="position: relative; width: 100%; height: 75px; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #1e293b; background: #000;">
-            <iframe id="ytPlayerFrame"
-  src="https://www.youtube.com/embed/videoseries?list=${savedYtId}&enablejsapi=1&playsinline=1"
-  style="width: 100%; height: 160px; border: none; border-radius: 6px;"
-  allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
-  sandbox="allow-scripts allow-same-origin allow-presentation"
-  loading="eager">
-</iframe>
-          </div>
-
-          <!-- Native App Launch Button -->
-          <div class="yt-actions-row">
-            <button id="ytOpenAppBtn" class="app-launch-link yt-link" type="button" style="width: 100%; text-align: center; padding: 8px; background: #1e293b; border: 1px solid #334155; color: #38bdf8; font-weight: bold; border-radius: 4px; cursor: pointer;">
-              🚀 OPEN IN YOUTUBE MUSIC APP
+          <!-- Active Station Status Card -->
+          <div class="station-card" style="background: rgba(15, 23, 42, 0.85); border: 1px solid #334155; border-radius: 6px; padding: 14px; margin-bottom: 12px; text-align: center;">
+            <div style="font-size: 10px; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 4px;">ACTIVE STREAM TARGET</div>
+            <div id="ytActiveStationTitle" style="color: #38bdf8; font-weight: bold; font-size: 13px; margin-bottom: 4px;">${initialStationLabel}</div>
+            <div id="ytActiveStationId" style="font-size: 10px; color: #64748b; word-break: break-all; margin-bottom: 12px;">${savedYtId}</div>
+            
+            <button id="ytLaunchStationBtn" type="button" style="width: 100%; padding: 10px; background: #e11d48; color: #fff; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              🚀 LAUNCH IN YOUTUBE MUSIC
             </button>
+          </div>
+
+          <div style="font-size: 10px; color: #64748b; line-height: 1.4; text-align: center;">
+            Direct handoff enables true background audio, uncompressed streams, and lockscreen/earbud controls during training.
           </div>
         </div>
       </div>
@@ -227,24 +207,24 @@ export async function initMusicDrawer() {
       <!-- SOURCE 3: PANDORA -->
       <div id="musicPanePandora" class="music-pane" style="display: none;">
         <div class="pandora-box">
-          <div class="pandora-desc">Instant handoff to Pandora workout stations:</div>
-          <div class="pandora-btn-grid">
+          <div class="pandora-desc" style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Select a station for direct app playback:</div>
+          <div class="pandora-btn-grid" style="display: flex; flex-direction: column; gap: 8px;">
             <a href="pandora://station/play/439775086551608226" 
                data-fallback="https://www.pandora.com/genre/workout" 
-               class="pandora-btn station-link">
+               class="pandora-btn station-link" style="padding: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 4px; color: #f8fafc; font-size: 11px; font-weight: bold; text-decoration: none; text-align: center;">
               ⚡ POP FITNESS & WORKOUT RADIO
             </a>
             <a href="pandora://genre/hip-hop-workout" 
                data-fallback="https://www.pandora.com/genre/hip-hop-workout" 
-               class="pandora-btn station-link">
+               class="pandora-btn station-link" style="padding: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 4px; color: #f8fafc; font-size: 11px; font-weight: bold; text-decoration: none; text-align: center;">
               🔥 HIP-HOP & RAP POWER HOUR
             </a>
             <a href="pandora://genre/electronic-workout" 
                data-fallback="https://www.pandora.com/genre/electronic-workout" 
-               class="pandora-btn station-link">
+               class="pandora-btn station-link" style="padding: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 4px; color: #f8fafc; font-size: 11px; font-weight: bold; text-decoration: none; text-align: center;">
               🌀 HIGH-BPM ELECTRONIC / DRUM & BASS
             </a>
-            <a href="https://www.pandora.com" target="_blank" rel="noopener" class="pandora-btn generic-link">
+            <a href="https://www.pandora.com" target="_blank" rel="noopener" class="pandora-btn generic-link" style="padding: 8px; background: transparent; border: 1px solid #334155; border-radius: 4px; color: #64748b; font-size: 10px; text-decoration: none; text-align: center; margin-top: 4px;">
               🌐 LAUNCH PANDORA WEB CLIENT
             </a>
           </div>
@@ -514,151 +494,86 @@ function attachMusicDrawerEvents() {
   }
 
   // -----------------------------------------------------------
-  // YOUTUBE MUSIC ENGINE: HEADLESS IFRAME API & IN-APP TRANSPORT
+  // YOUTUBE MUSIC: STATION LAUNCHER ENGINE
   // -----------------------------------------------------------
   const ytLoadBtn = document.getElementById('ytLoadBtn');
   const ytInput = document.getElementById('ytPlaylistInput');
-  const ytOpenAppBtn = document.getElementById('ytOpenAppBtn');
-  const ytPlayPauseBtn = document.getElementById('ytPlayPauseBtn');
-  const ytPrevBtn = document.getElementById('ytPrevBtn');
-  const ytNextBtn = document.getElementById('ytNextBtn');
-  const ytTrackTitle = document.getElementById('ytTrackTitle');
-  const ytStateIndicator = document.getElementById('ytPlayStateIndicator');
+  const ytLaunchBtn = document.getElementById('ytLaunchStationBtn');
+  const ytStationTitle = document.getElementById('ytActiveStationTitle');
+  const ytStationIdDisplay = document.getElementById('ytActiveStationId');
 
-  // Load YouTube IFrame API if not already loaded
-  function loadYouTubeIframeApi() {
-    if (window.YT && window.YT.Player) {
-      initHeadlessYtPlayer();
-      return;
-    }
-    if (!document.getElementById('ytApiScript')) {
-      const tag = document.createElement('script');
-      tag.id = 'ytApiScript';
-      tag.src = 'https://www.youtube.com/iframe_api';
-      const firstScriptTag = document.getElementsByTagName('script')[0];
-      firstScriptTag.parentNode.insertBefore(tag, firstScriptTag);
-    }
-    window.onYouTubeIframeAPIReady = () => {
-      ytApiReady = true;
-      initHeadlessYtPlayer();
-    };
-  }
-
-  function initHeadlessYtPlayer() {
-    const initialTarget = extractYouTubeTarget(ytInput?.value || savedYtId);
-    if (!initialTarget || !document.getElementById('ytPlayerAnchor')) return;
-
-    const playerConfig = {
-      height: '200',
-      width: '200',
-      playerVars: {
-        playsinline: 1,
-        enablejsapi: 1,
-        origin: window.location.origin
-      },
-      events: {
-        onReady: (event) => {
-          if (initialTarget.type === 'playlist') {
-            event.target.cuePlaylist({ list: initialTarget.id });
-          } else {
-            event.target.cueVideoById(initialTarget.id);
-          }
-          if (ytTrackTitle) ytTrackTitle.innerText = 'PLAYLIST LOADED (TAP ▶)';
-        },
-        onStateChange: (event) => {
-          // 1 = Playing, 2 = Paused, 3 = Buffering, 0 = Ended
-          if (event.data === 1) {
-            if (ytPlayPauseBtn) ytPlayPauseBtn.innerText = '⏸';
-            if (ytStateIndicator) ytStateIndicator.innerText = 'PLAYING';
-            // Sync current track title
-            const data = event.target.getVideoData();
-            if (ytTrackTitle && data && data.title) {
-              ytTrackTitle.innerText = data.title;
-            }
-          } else if (event.data === 2) {
-            if (ytPlayPauseBtn) ytPlayPauseBtn.innerText = '▶';
-            if (ytStateIndicator) ytStateIndicator.innerText = 'PAUSED';
-          } else if (event.data === 3) {
-            if (ytStateIndicator) ytStateIndicator.innerText = 'BUFFERING...';
-          }
-        }
-      }
-    };
-
-    ytPlayerInstance = new window.YT.Player('ytPlayerAnchor', playerConfig);
-  }
-
-  // Transport Button Listeners
-  if (ytPlayPauseBtn) {
-    ytPlayPauseBtn.onclick = () => {
-      if (!ytPlayerInstance || typeof ytPlayerInstance.getPlayerState !== 'function') return;
-      const state = ytPlayerInstance.getPlayerState();
-      if (state === 1) {
-        ytPlayerInstance.pauseVideo();
-      } else {
-        // Paused or queued
-        ytPlayerInstance.playVideo();
-      }
-    };
-  }
-
-  if (ytNextBtn) {
-    ytNextBtn.onclick = () => {
-      if (ytPlayerInstance && typeof ytPlayerInstance.nextVideo === 'function') {
-        ytPlayerInstance.nextVideo();
-      }
-    };
-  }
-
-  if (ytPrevBtn) {
-    ytPrevBtn.onclick = () => {
-      if (ytPlayerInstance && typeof ytPlayerInstance.previousVideo === 'function') {
-        ytPlayerInstance.previousVideo();
-      }
-    };
-  }
+  const stationMap = {
+    'PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr': 'ANIME OSTS',
+    'PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D': 'SONIC OST',
+    'RDCLAK5uy_kfd5lT4u6Vq3q6p5Fq_h8E1l2m3n4o5p': 'GYM HYPE'
+  };
 
   function extractYouTubeTarget(inputStr) {
     if (!inputStr) return null;
     const trimmed = inputStr.trim();
+
     if (/^[A-Za-z0-9_-]{18,}$/.test(trimmed) && (trimmed.startsWith('PL') || trimmed.startsWith('OL') || trimmed.startsWith('RD') || trimmed.startsWith('UU'))) {
       return { type: 'playlist', id: trimmed };
     }
+
     if (/^[A-Za-z0-9_-]{11}$/.test(trimmed)) {
       return { type: 'video', id: trimmed };
     }
+
     try {
       const url = new URL(trimmed);
       const listParam = url.searchParams.get('list');
       if (listParam) return { type: 'playlist', id: listParam };
+
       const vParam = url.searchParams.get('v');
       if (vParam) return { type: 'video', id: vParam };
+
       if (url.hostname === 'youtu.be') {
         const pathId = url.pathname.slice(1);
         if (pathId) return { type: 'video', id: pathId };
       }
     } catch (e) {}
+
     return { type: 'playlist', id: trimmed };
   }
 
-  function applyYouTubeTarget(target) {
+  function setStation(target, customName) {
     if (!target || !target.id) return;
     localStorage.setItem('sonic_music_yt_id', target.id);
     if (ytInput) ytInput.value = target.id;
-
-    if (ytPlayerInstance && typeof ytPlayerInstance.loadPlaylist === 'function') {
-      if (target.type === 'video') {
-        ytPlayerInstance.loadVideoById(target.id);
-      } else {
-        ytPlayerInstance.loadPlaylist({ list: target.id });
-      }
+    if (ytStationIdDisplay) ytStationIdDisplay.innerText = target.id;
+    if (ytStationTitle) {
+      ytStationTitle.innerText = customName || stationMap[target.id] || 'CUSTOM PLAYLIST';
     }
+  }
+
+  function launchCurrentStation() {
+    const rawVal = ytInput ? ytInput.value.trim() : '';
+    const target = extractYouTubeTarget(rawVal) || { id: 'PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr', type: 'playlist' };
+
+    const isPlaylist = target.type === 'playlist';
+    const webUrl = isPlaylist 
+      ? `https://music.youtube.com/playlist?list=${target.id}` 
+      : `https://music.youtube.com/watch?v=${target.id}`;
+
+    const appUri = isPlaylist
+      ? `youtubemusic://playlist?list=${target.id}`
+      : `youtubemusic://watch?v=${target.id}`;
+
+    const start = Date.now();
+    window.location.href = appUri;
+
+    setTimeout(() => {
+      if (Date.now() - start < 1500) {
+        window.open(webUrl, '_blank', 'noopener');
+      }
+    }, 800);
   }
 
   if (ytLoadBtn && ytInput) {
     ytLoadBtn.onclick = () => {
       const target = extractYouTubeTarget(ytInput.value);
-      if (target) applyYouTubeTarget(target);
+      if (target) setStation(target, 'CUSTOM TARGET');
     };
   }
 
@@ -668,36 +583,18 @@ function attachMusicDrawerEvents() {
       presetBtns.forEach(b => b.classList.remove('active'));
       btn.classList.add('active');
       const pid = btn.getAttribute('data-yt-id');
-      if (pid) applyYouTubeTarget({ type: 'playlist', id: pid });
+      const label = btn.innerText.replace(/^[^\w]+/, '').trim();
+      if (pid) setStation({ type: 'playlist', id: pid }, label);
     };
   });
 
-  if (ytOpenAppBtn) {
-    ytOpenAppBtn.onclick = () => {
-      const currentVal = ytInput ? ytInput.value.trim() : '';
-      const target = extractYouTubeTarget(currentVal) || { id: 'PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr', type: 'playlist' };
-      const isPlaylist = target.type === 'playlist';
-      const webUrl = isPlaylist 
-        ? `https://music.youtube.com/playlist?list=${target.id}` 
-        : `https://music.youtube.com/watch?v=${target.id}`;
-
-      const appUri = isPlaylist
-        ? `youtubemusic://playlist?list=${target.id}`
-        : `youtubemusic://watch?v=${target.id}`;
-
-      const start = Date.now();
-      window.location.href = appUri;
-      setTimeout(() => {
-        if (Date.now() - start < 1500) {
-          window.open(webUrl, '_blank', 'noopener');
-        }
-      }, 800);
-    };
+  if (ytLaunchBtn) {
+    ytLaunchBtn.onclick = launchCurrentStation;
   }
 
-  // Initialize the API
-  loadYouTubeIframeApi();
-  // Pandora Deep-Link Fallbacks
+  // -----------------------------------------------------------
+  // PANDORA: DEEP-LINK HANDOFF
+  // -----------------------------------------------------------
   document.querySelectorAll('.station-link').forEach(link => {
     link.onclick = (e) => {
       const deepUri = link.getAttribute('href');
