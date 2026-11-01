@@ -164,21 +164,19 @@
     </div>
   </div>
 
-<!-- PERSISTENT COCKPIT DOCK (FIXED AT BOTTOM OF SCREEN) -->
+<!-- PERSISTENT COCKPIT DOCK -->
 <div class="fixed-cockpit-dock">
-  <!-- Mount for the Slide-Up Music Drawer (Pops up directly above the dock) -->
+  <!-- Slide-up tray anchor -->
   <div id="musicDrawerMount"></div>
 
-  <!-- The Single Persistent Line: Rest Timer + Music Button -->
+  <!-- Persistent Single Line (Timer + Music) -->
   <div class="cockpit-bar-content">
-    <!-- Left: Rest Timer & Time Brake Controls -->
     <div class="dock-timer-section">
       <span class="dock-timer-label">⏱ REST</span>
       <span id="timerClock" class="dock-timer-clock">00:00</span>
       <button id="timeBrakeBtn" class="dock-brake-btn" type="button" title="Apply Time Brake (-15s)">BRAKE</button>
     </div>
 
-    <!-- Right: Audio Deck Toggle Button (Same Line) -->
     <button id="dockMusicToggleBtn" class="dock-music-btn" type="button">
       <span class="dock-music-icon">🎵</span>
       <span id="dockNowPlayingText" class="dock-music-text">MUSIC DECK</span>
