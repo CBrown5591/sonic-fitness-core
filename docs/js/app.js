@@ -455,10 +455,15 @@ function renderSessionUI() {
 // Toggle Time Brake visibility strictly when Darkspine Sonic is active
   const timeBrakeBtn = document.getElementById('timeBrakeBtn');
   if (timeBrakeBtn) {
-    const isDarkspineActive = devDarkspineOverride !== null 
+    const isDarkspineActive = (typeof devDarkspineOverride === 'boolean')
       ? devDarkspineOverride 
       : (isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I'].includes(activeStageKey));
-    timeBrakeBtn.style.display = isDarkspineActive ? 'inline-block' : 'none';
+
+    if (isDarkspineActive) {
+      timeBrakeBtn.style.setProperty('display', 'inline-block', 'important');
+    } else {
+      timeBrakeBtn.style.setProperty('display', 'none', 'important');
+    }
   }
 function ensureStageTabsExist() {
   const stageNav = document.querySelector('.stage-nav') || document.querySelector('.stage-tabs');
