@@ -451,7 +451,11 @@ function renderSessionUI() {
     });
   }
 }
-
+const timeBrakeBtn = document.getElementById('timeBrakeBtn');
+  if (timeBrakeBtn) {
+    const isDarkspineActive = isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I'].includes(activeStageKey);
+    timeBrakeBtn.style.display = isDarkspineActive ? 'inline-block' : 'none';
+  }
 function ensureStageTabsExist() {
   const stageNav = document.querySelector('.stage-nav') || document.querySelector('.stage-tabs');
   if (!stageNav) return;
