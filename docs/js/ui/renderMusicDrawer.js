@@ -342,18 +342,6 @@ function attachMusicDrawerEvents() {
     };
   }
 
-  // Multi-file Ingest
-  const fileInput = document.getElementById('localAudioFileInput');
-  if (fileInput) {
-    fileInput.onchange = async (e) => {
-      const files = Array.from(e.target.files);
-      const tracks = parseRelativeFileList(files);
-      if (tracks.length > 0) {
-        await commitTracksToPlaylist(tracks);
-      }
-    };
-  }
-
   // Clear Queue
   const clearBtn = document.getElementById('clearQueueBtn');
   if (clearBtn) {
