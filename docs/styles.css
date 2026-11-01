@@ -2292,3 +2292,339 @@ body {
   text-decoration: none;
   text-align: center;
 }
+/* -------------------------------------------------------------
+   PERSISTENT COCKPIT DOCK & SLIDE-UP AUDIO DRAWER
+------------------------------------------------------------- */
+body {
+  padding-bottom: 76px !important;
+}
+
+.fixed-cockpit-dock {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 9999;
+  background: rgba(11, 15, 25, 0.95);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(56, 189, 248, 0.3);
+  box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.7);
+  padding: env(safe-area-inset-bottom, 8px) 12px 10px 12px;
+}
+
+.cockpit-bar-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  max-width: 600px;
+  margin: 0 auto;
+}
+
+.dock-timer-section {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: #141c2e;
+  padding: 6px 12px;
+  border-radius: 6px;
+  border: 1px solid #1e293b;
+  flex: 1;
+}
+
+.dock-timer-label {
+  font-size: 10px;
+  font-weight: 800;
+  color: #94a3b8;
+  letter-spacing: 0.5px;
+}
+
+.dock-timer-clock {
+  font-family: monospace;
+  font-size: 16px;
+  font-weight: 900;
+  color: #38bdf8;
+  letter-spacing: 1px;
+}
+
+.dock-brake-btn {
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #f8fafc;
+  font-size: 10px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 4px;
+  cursor: pointer;
+  margin-left: auto;
+}
+
+.dock-brake-btn:active {
+  background: #0284c7;
+}
+
+.dock-music-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #141c2e;
+  border: 1px solid #0284c7;
+  color: #38bdf8;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 800;
+  font-size: 11px;
+  max-width: 170px;
+}
+
+.dock-music-btn:active {
+  background: #0284c7;
+  color: #fff;
+}
+
+.dock-music-text {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.dock-music-chevron {
+  font-size: 9px;
+  color: #94a3b8;
+}
+
+.music-slideup-tray {
+  background: #0f172a;
+  border: 1px solid var(--accent-blue, #38bdf8);
+  border-radius: 10px 10px 0 0;
+  padding: 12px;
+  margin-bottom: 8px;
+  max-width: 600px;
+  margin-left: auto;
+  margin-right: auto;
+  box-shadow: 0 -8px 25px rgba(0, 0, 0, 0.8);
+  max-height: 400px;
+  overflow-y: auto;
+}
+
+.music-tray-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #1e293b;
+}
+
+.music-tray-title {
+  font-size: 10px;
+  font-weight: 900;
+  color: #38bdf8;
+  letter-spacing: 0.5px;
+}
+
+.music-tray-close {
+  background: transparent;
+  border: none;
+  color: #94a3b8;
+  font-size: 14px;
+  cursor: pointer;
+}
+
+.music-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 10px;
+}
+
+.music-tab-btn {
+  flex: 1;
+  padding: 6px;
+  background: #1e293b;
+  border: 1px solid #334155;
+  color: #94a3b8;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.music-tab-btn.active {
+  background: #0284c7;
+  color: #ffffff;
+  border-color: #38bdf8;
+}
+
+.local-player-box {
+  background: #0b0f19;
+  padding: 10px;
+  border-radius: 6px;
+  border: 1px solid #1e293b;
+}
+
+.track-info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.track-title-text {
+  font-size: 11px;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 70%;
+}
+
+.track-time-text {
+  font-size: 10px;
+  font-family: monospace;
+  color: #94a3b8;
+}
+
+.track-progress-bar {
+  width: 100%;
+  height: 6px;
+  background: #1e293b;
+  border-radius: 3px;
+  margin-bottom: 10px;
+  cursor: pointer;
+  overflow: hidden;
+}
+
+.track-progress-fill {
+  height: 100%;
+  width: 0%;
+  background: #38bdf8;
+}
+
+.transport-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.ctrl-btn {
+  background: #1e293b;
+  color: #f8fafc;
+  border: 1px solid #334155;
+  padding: 6px 14px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+}
+
+.play-btn {
+  background: #38bdf8;
+  color: #0b0f19;
+  font-weight: 900;
+  flex: 1;
+}
+
+.file-load-btn {
+  background: #334155;
+  color: #f8fafc;
+  padding: 6px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.queue-status-text {
+  font-size: 9px;
+  color: #64748b;
+  margin-top: 6px;
+  text-align: right;
+}
+
+.yt-input-row {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 8px;
+}
+
+.yt-input {
+  flex: 1;
+  background: #0b0f19;
+  border: 1px solid #334155;
+  color: #fff;
+  padding: 6px 8px;
+  font-size: 11px;
+  border-radius: 4px;
+}
+
+.yt-btn {
+  background: #e11d48;
+  color: #fff;
+  border: none;
+  font-weight: 800;
+  font-size: 11px;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.yt-embed-wrap {
+  width: 100%;
+  height: 140px;
+  border-radius: 6px;
+  overflow: hidden;
+  border: 1px solid #1e293b;
+  margin-bottom: 8px;
+}
+
+.yt-embed-wrap iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+.app-launch-link {
+  display: block;
+  text-align: center;
+  background: rgba(225, 29, 72, 0.15);
+  border: 1px solid #e11d48;
+  color: #fb7185;
+  padding: 7px;
+  font-size: 10px;
+  font-weight: 800;
+  border-radius: 4px;
+  text-decoration: none;
+}
+
+.pandora-desc {
+  font-size: 11px;
+  color: #94a3b8;
+  margin-bottom: 8px;
+}
+
+.pandora-btn-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.pandora-btn {
+  background: #1e293b;
+  border: 1px solid #0ea5e9;
+  color: #38bdf8;
+  padding: 8px 12px;
+  font-size: 11px;
+  font-weight: 700;
+  border-radius: 4px;
+  text-decoration: none;
+  text-align: center;
+}
+
+.pandora-btn.generic-link {
+  border-color: #334155;
+  color: #94a3b8;
+  font-size: 10px;
+}
