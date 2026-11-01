@@ -11,8 +11,10 @@ let localPlaylist = [];
 let currentTrackIndex = 0;
 let localAudio = null;
 let dbInstance = null;
+
+// Playback Modes State
 let isShuffle = false;
-let repeatMode = 'all'; // 'off' | 'all' | 'one'
+let repeatMode = 'all'; // 'all' | 'one' | 'off'
 let playbackHistory = [];
 
 // IndexedDB: Open / Initialize Store
@@ -34,18 +36,34 @@ function getDB() {
   });
 }
 
-// IndexedDB: Save playlist blobs
-async function saveTracksToIDB(trackObjects) {
+// IndexedDB: Save playlist blobs in batches
+async function saveTracksToIDB(trackObjects, onProgress) {
   try {
     const db = await getDB();
-    return new Promise((resolve, reject) => {
+    const BATCH_SIZE = 50;
+
+    await new Promise((resolve, reject) => {
       const tx = db.transaction(STORE_NAME, 'readwrite');
-      const store = tx.objectStore(STORE_NAME);
-      store.clear(); // Replace old playlist
-      trackObjects.forEach(t => store.add({ name: t.name, blob: t.blob }));
+      tx.objectStore(STORE_NAME).clear();
       tx.oncomplete = () => resolve();
       tx.onerror = (e) => reject(e.target.error);
     });
+
+    for (let i = 0; i < trackObjects.length; i += BATCH_SIZE) {
+      const chunk = trackObjects.slice(i, i + BATCH_SIZE);
+      await new Promise((resolve, reject) => {
+        const tx = db.transaction(STORE_NAME, 'readwrite');
+        const store = tx.objectStore(STORE_NAME);
+        chunk.forEach(t => store.add({ name: t.name, blob: t.blob }));
+        tx.oncomplete = () => resolve();
+        tx.onerror = (e) => reject(e.target.error);
+      });
+
+      if (onProgress) {
+        onProgress(Math.min(i + BATCH_SIZE, trackObjects.length), trackObjects.length);
+      }
+      await new Promise(r => setTimeout(r, 0));
+    }
   } catch (err) {
     console.warn('[Audio DB] Failed to cache tracks:', err);
   }
@@ -95,7 +113,7 @@ export async function initMusicDrawer() {
     localAudio.addEventListener('pause', () => updatePlayPauseState(false));
   }
 
-  // Change the default saved ID to your Anime OST playlist:
+  // Default to Anime OSTs playlist
   const savedYtId = localStorage.getItem('sonic_music_yt_id') || 'PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr';
 
   mount.innerHTML = `
@@ -130,20 +148,20 @@ export async function initMusicDrawer() {
             <button id="prevTrackBtn" class="ctrl-btn" type="button" title="Previous Track">⏮</button>
             <button id="playPauseBtn" class="ctrl-btn play-btn" type="button" title="Play / Pause">▶</button>
             <button id="nextTrackBtn" class="ctrl-btn" type="button" title="Next Track">⏭</button>
-            <button id="repeatBtn" class="ctrl-btn mode-btn" type="button" title="Toggle Repeat (Off / All / One)">🔁</button>
+            <button id="repeatBtn" class="ctrl-btn mode-btn" type="button" title="Toggle Repeat (All / One / Off)">🔁</button>
             
-<!-- Inside .transport-controls in renderMusicDrawer.js -->
-<button id="pickFolderBtn" class="ctrl-btn folder-btn" type="button" title="Select entire folder">
-  📁 FOLDER
-</button>
+            <button id="pickFolderBtn" class="ctrl-btn folder-btn" type="button" title="Select folder and all subfolders">
+              📁 FOLDER
+            </button>
 
-<label class="file-load-btn" title="Pick individual files">
-  📂 FILES
-  <input type="file" id="localAudioFileInput" multiple accept="audio/*" style="display: none;">
-</label>
+            <label class="file-load-btn" title="Pick individual files">
+              📂 FILES
+              <input type="file" id="localAudioFileInput" multiple accept="audio/*" style="display: none;">
+            </label>
 
-<!-- MUST omit accept="" and include webkitdirectory to enable Android "Use this folder" -->
-<input type="file" id="localAudioFolderFallback" webkitdirectory directory mozdirectory style="display: none;">
+            <!-- Hidden fallback input for browsers/mobile without showDirectoryPicker -->
+            <input type="file" id="localAudioFolderFallback" webkitdirectory directory mozdirectory multiple style="display: none;">
+          </div>
 
           <!-- Queue Management Row -->
           <div class="queue-manage-row">
@@ -157,30 +175,31 @@ export async function initMusicDrawer() {
       <div id="musicPaneYoutube" class="music-pane" style="display: none;">
         <div class="yt-box">
           <!-- Preset Quick Mixes -->
-          <div class="yt-presets-row">
+          <div class="yt-presets-row" style="display: flex; gap: 6px; margin-bottom: 8px;">
             <button class="yt-preset-btn active" data-yt-id="PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr" type="button">⚡ ANIME OSTS</button>
             <button class="yt-preset-btn" data-yt-id="PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D" type="button">🌀 SONIC OST</button>
             <button class="yt-preset-btn" data-yt-id="RDCLAK5uy_kfd5lT4u6Vq3q6p5Fq_h8E1l2m3n4o5p" type="button">🔥 GYM HYPE</button>
           </div>
 
           <!-- URL / ID Ingest Bar -->
-          <div class="yt-input-row">
-            <input type="text" id="ytPlaylistInput" class="yt-input" placeholder="Paste YouTube / YT Music URL or ID" value="${savedYtId}">
-            <button id="ytLoadBtn" class="yt-btn" type="button">LOAD</button>
+          <div class="yt-input-row" style="display: flex; gap: 6px; margin-bottom: 8px;">
+            <input type="text" id="ytPlaylistInput" class="yt-input" placeholder="Paste YouTube / YT Music URL or ID" value="${savedYtId}" style="flex: 1; padding: 6px 8px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 4px;">
+            <button id="ytLoadBtn" class="yt-btn" type="button" style="padding: 6px 12px; background: #e11d48; color: #fff; font-weight: bold; border: none; border-radius: 4px; cursor: pointer;">LOAD</button>
           </div>
 
-          <!-- Responsive Embedded Deck -->
-          <div class="yt-embed-wrap">
+          <!-- Embedded Player Deck -->
+          <div class="yt-embed-wrap" style="position: relative; width: 100%; height: 200px; margin-bottom: 8px;">
             <iframe id="ytPlayerFrame" 
               src="https://www.youtube.com/embed/videoseries?list=${savedYtId}&enablejsapi=1" 
+              style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; border-radius: 6px;"
               allow="autoplay; encrypted-media; picture-in-picture" 
               allowfullscreen>
             </iframe>
           </div>
 
-          <!-- Deep-Link Action Row -->
+          <!-- Native App Launch Button -->
           <div class="yt-actions-row">
-            <button id="ytOpenAppBtn" class="app-launch-link yt-link" type="button">
+            <button id="ytOpenAppBtn" class="app-launch-link yt-link" type="button" style="width: 100%; text-align: center; padding: 8px; background: #1e293b; border: 1px solid #334155; color: #38bdf8; font-weight: bold; border-radius: 4px; cursor: pointer;">
               🚀 OPEN IN YOUTUBE MUSIC APP
             </button>
           </div>
@@ -238,29 +257,42 @@ export function toggleMusicDrawer() {
 // RECURSIVE SUBFOLDER SCANNER ENGINE
 // -------------------------------------------------------------
 
-// Method A: Recursive traversal using modern File System Access API
-async function scanDirectoryRecursively(dirHandle, path = '') {
+async function scanDirectoryRecursively(dirHandle, path = '', onProgress) {
   let foundTracks = [];
 
   for await (const entry of dirHandle.values()) {
     if (entry.kind === 'file') {
-      const file = await entry.getFile();
-      if (file.type.startsWith('audio/') || /\.(mp3|m4a|wav|ogg|flac|aac|wma)$/i.test(file.name)) {
-        foundTracks.push({
-          name: (path ? `${path} / ` : '') + file.name.replace(/\.[^/.]+$/, ""),
-          blob: file
-        });
+      if (/\.(mp3|m4a|wav|ogg|flac|aac|wma)$/i.test(entry.name)) {
+        try {
+          const file = await entry.getFile();
+          foundTracks.push({
+            name: (path ? `${path} / ` : '') + file.name.replace(/\.[^/.]+$/, ""),
+            blob: file
+          });
+          if (onProgress && foundTracks.length % 10 === 0) {
+            onProgress(foundTracks.length, path || entry.name);
+          }
+        } catch (fileErr) {
+          console.warn('[Scanner] Skipped file:', entry.name, fileErr);
+        }
       }
     } else if (entry.kind === 'directory') {
-      const subTracks = await scanDirectoryRecursively(entry, path ? `${path}/${entry.name}` : entry.name);
+      await new Promise(r => setTimeout(r, 0));
+      const subTracks = await scanDirectoryRecursively(
+        entry, 
+        path ? `${path}/${entry.name}` : entry.name, 
+        onProgress
+      );
       foundTracks = foundTracks.concat(subTracks);
+      if (onProgress) {
+        onProgress(foundTracks.length, entry.name);
+      }
     }
   }
 
   return foundTracks;
 }
 
-// Method B: Parse nested subfolders from webkitRelativePath
 function parseRelativeFileList(fileArray) {
   return fileArray
     .filter(f => f.type.startsWith('audio/') || /\.(mp3|m4a|wav|ogg|flac|aac|wma)$/i.test(f.name))
@@ -289,13 +321,18 @@ function attachMusicDrawerEvents() {
       btn.classList.add('active');
 
       const src = btn.getAttribute('data-source');
-      document.getElementById('musicPaneLocal').style.display = src === 'local' ? 'block' : 'none';
-      document.getElementById('musicPaneYoutube').style.display = src === 'youtube' ? 'block' : 'none';
-      document.getElementById('musicPanePandora').style.display = src === 'pandora' ? 'block' : 'none';
+      const paneLocal = document.getElementById('musicPaneLocal');
+      const paneYt = document.getElementById('musicPaneYoutube');
+      const panePandora = document.getElementById('musicPanePandora');
+
+      if (paneLocal) paneLocal.style.display = (src === 'local') ? 'block' : 'none';
+      if (paneYt) paneYt.style.display = (src === 'youtube') ? 'block' : 'none';
+      if (panePandora) panePandora.style.display = (src === 'pandora') ? 'block' : 'none';
     };
   });
 
- const pickFolderBtn = document.getElementById('pickFolderBtn');
+  // Folder Ingest: Primary = showDirectoryPicker, Fallback = webkitdirectory
+  const pickFolderBtn = document.getElementById('pickFolderBtn');
   const fallbackFolderInput = document.getElementById('localAudioFolderFallback');
   const fileInput = document.getElementById('localAudioFileInput');
 
@@ -304,16 +341,18 @@ function attachMusicDrawerEvents() {
       const countEl = document.getElementById('localQueueCount');
       const isMobile = /Android|iPhone|iPad|iPod/i.test(navigator.userAgent);
 
-      // On desktop Chromium, use showDirectoryPicker if available
       if (!isMobile && 'showDirectoryPicker' in window) {
         try {
           if (countEl) countEl.innerText = 'Scanning folder tree...';
           const dirHandle = await window.showDirectoryPicker();
-          const tracks = await scanDirectoryRecursively(dirHandle);
+          const tracks = await scanDirectoryRecursively(dirHandle, '', (count, curDir) => {
+            if (countEl) countEl.innerText = `Found ${count} tracks... (${curDir.slice(0, 25)})`;
+          });
+
           if (tracks.length > 0) {
             await commitTracksToPlaylist(tracks);
           } else {
-            if (countEl) countEl.innerText = 'No audio tracks found.';
+            if (countEl) countEl.innerText = 'No audio tracks found in folder.';
           }
         } catch (err) {
           if (err.name !== 'AbortError') {
@@ -321,10 +360,9 @@ function attachMusicDrawerEvents() {
           }
         }
       } else {
-        // Mobile (Android): Reset input value and trigger directory picker
         if (fallbackFolderInput) {
-          fallbackFolderInput.value = ''; // Clear prior selection cache
-          if (countEl) countEl.innerText = 'Open folder and tap "Use this folder"...';
+          fallbackFolderInput.value = '';
+          if (countEl) countEl.innerText = 'Select folder or audio tracks...';
           fallbackFolderInput.click();
         } else if (fileInput) {
           fileInput.click();
@@ -332,26 +370,25 @@ function attachMusicDrawerEvents() {
       }
     };
   }
- if (fallbackFolderInput) {
+
+  if (fallbackFolderInput) {
     fallbackFolderInput.onchange = async (e) => {
       const files = Array.from(e.target.files);
-      if (!files || files.length === 0) return;
-
-      const countEl = document.getElementById('localQueueCount');
-      if (countEl) countEl.innerText = `Ingesting ${files.length} items from folder...`;
-
-      // Filter only audio formats from the directory payload
-      const audioFiles = files.filter(f => 
-        f.type.startsWith('audio/') || /\.(mp3|m4a|wav|ogg|flac|aac|wma)$/i.test(f.name)
-      );
-
-      if (audioFiles.length === 0) {
-        if (countEl) countEl.innerText = 'No audio files found in selected folder.';
-        return;
+      const tracks = parseRelativeFileList(files);
+      if (tracks.length > 0) {
+        await commitTracksToPlaylist(tracks);
       }
+    };
+  }
 
-      const tracks = parseRelativeFileList(audioFiles);
-      await commitTracksToPlaylist(tracks);
+  // Multi-file Ingest
+  if (fileInput) {
+    fileInput.onchange = async (e) => {
+      const files = Array.from(e.target.files);
+      const tracks = parseRelativeFileList(files);
+      if (tracks.length > 0) {
+        await commitTracksToPlaylist(tracks);
+      }
     };
   }
 
@@ -365,6 +402,7 @@ function attachMusicDrawerEvents() {
       }
       localPlaylist.forEach(t => URL.revokeObjectURL(t.url));
       localPlaylist = [];
+      playbackHistory = [];
       currentTrackIndex = 0;
       await clearTracksFromIDB();
 
@@ -389,7 +427,7 @@ function attachMusicDrawerEvents() {
     };
   }
 
-// Shuffle Mode Toggle
+  // Transport Controls: Shuffle & Repeat Toggles
   const shuffleBtn = document.getElementById('shuffleBtn');
   if (shuffleBtn) {
     shuffleBtn.onclick = () => {
@@ -399,7 +437,6 @@ function attachMusicDrawerEvents() {
     };
   }
 
-  // Repeat Mode Toggle (Cycle: ALL 🔁 -> ONE 🔂 -> OFF ➡️)
   const repeatBtn = document.getElementById('repeatBtn');
   if (repeatBtn) {
     repeatBtn.onclick = () => {
@@ -418,8 +455,7 @@ function attachMusicDrawerEvents() {
       }
     };
   }
-  
-  // Transport Controls
+
   const playPauseBtn = document.getElementById('playPauseBtn');
   if (playPauseBtn) {
     playPauseBtn.onclick = () => {
@@ -440,13 +476,11 @@ function attachMusicDrawerEvents() {
     prevBtn.onclick = () => {
       if (localPlaylist.length === 0) return;
 
-      // If more than 3 seconds in, restart track
       if (localAudio.currentTime > 3) {
         localAudio.currentTime = 0;
         return;
       }
 
-      // If we have history from shuffle, pop last played track
       if (playbackHistory.length > 0) {
         currentTrackIndex = playbackHistory.pop();
       } else {
@@ -455,6 +489,7 @@ function attachMusicDrawerEvents() {
       loadTrack(currentTrackIndex, true);
     };
   }
+
   const nextBtn = document.getElementById('nextTrackBtn');
   if (nextBtn) {
     nextBtn.onclick = playNextTrack;
@@ -468,41 +503,31 @@ function attachMusicDrawerEvents() {
   const ytFrame = document.getElementById('ytPlayerFrame');
   const ytOpenAppBtn = document.getElementById('ytOpenAppBtn');
 
-  // URL / ID Parser Helper
   function extractYouTubeTarget(inputStr) {
     if (!inputStr) return null;
     const trimmed = inputStr.trim();
 
-    // 1. Direct Playlist ID
     if (/^[A-Za-z0-9_-]{18,}$/.test(trimmed) && (trimmed.startsWith('PL') || trimmed.startsWith('OL') || trimmed.startsWith('RD') || trimmed.startsWith('UU'))) {
       return { type: 'playlist', id: trimmed };
     }
 
-    // 2. Direct Video ID (11 chars)
     if (/^[A-Za-z0-9_-]{11}$/.test(trimmed)) {
       return { type: 'video', id: trimmed };
     }
 
-    // 3. Full URL matching (music.youtube.com, youtube.com, youtu.be)
     try {
       const url = new URL(trimmed);
       const listParam = url.searchParams.get('list');
-      if (listParam) {
-        return { type: 'playlist', id: listParam };
-      }
+      if (listParam) return { type: 'playlist', id: listParam };
 
       const vParam = url.searchParams.get('v');
-      if (vParam) {
-        return { type: 'video', id: vParam };
-      }
+      if (vParam) return { type: 'video', id: vParam };
 
       if (url.hostname === 'youtu.be') {
         const pathId = url.pathname.slice(1);
         if (pathId) return { type: 'video', id: pathId };
       }
-    } catch (e) {
-      // Not a valid URL, treat as raw ID fallback
-    }
+    } catch (e) {}
 
     return { type: 'playlist', id: trimmed };
   }
@@ -521,7 +546,6 @@ function attachMusicDrawerEvents() {
     }
   }
 
-  // Load button action
   if (ytLoadBtn && ytInput) {
     ytLoadBtn.onclick = () => {
       const target = extractYouTubeTarget(ytInput.value);
@@ -529,27 +553,26 @@ function attachMusicDrawerEvents() {
     };
   }
 
-  // Preset button actions
   const presetBtns = document.querySelectorAll('.yt-preset-btn');
   presetBtns.forEach(btn => {
     btn.onclick = () => {
+      presetBtns.forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
       const pid = btn.getAttribute('data-yt-id');
       if (pid) applyYouTubeTarget({ type: 'playlist', id: pid });
     };
   });
 
-  // Deep-link to YouTube Music native app with browser fallback
   if (ytOpenAppBtn) {
     ytOpenAppBtn.onclick = () => {
       const currentVal = ytInput ? ytInput.value.trim() : '';
-      const target = extractYouTubeTarget(currentVal) || { id: '' };
+      const target = extractYouTubeTarget(currentVal) || { id: 'PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr', type: 'playlist' };
 
       const isPlaylist = target.type === 'playlist';
       const webUrl = isPlaylist 
         ? `https://music.youtube.com/playlist?list=${target.id}` 
         : `https://music.youtube.com/watch?v=${target.id}`;
 
-      // Native URI schemes for YouTube Music
       const appUri = isPlaylist
         ? `youtubemusic://playlist?list=${target.id}`
         : `youtubemusic://watch?v=${target.id}`;
@@ -558,7 +581,6 @@ function attachMusicDrawerEvents() {
       window.location.href = appUri;
 
       setTimeout(() => {
-        // Fall back to web client if native intent doesn't resolve within 1.2s
         if (Date.now() - start < 1500) {
           window.open(webUrl, '_blank', 'noopener');
         }
@@ -585,49 +607,24 @@ function attachMusicDrawerEvents() {
   });
 }
 
-async function handleIncomingFiles(rawFiles) {
-  const countEl = document.getElementById('localQueueCount');
-  
-  if (!rawFiles || rawFiles.length === 0) {
-    if (countEl) countEl.innerText = 'No files selected.';
-    return;
-  }
-
-  if (countEl) countEl.innerText = `Processing ${rawFiles.length} files...`;
-
-  const tracks = parseRelativeFileList(rawFiles);
-
-  if (tracks.length === 0) {
-    if (countEl) countEl.innerText = 'No supported audio files (.mp3, .m4a, .flac) found in selection.';
-    return;
-  }
-
-  try {
-    await commitTracksToPlaylist(tracks);
-  } catch (err) {
-    if (countEl) countEl.innerText = `Save error: ${err.message || 'Storage full'}`;
-  }
-}
-
 // Ingest, store in IndexedDB, and set active playlist
 async function commitTracksToPlaylist(trackObjects) {
   const countEl = document.getElementById('localQueueCount');
-  if (countEl) countEl.innerText = `Saving ${trackObjects.length} tracks (with subfolders) to offline vault...`;
 
-  // Free previous object URLs
   localPlaylist.forEach(t => URL.revokeObjectURL(t.url));
 
-  // Store raw blobs into IndexedDB
-  await saveTracksToIDB(trackObjects);
+  await saveTracksToIDB(trackObjects, (saved, total) => {
+    if (countEl) countEl.innerText = `Caching: ${saved} / ${total} tracks in offline vault...`;
+  });
 
-  // Hydrate playable playlist
   localPlaylist = trackObjects.map(t => ({
     name: t.name,
     url: URL.createObjectURL(t.blob)
   }));
 
   currentTrackIndex = 0;
-  if (countEl) countEl.innerText = `Queue: ${localPlaylist.length} tracks cached (All subfolders included)`;
+  playbackHistory = [];
+  if (countEl) countEl.innerText = `Queue: ${localPlaylist.length} tracks cached (All subfolders ready)`;
   loadTrack(currentTrackIndex, true);
 }
 
@@ -645,6 +642,7 @@ async function restorePlaylistFromCache() {
 
     if (countEl) countEl.innerText = `Queue: ${localPlaylist.length} tracks cached (Ready)`;
     currentTrackIndex = 0;
+    playbackHistory = [];
     loadTrack(currentTrackIndex, false);
   } else {
     if (countEl) countEl.innerText = 'Queue: 0 tracks loaded';
@@ -673,26 +671,22 @@ function loadTrack(index, autoPlay = false) {
 function playNextTrack() {
   if (localPlaylist.length === 0) return;
 
-  // Repeat One: replay the same track from start
   if (repeatMode === 'one') {
     localAudio.currentTime = 0;
     localAudio.play().catch(() => {});
     return;
   }
 
-  // Push current index to history for reliable back-skipping
   playbackHistory.push(currentTrackIndex);
   if (playbackHistory.length > 50) playbackHistory.shift();
 
   if (isShuffle && localPlaylist.length > 1) {
-    // Pick random index different from current
     let nextIndex;
     do {
       nextIndex = Math.floor(Math.random() * localPlaylist.length);
     } while (nextIndex === currentTrackIndex);
     currentTrackIndex = nextIndex;
   } else {
-    // Sequential
     if (currentTrackIndex + 1 >= localPlaylist.length && repeatMode === 'off') {
       updatePlayPauseState(false);
       return;
@@ -702,6 +696,7 @@ function playNextTrack() {
 
   loadTrack(currentTrackIndex, true);
 }
+
 function updatePlayPauseState(isPlaying) {
   const btn = document.getElementById('playPauseBtn');
   if (btn) btn.innerText = isPlaying ? '⏸' : '▶';
@@ -743,10 +738,13 @@ function setupMediaSessionApi() {
     if (localAudio) localAudio.pause();
   });
   navigator.mediaSession.setActionHandler('previoustrack', () => {
-    if (localPlaylist.length > 0) {
+    if (localPlaylist.length === 0) return;
+    if (playbackHistory.length > 0) {
+      currentTrackIndex = playbackHistory.pop();
+    } else {
       currentTrackIndex = (currentTrackIndex - 1 + localPlaylist.length) % localPlaylist.length;
-      loadTrack(currentTrackIndex, true);
     }
+    loadTrack(currentTrackIndex, true);
   });
   navigator.mediaSession.setActionHandler('nexttrack', playNextTrack);
 }
