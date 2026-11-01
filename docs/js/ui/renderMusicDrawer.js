@@ -126,18 +126,18 @@ export async function initMusicDrawer() {
             <button id="playPauseBtn" class="ctrl-btn play-btn" type="button" title="Play / Pause">▶</button>
             <button id="nextTrackBtn" class="ctrl-btn" type="button" title="Next Track">⏭</button>
             
-            <!-- Inside .transport-controls in renderMusicDrawer.js -->
-<button id="pickFolderBtn" class="ctrl-btn folder-btn" type="button" title="Select folder and all subfolders">
-  📁 FOLDER
-</button>
+            <button id="pickFolderBtn" class="ctrl-btn folder-btn" type="button" title="Select folder and all subfolders">
+              📁 FOLDER
+            </button>
 
-<label class="file-load-btn" title="Pick individual files">
-  📂 FILES
-  <input type="file" id="localAudioFileInput" multiple accept="audio/*" style="display: none;">
-</label>
+            <label class="file-load-btn" title="Pick individual files">
+              📂 FILES
+              <input type="file" id="localAudioFileInput" multiple accept="audio/*" style="display: none;">
+            </label>
 
-<!-- Hidden fallback input for browsers without showDirectoryPicker -->
-<input type="file" id="localAudioFolderFallback" webkitdirectory directory multiple style="display: none;">
+            <!-- Hidden fallback input for browsers without showDirectoryPicker -->
+            <input type="file" id="localAudioFolderFallback" webkitdirectory directory multiple style="display: none;">
+          </div>
 
           <!-- Queue Management Row -->
           <div class="queue-manage-row">
@@ -234,7 +234,6 @@ async function scanDirectoryRecursively(dirHandle, path = '') {
         });
       }
     } else if (entry.kind === 'directory') {
-      // Recursively step into nested subfolders
       const subTracks = await scanDirectoryRecursively(entry, path ? `${path}/${entry.name}` : entry.name);
       foundTracks = foundTracks.concat(subTracks);
     }
@@ -248,7 +247,6 @@ function parseRelativeFileList(fileArray) {
   return fileArray
     .filter(f => f.type.startsWith('audio/') || /\.(mp3|m4a|wav|ogg|flac|aac|wma)$/i.test(f.name))
     .map(file => {
-      // Use directory path if available, or fall back to file name
       const displayPath = file.webkitRelativePath 
         ? file.webkitRelativePath.replace(/\.[^/.]+$/, '').replace(/\//g, ' / ')
         : file.name.replace(/\.[^/.]+$/, '');
@@ -279,7 +277,6 @@ function attachMusicDrawerEvents() {
     };
   });
 
-  // Folder Ingest (webkitdirectory)
   // Folder Ingest: Primary = showDirectoryPicker (full subfolder recursion), Fallback = webkitdirectory
   const pickFolderBtn = document.getElementById('pickFolderBtn');
   const fallbackFolderInput = document.getElementById('localAudioFolderFallback');
@@ -299,14 +296,12 @@ function attachMusicDrawerEvents() {
             if (countEl) countEl.innerText = 'No audio files found in selected folder or subfolders.';
           }
         } catch (err) {
-          // User canceled or permission rejected
           if (err.name !== 'AbortError') {
             console.warn('[DirectoryPicker] Fallback triggered:', err);
             fallbackFolderInput?.click();
           }
         }
       } else {
-        // Fallback for browsers without showDirectoryPicker
         fallbackFolderInput?.click();
       }
     };
@@ -325,7 +320,13 @@ function attachMusicDrawerEvents() {
   // Multi-file Ingest
   const fileInput = document.getElementById('localAudioFileInput');
   if (fileInput) {
-    fileInput.onchange = (e) => ingestAudioFiles(Array.from(e.target.files));
+    fileInput.onchange = async (e) => {
+      const files = Array.from(e.target.files);
+      const tracks = parseRelativeFileList(files);
+      if (tracks.length > 0) {
+        await commitTracksToPlaylist(tracks);
+      }
+    };
   }
 
   // Clear Queue
@@ -448,18 +449,6 @@ async function commitTracksToPlaylist(trackObjects) {
   loadTrack(currentTrackIndex, true);
 }
 
-  await saveTracksToIDB(trackObjectsToStore);
-
-  localPlaylist = trackObjectsToStore.map(t => ({
-    name: t.name,
-    url: URL.createObjectURL(t.blob)
-  }));
-
-  currentTrackIndex = 0;
-  if (countEl) countEl.innerText = `Queue: ${localPlaylist.length} tracks cached (Ready)`;
-  loadTrack(currentTrackIndex, true);
-}
-
 // Restore playlist from IndexedDB on boot
 async function restorePlaylistFromCache() {
   const cached = await loadTracksFromIDB();
@@ -474,7 +463,7 @@ async function restorePlaylistFromCache() {
 
     if (countEl) countEl.innerText = `Queue: ${localPlaylist.length} tracks cached (Ready)`;
     currentTrackIndex = 0;
-    loadTrack(currentTrackIndex, false); // Cue track without autoplay
+    loadTrack(currentTrackIndex, false);
   } else {
     if (countEl) countEl.innerText = 'Queue: 0 tracks loaded';
     if (titleEl) titleEl.innerText = 'NO TRACK LOADED (Pick Folder/Files)';
@@ -567,4 +556,3 @@ function updateMediaSessionMetadata(trackName) {
     ]
   });
 }
-// <-- LOOK HERE: If there is an extra '}' below this function, delete it.
