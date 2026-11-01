@@ -207,11 +207,12 @@ export async function initMusicDrawer() {
           <!-- Compact Audio Dock Frame (Standard Mobile-Compliant Embed) -->
           <div id="ytFrameWrapper" style="position: relative; width: 100%; height: 75px; border-radius: 6px; overflow: hidden; margin-bottom: 8px; border: 1px solid #1e293b; background: #000;">
             <iframe id="ytPlayerFrame"
-              src="https://www.youtube.com/embed/videoseries?list=${savedYtId}&enablejsapi=1&playsinline=1"
-              style="width: 100%; height: 100%; border: none;"
-              allow="autoplay; encrypted-media; picture-in-picture"
-              allowfullscreen>
-            </iframe>
+  src="https://www.youtube.com/embed/videoseries?list=${savedYtId}&enablejsapi=1&playsinline=1"
+  style="width: 100%; height: 160px; border: none; border-radius: 6px;"
+  allow="autoplay; encrypted-media; fullscreen; picture-in-picture"
+  sandbox="allow-scripts allow-same-origin allow-presentation"
+  loading="eager">
+</iframe>
           </div>
 
           <!-- Native App Launch Button -->
