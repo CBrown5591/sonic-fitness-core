@@ -45,8 +45,23 @@ export function getVaultData() {
   return merged;
 }
 
-export function saveVaultData(data) {
-  localStorage.setItem('sonic_mastery_vault', JSON.stringify(data));
+export function saveVaultData(incomingData) {
+  if (!incomingData || !Array.isArray(incomingData)) return;
+
+  const currentVault = getVaultData(); // Reads existing catalog with Wednesday's rings
+
+  incomingData.forEach(inItem => {
+    const name = inItem.exercise || inItem.name;
+    const incomingRings = Number(inItem.rings || inItem.stars) || 0;
+    const match = currentVault.find(v => v.exercise === name);
+
+    if (match) {
+      // Keep whichever is higher (preserves both Wednesday and Today)
+      match.rings = Math.min(5, Math.max(match.rings || 0, incomingRings));
+    }
+  });
+
+  localStorage.setItem('sonic_mastery_vault', JSON.stringify(currentVault));
 }
 
 export function getTotalRedRings() {
