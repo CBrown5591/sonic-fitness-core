@@ -164,24 +164,28 @@
     </div>
   </div>
 
-<!-- INSERT IMMEDIATELY ABOVE THE REST TIMER CARD: -->
-<div id="musicDrawerMount"></div>
-  
-  <!-- Rest Dock -->
-  <div class="rest-dock">
-    <div>
-      <div style="font-size: 10px; color: var(--text-dim); text-transform: uppercase;">Recovery Timer</div>
-      <div class="timer-val" id="timerClock">01:30</div>
+<!-- PERSISTENT COCKPIT DOCK (FIXED AT BOTTOM OF SCREEN) -->
+<div class="fixed-cockpit-dock">
+  <!-- Mount for the Slide-Up Music Drawer (Pops up directly above the dock) -->
+  <div id="musicDrawerMount"></div>
+
+  <!-- The Single Persistent Line: Rest Timer + Music Button -->
+  <div class="cockpit-bar-content">
+    <!-- Left: Rest Timer & Time Brake Controls -->
+    <div class="dock-timer-section">
+      <span class="dock-timer-label">⏱ REST</span>
+      <span id="timerClock" class="dock-timer-clock">00:00</span>
+      <button id="timeBrakeBtn" class="dock-brake-btn" type="button" title="Apply Time Brake (-15s)">BRAKE</button>
     </div>
 
-    <div class="timer-selector">
-      <button class="btn-pill" id="pill-60" onclick="setTimerDuration(60)">60s</button>
-      <button class="btn-pill active" id="pill-90" onclick="setTimerDuration(90)">90s</button>
-      <button class="btn-pill" id="pill-120" onclick="setTimerDuration(120)">120s</button>
-    </div>
-
-    <button id="stageClearBtn" class="btn-advance" onclick="finishSession()">CLEAR STAGE</button>
+    <!-- Right: Audio Deck Toggle Button (Same Line) -->
+    <button id="dockMusicToggleBtn" class="dock-music-btn" type="button">
+      <span class="dock-music-icon">🎵</span>
+      <span id="dockNowPlayingText" class="dock-music-text">MUSIC DECK</span>
+      <span id="dockMusicChevron" class="dock-music-chevron">▲</span>
+    </button>
   </div>
+</div>
 
   <!-- Integrated Results Dossier Overlay -->
   <div id="resultsOverlay" class="results-overlay">
