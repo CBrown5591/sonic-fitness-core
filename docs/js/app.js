@@ -598,6 +598,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (data.goldRings !== undefined) {
         saveStandardRings(data.goldRings);
       }
+      // ---> HYDRATE RED STAR RINGS FROM COMMAND HUB TELEMETRY
+      if (data.totalRedRings !== undefined || data.redRings !== undefined || data.redStarRings !== undefined) {
+        const remoteRed = data.totalRedRings ?? data.redRings ?? data.redStarRings;
+        localStorage.setItem('sonic_total_red_rings', remoteRed);
+      }
       if (data.stages) {
         localStorage.setItem('sonic_stage_statuses', JSON.stringify(data.stages));
         checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
