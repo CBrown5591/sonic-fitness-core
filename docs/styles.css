@@ -2652,3 +2652,15 @@ body {
   border-color: #ef4444;
   color: #f87171;
 }
+.mode-btn {
+  font-size: 11px;
+  padding: 6px 10px;
+  color: #94a3b8;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.mode-btn.active-mode {
+  color: #38bdf8 !important;
+  border-color: #38bdf8 !important;
+  background: rgba(56, 189, 248, 0.1);
+}
