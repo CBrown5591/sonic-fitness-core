@@ -556,18 +556,20 @@ function attachMusicDrawerEvents() {
       ? `https://music.youtube.com/playlist?list=${target.id}` 
       : `https://music.youtube.com/watch?v=${target.id}`;
 
-    const appUri = isPlaylist
-      ? `youtubemusic://playlist?list=${target.id}`
-      : `youtubemusic://watch?v=${target.id}`;
-
-    const start = Date.now();
-    window.location.href = appUri;
-
-    setTimeout(() => {
-      if (Date.now() - start < 1500) {
-        window.open(webUrl, '_blank', 'noopener');
-      }
-    }, 800);
+    // Android Intent URI: Directly invokes package com.google.android.apps.youtube.music
+    // If the native app is absent, it seamlessly routes to browser fallback without showing an OS error toast
+    const isAndroid = /Android/i.test(navigator.userAgent);
+    
+    if (isAndroid) {
+      const intentUri = isPlaylist
+        ? `intent://music.youtube.com/playlist?list=${target.id}#Intent;scheme=https;package=com.google.android.apps.youtube.music;S.browser_fallback_url=${encodeURIComponent(webUrl)};end`
+        : `intent://music.youtube.com/watch?v=${target.id}#Intent;scheme=https;package=com.google.android.apps.youtube.music;S.browser_fallback_url=${encodeURIComponent(webUrl)};end`;
+      
+      window.location.href = intentUri;
+    } else {
+      // iOS / Desktop fallback: Standard App Link
+      window.open(webUrl, '_blank', 'noopener');
+    }
   }
 
   if (ytLoadBtn && ytInput) {
