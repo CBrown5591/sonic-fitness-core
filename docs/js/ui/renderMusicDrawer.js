@@ -567,3 +567,4 @@ function updateMediaSessionMetadata(trackName) {
     ]
   });
 }
+// <-- LOOK HERE: If there is an extra '}' below this function, delete it.
