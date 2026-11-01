@@ -602,6 +602,16 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (data.totalRedRings !== undefined) {
         localStorage.setItem('sonic_total_red_rings', data.totalRedRings);
       }
+      if (data.stageRecords && typeof data.stageRecords === 'object') {
+        const existingRecords = JSON.parse(localStorage.getItem('sonic_stage_records') || '{}');
+        Object.keys(data.stageRecords).forEach(stg => {
+          if (!existingRecords[stg] || data.stageRecords[stg].bestScore > existingRecords[stg].bestScore) {
+            existingRecords[stg] = data.stageRecords[stg];
+          }
+        });
+        localStorage.setItem('sonic_stage_records', JSON.stringify(existingRecords));
+        renderStageRecordBanner(activeStageKey);
+      }
       if (data.stages) {
         localStorage.setItem('sonic_stage_statuses', JSON.stringify(data.stages));
         checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
