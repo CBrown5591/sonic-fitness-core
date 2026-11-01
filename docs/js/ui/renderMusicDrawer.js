@@ -11,6 +11,9 @@ let localPlaylist = [];
 let currentTrackIndex = 0;
 let localAudio = null;
 let dbInstance = null;
+let isShuffle = false;
+let repeatMode = 'all'; // 'off' | 'all' | 'one'
+let playbackHistory = [];
 
 // IndexedDB: Open / Initialize Store
 function getDB() {
@@ -122,9 +125,11 @@ export async function initMusicDrawer() {
           </div>
 
           <div class="transport-controls">
+            <button id="shuffleBtn" class="ctrl-btn mode-btn" type="button" title="Toggle Shuffle">🔀</button>
             <button id="prevTrackBtn" class="ctrl-btn" type="button" title="Previous Track">⏮</button>
             <button id="playPauseBtn" class="ctrl-btn play-btn" type="button" title="Play / Pause">▶</button>
             <button id="nextTrackBtn" class="ctrl-btn" type="button" title="Next Track">⏭</button>
+            <button id="repeatBtn" class="ctrl-btn mode-btn" type="button" title="Toggle Repeat (Off / All / One)">🔁</button>
             
             <button id="pickFolderBtn" class="ctrl-btn folder-btn" type="button" title="Select folder and all subfolders">
               📁 FOLDER
@@ -363,6 +368,36 @@ function attachMusicDrawerEvents() {
     };
   }
 
+// Shuffle Mode Toggle
+  const shuffleBtn = document.getElementById('shuffleBtn');
+  if (shuffleBtn) {
+    shuffleBtn.onclick = () => {
+      isShuffle = !isShuffle;
+      shuffleBtn.classList.toggle('active-mode', isShuffle);
+      shuffleBtn.style.color = isShuffle ? '#38bdf8' : '#94a3b8';
+    };
+  }
+
+  // Repeat Mode Toggle (Cycle: ALL 🔁 -> ONE 🔂 -> OFF ➡️)
+  const repeatBtn = document.getElementById('repeatBtn');
+  if (repeatBtn) {
+    repeatBtn.onclick = () => {
+      if (repeatMode === 'all') {
+        repeatMode = 'one';
+        repeatBtn.innerText = '🔂';
+        repeatBtn.style.color = '#38bdf8';
+      } else if (repeatMode === 'one') {
+        repeatMode = 'off';
+        repeatBtn.innerText = '➡️';
+        repeatBtn.style.color = '#64748b';
+      } else {
+        repeatMode = 'all';
+        repeatBtn.innerText = '🔁';
+        repeatBtn.style.color = '#38bdf8';
+      }
+    };
+  }
+  
   // Transport Controls
   const playPauseBtn = document.getElementById('playPauseBtn');
   if (playPauseBtn) {
@@ -383,11 +418,22 @@ function attachMusicDrawerEvents() {
   if (prevBtn) {
     prevBtn.onclick = () => {
       if (localPlaylist.length === 0) return;
-      currentTrackIndex = (currentTrackIndex - 1 + localPlaylist.length) % localPlaylist.length;
+
+      // If more than 3 seconds in, restart track
+      if (localAudio.currentTime > 3) {
+        localAudio.currentTime = 0;
+        return;
+      }
+
+      // If we have history from shuffle, pop last played track
+      if (playbackHistory.length > 0) {
+        currentTrackIndex = playbackHistory.pop();
+      } else {
+        currentTrackIndex = (currentTrackIndex - 1 + localPlaylist.length) % localPlaylist.length;
+      }
       loadTrack(currentTrackIndex, true);
     };
   }
-
   const nextBtn = document.getElementById('nextTrackBtn');
   if (nextBtn) {
     nextBtn.onclick = playNextTrack;
@@ -490,10 +536,36 @@ function loadTrack(index, autoPlay = false) {
 
 function playNextTrack() {
   if (localPlaylist.length === 0) return;
-  currentTrackIndex = (currentTrackIndex + 1) % localPlaylist.length;
+
+  // Repeat One: replay the same track from start
+  if (repeatMode === 'one') {
+    localAudio.currentTime = 0;
+    localAudio.play().catch(() => {});
+    return;
+  }
+
+  // Push current index to history for reliable back-skipping
+  playbackHistory.push(currentTrackIndex);
+  if (playbackHistory.length > 50) playbackHistory.shift();
+
+  if (isShuffle && localPlaylist.length > 1) {
+    // Pick random index different from current
+    let nextIndex;
+    do {
+      nextIndex = Math.floor(Math.random() * localPlaylist.length);
+    } while (nextIndex === currentTrackIndex);
+    currentTrackIndex = nextIndex;
+  } else {
+    // Sequential
+    if (currentTrackIndex + 1 >= localPlaylist.length && repeatMode === 'off') {
+      updatePlayPauseState(false);
+      return;
+    }
+    currentTrackIndex = (currentTrackIndex + 1) % localPlaylist.length;
+  }
+
   loadTrack(currentTrackIndex, true);
 }
-
 function updatePlayPauseState(isPlaying) {
   const btn = document.getElementById('playPauseBtn');
   if (btn) btn.innerText = isPlaying ? '⏸' : '▶';
