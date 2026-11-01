@@ -126,18 +126,18 @@ export async function initMusicDrawer() {
             <button id="playPauseBtn" class="ctrl-btn play-btn" type="button" title="Play / Pause">▶</button>
             <button id="nextTrackBtn" class="ctrl-btn" type="button" title="Next Track">⏭</button>
             
-            <!-- Folder Select Mode -->
-            <label class="file-load-btn" title="Load entire folder of songs">
-              📁 FOLDER
-              <input type="file" id="localAudioFolderInput" webkitdirectory directory multiple style="display: none;">
-            </label>
+            <!-- Inside .transport-controls in renderMusicDrawer.js -->
+<button id="pickFolderBtn" class="ctrl-btn folder-btn" type="button" title="Select folder and all subfolders">
+  📁 FOLDER
+</button>
 
-            <!-- Multi-file Select Mode -->
-            <label class="file-load-btn" title="Pick multiple loose songs">
-              📂 FILES
-              <input type="file" id="localAudioFileInput" multiple accept="audio/*" style="display: none;">
-            </label>
-          </div>
+<label class="file-load-btn" title="Pick individual files">
+  📂 FILES
+  <input type="file" id="localAudioFileInput" multiple accept="audio/*" style="display: none;">
+</label>
+
+<!-- Hidden fallback input for browsers without showDirectoryPicker -->
+<input type="file" id="localAudioFolderFallback" webkitdirectory directory multiple style="display: none;">
 
           <!-- Queue Management Row -->
           <div class="queue-manage-row">
