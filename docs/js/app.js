@@ -136,25 +136,6 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
   return { targetText: `TARGET: ${defaultSlotTarget}`, defaultReps: fallbackReps };
 }
 
-// -------------------------------------------------------------
-// DYNAMIC MOVEMENT TARGET & REP PARAMETER RESOLVER
-// -------------------------------------------------------------
-function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
-  if (!exerciseName) return { targetText: defaultSlotTarget, defaultReps: 8 };
-
-  const name = exerciseName.toLowerCase();
-
-  // Embedded specific rep/hold notes in name (e.g. 12r/side, 5s Hold)
-  const matchReps = exerciseName.match(/\((\d+r\/side|\d+-\d+|\d+s hold|\d+ reps?)/i);
-  if (matchReps) {
-    const raw = matchReps[1];
-    const numMatch = raw.match(/\d+/);
-    return {
-      targetText: `3 × ${raw}`,
-      defaultReps: numMatch ? parseInt(numMatch[0], 10) : 10
-    };
-  }
-
   // Carries (Paces)
   if (name.includes('carry') || (name.includes('walk') && !name.includes('treadmill'))) {
     return { targetText: "3 × 40–50 paces", defaultReps: 50 };
