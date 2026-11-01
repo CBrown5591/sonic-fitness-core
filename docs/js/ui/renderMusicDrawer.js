@@ -1,5 +1,5 @@
 // -------------------------------------------------------------
-// COCKPIT MEDIA DRAWER & AUDIO TRANSPORT ENGINE
+// PERSISTENT COCKPIT DOCK & SLIDE-UP AUDIO DECK
 // Modular Component: renderMusicDrawer.js
 // -------------------------------------------------------------
 
@@ -11,90 +11,84 @@ export function initMusicDrawer() {
   const mount = document.getElementById('musicDrawerMount');
   if (!mount) return;
 
-  // Initialize native HTML5 audio object
   if (!localAudio) {
     localAudio = new Audio();
     localAudio.addEventListener('ended', playNextTrack);
     localAudio.addEventListener('timeupdate', updateAudioProgress);
   }
 
-  // Load saved YouTube playlist ID or default
   const savedYtId = localStorage.getItem('sonic_music_yt_id') || 'PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D';
 
   mount.innerHTML = `
-    <div class="music-drawer-container">
-      <!-- Toggle Expander Bar -->
-      <button id="musicDrawerToggleBtn" class="music-drawer-toggle" type="button">
-        <span>🎵 AUDIO DECK // COCKPIT CONTROLS</span>
-        <span id="musicDrawerChevron">▼</span>
-      </button>
+    <!-- Slide-Up Drawer Tray (Sits above the fixed dock) -->
+    <div id="musicSlideUpTray" class="music-slideup-tray" style="display: none;">
+      <div class="music-tray-header">
+        <span class="music-tray-title">AUDIO DECK // COCKPIT CONTROLS</span>
+        <button id="musicCloseTrayBtn" class="music-tray-close" type="button">✕</button>
+      </div>
 
-      <!-- Expandable Drawer Body -->
-      <div id="musicDrawerBody" class="music-drawer-body" style="display: none;">
-        <!-- Source Switcher Tabs -->
-        <div class="music-tabs">
-          <button class="music-tab-btn active" data-source="local">LOCAL PLAYER</button>
-          <button class="music-tab-btn" data-source="youtube">YOUTUBE MUSIC</button>
-          <button class="music-tab-btn" data-source="pandora">PANDORA</button>
-        </div>
+      <!-- Tabs -->
+      <div class="music-tabs">
+        <button class="music-tab-btn active" data-source="local">LOCAL PLAYER</button>
+        <button class="music-tab-btn" data-source="youtube">YOUTUBE MUSIC</button>
+        <button class="music-tab-btn" data-source="pandora">PANDORA</button>
+      </div>
 
-        <!-- TAB 1: LOCAL AUDIO -->
-        <div id="musicPaneLocal" class="music-pane active">
-          <div class="local-player-box">
-            <div id="currentTrackTitle" class="track-title-text">NO TRACK LOADED</div>
-            <div class="track-progress-bar">
-              <div id="trackProgressFill" class="track-progress-fill"></div>
-            </div>
-            <div class="transport-controls">
-              <button id="prevTrackBtn" class="ctrl-btn" title="Previous">⏮</button>
-              <button id="playPauseBtn" class="ctrl-btn play-btn" title="Play/Pause">▶</button>
-              <button id="nextTrackBtn" class="ctrl-btn" title="Next">⏭</button>
-              <label class="file-load-btn" title="Load Audio Files">
-                📂 LOAD
-                <input type="file" id="localAudioFileInput" multiple accept="audio/*" style="display: none;">
-              </label>
-            </div>
+      <!-- Tab 1: Local Player -->
+      <div id="musicPaneLocal" class="music-pane active">
+        <div class="local-player-box">
+          <div id="currentTrackTitle" class="track-title-text">NO TRACK LOADED</div>
+          <div class="track-progress-bar">
+            <div id="trackProgressFill" class="track-progress-fill"></div>
+          </div>
+          <div class="transport-controls">
+            <button id="prevTrackBtn" class="ctrl-btn" title="Previous">⏮</button>
+            <button id="playPauseBtn" class="ctrl-btn play-btn" title="Play/Pause">▶</button>
+            <button id="nextTrackBtn" class="ctrl-btn" title="Next">⏭</button>
+            <label class="file-load-btn" title="Load Audio Files">
+              📂 LOAD
+              <input type="file" id="localAudioFileInput" multiple accept="audio/*" style="display: none;">
+            </label>
           </div>
         </div>
+      </div>
 
-        <!-- TAB 2: YOUTUBE MUSIC -->
-        <div id="musicPaneYoutube" class="music-pane" style="display: none;">
-          <div class="yt-box">
-            <div class="yt-input-row">
-              <input type="text" id="ytPlaylistInput" class="yt-input" placeholder="Playlist or Video ID" value="${savedYtId}">
-              <button id="ytLoadBtn" class="yt-btn">LOAD</button>
-            </div>
-            <div class="yt-embed-wrap">
-              <iframe id="ytPlayerFrame" 
-                src="https://www.youtube.com/embed/videoseries?list=${savedYtId}&enablejsapi=1" 
-                allow="autoplay; encrypted-media" 
-                allowfullscreen>
-              </iframe>
-            </div>
-            <a href="https://music.youtube.com" target="_blank" rel="noopener" class="app-launch-link">
-              🚀 LAUNCH YOUTUBE MUSIC APP
+      <!-- Tab 2: YouTube Music -->
+      <div id="musicPaneYoutube" class="music-pane" style="display: none;">
+        <div class="yt-box">
+          <div class="yt-input-row">
+            <input type="text" id="ytPlaylistInput" class="yt-input" placeholder="Playlist or Video ID" value="${savedYtId}">
+            <button id="ytLoadBtn" class="yt-btn">LOAD</button>
+          </div>
+          <div class="yt-embed-wrap">
+            <iframe id="ytPlayerFrame" 
+              src="https://www.youtube.com/embed/videoseries?list=${savedYtId}&enablejsapi=1" 
+              allow="autoplay; encrypted-media" 
+              allowfullscreen>
+            </iframe>
+          </div>
+          <a href="https://music.youtube.com" target="_blank" rel="noopener" class="app-launch-link">
+            🚀 LAUNCH YOUTUBE MUSIC APP
+          </a>
+        </div>
+      </div>
+
+      <!-- Tab 3: Pandora -->
+      <div id="musicPanePandora" class="music-pane" style="display: none;">
+        <div class="pandora-box">
+          <div class="pandora-desc">Direct Launchpad for Workout Stations:</div>
+          <div class="pandora-btn-grid">
+            <a href="https://www.pandora.com" target="_blank" rel="noopener" class="pandora-btn">
+              ⚡ WORKOUT RADIO
+            </a>
+            <a href="https://www.pandora.com/genre/hip-hop-workout" target="_blank" rel="noopener" class="pandora-btn">
+              🔥 HIP-HOP WORKOUT
+            </a>
+            <a href="https://www.pandora.com/genre/electronic-workout" target="_blank" rel="noopener" class="pandora-btn">
+              🌀 ELECTRONIC / DNB
             </a>
           </div>
         </div>
-
-        <!-- TAB 3: PANDORA -->
-        <div id="musicPanePandora" class="music-pane" style="display: none;">
-          <div class="pandora-box">
-            <div class="pandora-desc">Direct Launchpad for Pandora Workout Stations:</div>
-            <div class="pandora-btn-grid">
-              <a href="https://www.pandora.com" target="_blank" rel="noopener" class="pandora-btn">
-                ⚡ WORKOUT RADIO
-              </a>
-              <a href="https://www.pandora.com/genre/hip-hop-workout" target="_blank" rel="noopener" class="pandora-btn">
-                🔥 HIP-HOP WORKOUT
-              </a>
-              <a href="https://www.pandora.com/genre/electronic-workout" target="_blank" rel="noopener" class="pandora-btn">
-                🌀 ELECTRONIC / DNB
-              </a>
-            </div>
-          </div>
-        </div>
-
       </div>
     </div>
   `;
@@ -102,21 +96,23 @@ export function initMusicDrawer() {
   attachMusicDrawerEvents();
 }
 
-function attachMusicDrawerEvents() {
-  const toggleBtn = document.getElementById('musicDrawerToggleBtn');
-  const drawerBody = document.getElementById('musicDrawerBody');
-  const chevron = document.getElementById('musicDrawerChevron');
+export function toggleMusicDrawer() {
+  const tray = document.getElementById('musicSlideUpTray');
+  const chevron = document.getElementById('dockMusicChevron');
+  if (!tray) return;
 
-  // Drawer Toggle
-  if (toggleBtn && drawerBody) {
-    toggleBtn.onclick = () => {
-      const isOpen = drawerBody.style.display !== 'none';
-      drawerBody.style.display = isOpen ? 'none' : 'block';
-      if (chevron) chevron.innerText = isOpen ? '▼' : '▲';
-    };
+  const isOpen = tray.style.display !== 'none';
+  tray.style.display = isOpen ? 'none' : 'block';
+  if (chevron) chevron.innerText = isOpen ? '▲' : '▼';
+}
+
+function attachMusicDrawerEvents() {
+  const closeBtn = document.getElementById('musicCloseTrayBtn');
+  if (closeBtn) {
+    closeBtn.onclick = () => toggleMusicDrawer();
   }
 
-  // Tab Switching
+  // Tab switching
   const tabBtns = document.querySelectorAll('.music-tab-btn');
   tabBtns.forEach(btn => {
     btn.onclick = () => {
@@ -147,7 +143,7 @@ function attachMusicDrawerEvents() {
     };
   }
 
-  // Local Transport Controls
+  // Local Transport
   const playPauseBtn = document.getElementById('playPauseBtn');
   if (playPauseBtn) {
     playPauseBtn.onclick = () => {
@@ -199,6 +195,9 @@ function loadTrack(index, autoPlay = false) {
 
   const titleEl = document.getElementById('currentTrackTitle');
   if (titleEl) titleEl.innerText = `${index + 1}. ${track.name}`;
+
+  const dockStatus = document.getElementById('dockNowPlayingText');
+  if (dockStatus) dockStatus.innerText = track.name;
 
   const playPauseBtn = document.getElementById('playPauseBtn');
   if (autoPlay) {
