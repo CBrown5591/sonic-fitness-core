@@ -136,27 +136,6 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
   return { targetText: `TARGET: ${defaultSlotTarget}`, defaultReps: fallbackReps };
 }
 
-  // Carries (Paces)
-  if (name.includes('carry') || (name.includes('walk') && !name.includes('treadmill'))) {
-    return { targetText: "3 × 40–50 paces", defaultReps: 50 };
-  }
-
-  // Isometric Core Holds
-  if (name.includes('hold') || name.includes('plank')) {
-    return { targetText: "3 × 20–30s hold", defaultReps: 30 };
-  }
-
-  // Isolation & Machine Accessories
-  if (name.includes('fly') || name.includes('lateral') || name.includes('curl') || name.includes('extension')) {
-    return { targetText: "3 × 12–15", defaultReps: 15 };
-  }
-
-  // Default to slot bracket
-  const slotMatch = (defaultSlotTarget || '').match(/(\d+)-(\d+)/);
-  const fallbackReps = slotMatch ? parseInt(slotMatch[2], 10) : 8;
-  return { targetText: defaultSlotTarget, defaultReps: fallbackReps };
-}
-
 function loadSlotData() {
   const stageDef = STAGES[activeStageKey];
   if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
@@ -650,9 +629,6 @@ document.addEventListener('DOMContentLoaded', async () => {
 
   const timeBrakeBtn = document.getElementById('timeBrakeBtn');
   if (timeBrakeBtn) timeBrakeBtn.onclick = window.applyTimeBrake;
-
-  const exSelect = document.getElementById('exerciseSelect');
-  // File: docs/js/app.js (inside DOMContentLoaded listener)
 
   const exSelect = document.getElementById('exerciseSelect');
   if (exSelect) {
