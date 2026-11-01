@@ -52,12 +52,12 @@ export function addStandardRings(amount) {
 
 export function getTotalRedRings() {
   const raw = localStorage.getItem('sonic_total_red_rings');
-  if (raw !== null) return parseInt(raw, 10) || 0;
+  if (raw !== null && !isNaN(parseInt(raw, 10))) return parseInt(raw, 10);
   try {
     const vRaw = localStorage.getItem('sonic_mastery_vault');
     if (vRaw) {
       const v = JSON.parse(vRaw);
-      return v.reduce((acc, row) => acc + (Number(row.stars) || 0), 0);
+      return v.reduce((acc, row) => acc + (Number(row.rings || row.stars) || 0), 0);
     }
   } catch (e) {}
   return 0;
