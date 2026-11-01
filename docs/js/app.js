@@ -31,6 +31,7 @@ import {
 import { getTotalRedRings } from './ui/renderVault.js';
 import { renderVault, toggleVaultDrawer, creditVaultRings, saveVaultData } from './ui/renderVault.js';
 import { toggleSkillTreeDrawer, hasPerk, getUnlockedPerks } from './ui/renderSkillTree.js';
+import { initMusicDrawer } from './ui/renderMusicDrawer.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
 let activeSlotIndex = 0;
@@ -609,6 +610,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   selectStage(activeStageKey, false);
   renderVault();
   renderArtifactsTray();
+  initMusicDrawer();
   initTimerBackgroundSync();
   checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
     selectStage(nextStage);
