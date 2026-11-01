@@ -155,22 +155,34 @@ export async function initMusicDrawer() {
       <!-- SOURCE 2: YOUTUBE MUSIC -->
       <div id="musicPaneYoutube" class="music-pane" style="display: none;">
         <div class="yt-box">
+          <!-- Preset Quick Mixes -->
+          <div class="yt-presets-row">
+            <button class="yt-preset-btn" data-yt-id="PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D" type="button">⚡ SONIC OST</button>
+            <button class="yt-preset-btn" data-yt-id="RDCLAK5uy_kfd5lT4u6Vq3q6p5Fq_h8E1l2m3n4o5p" type="button">🔥 GYM HYPE</button>
+            <button class="yt-preset-btn" data-yt-id="RDCLAK5uy_l0Yd8XgOqvz6XkZ5U8x2_G8o3P1q" type="button">🌀 SYNTHWAVE</button>
+          </div>
+
+          <!-- URL / ID Ingest Bar -->
           <div class="yt-input-row">
-            <input type="text" id="ytPlaylistInput" class="yt-input" placeholder="Playlist ID or Video ID" value="${savedYtId}">
+            <input type="text" id="ytPlaylistInput" class="yt-input" placeholder="Paste YouTube / YT Music URL or ID" value="${savedYtId}">
             <button id="ytLoadBtn" class="yt-btn" type="button">LOAD</button>
           </div>
 
+          <!-- Responsive Embedded Deck -->
           <div class="yt-embed-wrap">
             <iframe id="ytPlayerFrame" 
               src="https://www.youtube.com/embed/videoseries?list=${savedYtId}&enablejsapi=1" 
-              allow="autoplay; encrypted-media" 
+              allow="autoplay; encrypted-media; picture-in-picture" 
               allowfullscreen>
             </iframe>
           </div>
 
-          <a href="https://music.youtube.com" target="_blank" rel="noopener" class="app-launch-link yt-link">
-            🚀 OPEN YOUTUBE MUSIC APP
-          </a>
+          <!-- Deep-Link Action Row -->
+          <div class="yt-actions-row">
+            <button id="ytOpenAppBtn" class="app-launch-link yt-link" type="button">
+              🚀 OPEN IN YOUTUBE MUSIC APP
+            </button>
+          </div>
         </div>
       </div>
 
@@ -447,18 +459,109 @@ function attachMusicDrawerEvents() {
     nextBtn.onclick = playNextTrack;
   }
 
-  // YouTube Playlist Load
+  // -----------------------------------------------------------
+  // YOUTUBE MUSIC ENGINE: URL PARSING & APP HANDOFF
+  // -----------------------------------------------------------
   const ytLoadBtn = document.getElementById('ytLoadBtn');
   const ytInput = document.getElementById('ytPlaylistInput');
   const ytFrame = document.getElementById('ytPlayerFrame');
-  if (ytLoadBtn && ytInput && ytFrame) {
+  const ytOpenAppBtn = document.getElementById('ytOpenAppBtn');
+
+  // URL / ID Parser Helper
+  function extractYouTubeTarget(inputStr) {
+    if (!inputStr) return null;
+    const trimmed = inputStr.trim();
+
+    // 1. Direct Playlist ID
+    if (/^[A-Za-z0-9_-]{18,}$/.test(trimmed) && (trimmed.startsWith('PL') || trimmed.startsWith('OL') || trimmed.startsWith('RD') || trimmed.startsWith('UU'))) {
+      return { type: 'playlist', id: trimmed };
+    }
+
+    // 2. Direct Video ID (11 chars)
+    if (/^[A-Za-z0-9_-]{11}$/.test(trimmed)) {
+      return { type: 'video', id: trimmed };
+    }
+
+    // 3. Full URL matching (music.youtube.com, youtube.com, youtu.be)
+    try {
+      const url = new URL(trimmed);
+      const listParam = url.searchParams.get('list');
+      if (listParam) {
+        return { type: 'playlist', id: listParam };
+      }
+
+      const vParam = url.searchParams.get('v');
+      if (vParam) {
+        return { type: 'video', id: vParam };
+      }
+
+      if (url.hostname === 'youtu.be') {
+        const pathId = url.pathname.slice(1);
+        if (pathId) return { type: 'video', id: pathId };
+      }
+    } catch (e) {
+      // Not a valid URL, treat as raw ID fallback
+    }
+
+    return { type: 'playlist', id: trimmed };
+  }
+
+  function applyYouTubeTarget(target) {
+    if (!target || !target.id) return;
+    localStorage.setItem('sonic_music_yt_id', target.id);
+    if (ytInput) ytInput.value = target.id;
+
+    if (ytFrame) {
+      if (target.type === 'video') {
+        ytFrame.src = `https://www.youtube.com/embed/${target.id}?autoplay=1&enablejsapi=1`;
+      } else {
+        ytFrame.src = `https://www.youtube.com/embed/videoseries?list=${target.id}&autoplay=1&enablejsapi=1`;
+      }
+    }
+  }
+
+  // Load button action
+  if (ytLoadBtn && ytInput) {
     ytLoadBtn.onclick = () => {
-      const id = ytInput.value.trim();
-      if (!id) return;
-      localStorage.setItem('sonic_music_yt_id', id);
-      ytFrame.src = id.length > 20 || id.startsWith('PL') || id.startsWith('OL')
-        ? `https://www.youtube.com/embed/videoseries?list=${id}&enablejsapi=1`
-        : `https://www.youtube.com/embed/${id}?enablejsapi=1`;
+      const target = extractYouTubeTarget(ytInput.value);
+      if (target) applyYouTubeTarget(target);
+    };
+  }
+
+  // Preset button actions
+  const presetBtns = document.querySelectorAll('.yt-preset-btn');
+  presetBtns.forEach(btn => {
+    btn.onclick = () => {
+      const pid = btn.getAttribute('data-yt-id');
+      if (pid) applyYouTubeTarget({ type: 'playlist', id: pid });
+    };
+  });
+
+  // Deep-link to YouTube Music native app with browser fallback
+  if (ytOpenAppBtn) {
+    ytOpenAppBtn.onclick = () => {
+      const currentVal = ytInput ? ytInput.value.trim() : '';
+      const target = extractYouTubeTarget(currentVal) || { id: '' };
+
+      const isPlaylist = target.type === 'playlist';
+      const webUrl = isPlaylist 
+        ? `https://music.youtube.com/playlist?list=${target.id}` 
+        : `https://music.youtube.com/watch?v=${target.id}`;
+
+      // Native URI schemes for YouTube Music
+      const appUri = isPlaylist
+        ? `youtubemusic://playlist?list=${target.id}`
+        : `youtubemusic://watch?v=${target.id}`;
+
+      const start = Date.now();
+      window.location.href = appUri;
+
+      setTimeout(() => {
+        // Fall back to web client if native intent doesn't resolve within 1.2s
+        if (Date.now() - start < 1500) {
+          window.open(webUrl, '_blank', 'noopener');
+        }
+      }, 800);
     };
   }
 
