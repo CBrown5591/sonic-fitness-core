@@ -99,8 +99,6 @@ function saveSessionState() {
   updateTonnageDisplay();
 }
 
-// File: docs/js/app.js (around line 110)
-
 function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
   if (!exerciseName) return { targetText: defaultSlotTarget, defaultReps: 8 };
 
@@ -118,7 +116,7 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
   }
 
   // Carries (Paces)
-  if (name.includes('carry') || name.includes('walk') && !name.includes('treadmill')) {
+  if (name.includes('carry') || (name.includes('walk') && !name.includes('treadmill'))) {
     return { targetText: "3 × 40–50 paces", defaultReps: 50 };
   }
 
@@ -133,7 +131,7 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
   }
 
   // Fallback to slot definition
-  const slotMatch = defaultSlotTarget.match(/(\d+)-(\d+)/);
+  const slotMatch = (defaultSlotTarget || '').match(/(\d+)-(\d+)/);
   const fallbackReps = slotMatch ? parseInt(slotMatch[2], 10) : 8;
   return { targetText: `TARGET: ${defaultSlotTarget}`, defaultReps: fallbackReps };
 }
@@ -451,8 +449,8 @@ function renderSessionUI() {
       listContainer.appendChild(row);
     });
   }
-}
-// Toggle Time Brake visibility strictly when Darkspine Sonic is active
+
+  // Toggle Time Brake visibility strictly when Darkspine Sonic is active
   const timeBrakeBtn = document.getElementById('timeBrakeBtn');
   if (timeBrakeBtn) {
     const isDarkspineActive = (typeof devDarkspineOverride === 'boolean')
@@ -465,6 +463,8 @@ function renderSessionUI() {
       timeBrakeBtn.style.setProperty('display', 'none', 'important');
     }
   }
+}
+
 function ensureStageTabsExist() {
   const stageNav = document.querySelector('.stage-nav') || document.querySelector('.stage-tabs');
   if (!stageNav) return;
@@ -625,10 +625,10 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderArtifactsTray();
   initMusicDrawer();
 
-const dockMusicBtn = document.getElementById('dockMusicToggleBtn');
-if (dockMusicBtn) {
-  dockMusicBtn.onclick = toggleMusicDrawer;
-}
+  const dockMusicBtn = document.getElementById('dockMusicToggleBtn');
+  if (dockMusicBtn) {
+    dockMusicBtn.onclick = toggleMusicDrawer;
+  }
   initTimerBackgroundSync();
   checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
     selectStage(nextStage);
@@ -694,9 +694,9 @@ if (dockMusicBtn) {
         localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
         updatePilotExpUI();
       }
-       if (data.goldRings !== undefined) {
-         saveStandardRings(data.goldRings);
-       }
+      if (data.goldRings !== undefined) {
+        saveStandardRings(data.goldRings);
+      }
       // Hydrate Red Star Ring ground truth directly from COMMAND_HUB!G3
       if (data.totalRedRings !== undefined) {
         localStorage.setItem('sonic_total_red_rings', data.totalRedRings);
@@ -817,8 +817,6 @@ function showUpdateBanner(worker) {
 // -------------------------------------------------------------
 // CHROME DEVTOOLS TESTING CONSOLE HARNESS
 // -------------------------------------------------------------
-// File: docs/js/app.js inside window.__sonicDev object
-
 window.__sonicDev = {
   getWallet: () => ({
     goldRings: getStandardRings(),
