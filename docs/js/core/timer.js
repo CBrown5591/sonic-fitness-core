@@ -21,6 +21,33 @@ export function setTimerDuration(seconds) {
     updateClockDisplay(seconds);
   }
 }
+// Add to docs/js/core/timer.js
+
+export function toggleRestDropUp() {
+  const menu = document.getElementById('restDropUpMenu');
+  if (!menu) return;
+  const isOpen = menu.style.display !== 'none';
+  menu.style.display = isOpen ? 'none' : 'flex';
+}
+
+export function selectRestPreset(seconds) {
+  setTimerDuration(seconds);
+  const menu = document.getElementById('restDropUpMenu');
+  if (menu) menu.style.display = 'none';
+}
+
+// Global window bindings
+window.toggleRestDropUp = toggleRestDropUp;
+window.selectRestPreset = selectRestPreset;
+
+// Dismiss drop-up if tapping anywhere outside
+document.addEventListener('click', (e) => {
+  const container = document.querySelector('.dock-timer-container');
+  const menu = document.getElementById('restDropUpMenu');
+  if (menu && container && !container.contains(e.target)) {
+    menu.style.display = 'none';
+  }
+});
 
 export function startRestTimer(callback) {
   if (callback) onTickCallback = callback;
