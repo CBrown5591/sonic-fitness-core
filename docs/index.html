@@ -176,22 +176,31 @@
   </div>
 
   <!-- PERSISTENT COCKPIT DOCK (Pinned to Bottom) -->
-  <div class="fixed-cockpit-dock">
-    <div id="musicDrawerMount"></div>
-    <div class="cockpit-bar-content">
-      <div class="dock-timer-section">
-        <span class="dock-timer-label">⏱ REST</span>
-        <span id="timerClock" class="dock-timer-clock">00:00</span>
-        <button id="timeBrakeBtn" class="dock-brake-btn" type="button" style="display: none;" title="Apply Time Brake (-15s)">BRAKE</button>
-      </div>
+<!-- PERSISTENT COCKPIT DOCK (Pinned to Bottom) -->
+<div class="fixed-cockpit-dock">
+  <!-- Slide-up tray anchor -->
+  <div id="musicDrawerMount"></div>
 
-      <button id="dockMusicToggleBtn" class="dock-music-btn" type="button">
-        <span class="dock-music-icon">🎵</span>
-        <span id="dockNowPlayingText" class="dock-music-text">MUSIC DECK</span>
-        <span id="dockMusicChevron" class="dock-music-chevron">▲</span>
-      </button>
+  <!-- The Persistent Single Line Dock -->
+  <div class="cockpit-bar-content">
+    <!-- Rest Timer & Time Brake -->
+    <div class="dock-timer-section">
+      <span class="dock-timer-label">⏱ REST</span>
+      <span id="timerClock" class="dock-timer-clock">00:00</span>
+      <button id="timeBrakeBtn" class="dock-brake-btn" type="button" style="display: none;" title="Apply Time Brake (-15s)">BRAKE</button>
     </div>
+
+    <!-- Pinned Clear Stage Button -->
+    <button id="stageClearBtn" class="dock-clear-btn" type="button" onclick="finishSession()">CLEAR STAGE</button>
+
+    <!-- Audio Deck Toggle Button -->
+    <button id="dockMusicToggleBtn" class="dock-music-btn" type="button">
+      <span class="dock-music-icon">🎵</span>
+      <span id="dockNowPlayingText" class="dock-music-text">MUSIC DECK</span>
+      <span id="dockMusicChevron" class="dock-music-chevron">▲</span>
+    </button>
   </div>
+</div>
 
   <!-- Integrated Results Dossier Overlay -->
   <div id="resultsOverlay" class="results-overlay">
