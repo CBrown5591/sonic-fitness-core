@@ -770,3 +770,16 @@ function updateMediaSessionMetadata(trackName) {
     ]
   });
 }
+// In docs/js/ui/renderMusicDrawer.js
+
+export function toggleMediaShelf() {
+  const shelf = document.getElementById('mediaShelf');
+  const chevron = document.getElementById('dockMusicChevron');
+  if (!shelf) return;
+
+  const isOpen = shelf.style.display !== 'none';
+  shelf.style.display = isOpen ? 'none' : 'block';
+  if (chevron) chevron.innerText = isOpen ? '▲' : '▼';
+}
+
+window.toggleMediaShelf = toggleMediaShelf;
