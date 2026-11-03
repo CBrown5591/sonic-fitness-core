@@ -1,126 +1,92 @@
-// -------------------------------------------------------------
-// REST TIMER SUBSYSTEM (WITH 3-CHARGE SOUL GAUGE)
-// Modular Core Subsystem: timer.js
-// -------------------------------------------------------------
+// docs/js/core/timer.js
 
-let configuredRestSeconds = parseInt(localStorage.getItem('sonic_rest_duration'), 10) || 90;
-let timerSeconds = configuredRestSeconds;
+let timerDuration = parseInt(localStorage.getItem('sonic_timer_duration') || '90', 10);
+let timerTargetEnd = null;
 let timerInterval = null;
-let timerEndTime = null;
-let wakeLock = null;
+let onTickCallback = null;
 
-// Darkspine 3-Charge Soul Gauge
-let soulCharges = 3;
+export function setTimerDuration(seconds) {
+  timerDuration = seconds;
+  localStorage.setItem('sonic_timer_duration', seconds);
 
-export function getSoulCharges() {
-  return soulCharges;
-}
+  // Update visual active state on duration pills
+  document.querySelectorAll('.timer-duration-selector .btn-pill').forEach(btn => {
+    btn.classList.remove('active');
+  });
+  const activePill = document.getElementById(`pill-${seconds}`);
+  if (activePill) activePill.classList.add('active');
 
-export function resetSoulGauge() {
-  soulCharges = 3;
-  updateTimeBrakeBtnUI();
-}
-
-export async function requestWakeLock() {
-  try {
-    if ('wakeLock' in navigator) {
-      wakeLock = await navigator.wakeLock.request('screen');
-    }
-  } catch (err) {
-    console.warn('WakeLock unavailable:', err);
+  // If clock is idle, immediately update clock readout
+  if (!timerTargetEnd) {
+    updateClockDisplay(seconds);
   }
 }
 
-export function setTimerDuration(seconds, onUpdate) {
-  configuredRestSeconds = seconds;
-  localStorage.setItem('sonic_rest_duration', seconds);
-  if (!timerEndTime) {
-    timerSeconds = seconds;
-    if (onUpdate) onUpdate(timerSeconds);
-  }
-  if (navigator.vibrate) navigator.vibrate(25);
-  return configuredRestSeconds;
-}
+export function startRestTimer(callback) {
+  if (callback) onTickCallback = callback;
 
-export function startRestTimer(onTick, onComplete) {
   clearInterval(timerInterval);
-  timerEndTime = Date.now() + (configuredRestSeconds * 1000);
-  localStorage.setItem('sonic_timer_end', timerEndTime);
-  requestWakeLock();
+  timerTargetEnd = Date.now() + (timerDuration * 1000);
 
-  const sync = () => {
-    if (!timerEndTime) return;
-    const remainingMs = timerEndTime - Date.now();
-    const newSeconds = Math.max(0, Math.ceil(remainingMs / 1000));
+  renderClock();
+  timerInterval = setInterval(renderClock, 250);
+}
 
-    if (newSeconds !== timerSeconds) {
-      timerSeconds = newSeconds;
-      if (onTick) onTick(timerSeconds);
+export function applyTimeBrake(callback) {
+  if (callback) onTickCallback = callback;
+  if (!timerTargetEnd) return;
 
-      if (timerSeconds === 0) {
-        clearInterval(timerInterval);
-        timerEndTime = null;
-        localStorage.removeItem('sonic_timer_end');
-        if (navigator.vibrate) navigator.vibrate([200, 100, 200]);
-        if (onComplete) onComplete();
-      }
+  // Deduct 15 seconds from remaining time target
+  timerTargetEnd -= 15000;
+  renderClock();
+}
+
+function renderClock() {
+  if (!timerTargetEnd) return;
+
+  const now = Date.now();
+  const diffMs = timerTargetEnd - now;
+  const remainingSecs = Math.max(0, Math.ceil(diffMs / 1000));
+
+  updateClockDisplay(remainingSecs);
+
+  if (onTickCallback) {
+    onTickCallback(remainingSecs);
+  }
+
+  if (remainingSecs <= 0) {
+    clearInterval(timerInterval);
+    timerTargetEnd = null;
+    timerInterval = null;
+
+    if (navigator.vibrate) {
+      navigator.vibrate([200, 100, 200]);
     }
-  };
-
-  sync();
-  timerInterval = setInterval(sync, 250);
-}
-
-export function applyTimeBrake(onTick) {
-  if (soulCharges <= 0) {
-    alert("🔥 SOUL GAUGE DEPLETED: 0 charges remaining for this workout!");
-    return false;
-  }
-  if (timerSeconds <= 5) return false;
-
-  soulCharges--;
-  timerSeconds = Math.max(1, timerSeconds - 30);
-  if (timerEndTime) {
-    timerEndTime -= (30 * 1000);
-    localStorage.setItem('sonic_timer_end', timerEndTime);
-  }
-  if (onTick) onTick(timerSeconds);
-  if (navigator.vibrate) navigator.vibrate([30, 20, 60]);
-  updateTimeBrakeBtnUI();
-  return true;
-}
-
-export function updateTimeBrakeBtnUI() {
-  const btn = document.getElementById('timeBrakeBtn');
-  if (!btn) return;
-  const pips = '■'.repeat(soulCharges) + '□'.repeat(3 - soulCharges);
-  btn.innerText = `TIME BRAKE [${pips}]`;
-  if (soulCharges <= 0) {
-    btn.style.opacity = '0.4';
-    btn.style.pointerEvents = 'none';
-  } else {
-    btn.style.opacity = '1';
-    btn.style.pointerEvents = 'auto';
   }
 }
 
-export function initTimerBackgroundSync(onTick, onComplete) {
+function updateClockDisplay(seconds) {
+  const mins = Math.floor(seconds / 60);
+  const rem = seconds % 60;
+  const formatted = `${String(mins).padStart(2, '0')}:${String(rem).padStart(2, '0')}`;
+  
+  const clk = document.getElementById('timerClock');
+  if (clk) clk.innerText = formatted;
+}
+
+export function initTimerBackgroundSync() {
   document.addEventListener('visibilitychange', () => {
-    if (document.visibilityState === 'visible') {
-      const savedEnd = parseInt(localStorage.getItem('sonic_timer_end'), 10);
-      if (savedEnd && savedEnd > Date.now()) {
-        timerEndTime = savedEnd;
-        startRestTimer(onTick, onComplete);
-      } else if (savedEnd) {
-        localStorage.removeItem('sonic_timer_end');
-        timerEndTime = null;
-        timerSeconds = 0;
-        if (onTick) onTick(0);
-        if (onComplete) onComplete();
-      }
+    if (!document.hidden && timerTargetEnd) {
+      // Recalculate immediately on return to app
+      renderClock();
     }
   });
+
+  // Re-hydrate active pill style on initial load
+  setTimerDuration(timerDuration);
 }
 
-window.getSoulCharges = getSoulCharges;
-window.resetSoulGauge = resetSoulGauge;
+// Global window exposure for inline HTML calls
+window.setTimerDuration = setTimerDuration;
+window.startRestTimer = startRestTimer;
+window.applyTimeBrake = () => applyTimeBrake();
