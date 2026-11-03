@@ -168,15 +168,16 @@ export const MOVEMENT_INTEL = {
     cue: "Curl ribcage down toward pelvis by flexing abdominals. Pause 1s, return under control.",
     safety: "Pull from the abs, not by jerking arms or pulling on neck."
   },
-  "Cybex VR2 Seated Hip Abductor/Adductor": {
-    setup: "Select adduction (inner) or abduction (outer). Set pads comfortably.",
-    cue: "Squeeze legs inward (or drive outward) with a 1s pause, then 3s slow return.",
-    safety: "Stabilizes pelvic bowl and buffers knee torque. Keep spine neutral."
+  "Cybex VR2 Hip Adduction (Inner Thigh)": {
+    setup: "Adjust pads to the outer leg/knee. Set starting width to a comfortable groin stretch.",
+    cue: "Squeeze knees inward toward the center line in a controlled 2-count. Squeeze adductors hard at full peak contraction, then resist over a 3-second eccentric return.",
+    safety: "Do not let the stack slam at the outer stretch. Keep pelvis pressed firmly into the back pad without rounding the lumbar."
   },
-  "Cybex VR2 Seated Hip Adduction / Abduction": {
-    setup: "Select adduction (inner) or abduction (outer). Set pads comfortably.",
-    cue: "Squeeze legs inward (or drive outward) with a 1s pause, then 3s slow return.",
-    safety: "Stabilizes pelvic bowl and buffers knee torque."
+
+  "Cybex VR2 Hip Abduction (Outer Glute)": {
+    setup: "Flip pads to the outside of knees. Set lever arms so knees start together.",
+    cue: "Drive knees outward against resistance using upper glutes (gluteus medius). Hold outer contraction for 1 full second, then control the eccentric back.",
+    safety: "Keep hips pushed deep into the seat backrest. Avoid leaning forward or using momentum to jerk the weight stack."
   },
   "DB Bulgarian Split Squat": {
     setup: "Rear foot laces resting on bench behind you. Front foot placed 3 feet forward.",
