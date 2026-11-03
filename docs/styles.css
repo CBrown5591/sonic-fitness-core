@@ -2702,3 +2702,24 @@ body {
   cursor: pointer;
   width: 100%;
 }
+/* Compact Clear Stage button inside persistent bottom dock */
+.dock-clear-btn {
+  background: rgba(0, 230, 118, 0.18);
+  border: 1.5px solid var(--accent-green, #00e676);
+  color: var(--accent-green, #00e676);
+  padding: 8px 12px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+  box-shadow: 0 0 10px rgba(0, 230, 118, 0.2);
+}
+
+.dock-clear-btn:active {
+  background: var(--accent-green, #00e676);
+  color: #0b0f19;
+  transform: scale(0.96);
+}
