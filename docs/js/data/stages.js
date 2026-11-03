@@ -195,7 +195,8 @@ export const STAGES = {
         alts: [
           "Farmer's Carries",
           "Suitcase Carry (Single-Arm)",
-          "Cybex VR2 Seated Hip Abductor/Adductor",
+          "Cybex VR2 Hip Adduction (Inner Thigh)",
+          "Cybex VR2 Hip Abduction (Outer Glute)",
           "Cable Pallof Press",
           "Bear Crawl (Forward & Reverse Paced)",
           "March in Place (Strict High Knees 45s)"
@@ -254,10 +255,11 @@ export const STAGES = {
       {
         slot: "D4",
         target: "3x12-15",
-        primary: "Cybex VR2 Seated Hip Adduction / Abduction",
+        primary: "Cybex VR2 Hip Adduction (Inner Thigh)",
         defaultLoad: 80,
         alts: [
-          "Cybex VR2 Seated Hip Adduction / Abduction",
+          "Cybex VR2 Hip Adduction (Inner Thigh)",
+          "Cybex VR2 Hip Abduction (Outer Glute)",
           "Med Ball Rotational Wall Chest Pass",
           "Cable Pull-Through (Bravo Low Pulley)",
           "McGill Curl-Up (Strict Pause)"
@@ -358,10 +360,11 @@ export const STAGES = {
       {
         slot: "F2",
         target: "3x12-15",
-        primary: "Cybex VR2 Seated Hip Adduction / Abduction",
+        primary: "Cybex VR2 Hip Adduction (Inner Thigh)",
         defaultLoad: 75,
         alts: [
-          "Cybex VR2 Seated Hip Adduction / Abduction",
+          "Cybex VR2 Hip Adduction (Inner Thigh)",
+          "Cybex VR2 Hip Abduction (Outer Glute)",
           "Tall-Kneeling Pallof Hold (20s)",
           "Single-Arm DB Suitcase Carry",
           "Med Ball Deadbug Compression"
