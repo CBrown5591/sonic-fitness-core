@@ -33,6 +33,7 @@ import { renderVault, toggleVaultDrawer, creditVaultRings, saveVaultData } from 
 import { toggleSkillTreeDrawer, hasPerk, getUnlockedPerks } from './ui/renderSkillTree.js';
 import { initMusicDrawer, toggleMusicDrawer } from './ui/renderMusicDrawer.js';
 import { switchMainTab } from './ui/renderTabs.js';
+import { renderPRVaultUI } from './ui/renderPRVault.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
 let activeSlotIndex = 0;
@@ -719,7 +720,12 @@ document.addEventListener('DOMContentLoaded', async () => {
           showToast(`FLIGHT PATH ENGAGED: ${nextStage.replace('_', ' ')}!`);
         });
       }
-      if (data.prVault) savePRVault(data.prVault);
+      if (data.prVault) {
+  savePRVault(data.prVault);
+  if (typeof renderPRVaultUI === 'function') {
+    renderPRVaultUI();
+  }
+}
       if (data.vault && Array.isArray(data.vault) && data.vault.length > 0) {
         saveVaultData(data.vault);
       }
@@ -864,3 +870,4 @@ window.__sonicDev = {
 };
 console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicDev');
 window.switchMainTab = switchMainTab;
+window.renderPRVaultUI = renderPRVaultUI; 
