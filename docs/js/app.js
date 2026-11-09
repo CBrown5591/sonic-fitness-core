@@ -313,13 +313,29 @@ export function logActiveSet() {
     jointPain: currentSetPain
   };
 
+  // 1. Commit the completed set object
   activeSession.sets.push(completedSetObj);
   checkSecretRingTriggers(completedSetObj, showToast);
 
-  if (currentSetPain) {
-    applySuperSonicDamagePenalty('strain');
-  } else if (!tempoClean) {
-    applySuperSonicDamagePenalty('tempo');
+  // 2. Apply strain penalty ONLY if the logged set recorded joint pain
+  if (completedSetObj.jointPain) {
+    activeSession.jointPain = true;
+    if (typeof applySuperSonicDamagePenalty === 'function') {
+      applySuperSonicDamagePenalty('strain');
+    }
+    showToast('⚠️ JOINT STRAIN LOGGED: Shield integrity depleted to 50%');
+  } else if (!completedSetObj.tempoClean) {
+    if (typeof applySuperSonicDamagePenalty === 'function') {
+      applySuperSonicDamagePenalty('tempo');
+    }
+  }
+
+  // 3. Reset toggle state and button for the next set
+  currentSetPain = false;
+  const painBtn = document.getElementById('painBtn');
+  if (painBtn) {
+    painBtn.classList.remove('active-red');
+    painBtn.innerText = "Joint Strain: No";
   }
 
   saveSessionState();
@@ -392,12 +408,14 @@ export function togglePain() {
     if (currentSetPain) {
       btn.classList.add('active-red');
       btn.innerText = "Joint Strain: YES";
-      activeSession.jointPain = true;
     } else {
       btn.classList.remove('active-red');
       btn.innerText = "Joint Strain: No";
     }
   }
+  // Notice: activeSession.jointPain is NOT set here.
+  // It only changes after the set is committed.
+}
   saveSessionState();
   renderSessionUI();
 }
@@ -415,9 +433,10 @@ function renderSessionUI() {
     clearBtn.style.background = activeSession.prehabChecked ? '#166534' : '';
   }
 
-  const shield = document.getElementById('shieldStatus');
+const shield = document.getElementById('shieldStatus');
   if (shield) {
-    if (activeSession.jointPain) {
+    const isStrained = activeSession.jointPain || activeSession.sets.some(s => s.jointPain);
+    if (isStrained) {
       shield.innerText = "SHIELD: 50%";
       shield.style.borderColor = "var(--accent-red)";
       shield.style.color = "var(--accent-red)";
