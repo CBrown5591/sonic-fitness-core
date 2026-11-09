@@ -603,7 +603,6 @@ window.renderPrehabInstructions = renderPrehabInstructions;
 window.finishSession = finishSession;
 window.toggleTempo = toggleTempo;
 window.togglePain = togglePain;
-window.toggleSkillTreeDrawer = toggleSkillTreeDrawer;
 window.hasPerk = hasPerk;
 
 window.applyTimeBrake = () => applyTimeBrake((secs) => {
