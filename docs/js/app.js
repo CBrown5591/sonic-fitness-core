@@ -30,7 +30,7 @@ import {
 } from './ui/renderArtifacts.js';
 import { getTotalRedRings } from './ui/renderVault.js';
 import { renderVault, creditVaultRings, saveVaultData } from './ui/renderVault.js';
-import { renderSkillTree, unlockPerk } from './ui/renderSkillTree.js';
+import { renderSkillTree, switchSkillTreeBranch, unlockPerk } from './ui/renderSkillTree.js';
 import { initMusicDrawer, toggleMusicDrawer } from './ui/renderMusicDrawer.js';
 import { switchMainTab } from './ui/renderTabs.js';
 import { renderPRVaultUI } from './ui/renderPRVault.js';
@@ -872,4 +872,5 @@ window.switchMainTab = switchMainTab;
 window.renderPRVaultUI = renderPRVaultUI; 
 window.renderVault = renderVault;
 window.renderSkillTree = renderSkillTree;
+window.switchSkillTreeBranch = switchSkillTreeBranch;
 window.unlockPerk = unlockPerk;
