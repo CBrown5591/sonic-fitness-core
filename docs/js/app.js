@@ -30,7 +30,7 @@ import {
 } from './ui/renderArtifacts.js';
 import { getTotalRedRings } from './ui/renderVault.js';
 import { renderVault, creditVaultRings, saveVaultData } from './ui/renderVault.js';
-import { renderSkillTree, switchSkillTreeBranch, unlockPerk } from './ui/renderSkillTree.js';
+import { renderSkillTree, switchSkillTreeBranch, unlockPerk, getUnlockedPerks } from './ui/renderSkillTree.js';
 import { initMusicDrawer } from './ui/renderMusicDrawer.js';
 import { switchMainTab } from './ui/renderTabs.js';
 import { renderPRVaultUI } from './ui/renderPRVault.js';
@@ -407,11 +407,6 @@ export function togglePain() {
       btn.innerText = "Joint Strain: No";
     }
   }
-  // Notice: activeSession.jointPain is NOT set here.
-  // It only changes after the set is committed.
-}
-  saveSessionState();
-  renderSessionUI();
 }
 
 function renderSessionUI() {
@@ -849,8 +844,8 @@ window.__sonicDev = {
   testTempoDamage: () => applySuperSonicDamagePenalty('tempo'),
   engageSuper: () => window.activateSuperModeSession(),
   revertSuper: () => window.deactivateSuperModeSession(),
-  getPerks: () => getUnlockedPerks(),
-  openSkills: () => toggleSkillTreeDrawer(),
+  getPerks: () => (typeof getUnlockedPerks === 'function' ? getUnlockedPerks() : []),
+  openSkills: () => switchMainTab('skillsTab'),
 
   toggleDarkspine: (forceState) => {
     devDarkspineOverride = typeof forceState === 'boolean' ? forceState : !devDarkspineOverride;
