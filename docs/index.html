@@ -182,16 +182,28 @@
   </div>
 
 </section>
-    <!-- ========================================== -->
-<!-- TAB 3: MASTERY VAULT                       -->
+<!-- ========================================== -->
+<!-- TAB 3: MOVEMENT MASTERY VAULT              -->
 <!-- ========================================== -->
 <section id="vaultTab" class="main-tab-view" style="display: none;">
   <div class="card">
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
       <span class="card-title">🏛️ MOVEMENT MASTERY VAULT</span>
-      <span id="vaultTotalRedRings" style="font-size: 12px; font-weight: 800; color: #f43f5e;"></span>
+      <span id="vaultTotalRedRings" style="font-size: 11px; font-weight: 800; color: #f43f5e;"></span>
     </div>
-    <div id="vaultItemsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 520px; overflow-y: auto;"></div>
+    <div style="font-size: 11px; color: #94a3b8; margin: 4px 0 10px 0;">
+      Bank 5 Clean Sets (RPE ≤ 8.0) per movement to achieve Mastery ★
+    </div>
+
+    <!-- Live Search / Focus Filter -->
+    <input type="text" id="vaultSearchInput" placeholder="Filter movements or focus (e.g. Squat, Hinge, Core)..." 
+           style="width: 100%; box-sizing: border-box; padding: 9px 12px; margin-bottom: 12px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: #f8fafc; font-size: 12px;"
+           oninput="renderVault(this.value)">
+
+    <!-- Natural Height Container (No max-height / No overflow scroll trap) -->
+    <div id="vaultItemsContainer" style="display: flex; flex-direction: column; gap: 8px;">
+      <!-- Dynamically populated via renderVault() -->
+    </div>
   </div>
 </section>
   <!-- ========================================== -->
