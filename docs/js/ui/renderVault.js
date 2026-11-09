@@ -1,6 +1,6 @@
 // -------------------------------------------------------------
-// MASTERY VAULT DRAWER & RENDERING COMPONENT
-// Modular UI Component: renderVault.js
+// MASTERY VAULT RENDERING COMPONENT
+// Module: js/ui/renderVault.js
 // -------------------------------------------------------------
 import { STAGES } from '../data/stages.js';
 
@@ -11,10 +11,10 @@ export function getVaultData() {
     try { savedVault = JSON.parse(stored); } catch (e) {}
   }
 
-  // Crawl every defined stage to catalog every exercise
+  // Crawl every defined stage to build full movement catalog
   const catalog = new Map();
   Object.values(STAGES).forEach(st => {
-    st.slots.forEach(slot => {
+    (st.slots || []).forEach(slot => {
       [slot.primary, ...(slot.alts || [])].forEach(name => {
         if (!catalog.has(name)) {
           let focus = "Conditioning";
@@ -24,21 +24,21 @@ export function getVaultData() {
           else if (name.includes("Row") || name.includes("Pulldown")) focus = "Pull / Lats";
           else if (name.includes("Pallof") || name.includes("Crunch") || name.includes("Deadbug") || name.includes("Bird-Dog") || name.includes("Hold") || name.includes("Woodchopper") || name.includes("Windmill")) focus = "Core / Pillar";
           else if (name.includes("Carry") || name.includes("March") || name.includes("Crawl")) focus = "Loaded Carry / Locomotion";
-          else if (name.includes("Rotation") || name.includes("Fly") || name.includes("Raises") || name.includes("Tibialis") || name.includes("Plank")) focus = "Joint Armor";
+          else if (name.includes("Rotation") || name.includes("Fly") || name.includes("Raises") || name.includes("Tibialis") || name.includes("Plank") || name.includes("Adduction") || name.includes("Abduction")) focus = "Joint Armor";
           catalog.set(name, focus);
         }
       });
     });
   });
 
-  // Merge saved Star Rings into catalog
+  // Merge saved rings into full movement catalog
   const merged = [];
   catalog.forEach((focus, exercise) => {
     const found = savedVault.find(v => v.exercise === exercise);
     merged.push({
       exercise,
       focus,
-      rings: found ? found.rings : 0
+      rings: found ? (found.rings || found.stars || 0) : 0
     });
   });
 
@@ -47,17 +47,21 @@ export function getVaultData() {
 
 export function saveVaultData(incomingData) {
   if (!incomingData || !Array.isArray(incomingData)) return;
-
-  const currentVault = getVaultData(); // Reads existing catalog with Wednesday's rings
+  const currentVault = getVaultData();
 
   incomingData.forEach(inItem => {
     const name = inItem.exercise || inItem.name;
-    const incomingRings = Number(inItem.rings || inItem.stars) || 0;
+    const incomingRings = Number(inItem.rings !== undefined ? inItem.rings : inItem.stars) || 0;
     const match = currentVault.find(v => v.exercise === name);
 
     if (match) {
-      // Keep whichever is higher (preserves both Wednesday and Today)
       match.rings = Math.min(5, Math.max(match.rings || 0, incomingRings));
+    } else {
+      currentVault.push({
+        exercise: name,
+        focus: inItem.focus || "General",
+        rings: Math.min(5, incomingRings)
+      });
     }
   });
 
@@ -65,58 +69,68 @@ export function saveVaultData(incomingData) {
 }
 
 export function getTotalRedRings() {
+  const raw = localStorage.getItem('sonic_total_red_rings');
+  if (raw !== null && !isNaN(parseInt(raw, 10))) return parseInt(raw, 10);
   const vault = getVaultData();
   return vault.reduce((sum, item) => sum + (item.rings || 0), 0);
 }
 
-export function renderVault() {
+export function renderVault(filterText = '') {
   const container = document.getElementById('vaultItemsContainer');
   if (!container) return;
-  const vault = getVaultData();
-  container.innerHTML = '';
 
-  vault.forEach(item => {
-    const row = document.createElement('div');
-    row.className = 'vault-item';
-    
-    let stars = '';
+  const query = (filterText || '').toLowerCase().trim();
+  const vault = getVaultData();
+
+  // Filter entries by exercise name or focus group
+  const filtered = vault.filter(item => {
+    if (!query) return true;
+    return item.exercise.toLowerCase().includes(query) || item.focus.toLowerCase().includes(query);
+  }).sort((a, b) => {
+    // Sort prioritized by completed rings first, then alphabetically
+    if (b.rings !== a.rings) return b.rings - a.rings;
+    return a.exercise.localeCompare(b.exercise);
+  });
+
+  // Update total Red Star Rings header
+  const totalCounter = document.getElementById('vaultTotalRedRings');
+  if (totalCounter) {
+    totalCounter.innerText = `${getTotalRedRings()} / 50 RED STAR RINGS`;
+  }
+
+  if (filtered.length === 0) {
+    container.innerHTML = `
+      <div style="font-size: 12px; color: #64748b; text-align: center; padding: 20px 0;">
+        No movements matching "${filterText}".
+      </div>
+    `;
+    return;
+  }
+
+  container.innerHTML = filtered.map(item => {
+    const isMastered = item.rings >= 5;
+    let starsHtml = '';
     for (let i = 1; i <= 5; i++) {
-      stars += i <= item.rings ? '★' : '☆';
+      starsHtml += i <= item.rings ? '★' : '☆';
     }
 
-    row.innerHTML = `
-      <div>
-        <div class="vault-move">${item.exercise}</div>
-        <div class="vault-focus">${item.focus}</div>
-      </div>
-      <div style="text-align: right;">
-        <div class="vault-rings">${stars}</div>
-        <div style="font-size: 10px; color: ${item.rings >= 5 ? 'var(--accent-gold)' : 'var(--text-dim)'};">
-          ${item.rings >= 5 ? 'MASTERED' : item.rings + '/5 Rings'}
+    return `
+      <div class="vault-item" style="display: flex; justify-content: space-between; align-items: center; background: rgba(15, 23, 42, 0.65); padding: 9px 12px; border-radius: 6px; border-left: 3px solid ${isMastered ? '#facc15' : (item.rings > 0 ? '#f43f5e' : 'rgba(255,255,255,0.1)')};">
+        <div style="flex: 1; padding-right: 10px;">
+          <div style="font-weight: 800; font-size: 13px; color: #f8fafc;">${item.exercise}</div>
+          <div style="font-size: 10px; color: #94a3b8; margin-top: 2px;">${item.focus}</div>
+        </div>
+        <div style="text-align: right; min-width: 85px;">
+          <div style="font-size: 14px; font-weight: 900; color: ${item.rings > 0 ? '#f43f5e' : '#64748b'}; letter-spacing: 2px;">
+            ${starsHtml}
+          </div>
+          <div style="font-size: 9px; font-weight: 700; color: ${isMastered ? '#facc15' : '#94a3b8'}; margin-top: 2px;">
+            ${isMastered ? '★ MASTERED' : `${item.rings}/5 RINGS`}
+          </div>
         </div>
       </div>
     `;
-    container.appendChild(row);
-  });
-
-  const totalCounter = document.getElementById('vaultTotalRedRings');
-  if (totalCounter) {
-    totalCounter.innerText = `${getTotalRedRings()} RED STAR RINGS`;
-  }
-}
-
-export function toggleVaultDrawer() {
-  const drawer = document.getElementById('vaultDrawer');
-  const icon = document.getElementById('vaultToggleIcon');
-  if (!drawer) return;
-  if (drawer.style.display === 'block') {
-    drawer.style.display = 'none';
-    if (icon) icon.innerText = 'EXPAND ▾';
-  } else {
-    renderVault();
-    drawer.style.display = 'block';
-    if (icon) icon.innerText = 'COLLAPSE ▴';
-  }
+  }).join('');
 }
 
 export function creditVaultRings(sets) {
@@ -134,5 +148,5 @@ export function creditVaultRings(sets) {
   saveVaultData(vault);
 }
 
-// Bind to window for HTML onclick compatibility
-window.toggleVaultDrawer = toggleVaultDrawer;
+// Global attachment for inline HTML event handlers
+window.renderVault = renderVault;
