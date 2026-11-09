@@ -2,6 +2,42 @@
 // FRONTIERS SKILL TREE CATALOG // js/data/skillTree.js
 // -------------------------------------------------------------
 
+// docs/js/data/skillTree.js
+export const SKILL_TREE_CATALOG = [
+  {
+    id: "cyloop_recovery",
+    name: "Cyloop Recovery",
+    cost: 5,
+    requires: null,
+    desc: "Restores Shield Integrity to 100% after clearing any stage without joint strain."
+  },
+  {
+    id: "phantom_rush",
+    name: "Phantom Rush",
+    cost: 10,
+    requires: "cyloop_recovery",
+    desc: "Grants +10% EXP multiplier across all completed sets on RPE ≤ 8.0."
+  },
+  {
+    id: "sonic_boom",
+    name: "Sonic Boom",
+    cost: 15,
+    requires: "phantom_rush",
+    desc: "Reduces mandatory rest timer floor by 15s without tempo penalty."
+  },
+  {
+    id: "wild_rush",
+    name: "Wild Rush",
+    cost: 20,
+    requires: "sonic_boom",
+    desc: "Converts extra volume reps into bonus Gold Rings at stage clear (100:1 ratio)."
+  }
+];
+
+// Backwards-compatible aliases:
+export const SKILL_TREE = SKILL_TREE_CATALOG;
+export default SKILL_TREE_CATALOG;
+
 export const SKILL_TREE_NODES = [
   // --- HULL & ARMOR (LONGEVITY & DEFENSE) ---
   {
