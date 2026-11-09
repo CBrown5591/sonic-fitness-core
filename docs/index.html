@@ -209,10 +209,40 @@
   <!-- ========================================== -->
 <!-- TAB 4: SKILL TREES (RED & GOLD RING)       -->
 <!-- ========================================== -->
+<!-- ========================================== -->
+<!-- TAB 4: SKILL TREES (RED & GOLD RING)       -->
+<!-- ========================================== -->
 <section id="skillsTab" class="main-tab-view" style="display: none;">
-  <div class="card">
-    <div id="skillTreeMount"></div>
+  
+  <!-- SKILL TREE WALLET & ECONOMY BANNER -->
+  <div class="card" style="margin-bottom: 14px; background: rgba(15, 23, 42, 0.85); border-left: 3px solid #f43f5e;">
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <div>
+        <div style="font-size: 13px; font-weight: 900; color: #f8fafc; letter-spacing: 0.5px;">⚡ FRONTIERS SKILL TREE</div>
+        <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Allocate Red Star Rings to unlock combat & recovery perks</div>
+      </div>
+      <div style="text-align: right;">
+        <div id="skillTreeRedRingBalance" style="font-size: 16px; font-weight: 900; color: #f43f5e; font-family: monospace;">
+          0 SPENDABLE
+        </div>
+        <div id="skillTreeGoldRingBalance" style="font-size: 11px; font-weight: 700; color: #facc15;">
+          0 GOLD RINGS
+        </div>
+      </div>
+    </div>
   </div>
+
+  <!-- PERK MATRIX CONTAINER (Natural height, no inner scroll traps) -->
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+      <span class="card-title">✨ ACTIVE PERK MATRIX</span>
+      <span id="unlockedPerkCount" style="font-size: 11px; font-weight: 800; color: #38bdf8;">0 UNLOCKED</span>
+    </div>
+
+    <!-- Mount point populated dynamically by renderSkillTree() -->
+    <div id="skillTreeMount" style="display: flex; flex-direction: column; gap: 10px;"></div>
+  </div>
+
 </section>
 
 <!-- ========================================== -->
