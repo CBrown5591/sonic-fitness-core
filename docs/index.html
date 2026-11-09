@@ -144,31 +144,44 @@
     </div>
   </section>
 
-  <!-- ========================================== -->
-<!-- TAB 2: RECORDS (STAGE RECORDS & 1RM VAULT) -->
+<!-- ========================================== -->
+<!-- TAB 2: RECORDS & PERFORMANCE LEDGER        -->
 <!-- ========================================== -->
 <section id="recordsTab" class="main-tab-view" style="display: none;">
-  <div class="card" style="margin-bottom: 12px;">
-    <span class="card-title">🏆 STAGE BEST RECORDS</span>
-    <div id="stageRecordsMount"></div>
+  
+  <!-- 1. STAGE BEST RECORDS CARD -->
+  <div class="card" style="margin-bottom: 14px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+      <span class="card-title">🏆 STAGE BEST RECORDS</span>
+      <span style="font-size: 10px; font-weight: 700; color: #38bdf8;">ALL SORTIES</span>
+    </div>
+    <div id="stageRecordsMount" style="display: flex; flex-direction: column; gap: 8px;">
+      <!-- Populated dynamically via renderAllStageRecords() -->
+    </div>
   </div>
 
+  <!-- 2. APEX 1RM PR VAULT CARD (Permanently open, no accordion required) -->
   <div class="card">
-    <span class="card-title">⚡ APEX 1RM BENCHMARKS</span>
-    <input type="text" id="prSearchInput" placeholder="Filter movements (e.g. Squat, Press, Row)..." 
-           style="width: 100%; box-sizing: border-box; padding: 8px 12px; margin: 10px 0; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: #f8fafc; font-size: 12px;"
-           oninput="window.renderPRVaultUI && window.renderPRVaultUI(this.value)">
-    <div id="prVaultMount" style="display: flex; flex-direction: column; gap: 8px; max-height: 480px; overflow-y: auto;"></div>
-  </div>
-</section>
-    <!-- Vault Drawer Toggle Bar -->
-    <div class="vault-toggle-bar" onclick="toggleVaultDrawer()">
-      <div class="vault-title">
-        <span>★ 5-RING MASTERY VAULT</span>
-      </div>
-      <div style="font-size: 12px; color: var(--accent-purple); font-weight: 700;" id="vaultToggleIcon">EXPAND ▾</div>
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+      <span class="card-title">⚡ APEX 1RM BENCHMARKS</span>
+      <span id="prTotalCount" style="font-size: 11px; font-weight: 800; color: #facc15;"></span>
+    </div>
+    <div style="font-size: 11px; color: #94a3b8; margin: 4px 0 10px 0;">
+      Estimated 1RM PR Vault & Peak Performance Ledger
     </div>
 
+    <!-- Live Search / Filter Input -->
+    <input type="text" id="prSearchInput" placeholder="Filter movements (e.g. Squat, Press, Row)..." 
+           style="width: 100%; box-sizing: border-box; padding: 9px 12px; margin-bottom: 10px; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: #f8fafc; font-size: 12px;"
+           oninput="renderPRVaultUI(this.value)">
+
+    <!-- Scrollable 1RM PR Container -->
+    <div id="prVaultMount" style="display: flex; flex-direction: column; gap: 8px; max-height: 460px; overflow-y: auto;">
+      <!-- Populated dynamically via renderPRVaultUI() -->
+    </div>
+  </div>
+
+</section>
     <!-- ========================================== -->
 <!-- TAB 3: MASTERY VAULT                       -->
 <!-- ========================================== -->
