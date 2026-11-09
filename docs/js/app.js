@@ -871,3 +871,4 @@ window.__sonicDev = {
 console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicDev');
 window.switchMainTab = switchMainTab;
 window.renderPRVaultUI = renderPRVaultUI; 
+window.renderVault = renderVault;
