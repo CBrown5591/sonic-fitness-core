@@ -1,6 +1,6 @@
 // -------------------------------------------------------------
-// PERSISTENT COCKPIT DOCK & 3-WAY MEDIA ENGINE
-// Modular Component: renderMusicDrawer.js
+// COCKPIT AUDIO RIG TAB ENGINE (WITH IDB CACHING & STATION LAUNCHERS)
+// Modular Component: js/ui/renderMusicDrawer.js
 // -------------------------------------------------------------
 
 const DB_NAME = 'SonicCockpitAudioDB';
@@ -101,7 +101,7 @@ async function clearTracksFromIDB() {
 }
 
 export async function initMusicDrawer() {
-  const mount = document.getElementById('musicDrawerMount');
+  const mount = document.getElementById('musicTabMount') || document.getElementById('musicDrawerMount');
   if (!mount) return;
 
   if (!localAudio) {
@@ -117,36 +117,42 @@ export async function initMusicDrawer() {
   const initialStationLabel = savedYtId === 'PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr' ? 'ANIME OSTS' : 'CUSTOM TARGET';
 
   mount.innerHTML = `
-    <!-- Slide-Up Drawer Tray -->
-    <div id="musicSlideUpTray" class="music-slideup-tray" style="display: none;">
-      <div class="music-tray-header">
-        <span class="music-tray-title">⚡ COCKPIT AUDIO DECK</span>
-        <button id="musicCloseTrayBtn" class="music-tray-close" type="button" title="Close Tray">✕</button>
+    <div class="card" style="margin-bottom: 12px; background: rgba(15, 23, 42, 0.85); border-left: 3px solid #38bdf8;">
+      <div style="display: flex; justify-content: space-between; align-items: center;">
+        <div>
+          <div style="font-size: 13px; font-weight: 900; color: #f8fafc; letter-spacing: 0.5px;">🎧 AUDIO RIG // COCKPIT PLAYER</div>
+          <div style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Local audio library & native streaming handoffs</div>
+        </div>
+        <div style="text-align: right;">
+          <span class="dock-music-icon" style="font-size: 18px;">🎵</span>
+        </div>
       </div>
+    </div>
 
-      <!-- Source Switcher Tabs -->
-      <div class="music-tabs">
-        <button class="music-tab-btn active" data-source="local" type="button">LOCAL FILES</button>
-        <button class="music-tab-btn" data-source="youtube" type="button">YT MUSIC</button>
-        <button class="music-tab-btn" data-source="pandora" type="button">PANDORA</button>
-      </div>
+    <!-- Media Source Selector Tabs -->
+    <div class="music-tabs" style="display: flex; gap: 8px; margin-bottom: 12px;">
+      <button class="music-tab-btn main-tab-btn active" data-source="local" type="button" style="flex: 1; padding: 10px;">📁 LOCAL VAULT</button>
+      <button class="music-tab-btn main-tab-btn" data-source="youtube" type="button" style="flex: 1; padding: 10px;">▶ YT MUSIC</button>
+      <button class="music-tab-btn main-tab-btn" data-source="pandora" type="button" style="flex: 1; padding: 10px;">📻 PANDORA</button>
+    </div>
 
-      <!-- SOURCE 1: LOCAL AUDIO PLAYER -->
-      <div id="musicPaneLocal" class="music-pane active">
-        <div class="local-player-box">
-          <div class="track-info-row">
-            <span id="currentTrackTitle" class="track-title-text">LOADING AUDIO CORE...</span>
-            <span id="trackTimeDisplay" class="track-time-text">0:00 / 0:00</span>
+    <!-- SOURCE 1: LOCAL AUDIO PLAYER -->
+    <div id="musicPaneLocal" class="music-pane active">
+      <div class="card">
+        <div class="local-player-box" style="background: rgba(11, 15, 25, 0.7); padding: 14px; border-radius: 8px; border: 1px solid rgba(255,255,255,0.08);">
+          <div class="track-info-row" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+            <span id="currentTrackTitle" class="track-title-text" style="font-size: 12px; font-weight: 800; color: #f8fafc;">LOADING AUDIO CORE...</span>
+            <span id="trackTimeDisplay" class="track-time-text" style="font-size: 11px; font-family: monospace; color: #94a3b8;">0:00 / 0:00</span>
           </div>
 
-          <div id="trackProgressBar" class="track-progress-bar">
-            <div id="trackProgressFill" class="track-progress-fill"></div>
+          <div id="trackProgressBar" class="track-progress-bar" style="width: 100%; height: 6px; background: #1e293b; border-radius: 3px; margin-bottom: 14px; cursor: pointer; overflow: hidden;">
+            <div id="trackProgressFill" class="track-progress-fill" style="height: 100%; width: 0%; background: #38bdf8; transition: width 0.15s linear;"></div>
           </div>
 
-          <div class="transport-controls">
+          <div class="transport-controls" style="display: flex; align-items: center; justify-content: space-between; gap: 6px; flex-wrap: wrap;">
             <button id="shuffleBtn" class="ctrl-btn mode-btn" type="button" title="Toggle Shuffle">🔀</button>
             <button id="prevTrackBtn" class="ctrl-btn" type="button" title="Previous Track">⏮</button>
-            <button id="playPauseBtn" class="ctrl-btn play-btn" type="button" title="Play / Pause">▶</button>
+            <button id="playPauseBtn" class="ctrl-btn play-btn" type="button" title="Play / Pause" style="min-width: 60px;">▶</button>
             <button id="nextTrackBtn" class="ctrl-btn" type="button" title="Next Track">⏭</button>
             <button id="repeatBtn" class="ctrl-btn mode-btn" type="button" title="Toggle Repeat (All / One / Off)">🔁</button>
             
@@ -159,78 +165,73 @@ export async function initMusicDrawer() {
               <input type="file" id="localAudioFileInput" multiple accept="audio/*" style="display: none;">
             </label>
 
-            <!-- Hidden fallback input for browsers/mobile without showDirectoryPicker -->
             <input type="file" id="localAudioFolderFallback" webkitdirectory directory mozdirectory multiple style="display: none;">
           </div>
 
-          <!-- Queue Management Row -->
-          <div class="queue-manage-row">
-            <span id="localQueueCount" class="queue-status-text">Restoring cached tracks...</span>
-            <button id="clearQueueBtn" class="clear-queue-btn" type="button">CLEAR QUEUE</button>
+          <div class="queue-manage-row" style="display: flex; justify-content: space-between; align-items: center; margin-top: 12px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.06);">
+            <span id="localQueueCount" class="queue-status-text" style="font-size: 11px; color: #94a3b8;">Restoring cached tracks...</span>
+            <button id="clearQueueBtn" class="clear-queue-btn" type="button" style="background: rgba(239, 68, 68, 0.15); border: 1px solid rgba(239, 68, 68, 0.3); color: #f87171; padding: 4px 8px; border-radius: 4px; font-size: 10px; font-weight: 700; cursor: pointer;">CLEAR QUEUE</button>
           </div>
         </div>
       </div>
+    </div>
 
-      <!-- SOURCE 2: YOUTUBE MUSIC (STATION LAUNCHER) -->
-      <div id="musicPaneYoutube" class="music-pane" style="display: none;">
-        <div class="yt-box">
-          <!-- Preset Quick Mixes -->
-          <div class="yt-presets-row" style="display: flex; gap: 6px; margin-bottom: 10px;">
-            <button class="yt-preset-btn active" data-yt-id="PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr" type="button">⚡ ANIME OSTS</button>
-            <button class="yt-preset-btn" data-yt-id="PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D" type="button">🌀 SONIC OST</button>
-            <button class="yt-preset-btn" data-yt-id="RDCLAK5uy_kfd5lT4u6Vq3q6p5Fq_h8E1l2m3n4o5p" type="button">🔥 GYM HYPE</button>
-          </div>
+    <!-- SOURCE 2: YOUTUBE MUSIC -->
+    <div id="musicPaneYoutube" class="music-pane" style="display: none;">
+      <div class="card">
+        <div style="font-size: 11px; font-weight: 700; color: #94a3b8; margin-bottom: 8px;">QUICK STREAM STATIONS</div>
+        <div class="yt-presets-row" style="display: flex; gap: 6px; margin-bottom: 12px; flex-wrap: wrap;">
+          <button class="yt-preset-btn active" data-yt-id="PL4QsqnjoDB5lZK4kL7J9S9cVbD1a_1EFr" type="button">⚡ ANIME OSTS</button>
+          <button class="yt-preset-btn" data-yt-id="PLw-VjHDlEOgvtnnnqWlTqByAtC7tXBg6D" type="button">🌀 SONIC OST</button>
+          <button class="yt-preset-btn" data-yt-id="RDCLAK5uy_kfd5lT4u6Vq3q6p5Fq_h8E1l2m3n4o5p" type="button">🔥 GYM HYPE</button>
+        </div>
 
-          <!-- URL / ID Ingest Bar -->
-          <div class="yt-input-row" style="display: flex; gap: 6px; margin-bottom: 12px;">
-            <input type="text" id="ytPlaylistInput" class="yt-input" placeholder="Paste YouTube / YT Music URL or ID" value="${savedYtId}" style="flex: 1; padding: 7px 10px; background: #0f172a; border: 1px solid #334155; color: #fff; border-radius: 4px; font-size: 11px;">
-            <button id="ytLoadBtn" class="yt-btn" type="button" style="padding: 7px 14px; background: #e11d48; color: #fff; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; font-size: 11px;">SET</button>
-          </div>
+        <div class="yt-input-row" style="display: flex; gap: 6px; margin-bottom: 12px;">
+          <input type="text" id="ytPlaylistInput" class="yt-input" placeholder="Paste YouTube / YT Music URL or ID" value="${savedYtId}">
+          <button id="ytLoadBtn" class="yt-btn" type="button">SET</button>
+        </div>
 
-          <!-- Active Station Status Card -->
-          <div class="station-card" style="background: rgba(15, 23, 42, 0.85); border: 1px solid #334155; border-radius: 6px; padding: 14px; margin-bottom: 12px; text-align: center;">
-            <div style="font-size: 10px; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 4px;">ACTIVE STREAM TARGET</div>
-            <div id="ytActiveStationTitle" style="color: #38bdf8; font-weight: bold; font-size: 13px; margin-bottom: 4px;">${initialStationLabel}</div>
-            <div id="ytActiveStationId" style="font-size: 10px; color: #64748b; word-break: break-all; margin-bottom: 12px;">${savedYtId}</div>
-            
-            <button id="ytLaunchStationBtn" type="button" style="width: 100%; padding: 10px; background: #e11d48; color: #fff; font-weight: bold; border: none; border-radius: 4px; cursor: pointer; font-size: 12px; letter-spacing: 0.05em; display: flex; align-items: center; justify-content: center; gap: 6px;">
-              🚀 LAUNCH IN YOUTUBE MUSIC
-            </button>
-          </div>
+        <div class="station-card" style="background: rgba(11, 15, 25, 0.7); border: 1px solid rgba(255,255,255,0.08); border-radius: 6px; padding: 14px; margin-bottom: 12px; text-align: center;">
+          <div style="font-size: 10px; color: #94a3b8; letter-spacing: 0.05em; margin-bottom: 4px;">ACTIVE STREAM TARGET</div>
+          <div id="ytActiveStationTitle" style="color: #38bdf8; font-weight: 800; font-size: 14px; margin-bottom: 4px;">${initialStationLabel}</div>
+          <div id="ytActiveStationId" style="font-size: 10px; color: #64748b; word-break: break-all; margin-bottom: 12px; font-family: monospace;">${savedYtId}</div>
+          
+          <button id="ytLaunchStationBtn" type="button" style="width: 100%; padding: 12px; background: #e11d48; color: #fff; font-weight: 800; border: none; border-radius: 6px; cursor: pointer; font-size: 12px; letter-spacing: 0.5px; display: flex; align-items: center; justify-content: center; gap: 6px;">
+            🚀 LAUNCH IN YOUTUBE MUSIC
+          </button>
+        </div>
 
-          <div style="font-size: 10px; color: #64748b; line-height: 1.4; text-align: center;">
-            Direct handoff enables true background audio, uncompressed streams, and lockscreen/earbud controls during training.
-          </div>
+        <div style="font-size: 10px; color: #64748b; line-height: 1.4; text-align: center;">
+          Direct handoff enables true background playback, lockscreen controls, and zero battery drain while switching tabs.
         </div>
       </div>
+    </div>
 
-      <!-- SOURCE 3: PANDORA -->
-      <div id="musicPanePandora" class="music-pane" style="display: none;">
-        <div class="pandora-box">
-          <div class="pandora-desc" style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Select a station for direct app playback:</div>
-          <div class="pandora-btn-grid" style="display: flex; flex-direction: column; gap: 8px;">
-            <a href="pandora://station/play/439775086551608226" 
-               data-fallback="https://www.pandora.com/genre/workout" 
-               class="pandora-btn station-link" style="padding: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 4px; color: #f8fafc; font-size: 11px; font-weight: bold; text-decoration: none; text-align: center;">
-              ⚡ POP FITNESS & WORKOUT RADIO
-            </a>
-            <a href="pandora://genre/hip-hop-workout" 
-               data-fallback="https://www.pandora.com/genre/hip-hop-workout" 
-               class="pandora-btn station-link" style="padding: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 4px; color: #f8fafc; font-size: 11px; font-weight: bold; text-decoration: none; text-align: center;">
-              🔥 HIP-HOP & RAP POWER HOUR
-            </a>
-            <a href="pandora://genre/electronic-workout" 
-               data-fallback="https://www.pandora.com/genre/electronic-workout" 
-               class="pandora-btn station-link" style="padding: 10px; background: #1e293b; border: 1px solid #334155; border-radius: 4px; color: #f8fafc; font-size: 11px; font-weight: bold; text-decoration: none; text-align: center;">
-              🌀 HIGH-BPM ELECTRONIC / DRUM & BASS
-            </a>
-            <a href="https://www.pandora.com" target="_blank" rel="noopener" class="pandora-btn generic-link" style="padding: 8px; background: transparent; border: 1px solid #334155; border-radius: 4px; color: #64748b; font-size: 10px; text-decoration: none; text-align: center; margin-top: 4px;">
-              🌐 LAUNCH PANDORA WEB CLIENT
-            </a>
-          </div>
+    <!-- SOURCE 3: PANDORA -->
+    <div id="musicPanePandora" class="music-pane" style="display: none;">
+      <div class="card">
+        <div style="font-size: 11px; color: #94a3b8; margin-bottom: 10px;">Select a station for direct app playback:</div>
+        <div class="pandora-btn-grid" style="display: flex; flex-direction: column; gap: 8px;">
+          <a href="pandora://station/play/439775086551608226" 
+             data-fallback="https://www.pandora.com/genre/workout" 
+             class="pandora-btn station-link" style="padding: 12px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: #f8fafc; font-size: 11px; font-weight: 800; text-decoration: none; text-align: center;">
+            ⚡ POP FITNESS & WORKOUT RADIO
+          </a>
+          <a href="pandora://genre/hip-hop-workout" 
+             data-fallback="https://www.pandora.com/genre/hip-hop-workout" 
+             class="pandora-btn station-link" style="padding: 12px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: #f8fafc; font-size: 11px; font-weight: 800; text-decoration: none; text-align: center;">
+            🔥 HIP-HOP & RAP POWER HOUR
+          </a>
+          <a href="pandora://genre/electronic-workout" 
+             data-fallback="https://www.pandora.com/genre/electronic-workout" 
+             class="pandora-btn station-link" style="padding: 12px; background: #1e293b; border: 1px solid #334155; border-radius: 6px; color: #f8fafc; font-size: 11px; font-weight: 800; text-decoration: none; text-align: center;">
+            🌀 HIGH-BPM ELECTRONIC / DRUM & BASS
+          </a>
+          <a href="https://www.pandora.com" target="_blank" rel="noopener" class="pandora-btn generic-link" style="padding: 10px; background: transparent; border: 1px solid #334155; border-radius: 6px; color: #64748b; font-size: 10px; text-decoration: none; text-align: center; margin-top: 4px;">
+            🌐 LAUNCH PANDORA WEB CLIENT
+          </a>
         </div>
       </div>
-
     </div>
   `;
   
@@ -239,16 +240,6 @@ export async function initMusicDrawer() {
 
   // Restore cached playlist from IndexedDB on startup
   await restorePlaylistFromCache();
-}
-
-export function toggleMusicDrawer() {
-  const tray = document.getElementById('musicSlideUpTray');
-  const chevron = document.getElementById('dockMusicChevron');
-  if (!tray) return;
-
-  const isOpen = tray.style.display !== 'none';
-  tray.style.display = isOpen ? 'none' : 'block';
-  if (chevron) chevron.innerText = isOpen ? '▲' : '▼';
 }
 
 // -------------------------------------------------------------
@@ -306,11 +297,6 @@ function parseRelativeFileList(fileArray) {
 }
 
 function attachMusicDrawerEvents() {
-  const closeBtn = document.getElementById('musicCloseTrayBtn');
-  if (closeBtn) {
-    closeBtn.onclick = () => toggleMusicDrawer();
-  }
-
   // Source Switcher Tabs
   const tabBtns = document.querySelectorAll('.music-tab-btn');
   tabBtns.forEach(btn => {
@@ -556,20 +542,18 @@ function attachMusicDrawerEvents() {
       ? `https://music.youtube.com/playlist?list=${target.id}` 
       : `https://music.youtube.com/watch?v=${target.id}`;
 
-    // Android Intent URI: Directly invokes package com.google.android.apps.youtube.music
-    // If the native app is absent, it seamlessly routes to browser fallback without showing an OS error toast
-    const isAndroid = /Android/i.test(navigator.userAgent);
-    
-    if (isAndroid) {
-      const intentUri = isPlaylist
-        ? `intent://music.youtube.com/playlist?list=${target.id}#Intent;scheme=https;package=com.google.android.apps.youtube.music;S.browser_fallback_url=${encodeURIComponent(webUrl)};end`
-        : `intent://music.youtube.com/watch?v=${target.id}#Intent;scheme=https;package=com.google.android.apps.youtube.music;S.browser_fallback_url=${encodeURIComponent(webUrl)};end`;
-      
-      window.location.href = intentUri;
-    } else {
-      // iOS / Desktop fallback: Standard App Link
-      window.open(webUrl, '_blank', 'noopener');
-    }
+    const appUri = isPlaylist
+      ? `youtubemusic://playlist?list=${target.id}`
+      : `youtubemusic://watch?v=${target.id}`;
+
+    const start = Date.now();
+    window.location.href = appUri;
+
+    setTimeout(() => {
+      if (Date.now() - start < 1500) {
+        window.open(webUrl, '_blank', 'noopener');
+      }
+    }, 800);
   }
 
   if (ytLoadBtn && ytInput) {
@@ -770,16 +754,3 @@ function updateMediaSessionMetadata(trackName) {
     ]
   });
 }
-// In docs/js/ui/renderMusicDrawer.js
-
-export function toggleMediaShelf() {
-  const shelf = document.getElementById('mediaShelf');
-  const chevron = document.getElementById('dockMusicChevron');
-  if (!shelf) return;
-
-  const isOpen = shelf.style.display !== 'none';
-  shelf.style.display = isOpen ? 'none' : 'block';
-  if (chevron) chevron.innerText = isOpen ? '▲' : '▼';
-}
-
-window.toggleMediaShelf = toggleMediaShelf;
