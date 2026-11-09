@@ -25,7 +25,15 @@
       <button onclick="promptWebhookUrl()" style="background: none; border: 1px solid var(--border); color: var(--accent-blue); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 700; cursor: pointer;">SYNC ⚙</button>
     </div>
   </div>
-
+<!-- TOP-LEVEL SCREEN NAVIGATION TABS -->
+<nav class="main-tab-nav" id="mainTabNav">
+  <button type="button" class="main-tab-btn active" data-target="hudTab" onclick="switchMainTab('hudTab')">⚡ WORKOUT HUD</button>
+  <button type="button" class="main-tab-btn" data-target="recordsTab" onclick="switchMainTab('recordsTab')">📊 RECORDS</button>
+  <button type="button" class="main-tab-btn" data-target="vaultTab" onclick="switchMainTab('vaultTab')">🏛️ VAULT</button>
+  <button type="button" class="main-tab-btn" data-target="skillsTab" onclick="switchMainTab('skillsTab')">✨ SKILL TREES</button>
+  <button type="button" class="main-tab-btn" data-target="musicTab" onclick="switchMainTab('musicTab')">🎧 AUDIO RIG</button>
+</nav>
+  <section id="hudTab" class="main-tab-view active-tab-view">
   <div class="container">
     <!-- Stage Switching Bar -->
         <!-- Pilot Progression & Lifetime EXP Cockpit Bar -->
@@ -134,7 +142,25 @@
       <button class="btn-log" id="logSetBtn" onclick="logActiveSet()">LOG SET 1 & START REST</button>
       <div id="loggedSetsList" class="logged-sets-list"></div>
     </div>
+  </section>
 
+  <!-- ========================================== -->
+<!-- TAB 2: RECORDS (STAGE RECORDS & 1RM VAULT) -->
+<!-- ========================================== -->
+<section id="recordsTab" class="main-tab-view" style="display: none;">
+  <div class="card" style="margin-bottom: 12px;">
+    <span class="card-title">🏆 STAGE BEST RECORDS</span>
+    <div id="stageRecordsMount"></div>
+  </div>
+
+  <div class="card">
+    <span class="card-title">⚡ APEX 1RM BENCHMARKS</span>
+    <input type="text" id="prSearchInput" placeholder="Filter movements (e.g. Squat, Press, Row)..." 
+           style="width: 100%; box-sizing: border-box; padding: 8px 12px; margin: 10px 0; background: rgba(15,23,42,0.6); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; color: #f8fafc; font-size: 12px;"
+           oninput="window.renderPRVaultUI && window.renderPRVaultUI(this.value)">
+    <div id="prVaultMount" style="display: flex; flex-direction: column; gap: 8px; max-height: 480px; overflow-y: auto;"></div>
+  </div>
+</section>
     <!-- Vault Drawer Toggle Bar -->
     <div class="vault-toggle-bar" onclick="toggleVaultDrawer()">
       <div class="vault-title">
@@ -143,14 +169,36 @@
       <div style="font-size: 12px; color: var(--accent-purple); font-weight: 700;" id="vaultToggleIcon">EXPAND ▾</div>
     </div>
 
-    <!-- Collapsible Vault Content -->
-    <div id="vaultDrawer">
-      <div id="vaultItemsContainer">
-        <!-- Rendered dynamically from storage -->
-      </div>
+    <!-- ========================================== -->
+<!-- TAB 3: MASTERY VAULT                       -->
+<!-- ========================================== -->
+<section id="vaultTab" class="main-tab-view" style="display: none;">
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+      <span class="card-title">🏛️ MOVEMENT MASTERY VAULT</span>
+      <span id="vaultTotalRedRings" style="font-size: 12px; font-weight: 800; color: #f43f5e;"></span>
     </div>
+    <div id="vaultItemsContainer" style="display: flex; flex-direction: column; gap: 8px; max-height: 520px; overflow-y: auto;"></div>
   </div>
+</section>
+  <!-- ========================================== -->
+<!-- TAB 4: SKILL TREES (RED & GOLD RING)       -->
+<!-- ========================================== -->
+<section id="skillsTab" class="main-tab-view" style="display: none;">
+  <div class="card">
+    <div id="skillTreeMount"></div>
+  </div>
+</section>
 
+<!-- ========================================== -->
+<!-- TAB 5: AUDIO RIG                           -->
+<!-- ========================================== -->
+<section id="musicTab" class="main-tab-view" style="display: none;">
+  <div class="card">
+    <span class="card-title">🎧 AUDIO RIG // COCKPIT PLAYER</span>
+    <div id="musicTabMount" style="margin-top: 12px;"></div>
+  </div>
+</section>
   <!-- Webhook Settings Modal -->
   <div id="syncModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; justify-content:center; align-items:center; padding:20px;">
     <div style="background:#141c2e; border:1px solid var(--accent-blue); border-radius:12px; padding:20px; width:100%; max-width:400px;">
@@ -161,14 +209,6 @@
         <button onclick="closeSyncModal()" style="background:#263238; color:#fff; border:none; padding:8px 14px; border-radius:6px; font-weight:700; font-size:12px; cursor:pointer;">Cancel</button>
         <button onclick="saveSyncModal()" style="background:var(--accent-green); color:#000; border:none; padding:8px 16px; border-radius:6px; font-weight:800; font-size:12px; cursor:pointer;">Save</button>
       </div>
-    </div>
-  </div>
-
-<!-- Rest Timer Duration Presets -->
-    <div class="timer-duration-selector" style="display: flex; justify-content: center; gap: 8px; margin: 12px 0;">
-      <button type="button" class="btn-pill" id="pill-60" onclick="setTimerDuration(60)">60s</button>
-      <button type="button" class="btn-pill" id="pill-90" onclick="setTimerDuration(90)">90s</button>
-      <button type="button" class="btn-pill" id="pill-120" onclick="setTimerDuration(120)">120s</button>
     </div>
   </div>
 
