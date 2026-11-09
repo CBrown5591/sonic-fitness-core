@@ -1,9 +1,10 @@
 // -------------------------------------------------------------
-// FRONTIERS SKILL TREE UI // js/ui/renderSkillTree.js
-// Modular UI Component: renderSkillTree.js
+// FRONTIERS SKILL TREE TAB RENDERER
+// Module: js/ui/renderSkillTree.js
 // -------------------------------------------------------------
-import { SKILL_TREE_NODES, getPerkById } from '../data/skillTree.js';
-import { getSpendableRedRings, saveSpendableRedRings } from './renderArtifacts.js';
+import { SKILL_TREE_CATALOG } from '../data/skillTree.js';
+import { getSpendableRedRings, saveSpendableRedRings, getStandardRings } from './renderArtifacts.js';
+import { showToast } from './renderHud.js';
 
 export function getUnlockedPerks() {
   try {
@@ -14,187 +15,127 @@ export function getUnlockedPerks() {
   }
 }
 
-export function saveUnlockedPerks(perksArr) {
-  localStorage.setItem('sonic_unlocked_perks', JSON.stringify(perksArr));
+export function saveUnlockedPerks(perkList) {
+  localStorage.setItem('sonic_unlocked_perks', JSON.stringify(perkList));
 }
 
 export function hasPerk(perkId) {
-  const perks = getUnlockedPerks();
-  return perks.includes(perkId);
+  const unlocked = getUnlockedPerks();
+  return unlocked.includes(perkId);
 }
 
-export function unlockPerk(perkId, showToast = window.showToast) {
-  const perk = getPerkById(perkId);
-  if (!perk) return false;
+export function unlockPerk(perkId) {
+  const perk = (SKILL_TREE_CATALOG || []).find(p => p.id === perkId);
+  if (!perk) return;
 
-  if (hasPerk(perkId)) {
-    if (showToast) showToast(`ℹ️ ${perk.name.toUpperCase()} ALREADY UNLOCKED`);
-    return false;
+  const unlocked = getUnlockedPerks();
+  if (unlocked.includes(perkId)) {
+    showToast(`Perk [${perk.name}] is already unlocked!`);
+    return;
   }
 
-  const currentBalance = getSpendableRedRings();
-  if (currentBalance < perk.cost) {
-    if (showToast) showToast(`⚠️ INSUFFICIENT RED RINGS: Need ${perk.cost}★ (Have ${currentBalance}★)`);
-    return false;
+  // Check parent prerequisites if any
+  if (perk.requires && !unlocked.includes(perk.requires)) {
+    showToast(`Prerequisite required: Unlock [${perk.requires}] first!`);
+    return;
   }
 
-  // Deduct Red Rings & persist perk
-  const newBalance = currentBalance - perk.cost;
-  saveSpendableRedRings(newBalance);
+  const balance = getSpendableRedRings();
+  const cost = perk.cost || 5;
 
-  const perks = getUnlockedPerks();
-  perks.push(perkId);
-  saveUnlockedPerks(perks);
-
-  // Re-render UI
-  renderSkillTreeDrawer();
-  
-  if (showToast) {
-    showToast(`⚡ PERK UNLOCKED: ${perk.name}! (-${perk.cost}★)`);
+  if (balance < cost) {
+    showToast(`Not enough Red Star Rings! Need ${cost}, have ${balance}.`);
+    return;
   }
 
-  // Hook into other runtime systems (e.g. Darkspine Soul Gauge)
-  if (perkId === 'PERK_SOUL_4') {
-    sessionStorage.setItem('sonic_soul_gauge_max', '4');
-  }
+  // Deduct balance and persist unlock
+  saveSpendableRedRings(balance - cost);
+  unlocked.push(perkId);
+  saveUnlockedPerks(unlocked);
 
-  return true;
+  if (navigator.vibrate) navigator.vibrate([40, 60, 40]);
+  showToast(`★ UNLOCKED PERK: ${perk.name}!`);
+
+  renderSkillTree();
 }
 
-export function toggleSkillTreeDrawer() {
-  let drawer = document.getElementById('skillTreeDrawerBackdrop');
-  if (drawer) {
-    drawer.remove();
-  } else {
-    renderSkillTreeDrawer();
-  }
-}
+export function renderSkillTree() {
+  const mount = document.getElementById('skillTreeMount');
+  if (!mount) return;
 
-export function renderSkillTreeDrawer() {
-  let backdrop = document.getElementById('skillTreeDrawerBackdrop');
-  if (!backdrop) {
-    backdrop = document.createElement('div');
-    backdrop.id = 'skillTreeDrawerBackdrop';
-    backdrop.className = 'modal-backdrop';
-    document.body.appendChild(backdrop);
-  }
-
-  const spendable = getSpendableRedRings();
+  const balance = getSpendableRedRings();
+  const gold = getStandardRings();
   const unlocked = getUnlockedPerks();
 
-  // Group by branch
-  const branches = [
-    { key: 'hull', label: '🛡️ HULL & ARMOR (LONGEVITY)' },
-    { key: 'kinetics', label: '⚡ SPEED & KINETICS (PERFORMANCE)' },
-    { key: 'protocol', label: '🧲 PILOT PROTOCOL (UTILITY)' }
-  ];
+  // Update Balances
+  const redBalEl = document.getElementById('skillTreeRedRingBalance');
+  if (redBalEl) redBalEl.innerText = `${balance} SPENDABLE RINGS`;
 
-  backdrop.innerHTML = `
-    <div class="modal-card" style="max-height: 90vh; overflow-y: auto; padding: 18px; width: 100%; max-width: 480px; background: #0b111e; border: 1px solid #1f2d45; border-radius: 14px; box-shadow: 0 0 40px rgba(0,0,0,0.9);">
-      
-      <!-- HEADER -->
-      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #1f2d45; padding-bottom: 12px; margin-bottom: 12px;">
-        <div>
-          <div style="font-size: 10px; font-weight: 800; color: #f87171; letter-spacing: 1.5px;">FRONTIERS SKILL TREE</div>
-          <div style="font-size: 16px; font-weight: 900; color: #f8fafc; letter-spacing: 0.5px;">PERMANENT PILOT PERKS</div>
-        </div>
-        <div style="display: flex; align-items: center; gap: 12px;">
-          <div style="text-align: right;">
-            <div style="font-size: 9px; font-weight: 800; color: #94a3b8;">SPENDABLE</div>
-            <div style="font-size: 15px; font-weight: 900; color: #f87171; font-family: monospace;">${spendable}★</div>
+  const goldBalEl = document.getElementById('skillTreeGoldRingBalance');
+  if (goldBalEl) goldBalEl.innerText = `${gold.toLocaleString()} GOLD RINGS`;
+
+  const countEl = document.getElementById('unlockedPerkCount');
+  if (countEl) countEl.innerText = `${unlocked.length} / ${(SKILL_TREE_CATALOG || []).length} UNLOCKED`;
+
+  if (!SKILL_TREE_CATALOG || SKILL_TREE_CATALOG.length === 0) {
+    mount.innerHTML = `<div style="font-size: 12px; color: #64748b; text-align: center; padding: 20px;">No skills registered in catalog.</div>`;
+    return;
+  }
+
+  // Render Perk Cards
+  mount.innerHTML = SKILL_TREE_CATALOG.map(perk => {
+    const isUnlocked = unlocked.includes(perk.id);
+    const hasReq = !perk.requires || unlocked.includes(perk.requires);
+    const canAfford = balance >= (perk.cost || 5);
+
+    let borderCol = 'rgba(255,255,255,0.08)';
+    let badgeText = 'LOCKED';
+    let badgeBg = '#334155';
+
+    if (isUnlocked) {
+      borderCol = '#38bdf8';
+      badgeText = 'ACTIVE ★';
+      badgeBg = '#0284c7';
+    } else if (!hasReq) {
+      borderCol = 'rgba(239, 68, 68, 0.3)';
+      badgeText = `REQ: ${perk.requires}`;
+      badgeBg = '#7f1d1d';
+    } else if (canAfford) {
+      borderCol = '#f43f5e';
+      badgeText = `UNLOCK (${perk.cost || 5} ★)`;
+      badgeBg = '#e11d48';
+    } else {
+      badgeText = `NEED ${perk.cost || 5} ★`;
+      badgeBg = '#475569';
+    }
+
+    return `
+      <div style="background: rgba(15, 23, 42, 0.7); padding: 12px; border-radius: 6px; border: 1px solid ${borderCol}; display: flex; justify-content: space-between; align-items: center; gap: 12px;">
+        <div style="flex: 1;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 14px; font-weight: 800; color: ${isUnlocked ? '#38bdf8' : '#f8fafc'};">${perk.name}</span>
+            <span style="font-size: 9px; font-weight: 800; background: ${badgeBg}; color: #fff; padding: 2px 6px; border-radius: 4px;">${badgeText}</span>
           </div>
-          <button id="closeSkillTreeBtn" style="background: none; border: none; color: #94a3b8; font-size: 22px; cursor: pointer; line-height: 1;">✕</button>
+          <div style="font-size: 11px; color: #94a3b8; margin-top: 4px; line-height: 1.4;">
+            ${perk.description || perk.desc || ''}
+          </div>
+        </div>
+        <div>
+          ${!isUnlocked && hasReq ? `
+            <button type="button" 
+                    onclick="unlockPerk('${perk.id}')" 
+                    style="background: ${canAfford ? '#f43f5e' : 'rgba(244,63,94,0.2)'}; color: #fff; border: none; padding: 7px 12px; border-radius: 4px; font-size: 11px; font-weight: 800; cursor: ${canAfford ? 'pointer' : 'not-allowed'};"
+                    ${canAfford ? '' : 'disabled'}>
+              UNLOCK
+            </button>
+          ` : ''}
         </div>
       </div>
-
-      <!-- BRANCHES & NODES -->
-      <div style="display: flex; flex-direction: column; gap: 16px;">
-        ${branches.map(b => {
-          const nodes = SKILL_TREE_NODES.filter(n => n.branch === b.key);
-          return `
-            <div class="skill-branch-section">
-              <div style="font-size: 11px; font-weight: 900; color: #38bdf8; letter-spacing: 1px; margin-bottom: 8px;">
-                ${b.label}
-              </div>
-              <div style="display: flex; flex-direction: column; gap: 8px;">
-                ${nodes.map(node => {
-                  const isOwned = unlocked.includes(node.id);
-                  const canAfford = spendable >= node.cost;
-
-                  let statusBtnHtml = '';
-                  if (isOwned) {
-                    statusBtnHtml = `
-                      <span style="background: rgba(74, 222, 128, 0.15); border: 1px solid #4ade80; color: #4ade80; padding: 4px 10px; border-radius: 6px; font-size: 10px; font-weight: 900; letter-spacing: 0.5px;">
-                        ✓ ACTIVE
-                      </span>
-                    `;
-                  } else {
-                    const btnStyle = canAfford
-                      ? 'background: #1e293b; border: 1px solid #f87171; color: #f87171; cursor: pointer;'
-                      : 'background: #0d1524; border: 1px solid #334155; color: #64748b; cursor: not-allowed; opacity: 0.6;';
-
-                    statusBtnHtml = `
-                      <button class="unlock-perk-action-btn" data-perk-id="${node.id}" style="
-                        font-size: 10.5px;
-                        font-weight: 900;
-                        padding: 6px 12px;
-                        border-radius: 6px;
-                        letter-spacing: 0.5px;
-                        transition: 0.15s ease;
-                        ${btnStyle}
-                      " ${!canAfford ? 'disabled' : ''}>
-                        UNLOCK (${node.cost}★)
-                      </button>
-                    `;
-                  }
-
-                  return `
-                    <div class="skill-node-card" style="background: #0f1828; border: 1px solid ${isOwned ? '#4ade80' : '#1f2d45'}; border-radius: 10px; padding: 10px 12px; display: flex; justify-content: space-between; align-items: center; gap: 12px; box-shadow: ${isOwned ? '0 0 10px rgba(74, 222, 128, 0.15)' : 'none'};">
-                      <div style="display: flex; gap: 10px; align-items: flex-start;">
-                        <span style="font-size: 22px; line-height: 1.1;">${node.icon}</span>
-                        <div>
-                          <div style="font-size: 12.5px; font-weight: 800; color: #f8fafc;">${node.name}</div>
-                          <div style="font-size: 10.5px; color: #94a3b8; margin-top: 2px;">${node.description}</div>
-                          <div style="font-size: 9px; font-style: italic; color: #64748b; margin-top: 4px;">"${node.flavor}"</div>
-                        </div>
-                      </div>
-                      <div style="flex-shrink: 0;">
-                        ${statusBtnHtml}
-                      </div>
-                    </div>
-                  `;
-                }).join('')}
-              </div>
-            </div>
-          `;
-        }).join('')}
-      </div>
-
-    </div>
-  `;
-
-  // Attach event listeners
-  document.getElementById('closeSkillTreeBtn').onclick = () => {
-    backdrop.remove();
-  };
-
-  backdrop.onclick = (e) => {
-    if (e.target === backdrop) backdrop.remove();
-  };
-
-  backdrop.querySelectorAll('.unlock-perk-action-btn').forEach(btn => {
-    btn.onclick = (e) => {
-      const perkId = e.currentTarget.getAttribute('data-perk-id');
-      unlockPerk(perkId);
-    };
-  });
+    `;
+  }).join('');
 }
 
-// DevTools exposures
-if (typeof window !== 'undefined') {
-  window.renderSkillTreeDrawer = renderSkillTreeDrawer;
-  window.toggleSkillTreeDrawer = toggleSkillTreeDrawer;
-  window.hasPerk = hasPerk;
-  window.unlockPerk = unlockPerk;
-  window.getUnlockedPerks = getUnlockedPerks;
-}
+// Global scope window attachments
+window.renderSkillTree = renderSkillTree;
+window.unlockPerk = unlockPerk;
+window.hasPerk = hasPerk;
