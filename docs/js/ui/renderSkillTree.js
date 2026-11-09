@@ -2,9 +2,16 @@
 // FRONTIERS SKILL TREE TAB RENDERER
 // Module: js/ui/renderSkillTree.js
 // -------------------------------------------------------------
-import { SKILL_TREE_CATALOG } from '../data/skillTree.js';
 import { getSpendableRedRings, saveSpendableRedRings, getStandardRings } from './renderArtifacts.js';
 import { showToast } from './renderHud.js';
+// After (Universal fallback import):
+import * as SkillModule from '../data/skillTree.js';
+
+const SKILL_TREE_CATALOG = SkillModule.SKILL_TREE_CATALOG 
+  || SkillModule.SKILL_TREE 
+  || SkillModule.SKILLS 
+  || SkillModule.default 
+  || [];
 
 export function getUnlockedPerks() {
   try {
