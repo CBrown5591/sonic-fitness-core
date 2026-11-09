@@ -331,12 +331,6 @@ export function logActiveSet() {
   }
 
   // 3. Reset toggle state and button for the next set
-  currentSetPain = false;
-  const painBtn = document.getElementById('painBtn');
-  if (painBtn) {
-    painBtn.classList.remove('active-red');
-    painBtn.innerText = "Joint Strain: No";
-  }
 
   saveSessionState();
   renderSessionUI();
