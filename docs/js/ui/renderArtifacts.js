@@ -3,7 +3,6 @@
 // Modular UI Component: renderArtifacts.js
 // -------------------------------------------------------------
 import { playStageClearFanfare } from '../core/audio.js';
-import { toggleSkillTreeDrawer } from './renderSkillTree.js';
 
 // -------------------------------------------------------------
 // CONSTANTS & CATALOGS
