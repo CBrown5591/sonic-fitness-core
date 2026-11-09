@@ -32,6 +32,7 @@ import { getTotalRedRings } from './ui/renderVault.js';
 import { renderVault, toggleVaultDrawer, creditVaultRings, saveVaultData } from './ui/renderVault.js';
 import { toggleSkillTreeDrawer, hasPerk, getUnlockedPerks } from './ui/renderSkillTree.js';
 import { initMusicDrawer, toggleMusicDrawer } from './ui/renderMusicDrawer.js';
+import { switchMainTab } from './ui/renderTabs.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
 let activeSlotIndex = 0;
@@ -862,3 +863,4 @@ window.__sonicDev = {
   }
 };
 console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicDev');
+window.switchMainTab = switchMainTab;
