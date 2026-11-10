@@ -503,47 +503,47 @@ function renderSessionUI() {
 
 // docs/js/app.js
 
+// docs/js/app.js
+
 function ensureStageTabsExist() {
   const stageNav = document.querySelector('.stage-nav') || document.querySelector('.stage-tabs');
   if (!stageNav) return;
 
-  const ch1rmTab = document.getElementById('tab-CH_1RM');
-  // Only use ch1rmTab as reference node if it is a verified direct child of stageNav
-  const insertRef = (ch1rmTab && ch1rmTab.parentNode === stageNav) ? ch1rmTab : null;
+  // Exact canonical sequence for all stages and challenge sorties
+  const canonicalOrder = [
+    { key: 'DAY_A', label: 'DAY A', className: 'stage-tab' },
+    { key: 'DAY_B', label: 'DAY B', className: 'stage-tab' },
+    { key: 'DAY_C', label: 'DAY C', className: 'stage-tab' },
+    { key: 'DAY_D', label: 'DAY D', className: 'stage-tab' },
+    { key: 'DAY_E', label: 'DAY E', className: 'stage-tab' },
+    { key: 'DAY_F', label: 'DAY F', className: 'stage-tab' },
+    { key: 'DAY_G', label: 'DAY G', className: 'stage-tab' },
+    { key: 'DAY_H', label: 'DAY H', className: 'stage-tab' },
+    { key: 'DAY_I', label: 'DAY I', className: 'stage-tab' },
+    { key: 'CH_1RM', label: '⚡ 1RM TEST', className: 'stage-tab challenge-tab-gold' },
+    { key: 'CH_AMRAP', label: '🔥 TO FAILURE', className: 'stage-tab challenge-tab-red' }
+  ];
 
-  ['DAY_G', 'DAY_H', 'DAY_I'].forEach(key => {
-    if (!document.getElementById(`tab-${key}`)) {
-      const tab = document.createElement('div');
-      tab.id = `tab-${key}`;
-      tab.className = 'stage-tab';
-      tab.innerText = key.replace('_', ' ');
-      tab.onclick = () => selectStage(key);
-
-      if (insertRef) {
-        stageNav.insertBefore(tab, insertRef);
-      } else {
-        stageNav.appendChild(tab);
-      }
+  canonicalOrder.forEach(item => {
+    let tab = document.getElementById(`tab-${item.key}`);
+    
+    // Create tab element if missing
+    if (!tab) {
+      tab = document.createElement('div');
+      tab.id = `tab-${item.key}`;
+      tab.innerText = item.label;
+      tab.onclick = () => selectStage(item.key);
     }
+
+    // Ensure styling classes match
+    tab.className = item.className;
+    if (item.key === activeStageKey) {
+      tab.classList.add('active');
+    }
+
+    // Re-append in strict canonical order
+    stageNav.appendChild(tab);
   });
-
-  if (!document.getElementById('tab-CH_1RM')) {
-    const tab1rm = document.createElement('div');
-    tab1rm.id = 'tab-CH_1RM';
-    tab1rm.className = 'stage-tab challenge-tab-gold';
-    tab1rm.innerText = '⚡ 1RM TEST';
-    tab1rm.onclick = () => selectStage('CH_1RM');
-    stageNav.appendChild(tab1rm);
-  }
-
-  if (!document.getElementById('tab-CH_AMRAP')) {
-    const tabAmrap = document.createElement('div');
-    tabAmrap.id = 'tab-CH_AMRAP';
-    tabAmrap.className = 'stage-tab challenge-tab-red';
-    tabAmrap.innerText = '🔥 TO FAILURE';
-    tabAmrap.onclick = () => selectStage('CH_AMRAP');
-    stageNav.appendChild(tabAmrap);
-  }
 }
 
 // -------------------------------------------------------------
