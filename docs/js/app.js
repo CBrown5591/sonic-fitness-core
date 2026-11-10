@@ -651,10 +651,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderArtifactsTray();
   initMusicDrawer();
 
-  const dockMusicBtn = document.getElementById('dockMusicToggleBtn');
-  if (dockMusicBtn) {
-    dockMusicBtn.onclick = toggleMusicDrawer;
-  }
   initTimerBackgroundSync();
   checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
     selectStage(nextStage);
