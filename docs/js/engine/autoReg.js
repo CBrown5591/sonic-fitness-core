@@ -9,24 +9,30 @@
  * e.g., "3x6-8"  -> { minReps: 6, maxReps: 8 }
  * e.g., "3x12-15" -> { minReps: 12, maxReps: 15 }
  */
-export function parseRepBracket(targetStr) {
-  if (!targetStr) return { minReps: 8, maxReps: 10 };
+// docs/js/engine/autoReg.js
 
-  const match = targetStr.match(/(\d+)-(\d+)/);
-  if (match) {
+export function parseRepBracket(targetStr, fallbackMin = 8, fallbackMax = 10) {
+  if (!targetStr) return { minReps: fallbackMin, maxReps: fallbackMax };
+
+  // 1. Matches range brackets across hyphens, en-dashes, em-dashes, and spaces
+  // Examples: "3x10-12", "3 × 12–15", "10 - 12", "40–50"
+  const rangeMatch = targetStr.match(/(\d+)\s*[-–—]\s*(\d+)/);
+  if (rangeMatch) {
     return {
-      minReps: parseInt(match[1], 10),
-      maxReps: parseInt(match[2], 10)
+      minReps: parseInt(rangeMatch[1], 10),
+      maxReps: parseInt(rangeMatch[2], 10)
     };
   }
 
-  const singleMatch = targetStr.match(/(\d+)\s*(?:reps?|r\b)/i);
+  // 2. Single target notations (e.g. "15 reps", "12r/side")
+  const singleMatch = targetStr.match(/(\d+)\s*(?:reps?|r\b|\/side)/i);
   if (singleMatch) {
     const val = parseInt(singleMatch[1], 10);
     return { minReps: Math.max(1, val - 2), maxReps: val };
   }
 
-  return { minReps: 8, maxReps: 10 };
+  // 3. Fall back to the passed-in stage/slot defaults rather than a static 8-10
+  return { minReps: fallbackMin, maxReps: fallbackMax };
 }
 
 /**
@@ -58,8 +64,8 @@ export function autoRegulateNextSet(completedSet) {
   const numReps = parseInt(reps, 10) || 0;
   const numRpe = parseFloat(rpe) || 8.0;
 
-  // Retrieve current active target string from DOM or fallback
-  let targetStr = "3x8-10";
+// Read current target directly from DOM or completed set
+  let targetStr = "";
   const targetTag = typeof document !== 'undefined' ? document.getElementById('currentTargetTag') : null;
   if (targetTag && targetTag.innerText) {
     targetStr = targetTag.innerText.replace(/^TARGET:\s*/i, '').trim();
@@ -67,7 +73,10 @@ export function autoRegulateNextSet(completedSet) {
     targetStr = completedSet.target;
   }
 
-  const { minReps, maxReps } = parseRepBracket(targetStr);
+  // Use completedSet.reps as the floor fallback if targetStr fails to resolve
+  const fallbackFloor = completedSet.reps || 8;
+  const { minReps, maxReps } = parseRepBracket(targetStr, fallbackFloor, fallbackFloor + 2);
+
   const isDumbbell = isDumbbellMovement(exercise);
 
   // 1. Safety Hold / Joint Strain / Severe Overshoot (RPE >= 9.5)
