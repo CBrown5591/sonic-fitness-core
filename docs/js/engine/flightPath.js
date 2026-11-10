@@ -1,184 +1,127 @@
-// -------------------------------------------------------------
-// TACTICAL FLIGHT PATH // FATIGUE & RECON AUTO-ROUTING ENGINE
-// Modular Engine: flightPath.js
-// -------------------------------------------------------------
+// docs/js/engine/flightPath.js
+import { STAGES } from '../data/stages.js';
+import { CARDIO_CONFIGS } from '../data/cardioConfigs.js';
 
-export const FLIGHT_PATH_ROUTING = {
-  DAY_G: {
-    next: "DAY_A",
-    title: "DAY A // Hinge & Horizontal Power",
-    reason: "Aerobic Engine Flushed: Systemic blood flow maximized and DOMS cleared. Full-power compound strength cleared.",
-    tag: "⚡ TACTICAL RECON // MAXIMUM POWER"
-  },
-  DAY_H: {
-    next: "DAY_D",
-    title: "DAY D // Trunk Fortress & Core Integrity",
-    reason: "Metcon Completed: High-density machine & cable volume logged. Core pillar anti-rotation advised.",
-    tag: "🛡️ TACTICAL RECON // CORE FORTRESS"
-  },
-  DAY_I: {
-    next: "DAY_A",
-    title: "DAY A // Hinge & Horizontal Power",
-    reason: "Bodyweight Mobility Flow Complete: Active joint restoration cleared for heavy compound reloading.",
-    tag: "⚡ TACTICAL RECON // MAXIMUM POWER"
-  },
-  DAY_A: {
-    next: "DAY_B",
-    title: "DAY B // Knee Stability & Shoulder Rehab",
-    reason: "Antagonist Rotation: Posterior chain (hamstrings/glutes) and chest/lats from DAY A are in active protein synthesis. Quad tracking and rotator cuff prehab are fully primed.",
-    tag: "⚡ TACTICAL RECON // BALANCED SORTIE"
-  },
-  DAY_B: {
-    next: "DAY_C",
-    title: "DAY C // Full-Body Capacity & Hinge Resilience",
-    reason: "Volume Shift: Anterior quad and pressing load cleared from Day B. Full-body tension, heavy carries, and lat recruitment are cleared for takeoff.",
-    tag: "⚡ TACTICAL RECON // SYSTEM ENGAGED"
-  },
-  DAY_C: {
-    next: "DAY_D",
-    title: "DAY D // Trunk Fortress & Core Integrity",
-    reason: "Axial Decompression: Heavy compound carries and leg work cleared. Anti-rotation core pillar and pelvic stabilization primed.",
-    tag: "🛡️ TACTICAL RECON // CORE FORTRESS"
-  },
-  DAY_D: {
-    next: "DAY_E",
-    title: "DAY E // Hypertrophy & Machine Overload",
-    reason: "Isolation Surge: Core stability secured. Machine-guided volume hypertrophy on Cybex track fully unlocked with zero spinal fatigue.",
-    tag: "⚡ TACTICAL RECON // HYPERTROPHY TRACK"
-  },
-  DAY_E: {
-    next: "DAY_F",
-    title: "DAY F // Joint Sparing & Deload Recon",
-    reason: "Connective Preservation: Heavy machine volume completed. Active joint sparing, rear delts, and adductor reset advised before heavy strike.",
-    tag: "🛡️ TACTICAL RECON // JOINT PRESERVATION"
-  },
-  DAY_F: {
-    next: "DAY_A",
-    title: "DAY A // Hinge & Horizontal Power",
-    reason: "System Recharged: Connective tissue and CNS fully restored from deload. Heavy hinge and horizontal pressing cleared for maximum output.",
-    tag: "⚡ TACTICAL RECON // MAXIMUM POWER"
-  },
-  CH_1RM: {
-    next: "DAY_F",
-    title: "DAY F // Joint Sparing & Deload Recon",
-    reason: "Neural Down-Regulation: Heavy CNS output expended on 1RM benchmark strikes. Low-intensity joint recon strictly advised to flush systemic fatigue.",
-    tag: "🛡️ TACTICAL RECON // CNS RECOVERY"
-  },
-  CH_AMRAP: {
-    next: "DAY_D",
-    title: "DAY D // Trunk Fortress & Core Integrity",
-    reason: "Metabolic Reset: Muscular failure reached on compound stations. Core anti-rotation and posture carries advised to reset biomechanical alignment.",
-    tag: "🛡️ TACTICAL RECON // ALIGNMENT RESET"
-  }
-};
+const DEDICATED_CARDIO_DAYS = ['DAY_G', 'DAY_H', 'DAY_I'];
 
-export function getRecommendedFlightPath() {
-  let lastStage = localStorage.getItem('sonic_last_stage');
-  const hadStrain = localStorage.getItem('sonic_last_strain') === 'true';
+/**
+ * Evaluates whether at least one cardio sortie (Days G/H/I or cardio finisher)
+ * was completed within the rolling 7-day training window.
+ */
+export function evaluateWeeklyCardioStatus(sessionHistory = []) {
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
 
-  // Check stage statuses synced from COMMAND_HUB
-  let stageStatuses = {};
-  try {
-    const raw = localStorage.getItem('sonic_stage_statuses');
-    if (raw) stageStatuses = JSON.parse(raw);
-  } catch (e) {}
+  // Filter sessions logged in the last 7 days
+  const recentSessions = sessionHistory.filter(s => {
+    const sessionDate = new Date(s.timestamp || s.date || s.Timestamp);
+    return !isNaN(sessionDate) && sessionDate >= sevenDaysAgo;
+  });
 
-  // If lastStage was not set yet, check which stages are already Cleared in COMMAND_HUB
-  if (!lastStage) {
-    if (stageStatuses["DAY_B"] === "Cleared") {
-      lastStage = "DAY_B";
-    } else if (stageStatuses["DAY_A"] === "Cleared") {
-      lastStage = "DAY_A";
-    } else {
-      lastStage = "DAY_B"; // Default to Day B completed today
-    }
-  }
+  // Check 1: Did any recent session use Day G, H, or I?
+  const hasDedicatedCardio = recentSessions.some(s => {
+    const stage = (s.stage || s.Stage || '').toUpperCase();
+    return DEDICATED_CARDIO_DAYS.includes(stage);
+  });
 
-  // Shield compromised / joint strain override: locks out heavy compounds
-  if (hadStrain) {
-    return {
-      stageKey: "DAY_F",
-      title: "DAY F // Joint Sparing & Deload Recon",
-      reason: "SHIELD COMPROMISED: Joint strain was flagged during your previous session. High-load compounds are locked out; active deload and joint recon are required to restore 100% Shield.",
-      tag: "⚠️ SHIELD BUFFER // RECOVERY DIRECTIVE",
-      isRecovery: true
-    };
-  }
+  // Check 2: Did any lifting session log sets with cardio movements?
+  const hasCardioFinisher = recentSessions.some(s => {
+    if (!Array.isArray(s.sets)) return false;
+    return s.sets.some(set => CARDIO_CONFIGS[set.exercise] !== undefined);
+  });
 
-  let route = FLIGHT_PATH_ROUTING[lastStage] || FLIGHT_PATH_ROUTING.DAY_B;
-
-  // If the suggested stage is already marked Cleared, advance forward to next pending stage
-  let hops = 0;
-  while (stageStatuses[route.next] === "Cleared" && hops < 8) {
-    const nextHop = FLIGHT_PATH_ROUTING[route.next];
-    if (!nextHop) break;
-    route = nextHop;
-    hops++;
-  }
+  const cardioFulfilled = hasDedicatedCardio || hasCardioFinisher;
+  const daysSinceMonday = (now.getDay() + 6) % 7; // 0 = Mon, 6 = Sun
+  const isUrgent = !cardioFulfilled && daysSinceMonday >= 3; // Urgent starting Thursday
 
   return {
-    stageKey: route.next,
-    title: route.title,
-    reason: route.reason,
-    tag: route.tag,
-    isRecovery: false
+    cardioFulfilled,
+    hasDedicatedCardio,
+    hasCardioFinisher,
+    isUrgent,
+    sessionsInWindow: recentSessions.length
   };
 }
 
-export function checkAndRenderFlightPathPrompt(activeSession, onEngage) {
-  // Don't show if active session already has sets logged
-  if (activeSession.sets && activeSession.sets.length > 0) return;
+/**
+ * Recommends the next sortie, elevating Days G/H/I if weekly cardio is pending.
+ */
+export function determineFlightPath(lastStages = [], sessionHistory = []) {
+  const cardioStatus = evaluateWeeklyCardioStatus(sessionHistory);
 
-  const container = document.querySelector('.container');
-  const stageNav = document.querySelector('.stage-nav') || document.querySelector('.stage-tabs');
-  if (!container || !stageNav) return;
+  // If weekly cardio is unfulfilled and we are mid-to-late week, force Days G/H/I
+  if (!cardioStatus.cardioFulfilled && cardioStatus.isUrgent) {
+    // Pick the least recently completed cardio stage among G, H, I
+    const cardioChoices = ['DAY_G', 'DAY_H', 'DAY_I'];
+    const lastCardio = lastStages.find(stg => cardioChoices.includes(stg));
+    const nextCardio = cardioChoices.find(c => c !== lastCardio) || 'DAY_G';
 
-  const existing = document.getElementById('flightPathPrompt');
-  if (existing) existing.remove();
+    return {
+      recommendedStage: nextCardio,
+      reason: "WEEKLY CARDIO GUARANTEE: No conditioning logged in 7 days.",
+      isCardioOverride: true,
+      canPairFinisher: true
+    };
+  }
 
-  const rec = getRecommendedFlightPath();
+  // Standard lifting rotation fallback (Day A -> Day B -> Day C -> Day D -> Day E -> Day F)
+  const lastStage = lastStages[0] || 'DAY_A';
+  const rotation = ['DAY_A', 'DAY_B', 'DAY_C', 'DAY_D', 'DAY_E', 'DAY_F'];
+  const nextIdx = (rotation.indexOf(lastStage) + 1) % rotation.length;
+  const nextStage = rotation[nextIdx] || 'DAY_A';
 
-  const promptCard = document.createElement('div');
-  promptCard.id = 'flightPathPrompt';
-  promptCard.className = `flight-path-card ${rec.isRecovery ? 'shield-recovery' : ''}`;
-  promptCard.innerHTML = `
-    <div class="flight-path-header">
-      <span class="flight-path-tag">${rec.tag}</span>
-      <span style="font-size: 10px; color: var(--text-dim); font-weight: 700;">AUTO-RECON</span>
-    </div>
-    <div class="flight-path-stage-title">${rec.title}</div>
-    <div class="flight-path-rationale">${rec.reason}</div>
-    <div class="flight-path-actions">
-      <button class="btn-engage-path" id="engagePathBtn">ENGAGE FLIGHT PATH [✓]</button>
-      <button class="btn-bypass-path" id="bypassPathBtn">CHOOSE OWN PATH [✕]</button>
+  return {
+    recommendedStage: nextStage,
+    reason: "STANDARD ROTATION FLIGHT PATH",
+    isCardioOverride: false,
+    canPairFinisher: !cardioStatus.cardioFulfilled
+  };
+}
+
+/**
+ * Checks and renders the prompt banner on HUD startup
+ */
+export function checkAndRenderFlightPathPrompt(activeSession, onSelectStage) {
+  const container = document.getElementById('flightPathMount') || document.getElementById('stageRecordBanner');
+  if (!container) return;
+
+  const rawHistory = localStorage.getItem('sonic_session_history');
+  let history = [];
+  try { history = JSON.parse(rawHistory) || []; } catch (e) {}
+
+  const lastStage = localStorage.getItem('sonic_last_stage') || 'DAY_A';
+  const flight = determineFlightPath([lastStage], history);
+
+  // Check if banner already exists
+  let banner = document.getElementById('flightPathPromptBanner');
+  if (!banner) {
+    banner = document.createElement('div');
+    banner.id = 'flightPathPromptBanner';
+    banner.className = 'flight-path-banner';
+    container.parentNode.insertBefore(banner, container.nextSibling);
+  }
+
+  banner.innerHTML = `
+    <div style="display: flex; justify-content: space-between; align-items: center; background: rgba(14, 165, 233, 0.12); border: 1.5px solid var(--accent-blue, #38bdf8); padding: 10px 14px; border-radius: 8px; margin-bottom: 12px;">
+      <div>
+        <div style="font-size: 10px; font-weight: 800; color: #38bdf8; letter-spacing: 0.5px;">
+          ${flight.isCardioOverride ? '🚨 FLIGHT PATH MANDATE' : '🧭 FLIGHT PATH RECOMMENDATION'}
+        </div>
+        <div style="font-size: 13px; font-weight: 800; color: #f8fafc; margin-top: 2px;">
+          ${flight.recommendedStage.replace('_', ' ')}: <span style="font-size: 11px; font-weight: 600; color: #94a3b8;">${flight.reason}</span>
+        </div>
+      </div>
+      <button id="acceptFlightPathBtn" type="button" style="background: #0284c7; border: none; color: #fff; font-size: 11px; font-weight: 800; padding: 6px 12px; border-radius: 6px; cursor: pointer;">
+        ENGAGE
+      </button>
     </div>
   `;
 
-  container.insertBefore(promptCard, stageNav);
-
-  const engageBtn = promptCard.querySelector('#engagePathBtn');
-  if (engageBtn) {
-    engageBtn.onclick = () => {
-      localStorage.setItem('sonic_flight_prompt_dismissed', Date.now());
-      dismissFlightPathPrompt();
-      if (onEngage) onEngage(rec.stageKey);
+  const btn = document.getElementById('acceptFlightPathBtn');
+  if (btn) {
+    btn.onclick = () => {
+      if (typeof onSelectStage === 'function') onSelectStage(flight.recommendedStage);
+      banner.style.display = 'none';
     };
   }
-
-  const bypassBtn = promptCard.querySelector('#bypassPathBtn');
-  if (bypassBtn) {
-    bypassBtn.onclick = () => {
-      localStorage.setItem('sonic_flight_prompt_dismissed', Date.now());
-      dismissFlightPathPrompt();
-    };
-  }
-}
-
-export function dismissFlightPathPrompt() {
-  const prompt = document.getElementById('flightPathPrompt');
-  if (!prompt) return;
-  prompt.style.transition = 'all 0.25s ease';
-  prompt.style.opacity = '0';
-  prompt.style.transform = 'translateY(-10px)';
-  setTimeout(() => prompt.remove(), 250);
 }
