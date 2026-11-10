@@ -30,8 +30,8 @@ import {
 } from './ui/renderArtifacts.js';
 import { getTotalRedRings } from './ui/renderVault.js';
 import { renderVault, creditVaultRings, saveVaultData } from './ui/renderVault.js';
-import { renderSkillTree, switchSkillTreeBranch, unlockPerk, getUnlockedPerks } from './ui/renderSkillTree.js';
-import { initMusicDrawer } from './ui/renderMusicDrawer.js';
+import { renderSkillTree, switchSkillTreeBranch, unlockPerk } from './ui/renderSkillTree.js';
+import { initMusicDrawer, toggleMusicDrawer } from './ui/renderMusicDrawer.js';
 import { switchMainTab } from './ui/renderTabs.js';
 import { renderPRVaultUI } from './ui/renderPRVault.js';
 
@@ -101,13 +101,16 @@ function saveSessionState() {
   updateTonnageDisplay();
 }
 
+// -------------------------------------------------------------
+// DYNAMIC MOVEMENT TARGET & REP PARAMETER RESOLVER
+// -------------------------------------------------------------
 function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
   if (!exerciseName) return { targetText: defaultSlotTarget, defaultReps: 8 };
 
   const name = exerciseName.toLowerCase();
 
-  // Embedded specific rep notes in name
-  const matchReps = exerciseName.match(/\((\d+r\/side|\d+-\d+|\d+s hold|\d+ reps?)/i);
+  // 1. Embedded specific rep/hold notes in name (e.g. 12r/side, 5s Hold)
+  const matchReps = exerciseName.match(/\((\d+r\/side|\d+[-–—]\d+|\d+s hold|\d+ reps?)/i);
   if (matchReps) {
     const raw = matchReps[1];
     const numMatch = raw.match(/\d+/);
@@ -117,25 +120,30 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
     };
   }
 
-  // Carries (Paces)
+  // 2. Carries (Paces)
   if (name.includes('carry') || (name.includes('walk') && !name.includes('treadmill'))) {
-    return { targetText: "3 × 40–50 paces", defaultReps: 50 };
+    return { targetText: "3 × 40-50 paces", defaultReps: 50 };
   }
 
-  // Isometric holds
+  // 3. Isometric Core Holds
   if (name.includes('hold') || name.includes('plank')) {
-    return { targetText: "3 × 20–30s hold", defaultReps: 30 };
+    return { targetText: "3 × 20-30s hold", defaultReps: 30 };
   }
 
-  // High-rep isolation & delts
+  // 4. Honor explicit slot brackets (e.g. Day F "3x10-12", "3x8-10", "3x6-8")
+  const slotMatch = (defaultSlotTarget || '').match(/(\d+)\s*[-–—]\s*(\d+)/);
+  if (slotMatch) {
+    const minR = parseInt(slotMatch[1], 10);
+    const maxR = parseInt(slotMatch[2], 10);
+    return { targetText: `3 × ${minR}-${maxR}`, defaultReps: maxR };
+  }
+
+  // 5. Unconfigured isolation / machine accessories fallback
   if (name.includes('fly') || name.includes('lateral') || name.includes('curl') || name.includes('extension')) {
-    return { targetText: "3 × 12–15", defaultReps: 15 };
+    return { targetText: "3 × 12-15", defaultReps: 15 };
   }
 
-  // Fallback to slot definition
-  const slotMatch = (defaultSlotTarget || '').match(/(\d+)-(\d+)/);
-  const fallbackReps = slotMatch ? parseInt(slotMatch[2], 10) : 8;
-  return { targetText: `TARGET: ${defaultSlotTarget}`, defaultReps: fallbackReps };
+  return { targetText: defaultSlotTarget, defaultReps: 8 };
 }
 
 function loadSlotData() {
@@ -297,12 +305,15 @@ export function logActiveSet() {
     displayMetric = cMetrics.display;
   }
 
+  const resolved = resolveExerciseTarget(exercise, slotDef.target);
+
   const completedSetObj = {
     slot: slotDef.slot,
     exercise,
     setNum: setsInSlot,
     load,
     reps,
+    target: resolved.targetText,
     equivReps,
     equivVolume,
     displayMetric,
@@ -331,7 +342,6 @@ export function logActiveSet() {
   }
 
   // 3. Reset toggle state and button for the next set
-
   saveSessionState();
   renderSessionUI();
   playRingChime();
@@ -407,6 +417,8 @@ export function togglePain() {
       btn.innerText = "Joint Strain: No";
     }
   }
+  saveSessionState();
+  renderSessionUI();
 }
 
 function renderSessionUI() {
@@ -422,7 +434,7 @@ function renderSessionUI() {
     clearBtn.style.background = activeSession.prehabChecked ? '#166534' : '';
   }
 
-const shield = document.getElementById('shieldStatus');
+  const shield = document.getElementById('shieldStatus');
   if (shield) {
     const isStrained = activeSession.jointPain || activeSession.sets.some(s => s.jointPain);
     if (isStrained) {
@@ -611,7 +623,12 @@ window.renderPrehabInstructions = renderPrehabInstructions;
 window.finishSession = finishSession;
 window.toggleTempo = toggleTempo;
 window.togglePain = togglePain;
-window.hasPerk = hasPerk;
+window.switchMainTab = switchMainTab;
+window.renderPRVaultUI = renderPRVaultUI; 
+window.renderVault = renderVault;
+window.renderSkillTree = renderSkillTree;
+window.switchSkillTreeBranch = switchSkillTreeBranch;
+window.unlockPerk = unlockPerk;
 
 window.applyTimeBrake = () => applyTimeBrake((secs) => {
   const mins = Math.floor(secs / 60);
@@ -633,6 +650,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderVault();
   renderArtifactsTray();
   initMusicDrawer();
+
+  const dockMusicBtn = document.getElementById('dockMusicToggleBtn');
+  if (dockMusicBtn) {
+    dockMusicBtn.onclick = toggleMusicDrawer;
+  }
   initTimerBackgroundSync();
   checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
     selectStage(nextStage);
@@ -723,11 +745,11 @@ document.addEventListener('DOMContentLoaded', async () => {
         });
       }
       if (data.prVault) {
-  savePRVault(data.prVault);
-  if (typeof renderPRVaultUI === 'function') {
-    renderPRVaultUI();
-  }
-}
+        savePRVault(data.prVault);
+        if (typeof renderPRVaultUI === 'function') {
+          renderPRVaultUI();
+        }
+      }
       if (data.vault && Array.isArray(data.vault) && data.vault.length > 0) {
         saveVaultData(data.vault);
       }
@@ -839,8 +861,8 @@ window.__sonicDev = {
   testTempoDamage: () => applySuperSonicDamagePenalty('tempo'),
   engageSuper: () => window.activateSuperModeSession(),
   revertSuper: () => window.deactivateSuperModeSession(),
-  getPerks: () => (typeof getUnlockedPerks === 'function' ? getUnlockedPerks() : []),
-  openSkills: () => switchMainTab('skillsTab'),
+  getPerks: () => getUnlockedPerks(),
+  openSkills: () => toggleSkillTreeDrawer(),
 
   toggleDarkspine: (forceState) => {
     devDarkspineOverride = typeof forceState === 'boolean' ? forceState : !devDarkspineOverride;
@@ -871,9 +893,3 @@ window.__sonicDev = {
   }
 };
 console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicDev');
-window.switchMainTab = switchMainTab;
-window.renderPRVaultUI = renderPRVaultUI; 
-window.renderVault = renderVault;
-window.renderSkillTree = renderSkillTree;
-window.switchSkillTreeBranch = switchSkillTreeBranch;
-window.unlockPerk = unlockPerk;
