@@ -2972,3 +2972,85 @@ body {
   padding: 12px 12px 100px 12px; /* 100px bottom clearance for persistent dock */
   box-sizing: border-box;
 }
+/* docs/styles.css */
+
+/* ------------------------------------------------------------- */
+/* FLIGHT PATH COMPACT BRIEFING CARD (OPTION B)                 */
+/* ------------------------------------------------------------- */
+#flightPathMount {
+  width: 100%;
+  margin-bottom: 8px;
+}
+
+.flight-path-card {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  background: rgba(14, 165, 233, 0.08);
+  border: 1px solid rgba(56, 189, 248, 0.35);
+  border-radius: 8px;
+  padding: 8px 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.25);
+}
+
+.flight-path-card.is-mandate {
+  background: rgba(239, 68, 68, 0.08);
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+.flight-path-info {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.flight-path-tag {
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 0.6px;
+  text-transform: uppercase;
+  color: var(--accent-blue, #38bdf8);
+}
+
+.flight-path-card.is-mandate .flight-path-tag {
+  color: var(--accent-red, #ef4444);
+}
+
+.flight-path-text {
+  font-size: 12px;
+  font-weight: 700;
+  color: #f8fafc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.flight-path-text span {
+  font-size: 11px;
+  font-weight: 500;
+  color: #94a3b8;
+}
+
+.btn-engage-flight {
+  background: #0284c7;
+  color: #ffffff;
+  border: none;
+  font-size: 10px;
+  font-weight: 900;
+  padding: 6px 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  letter-spacing: 0.5px;
+  flex-shrink: 0;
+  transition: transform 0.1s ease, background 0.15s ease;
+}
+
+.flight-path-card.is-mandate .btn-engage-flight {
+  background: #dc2626;
+}
+
+.btn-engage-flight:active {
+  transform: scale(0.96);
+}
