@@ -903,3 +903,36 @@ window.__sonicDev = {
   }
 };
 console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicDev');
+// docs/js/app.js
+
+export function appendCardioFinisherSlot() {
+  const stageDef = STAGES[activeStageKey];
+  if (!stageDef) return;
+
+  // Prevent duplicating the finisher slot if already added
+  const existingFinisher = stageDef.slots.find(s => s.isModularFinisher);
+  if (existingFinisher) {
+    showToast('Conditioning Finisher already attached to active sortie.');
+    return;
+  }
+
+  const finisherSlot = {
+    slot: `${activeStageKey.replace('DAY_', '')}5`,
+    target: "10-12 Mins @ Zone 2",
+    primary: "Incline Treadmill Walk (Zone 2)",
+    defaultLoad: 10, // 10% incline
+    isModularFinisher: true,
+    alts: [
+      "Incline Treadmill Walk (Zone 2)",
+      "Airdyne Bike (Interval Cadence)",
+      "Concept2 Rower (Zone 2 Pace)"
+    ]
+  };
+
+  stageDef.slots.push(finisherSlot);
+  renderSlotStepper();
+  showToast('⚡ MODULAR CARDIO FINISHER APPENDED TO SORTIE');
+}
+
+// Bind to window for HUD or prompt buttons
+window.appendCardioFinisherSlot = appendCardioFinisherSlot;
