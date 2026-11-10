@@ -104,13 +104,14 @@ function saveSessionState() {
 // -------------------------------------------------------------
 // DYNAMIC MOVEMENT TARGET & REP PARAMETER RESOLVER
 // -------------------------------------------------------------
+
 function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
   if (!exerciseName) return { targetText: defaultSlotTarget, defaultReps: 8 };
 
   const name = exerciseName.toLowerCase();
 
-  // 1. Embedded specific rep/hold notes in name (e.g. 12r/side, 5s Hold)
-  const matchReps = exerciseName.match(/\((\d+r\/side|\d+[-–—]\d+|\d+s hold|\d+ reps?)/i);
+  // 1. Embedded specific rep/hold notes in name: (12r/side), (5s hold), (45s), etc.
+  const matchReps = exerciseName.match(/\((\d+r\/side|\d+[-–—]\d+|\d+s hold|\d+s|\d+ reps?)/i);
   if (matchReps) {
     const raw = matchReps[1];
     const numMatch = raw.match(/\d+/);
@@ -120,17 +121,36 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
     };
   }
 
-  // 2. Carries (Paces)
-  if (name.includes('carry') || (name.includes('walk') && !name.includes('treadmill'))) {
+  // 2. Carries & Locomotion (Paces)
+  if (name.includes('carry') || (name.includes('walk') && !name.includes('treadmill')) || name.includes('crawl')) {
     return { targetText: "3 × 40-50 paces", defaultReps: 50 };
   }
 
-  // 3. Isometric Core Holds
-  if (name.includes('hold') || name.includes('plank')) {
+  // 3. Isometric Holds & Core Bracing (Seconds)
+  if (name.includes('hold') || name.includes('plank') || name.includes('deadbug')) {
     return { targetText: "3 × 20-30s hold", defaultReps: 30 };
   }
 
-  // 4. Honor explicit slot brackets (e.g. Day F "3x10-12", "3x8-10", "3x6-8")
+  // 4. Isolation, Hip Armor & Accessories (Adduction, Abduction, Flyes, Raises, Curls, Extensions)
+  if (
+    name.includes('adduct') || 
+    name.includes('abduct') || 
+    name.includes('fly') || 
+    name.includes('lateral') || 
+    name.includes('curl') || 
+    name.includes('extension') || 
+    name.includes('raise') || 
+    name.includes('rotation')
+  ) {
+    return { targetText: "3 × 12-15", defaultReps: 15 };
+  }
+
+  // 5. Trunk & Core Compression
+  if (name.includes('crunch') || name.includes('pallof')) {
+    return { targetText: "3 × 10-12", defaultReps: 12 };
+  }
+
+  // 6. Inherit the stage slot definition if no specific movement override matched
   const slotMatch = (defaultSlotTarget || '').match(/(\d+)\s*[-–—]\s*(\d+)/);
   if (slotMatch) {
     const minR = parseInt(slotMatch[1], 10);
@@ -138,14 +158,8 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
     return { targetText: `3 × ${minR}-${maxR}`, defaultReps: maxR };
   }
 
-  // 5. Unconfigured isolation / machine accessories fallback
-  if (name.includes('fly') || name.includes('lateral') || name.includes('curl') || name.includes('extension')) {
-    return { targetText: "3 × 12-15", defaultReps: 15 };
-  }
-
   return { targetText: defaultSlotTarget, defaultReps: 8 };
 }
-
 function loadSlotData() {
   const stageDef = STAGES[activeStageKey];
   if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
