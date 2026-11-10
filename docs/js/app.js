@@ -501,9 +501,15 @@ function renderSessionUI() {
   }
 }
 
+// docs/js/app.js
+
 function ensureStageTabsExist() {
   const stageNav = document.querySelector('.stage-nav') || document.querySelector('.stage-tabs');
   if (!stageNav) return;
+
+  const ch1rmTab = document.getElementById('tab-CH_1RM');
+  // Only use ch1rmTab as reference node if it is a verified direct child of stageNav
+  const insertRef = (ch1rmTab && ch1rmTab.parentNode === stageNav) ? ch1rmTab : null;
 
   ['DAY_G', 'DAY_H', 'DAY_I'].forEach(key => {
     if (!document.getElementById(`tab-${key}`)) {
@@ -513,9 +519,8 @@ function ensureStageTabsExist() {
       tab.innerText = key.replace('_', ' ');
       tab.onclick = () => selectStage(key);
 
-      const ch1rmTab = document.getElementById('tab-CH_1RM');
-      if (ch1rmTab) {
-        stageNav.insertBefore(tab, ch1rmTab);
+      if (insertRef) {
+        stageNav.insertBefore(tab, insertRef);
       } else {
         stageNav.appendChild(tab);
       }
