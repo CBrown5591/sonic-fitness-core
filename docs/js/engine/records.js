@@ -1,41 +1,43 @@
 // -------------------------------------------------------------
-// STAGE HIGH SCORE & COURSE RECORDS ENGINE
+// STAGE HIGH SCORE & COURSE RECORDS ENGINE (ZERO LOCALSTORAGE)
 // Modular Engine: records.js
 // -------------------------------------------------------------
 
+// Runtime in-memory stores (hydrated from Google Sheet telemetry on boot)
+let runtimeStageRecords = {};
+let runtimePRVault = {};
+
+export function setRuntimeStageRecords(records) {
+  runtimeStageRecords = records || {};
+}
+
 export function getStageRecords() {
-  const stored = localStorage.getItem('sonic_stage_records');
-  if (stored) {
-    try { return JSON.parse(stored); } catch (e) {}
-  }
-  return {};
+  return runtimeStageRecords;
+}
+
+export function setRuntimePRVault(vault) {
+  runtimePRVault = vault || {};
+}
+
+export function getPRVault() {
+  return runtimePRVault;
+}
+
+export function savePRVault(data) {
+  runtimePRVault = data || {};
 }
 
 export function saveStageRecord(stageKey, score, rank) {
-  const records = getStageRecords();
-  const currentBest = records[stageKey] ? records[stageKey].bestScore : 0;
+  const currentBest = runtimeStageRecords[stageKey] ? runtimeStageRecords[stageKey].bestScore : 0;
   let isNewRecord = false;
 
   if (score > currentBest) {
-    records[stageKey] = {
+    runtimeStageRecords[stageKey] = {
       bestScore: score,
       rank: rank,
       date: new Date().toISOString().split('T')[0]
     };
-    localStorage.setItem('sonic_stage_records', JSON.stringify(records));
     isNewRecord = true;
   }
-  return { isNewRecord, record: records[stageKey] };
-}
-
-export function getPRVault() {
-  const stored = localStorage.getItem('sonic_pr_vault');
-  if (stored) {
-    try { return JSON.parse(stored); } catch (e) {}
-  }
-  return {};
-}
-
-export function savePRVault(data) {
-  localStorage.setItem('sonic_pr_vault', JSON.stringify(data));
+  return { isNewRecord, record: runtimeStageRecords[stageKey] };
 }
