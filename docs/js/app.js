@@ -766,44 +766,40 @@ document.addEventListener('DOMContentLoaded', async () => {
 
 // docs/js/app.js (inside DOMContentLoaded)
 
-  bandBtn.onclick = () => {
-    currentSlotGearMode = 'BANDS';
-    bandBtn.style.background = '#38bdf8';
-    bandBtn.style.color = '#0f172a';
-    gymBtn.style.background = 'transparent';
-    gymBtn.style.color = '#94a3b8';
+ bandBtn.onclick = () => {
+      currentSlotGearMode = 'BANDS';
+      bandBtn.style.background = '#38bdf8';
+      bandBtn.style.color = '#0f172a';
+      gymBtn.style.background = 'transparent';
+      gymBtn.style.color = '#94a3b8';
 
-    const stageDef = STAGES[activeStageKey];
-    const slotDef = stageDef?.slots?.[activeSlotIndex];
-    const gymPrimary = slotDef ? slotDef.primary : '';
+      // 1. Swap dropdown options to banded movements and mount band selector DOM
+      hydrateExerciseDropdown();
+      syncEquipmentInputs();
 
-    // Pull the real gym working load from PR_VAULT or slot default
-    const prVault = getPRVault();
-    const gymPR = prVault[gymPrimary];
-    let gymWorkingLoad = parseFloat(document.getElementById('loadInput')?.value);
-    if (!gymWorkingLoad || gymWorkingLoad < 60) {
-      gymWorkingLoad = (gymPR && gymPR.load) ? gymPR.load : (slotDef?.defaultLoad || 235);
-    }
+      // 2. Fetch active exercise and slot parameters
+      const stageDef = STAGES[activeStageKey];
+      const slotDef = stageDef?.slots?.[activeSlotIndex];
+      const gymPrimary = slotDef ? slotDef.primary : '';
+      const slotTarget = slotDef ? slotDef.target : "3x8-10";
+      const currentBandExercise = document.getElementById('exerciseSelect')?.value || '';
 
-    hydrateExerciseDropdown();
-    syncEquipmentInputs(); // Mounts the container and saves activeSelectionCallback
+      // 3. Solve initial band preset via stage-specific 1RM math
+      const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
+        currentBandExercise,
+        gymPrimary,
+        slotTarget,
+        slotDef?.defaultLoad || 50
+      );
 
-   const slotTarget = slotDef ? slotDef.target : "3x8-10";
-    const currentBandExercise = document.getElementById('exerciseSelect')?.value || '';
-    
-    const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
-      currentBandExercise,
-      gymPrimary,
-      slotTarget,
-      slotDef?.defaultLoad || 50
-    );
-
-    if (selectedKeys.length > 0) {
-      setActiveBandSelection(selectedKeys);
-    }
-    if (nominalTotal > 0 && document.getElementById('loadInput')) {
-      document.getElementById('loadInput').value = nominalTotal;
-    }
+      // 4. Activate pills and populate numeric load input
+      if (selectedKeys && selectedKeys.length > 0) {
+        setActiveBandSelection(selectedKeys);
+      }
+      if (nominalTotal > 0 && document.getElementById('loadInput')) {
+        document.getElementById('loadInput').value = nominalTotal;
+      }
+    };
 
     if (selectedKeys.length > 0) {
       setActiveBandSelection(selectedKeys);
@@ -862,7 +858,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       const pr = prVault[val];
       const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(val);
 
+     // docs/js/app.js (inside exSelect.onchange)
+
       if (isBand) {
+        // 1. Mount fresh band buttons for the newly selected exercise
+        syncEquipmentInputs();
+
+        // 2. Solve preset for the new movement
         const gymPrimary = slotDef ? slotDef.primary : '';
         const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
           val, 
@@ -871,8 +873,8 @@ document.addEventListener('DOMContentLoaded', async () => {
           slotDef?.defaultLoad || 50
         );
 
-        syncEquipmentInputs();
-        if (typeof setActiveBandSelection === 'function' && selectedKeys.length > 0) {
+        // 3. Activate the resolved band pills
+        if (typeof setActiveBandSelection === 'function' && selectedKeys && selectedKeys.length > 0) {
           setActiveBandSelection(selectedKeys);
         }
         const loadInput = document.getElementById('loadInput');
