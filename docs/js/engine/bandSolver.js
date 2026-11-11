@@ -47,7 +47,7 @@ export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, slot
   const prVault = getPRVault();
   const candidateBands = getBandsForMovement(bandExerciseName);
 
-  // STEP 1: Does this exact BAND movement have an existing PR?
+  // STEP 1: Dedicated Band PR History Check
   const dedicatedPR = prVault[bandExerciseName];
   if (dedicatedPR && dedicatedPR.load > 0) {
     const bandTargetLoad = (dedicatedPR.e1rm && dedicatedPR.e1rm > 0)
@@ -56,8 +56,7 @@ export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, slot
     return solveBestBandCombination(bandTargetLoad, candidateBands);
   }
 
-  // STEP 2: Identify primary counterpart and check if it has a registered PR
-// 1. Identify primary counterpart (strip parenthetical qualifiers for PR lookup)
+  // STEP 2: Identify primary counterpart (strip qualifiers for PR lookup)
   const trueGymName = getGymCounterpart(bandExerciseName) || gymExerciseName;
   const cleanGymName = trueGymName.replace(/\s*\([^)]*\)/g, '').trim();
   const gymPR = prVault[cleanGymName] || prVault[trueGymName];
@@ -65,13 +64,13 @@ export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, slot
   let stageGymLoad = defaultFallbackLoad;
   let multiplier = getMovementScaler(bandExerciseName || trueGymName);
 
-  // 2. High-Rep / Metcon Cadence Dampener (20+ reps)
+  // Metcon Cadence Dampener (20+ reps)
   const isHighRepMetcon = slotTarget.includes('20') || slotTarget.includes('25') || (bandExerciseName || '').toLowerCase().includes('tempo');
   if (isHighRepMetcon && (bandExerciseName || '').toLowerCase().includes('front squat')) {
     multiplier = 0.20; // Drops metcon front squat from 0.50x down to light cadence
   }
 
-  // 3. Stage Gym Load Resolution
+  // STEP 3: Counterpart Stage Load Resolution
   if (gymPR && gymPR.e1rm > 0) {
     stageGymLoad = calculateTargetLoad(gymPR.e1rm, slotTarget, defaultFallbackLoad, trueGymName);
   } else if (gymPR && gymPR.load > 0) {
@@ -84,14 +83,8 @@ export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, slot
     stageGymLoad = defaultFallbackLoad;
   }
 
-  // 4. Final Band Load Calculation & Preset Solution
+  // Calculate final effective load and solve
   const effectiveBandLoad = Math.max(15, Math.round(stageGymLoad * multiplier));
-  return solveBestBandCombination(effectiveBandLoad, candidateBands);
-}
-  // Apply movement modifier to the stage load
-  const effectiveBandLoad = Math.max(10, Math.round(stageGymLoad * multiplier));
-
-  // Snap to closest valid band combination
   return solveBestBandCombination(effectiveBandLoad, candidateBands);
 }
 
