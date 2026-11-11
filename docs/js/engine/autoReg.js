@@ -78,7 +78,20 @@ export function autoRegulateNextSet(completedSet) {
   const { minReps, maxReps } = parseRepBracket(targetStr, fallbackFloor, fallbackFloor + 2);
 
   const isDumbbell = isDumbbellMovement(exercise);
+  // Inside autoRegulateNextSet() in docs/js/engine/autoReg.js:
+  const isBand = (exercise || '').toLowerCase().includes('band') || 
+               (exercise || '').toLowerCase().includes('loop') ||
+               (exercise || '').toLowerCase().includes('pull-through');
 
+if (isBand) {
+  if (reps >= maxReps && rpe <= 7.5 && tempoClean && !jointPain) {
+    return {
+      load: currentLoad,
+      reps: minReps,
+      message: `★ BRACKET CLEARED (${reps}r @ RPE ${rpe})! Step up to next band tier or stack a micro band × ${minReps} reps.`
+    };
+  }
+}
   // 1. Safety Hold / Joint Strain / Severe Overshoot (RPE >= 9.5)
   if (jointPain || numRpe >= 9.5) {
     const deLoad = Math.max(5, numLoad - 5);
