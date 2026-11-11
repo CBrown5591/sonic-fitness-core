@@ -819,7 +819,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const timeBrakeBtn = document.getElementById('timeBrakeBtn');
   if (timeBrakeBtn) timeBrakeBtn.onclick = window.applyTimeBrake;
 
-const exSelect = document.getElementById('exerciseSelect');
+// docs/js/app.js (inside DOMContentLoaded listener)
+
+  const exSelect = document.getElementById('exerciseSelect');
   if (exSelect) {
     exSelect.onchange = () => {
       const val = exSelect.value;
@@ -845,7 +847,6 @@ const exSelect = document.getElementById('exerciseSelect');
       const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(val);
 
       if (isBand) {
-        // BAND MODE: Resolve preset and mount pills
         const gymPrimary = slotDef ? slotDef.primary : '';
         const gymBaseLoad = getDefaultGymLoad(gymPrimary, slotDef?.defaultLoad);
         const { selectedKeys, nominalTotal } = resolveInitialBandPreset(val, gymPrimary, gymBaseLoad);
@@ -856,9 +857,7 @@ const exSelect = document.getElementById('exerciseSelect');
         }
         const loadInput = document.getElementById('loadInput');
         if (loadInput) loadInput.value = nominalTotal;
-
       } else {
-        // GYM MODE: Calculate from PR or category default
         const baseLoad = getDefaultGymLoad(val, slotDef?.defaultLoad);
         const dynamicLoad = pr && pr.e1rm > 0 
           ? calculateTargetLoad(pr.e1rm, defaultTarget, baseLoad, val) 
