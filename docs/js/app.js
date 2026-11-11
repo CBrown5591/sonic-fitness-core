@@ -204,6 +204,7 @@ function hydrateExerciseDropdown() {
     });
     select.value = getBandEquivalent(slotDef.primary);
   }
+}
 
   // Trigger movement intel, target bracket, and load recalculation
   select.dispatchEvent(new Event('change'));
@@ -773,18 +774,17 @@ document.addEventListener('DOMContentLoaded', async () => {
       gymBtn.style.background = 'transparent';
       gymBtn.style.color = '#94a3b8';
 
-      // 1. Swap dropdown options & mount selector DOM
+      // 1. Populate dropdown with banded alternates
       hydrateExerciseDropdown();
-      syncEquipmentInputs();
 
-      // 2. Fetch active slot definitions
+      // 2. Fetch parameters
       const stageDef = STAGES[activeStageKey];
       const slotDef = stageDef?.slots?.[activeSlotIndex];
       const gymPrimary = slotDef ? slotDef.primary : '';
       const slotTarget = slotDef ? slotDef.target : "3x8-10";
       const currentBandExercise = document.getElementById('exerciseSelect')?.value || '';
 
-      // 3. Solve initial band preset via 1RM math
+      // 3. Solve 3-step preset
       const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
         currentBandExercise,
         gymPrimary,
@@ -792,13 +792,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         slotDef?.defaultLoad || 50
       );
 
-      // 4. Highlight pills and set load input
-      if (selectedKeys && selectedKeys.length > 0) {
-        setActiveBandSelection(selectedKeys);
-      }
-      if (nominalTotal > 0 && document.getElementById('loadInput')) {
-        document.getElementById('loadInput').value = nominalTotal;
-      }
+      // 4. Pre-set active keys in memory THEN mount selector DOM
+      setActiveBandSelection(selectedKeys);
+      syncEquipmentInputs();
+
+      // 5. Explicitly assign loadInput
+      const loadInput = document.getElementById('loadInput');
+      if (loadInput) loadInput.value = nominalTotal;
     };
   }
   checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
@@ -851,10 +851,6 @@ document.addEventListener('DOMContentLoaded', async () => {
      // docs/js/app.js (inside exSelect.onchange)
 
       if (isBand) {
-        // 1. Mount fresh band buttons for the newly selected exercise
-        syncEquipmentInputs();
-
-        // 2. Solve preset for the new movement
         const gymPrimary = slotDef ? slotDef.primary : '';
         const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
           val, 
@@ -863,10 +859,9 @@ document.addEventListener('DOMContentLoaded', async () => {
           slotDef?.defaultLoad || 50
         );
 
-        // 3. Activate the resolved band pills
-        if (typeof setActiveBandSelection === 'function' && selectedKeys && selectedKeys.length > 0) {
-          setActiveBandSelection(selectedKeys);
-        }
+        setActiveBandSelection(selectedKeys);
+        syncEquipmentInputs();
+
         const loadInput = document.getElementById('loadInput');
         if (loadInput) loadInput.value = nominalTotal;
       } else {
