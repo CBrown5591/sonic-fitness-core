@@ -810,7 +810,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       document.getElementById('loadInput').value = nominalTotal;
     }
   };
-
+}
   checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
     selectStage(nextStage);
     showToast(`FLIGHT PATH ENGAGED: ${nextStage.replace('_', ' ')}!`);
