@@ -113,6 +113,18 @@
         <span class="target-tag" id="currentTargetTag">TARGET: 3x6-8</span>
       </div>
 
+      <!-- Add right above #exerciseSelect inside docs/index.html -->
+<div class="gear-mode-container" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+  <span style="font-size: 10px; font-weight: 800; color: var(--text-dim, #94a3b8); letter-spacing: 0.5px;">EQUIPMENT MODE</span>
+  <div class="segmented-gear-control" style="display: flex; background: rgba(15, 23, 42, 0.8); border: 1px solid rgba(255,255,255,0.15); border-radius: 6px; padding: 2px;">
+    <button id="gearModeGymBtn" type="button" class="gear-btn active" style="padding: 3px 10px; font-size: 11px; font-weight: 800; border-radius: 4px; border: none; background: #38bdf8; color: #0f172a; cursor: pointer;">🏋️ GYM</button>
+    <button id="gearModeBandBtn" type="button" class="gear-btn" style="padding: 3px 10px; font-size: 11px; font-weight: 800; border-radius: 4px; border: none; background: transparent; color: #94a3b8; cursor: pointer;">⚡ BANDS</button>
+  </div>
+</div>
+
+<!-- Add right below #loadInput (or in place of it when bands active) -->
+<div id="bandSelectorMount" style="display: none; margin-top: 8px;"></div>
+
       <select class="exercise-select" id="exerciseSelect" onchange="onExerciseChange()">
         <!-- Generated via JS -->
       </select>
