@@ -750,6 +750,8 @@ document.addEventListener('DOMContentLoaded', async () => {
   initMusicDrawer();
   initTimerBackgroundSync();
 
+  // File: docs/js/app.js (Inside DOMContentLoaded listener)
+
   const gymBtn = document.getElementById('gearModeGymBtn');
   const bandBtn = document.getElementById('gearModeBandBtn');
 
@@ -771,11 +773,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       gymBtn.style.background = 'transparent';
       gymBtn.style.color = '#94a3b8';
 
-      // 1. Swap dropdown to banded variations and mount selector container
+      // 1. Swap dropdown options & mount selector DOM
       hydrateExerciseDropdown();
       syncEquipmentInputs();
 
-      // 2. Fetch active exercise and slot parameters
+      // 2. Fetch active slot definitions
       const stageDef = STAGES[activeStageKey];
       const slotDef = stageDef?.slots?.[activeSlotIndex];
       const gymPrimary = slotDef ? slotDef.primary : '';
@@ -790,7 +792,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         slotDef?.defaultLoad || 50
       );
 
-      // 4. Highlight pills and write load input inside this handler scope
+      // 4. Highlight pills and set load input
       if (selectedKeys && selectedKeys.length > 0) {
         setActiveBandSelection(selectedKeys);
       }
@@ -798,7 +800,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('loadInput').value = nominalTotal;
       }
     };
-  
+  }
     if (selectedKeys.length > 0) {
       setActiveBandSelection(selectedKeys);
     }
