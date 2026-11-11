@@ -47,6 +47,7 @@ import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSele
 import { resolveInitialBandPreset } from './engine/bandSolver.js';
 import { setActiveBandSelection } from './ui/renderBandSelector.js';
 import { getDefaultGymLoad } from './data/movementIntel.js';
+import { renderCalculator } from './renderCalculator.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
 let activeSlotIndex = 0;
