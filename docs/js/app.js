@@ -831,10 +831,11 @@ document.addEventListener('DOMContentLoaded', async () => {
   fetchSheetTelemetry().then(data => {
     if (data && data.status === 'success') {
       // 1. Ingest Lifetime EXP & Pilot Progress
-      if (data.lifetimeExp !== undefined) {
-        runtimeLifetimeExp = data.lifetimeExp; // update runtime memory variable
-        updatePilotExpUI(data.lifetimeExp);
-      }
+      // AFTER:
+if (data.lifetimeExp !== undefined) {
+  localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
+  updatePilotExpUI();
+}
 
       // 2. Ingest Standard Gold Rings
       if (data.goldRings !== undefined) {
