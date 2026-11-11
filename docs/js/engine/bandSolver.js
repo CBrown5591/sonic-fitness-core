@@ -1,6 +1,7 @@
 // docs/js/engine/bandSolver.js
+// docs/js/engine/bandSolver.js
+import { BAND_CONFIG, getBandsForMovement } from '../data/bandConfigs.js';
 import { BAND_EQUIVALENTS } from '../data/bandEquivalents.js';
-import { getBandsForMovement } from '../data/bandConfigs.js';
 import { getPRVault } from './records.js';
 import { calculateTargetLoad } from './calc.js';
 
@@ -71,8 +72,16 @@ export function solveBestBandCombination(targetLoad, candidateBands = []) {
   };
 }
 
-// docs/js/engine/bandSolver.js
-
+// Reverse lookup: maps any chosen band exercise back to its primary gym counterpart
+export function getGymCounterpart(bandExerciseName) {
+  if (!bandExerciseName) return '';
+  for (const [gymName, bandName] of Object.entries(BAND_EQUIVALENTS || {})) {
+    if (bandName.toLowerCase() === bandExerciseName.toLowerCase()) {
+      return gymName;
+    }
+  }
+  return bandExerciseName;
+}
 // Reverse lookup: finds the actual gym parent lift for any chosen band alt
 export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, slotTarget = "3x8-10", defaultFallbackLoad = 50) {
   const prVault = getPRVault();
@@ -85,7 +94,7 @@ export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, slot
     return solveBestBandCombination(bandTargetLoad, candidateBands);
   }
 
-  // 2. Identify gym partner
+  // 2. Identify gym partner via reverse lookup
   const trueGymName = getGymCounterpart(bandExerciseName) || gymExerciseName;
   const gymPR = prVault[trueGymName];
 
