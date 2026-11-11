@@ -753,6 +753,9 @@ document.addEventListener('DOMContentLoaded', async () => {
   const gymBtn = document.getElementById('gearModeGymBtn');
   const bandBtn = document.getElementById('gearModeBandBtn');
 
+  const gymBtn = document.getElementById('gearModeGymBtn');
+  const bandBtn = document.getElementById('gearModeBandBtn');
+
   if (gymBtn && bandBtn) {
     gymBtn.onclick = () => {
       currentSlotGearMode = 'GYM';
@@ -764,16 +767,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       syncEquipmentInputs();
     };
 
-// docs/js/app.js (inside DOMContentLoaded)
-
- bandBtn.onclick = () => {
+    bandBtn.onclick = () => {
       currentSlotGearMode = 'BANDS';
       bandBtn.style.background = '#38bdf8';
       bandBtn.style.color = '#0f172a';
       gymBtn.style.background = 'transparent';
       gymBtn.style.color = '#94a3b8';
 
-      // 1. Swap dropdown options to banded movements and mount band selector DOM
+      // 1. Swap dropdown to banded variations and mount selector container
       hydrateExerciseDropdown();
       syncEquipmentInputs();
 
@@ -784,7 +785,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const slotTarget = slotDef ? slotDef.target : "3x8-10";
       const currentBandExercise = document.getElementById('exerciseSelect')?.value || '';
 
-      // 3. Solve initial band preset via stage-specific 1RM math
+      // 3. Solve initial band preset via 1RM math
       const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
         currentBandExercise,
         gymPrimary,
@@ -792,7 +793,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         slotDef?.defaultLoad || 50
       );
 
-      // 4. Activate pills and populate numeric load input
+      // 4. Highlight pills and write load input inside this handler scope
       if (selectedKeys && selectedKeys.length > 0) {
         setActiveBandSelection(selectedKeys);
       }
@@ -800,7 +801,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         document.getElementById('loadInput').value = nominalTotal;
       }
     };
-
+  
     if (selectedKeys.length > 0) {
       setActiveBandSelection(selectedKeys);
     }
