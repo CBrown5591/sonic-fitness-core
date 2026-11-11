@@ -655,3 +655,21 @@ export const MOVEMENT_INTEL = {
     safety: "If lower back arches off the mat at all, shorten leg reach. Zero daylight under lumbar spine."
   }
 };
+// Helper to determine starting baseline for unlogged gym alternates
+export function getDefaultGymLoad(exerciseName, slotDefaultLoad) {
+  const name = (exerciseName || '').toLowerCase();
+
+  if (name.includes('bodyweight') || name.includes('push-up') || name.includes('plank') || name.includes('deadbug') || name.includes('bird-dog')) {
+    return 0;
+  }
+  if (name.includes('external rotation') || name.includes('rear delt') || name.includes('lateral')) {
+    return 15;
+  }
+  if (name.includes('curl') || name.includes('extension') || name.includes('pallof')) {
+    return 30;
+  }
+  if (name.includes('dumbbell') || name.includes('db')) {
+    return Math.min(50, slotDefaultLoad || 40);
+  }
+  return slotDefaultLoad || 50;
+}
