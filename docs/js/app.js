@@ -194,7 +194,7 @@ function hydrateExerciseDropdown() {
   }
 
   // Trigger movement intel, target bracket, and load recalculation
-  if (select.onchange) select.onchange();
+  select.dispatchEvent(new Event('change'));
 }
 
 function syncEquipmentInputs() {
