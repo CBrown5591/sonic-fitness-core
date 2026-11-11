@@ -1,13 +1,64 @@
-// docs/js/ui/renderBandSelector.js
-import { BAND_CONFIG, getBandsForMovement } from '../data/bandConfigs.js';
+// -------------------------------------------------------------
+// RESISTANCE BAND MULTI-SELECT & COMPOUND LOAD ENGINE
+// Modular UI Component: docs/js/ui/renderBandSelector.js
+// -------------------------------------------------------------
+import { BAND_CONFIG } from '../data/bandConfigs.js';
 
 let selectedBandKeys = new Set();
 
+/**
+ * 1. STRICT EQUIPMENT FILTER
+ * Mutually exclusive separation:
+ * - Mini Loops: Locomotion, Ankles, Hips
+ * - Handled Tubes: Door-Anchored pulls, presses, crunches, rotations, curls
+ * - 41" Continuous Loops: Body-anchored heavy compound hinges, squats, push-ups
+ */
+export function getBandsForMovement(exerciseName = '') {
+  const name = (exerciseName || '').toLowerCase();
+
+  // Mini Loop Movements (Hips, Locomotion, Ankles, Core)
+  if (
+    name.includes('mini') || 
+    name.includes('walk') || 
+    name.includes('march') || 
+    name.includes('deadbug') || 
+    name.includes('y-t-w') || 
+    name.includes('climber') ||
+    name.includes('step-jack')
+  ) {
+    return Object.values(BAND_CONFIG).filter(b => b.type === 'mini');
+  }
+
+  // Door-Anchored Movements -> Handled Tubes Only
+  if (
+    name.includes('anchor') || 
+    name.includes('pulldown') || 
+    name.includes('woodchopper') || 
+    name.includes('pallof') || 
+    name.includes('crunch') || 
+    name.includes('face pull') || 
+    name.includes('curl') || 
+    name.includes('adduction') || 
+    name.includes('fly')
+  ) {
+    return Object.values(BAND_CONFIG).filter(b => b.type === 'tube');
+  }
+
+  // Body-Anchored Compound Lifts -> 41" Continuous Loops Only
+  return Object.values(BAND_CONFIG).filter(b => b.type === '41_loop');
+}
+
+/**
+ * Helper to check if movement requires band controls
+ */
 export function isBandMovement(exerciseName = '') {
   const name = (exerciseName || '').toLowerCase();
   return name.includes('band') || name.includes('loop') || name.includes('mini-band') || name.includes('pull-through');
 }
 
+/**
+ * Derives compounded nominal total and formatted display metric label
+ */
 export function getSelectedBandCombo() {
   let totalNominal = 0;
   let names = [];
@@ -29,9 +80,13 @@ export function clearBandSelections() {
   selectedBandKeys.clear();
 }
 
+/**
+ * Main UI Mount: Renders interactive pills filtered to the selected exercise
+ */
 export function renderBandSelector(containerEl, exerciseName, onSelectionChange) {
   if (!containerEl) return;
 
+  // Filter bands using the strict category rules above
   const relevantBands = getBandsForMovement(exerciseName);
 
   containerEl.innerHTML = `
@@ -67,7 +122,7 @@ export function renderBandSelector(containerEl, exerciseName, onSelectionChange)
     </div>
   `;
 
-  // Attach button toggle handlers
+  // Attach button toggle click listeners
   containerEl.querySelectorAll('.band-pill-btn').forEach(btn => {
     btn.onclick = (e) => {
       e.preventDefault();
