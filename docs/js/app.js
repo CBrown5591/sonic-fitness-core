@@ -843,10 +843,11 @@ if (data.lifetimeExp !== undefined) {
       }
 
       // 3. Ingest Red Star Rings
-      if (data.totalRedRings !== undefined || data.redRings !== undefined) {
-        const remoteRed = data.totalRedRings ?? data.redRings;
-        setRuntimeRedRings(remoteRed);
-      }
+      // AFTER (stores the remote total from COMMAND_HUB directly):
+if (data.totalRedRings !== undefined || data.redRings !== undefined) {
+  const remoteRed = data.totalRedRings ?? data.redRings;
+  localStorage.setItem('sonic_total_red_rings', remoteRed);
+}
 
       // 4. Ingest Stage High Records directly into runtime memory
       if (data.stageRecords && typeof data.stageRecords === 'object') {
