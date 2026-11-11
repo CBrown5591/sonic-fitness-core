@@ -818,7 +818,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   const timeBrakeBtn = document.getElementById('timeBrakeBtn');
   if (timeBrakeBtn) timeBrakeBtn.onclick = window.applyTimeBrake;
 
-  const exSelect = document.getElementById('exerciseSelect');
+const exSelect = document.getElementById('exerciseSelect');
   if (exSelect) {
     exSelect.onchange = () => {
       const val = exSelect.value;
@@ -830,7 +830,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const resolved = resolveExerciseTarget(val, defaultTarget);
       const targetTag = document.getElementById('currentTargetTag');
       if (targetTag) {
-        targetTag.innerText = resolved.targetText.startsWith('TARGET:')
+        targetTag.innerText = resolved.targetText.startsWith('TARGET:') 
           ? resolved.targetText 
           : `TARGET: ${resolved.targetText}`;
       }
@@ -838,26 +838,39 @@ document.addEventListener('DOMContentLoaded', async () => {
       const repsInput = document.getElementById('repsInput');
       if (repsInput) repsInput.value = resolved.defaultReps;
 
-      // 2. Recalculate load from PR vault for this specific exercise
+      // 2. Load Resolution & Equipment Autoset
       const prVault = getPRVault();
       const pr = prVault[val];
-      const baseLoad = slotDef ? slotDef.defaultLoad : 50;
-      const dynamicLoad = pr && pr.e1rm > 0 
-        ? calculateTargetLoad(pr.e1rm, defaultTarget, baseLoad, val) 
-        : baseLoad;
+      const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(val);
 
-      const loadInput = document.getElementById('loadInput');
-      if (loadInput) loadInput.value = dynamicLoad;
-      // In app.js inside exSelect.onchange:
-if (currentSlotGearMode === 'BANDS' || isBandMovement(val)) {
-  clearBandSelections();
-  activeBandCombo = { nominalLoad: 0, comboLabel: 'None' };
-  if (loadInput) loadInput.value = 0;
-}
-      // 3. Update tactical cues, input labels, and sync equipment UI
+      if (isBand) {
+        // BAND MODE: Resolve preset and mount pills
+        const gymPrimary = slotDef ? slotDef.primary : '';
+        const gymBaseLoad = getDefaultGymLoad(gymPrimary, slotDef?.defaultLoad);
+        const { selectedKeys, nominalTotal } = resolveInitialBandPreset(val, gymPrimary, gymBaseLoad);
+
+        syncEquipmentInputs();
+        if (typeof setActiveBandSelection === 'function' && selectedKeys.length > 0) {
+          setActiveBandSelection(selectedKeys);
+        }
+        const loadInput = document.getElementById('loadInput');
+        if (loadInput) loadInput.value = nominalTotal;
+
+      } else {
+        // GYM MODE: Calculate from PR or category default
+        const baseLoad = getDefaultGymLoad(val, slotDef?.defaultLoad);
+        const dynamicLoad = pr && pr.e1rm > 0 
+          ? calculateTargetLoad(pr.e1rm, defaultTarget, baseLoad, val) 
+          : baseLoad;
+
+        const loadInput = document.getElementById('loadInput');
+        if (loadInput) loadInput.value = dynamicLoad;
+        syncEquipmentInputs();
+      }
+
+      // 3. Update tactical cues and labels
       renderMovementIntel(val);
       updateInputLabelsForExercise(val);
-      syncEquipmentInputs();
     };
   }
 
