@@ -69,6 +69,8 @@ export function solveBestBandCombination(targetLoad, candidateBands = []) {
   };
 }
 
+// docs/js/engine/bandSolver.js
+
 export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, gymTargetLoad = 50) {
   const prVault = getPRVault();
   const dedicatedPR = prVault[bandExerciseName];
@@ -76,10 +78,18 @@ export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, gymT
   let effectiveTargetLoad = 0;
 
   if (dedicatedPR && dedicatedPR.e1rm > 0) {
+    // 1. Dedicated band history exists
     effectiveTargetLoad = dedicatedPR.load || Math.round(dedicatedPR.e1rm * 0.70);
   } else {
+    // 2. Fetch the gym movement's actual load or PR if gymTargetLoad is generic
+    let gymLoad = gymTargetLoad;
+    const gymPR = prVault[gymExerciseName];
+    if ((!gymLoad || gymLoad < 120) && gymPR && gymPR.e1rm > 0) {
+      gymLoad = Math.round(gymPR.e1rm * 0.75); // Use working gym weight (~260 lbs)
+    }
+
     const multiplier = getMovementScaler(bandExerciseName || gymExerciseName);
-    effectiveTargetLoad = Math.round(gymTargetLoad * multiplier);
+    effectiveTargetLoad = Math.round(gymLoad * multiplier);
   }
 
   const candidateBands = getBandsForMovement(bandExerciseName);
