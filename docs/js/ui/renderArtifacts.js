@@ -75,39 +75,38 @@ export function saveSpendableRedRings(amount) {
   return safe;
 }
 
+// -------------------------------------------------------------
+// RUNTIME RELIC & PERK CACHE (ZERO LOCALSTORAGE)
+// -------------------------------------------------------------
+
+// Pure in-memory cache populated from Google Sheet telemetry on boot
+let runtimeChaosEmeralds = {};
+let runtimeWorldRings = [];
+let runtimeUnlockedPerks = [];
+
+export function setRuntimeEmeralds(emeralds) {
+  runtimeChaosEmeralds = emeralds || {};
+}
+
 export function getChaosEmeralds() {
-  try {
-    const raw = localStorage.getItem('sonic_chaos_emeralds');
-    return raw ? JSON.parse(raw) : {};
-  } catch (e) {
-    return {};
-  }
+  return runtimeChaosEmeralds;
 }
 
-export function saveChaosEmeralds(emeraldsObj) {
-  localStorage.setItem('sonic_chaos_emeralds', JSON.stringify(emeraldsObj));
+export function setRuntimeWorldRings(rings) {
+  runtimeWorldRings = Array.isArray(rings) ? rings : [];
 }
 
-export function getSecretRings() {
-  try {
-    const raw = localStorage.getItem('sonic_secret_rings');
-    if (!raw) return {};
-    const parsed = JSON.parse(raw);
-    if (Array.isArray(parsed)) {
-      const obj = {};
-      parsed.forEach(k => { obj[k] = true; });
-      return obj;
-    }
-    return parsed;
-  } catch (e) {
-    return {};
-  }
+export function getWorldRings() {
+  return runtimeWorldRings;
 }
 
-export function saveSecretRings(ringsObj) {
-  localStorage.setItem('sonic_secret_rings', JSON.stringify(ringsObj));
+export function setRuntimeUnlockedPerks(perks) {
+  runtimeUnlockedPerks = Array.isArray(perks) ? perks : [];
 }
 
+export function getUnlockedPerks() {
+  return runtimeUnlockedPerks;
+}
 // -------------------------------------------------------------
 // UNLOCK & TRANSFORMATION STATE CHECKS
 // -------------------------------------------------------------
