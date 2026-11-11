@@ -1,79 +1,36 @@
-// docs/js/engine/bandSolver.js
-// docs/js/engine/bandSolver.js
+// -------------------------------------------------------------
+// DYNAMIC BAND SELECTION & LOAD SOLVER ENGINE
+// File: docs/js/engine/bandSolver.js
+// -------------------------------------------------------------
 import { BAND_CONFIG, getBandsForMovement } from '../data/bandConfigs.js';
 import { BAND_EQUIVALENTS } from '../data/bandEquivalents.js';
 import { getPRVault } from './records.js';
 import { calculateTargetLoad } from './calc.js';
 
+// Movement-specific scale factors
 export const EQUIPMENT_LOAD_SCALERS = {
-  // Horizontal shin/knee brace squats (bodyweight delivers vertical work)
   "spanish squat": 0.25,
-
-  // Direct vertical resisted squats & deadlifts
   "front squat": 0.50,
   "rdl": 0.60,
-
-  // Unilateral / Hip isolation
   "adduct": 0.75,
   "abduct": 0.75,
   "curl": 0.70,
   "extension": 0.65,
-
-  // Direct upper-body cable/machine pulls and presses
   "default": 1.00
 };
 
 export function getMovementScaler(exerciseName = '') {
   const name = exerciseName.toLowerCase();
-  for (const [key, multiplier] of Object.entries(EQUIPMENT_LOAD_SCALERS)) {
-    if (name.includes(key)) return multiplier;
+  for (const [key, scale] of Object.entries(EQUIPMENT_LOAD_SCALERS)) {
+    if (key !== 'default' && name.includes(key)) {
+      return scale;
+    }
   }
   return EQUIPMENT_LOAD_SCALERS.default;
 }
 
-export function solveBestBandCombination(targetLoad, candidateBands = []) {
-  if (!targetLoad || targetLoad <= 0 || candidateBands.length === 0) {
-    return { selectedKeys: [], nominalTotal: 0 };
-  }
-
-  let bestCombo = [];
-  let minDiff = Infinity;
-
-  function getCombos(arr, k) {
-    if (k === 1) return arr.map(el => [el]);
-    const combos = [];
-    arr.forEach((el, idx) => {
-      const rest = arr.slice(idx + 1);
-      const subCombos = getCombos(rest, k - 1);
-      subCombos.forEach(sub => combos.push([el, ...sub]));
-    });
-    return combos;
-  }
-
-  const maxStack = Math.min(3, candidateBands.length);
-  for (let k = 1; k <= maxStack; k++) {
-    const combos = getCombos(candidateBands, k);
-    for (const combo of combos) {
-      const sum = combo.reduce((acc, b) => acc + (b.nominal || 0), 0);
-      const diff = Math.abs(sum - targetLoad);
-
-      if (diff < minDiff) {
-        minDiff = diff;
-        bestCombo = combo;
-      } else if (diff === minDiff && combo.length < bestCombo.length) {
-        bestCombo = combo;
-      }
-    }
-  }
-
-  return {
-    selectedKeys: bestCombo.map(b => b.id),
-    nominalTotal: bestCombo.reduce((acc, b) => acc + (b.nominal || 0), 0)
-  };
-}
-
-// Reverse lookup: maps any chosen band exercise back to its primary gym counterpart
-export function getGymCounterpart(bandExerciseName) {
+// Reverse lookup helper: maps banded variation to primary gym counterpart
+export function getGymCounterpart(bandExerciseName = '') {
   if (!bandExerciseName) return '';
   for (const [gymName, bandName] of Object.entries(BAND_EQUIVALENTS || {})) {
     if (bandName.toLowerCase() === bandExerciseName.toLowerCase()) {
@@ -82,35 +39,89 @@ export function getGymCounterpart(bandExerciseName) {
   }
   return bandExerciseName;
 }
-// Reverse lookup: finds the actual gym parent lift for any chosen band alt
+
+/**
+ * 3-Step Dynamic Band Load Solver
+ */
 export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, slotTarget = "3x8-10", defaultFallbackLoad = 50) {
   const prVault = getPRVault();
   const candidateBands = getBandsForMovement(bandExerciseName);
 
-  // 1. Dedicated band history check
+  // STEP 1: Does this exact BAND movement have an existing PR?
   const dedicatedPR = prVault[bandExerciseName];
-  if (dedicatedPR && dedicatedPR.e1rm > 0) {
-    const bandTargetLoad = calculateTargetLoad(dedicatedPR.e1rm, slotTarget, dedicatedPR.load || defaultFallbackLoad, bandExerciseName);
+  if (dedicatedPR && dedicatedPR.load > 0) {
+    const bandTargetLoad = (dedicatedPR.e1rm && dedicatedPR.e1rm > 0)
+      ? calculateTargetLoad(dedicatedPR.e1rm, slotTarget, dedicatedPR.load, bandExerciseName)
+      : dedicatedPR.load;
     return solveBestBandCombination(bandTargetLoad, candidateBands);
   }
 
-  // 2. Identify gym partner via reverse lookup
+  // STEP 2: Identify primary counterpart and check if it has a registered PR
   const trueGymName = getGymCounterpart(bandExerciseName) || gymExerciseName;
   const gymPR = prVault[trueGymName];
 
-  // 3. Compute stage-specific load from partner 1RM
-  let partnerStageLoad = defaultFallbackLoad;
+  let stageGymLoad = defaultFallbackLoad;
+  const multiplier = getMovementScaler(bandExerciseName || trueGymName);
+
   if (gymPR && gymPR.e1rm > 0) {
-    partnerStageLoad = calculateTargetLoad(gymPR.e1rm, slotTarget, defaultFallbackLoad, trueGymName);
-  } else if (trueGymName.includes('Leg Press')) {
-    partnerStageLoad = calculateTargetLoad(350, slotTarget, 250, trueGymName);
-  } else if (trueGymName.includes('Chest Press') || trueGymName.includes('High Row')) {
-    partnerStageLoad = calculateTargetLoad(140, slotTarget, 110, trueGymName);
+    // STEP 3: Counterpart PR exists -> Calculate stage load from e1RM, then apply multiplier
+    stageGymLoad = calculateTargetLoad(gymPR.e1rm, slotTarget, defaultFallbackLoad, trueGymName);
+  } else if (gymPR && gymPR.load > 0) {
+    stageGymLoad = gymPR.load;
+  } else {
+    // Fallback baseline defaults if no PR exists anywhere yet
+    if (trueGymName.includes('Leg Press')) {
+      stageGymLoad = calculateTargetLoad(350, slotTarget, 250, trueGymName);
+    } else if (trueGymName.includes('Chest Press') || trueGymName.includes('High Row')) {
+      stageGymLoad = calculateTargetLoad(140, slotTarget, 110, trueGymName);
+    } else {
+      stageGymLoad = defaultFallbackLoad;
+    }
   }
 
-  // 4. Apply biomechanical modifier
-  const multiplier = getMovementScaler(bandExerciseName || trueGymName);
-  const effectiveBandLoad = Math.max(20, Math.round(partnerStageLoad * multiplier));
+  // Apply movement modifier to the stage load
+  const effectiveBandLoad = Math.max(10, Math.round(stageGymLoad * multiplier));
 
+  // Snap to closest valid band combination
   return solveBestBandCombination(effectiveBandLoad, candidateBands);
+}
+
+/**
+ * Combination Solver: Finds the closest 1-band or 2-band combination
+ */
+export function solveBestBandCombination(targetLoad, candidateBands = []) {
+  if (!targetLoad || targetLoad <= 0 || candidateBands.length === 0) {
+    return { selectedKeys: [], nominalTotal: 0 };
+  }
+
+  let bestCombo = [];
+  let minDiff = Infinity;
+
+  // 1-band check
+  for (const b of candidateBands) {
+    const diff = Math.abs(b.nominal - targetLoad);
+    if (diff < minDiff) {
+      minDiff = diff;
+      bestCombo = [b];
+    }
+  }
+
+  // 2-band stacking check
+  for (let i = 0; i < candidateBands.length; i++) {
+    for (let j = i + 1; j < candidateBands.length; j++) {
+      const b1 = candidateBands[i];
+      const b2 = candidateBands[j];
+      const sum = b1.nominal + b2.nominal;
+      const diff = Math.abs(sum - targetLoad);
+      if (diff < minDiff) {
+        minDiff = diff;
+        bestCombo = [b1, b2];
+      }
+    }
+  }
+
+  return {
+    selectedKeys: bestCombo.map(b => b.id),
+    nominalTotal: bestCombo.reduce((acc, b) => acc + (b.nominal || 0), 0)
+  };
 }
