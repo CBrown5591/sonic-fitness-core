@@ -2,6 +2,7 @@
 import { BAND_EQUIVALENTS } from '../data/bandEquivalents.js';
 import { getBandsForMovement } from '../data/bandConfigs.js';
 import { getPRVault } from './records.js';
+import { calculateTargetLoad } from './calc.js';
 
 export const EQUIPMENT_LOAD_SCALERS = {
   // Horizontal shin/knee brace squats (bodyweight delivers vertical work)
@@ -73,43 +74,34 @@ export function solveBestBandCombination(targetLoad, candidateBands = []) {
 // docs/js/engine/bandSolver.js
 
 // Reverse lookup: finds the actual gym parent lift for any chosen band alt
-function getGymCounterpart(bandExerciseName) {
-  for (const [gymName, bandName] of Object.entries(BAND_EQUIVALENTS)) {
-    if (bandName.toLowerCase() === (bandExerciseName || '').toLowerCase()) {
-      return gymName;
-    }
-  }
-  return bandExerciseName;
-}
-
-export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, gymTargetLoad = 50) {
+export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, slotTarget = "3x8-10", defaultFallbackLoad = 50) {
   const prVault = getPRVault();
-  
-  // 1. Check if this banded movement has its own dedicated 1RM/PR
+  const candidateBands = getBandsForMovement(bandExerciseName);
+
+  // 1. Dedicated band history check
   const dedicatedPR = prVault[bandExerciseName];
-  if (dedicatedPR && dedicatedPR.load > 0) {
-    const candidateBands = getBandsForMovement(bandExerciseName);
-    return solveBestBandCombination(dedicatedPR.load, candidateBands);
+  if (dedicatedPR && dedicatedPR.e1rm > 0) {
+    const bandTargetLoad = calculateTargetLoad(dedicatedPR.e1rm, slotTarget, dedicatedPR.load || defaultFallbackLoad, bandExerciseName);
+    return solveBestBandCombination(bandTargetLoad, candidateBands);
   }
 
-  // 2. Identify the true gym counterpart (e.g., Spanish Squat -> Cybex Leg Press)
+  // 2. Identify gym partner
   const trueGymName = getGymCounterpart(bandExerciseName) || gymExerciseName;
   const gymPR = prVault[trueGymName];
 
-  // 3. Resolve baseline load for that true counterpart
-  let baseGymLoad = gymTargetLoad;
-  if (gymPR && gymPR.load > 0) {
-    baseGymLoad = gymPR.load;
+  // 3. Compute stage-specific load from partner 1RM
+  let partnerStageLoad = defaultFallbackLoad;
+  if (gymPR && gymPR.e1rm > 0) {
+    partnerStageLoad = calculateTargetLoad(gymPR.e1rm, slotTarget, defaultFallbackLoad, trueGymName);
   } else if (trueGymName.includes('Leg Press')) {
-    baseGymLoad = 250; 
+    partnerStageLoad = calculateTargetLoad(350, slotTarget, 250, trueGymName);
   } else if (trueGymName.includes('Chest Press') || trueGymName.includes('High Row')) {
-    baseGymLoad = 110;
+    partnerStageLoad = calculateTargetLoad(140, slotTarget, 110, trueGymName);
   }
 
-  // 4. Scale with the movement multiplier
+  // 4. Apply biomechanical modifier
   const multiplier = getMovementScaler(bandExerciseName || trueGymName);
-  const effectiveTargetLoad = Math.max(20, Math.round(baseGymLoad * multiplier));
+  const effectiveBandLoad = Math.max(20, Math.round(partnerStageLoad * multiplier));
 
-  const candidateBands = getBandsForMovement(bandExerciseName);
-  return solveBestBandCombination(effectiveTargetLoad, candidateBands);
+  return solveBestBandCombination(effectiveBandLoad, candidateBands);
 }
