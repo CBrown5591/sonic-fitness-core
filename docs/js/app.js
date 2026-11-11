@@ -7,7 +7,13 @@ import { CARDIO_CONFIGS } from './data/cardioConfigs.js';
 import { calculateE1RM, calculateTargetLoad, calculatePilotProgress } from './engine/calc.js';
 import { autoRegulateNextSet } from './engine/autoReg.js';
 import { checkAndRenderFlightPathPrompt } from './engine/flightPath.js';
-import { getStageRecords, saveStageRecord, getPRVault, savePRVault } from './engine/records.js';
+import { 
+  getStageRecords, 
+  saveStageRecord, 
+  setRuntimeStageRecords, 
+  getPRVault, 
+  savePRVault 
+} from './engine/records.js';
 import { playRingChime, toggleAudioTheme, getAudioTheme, stopAllFanfare } from './core/audio.js';
 import { setTimerDuration, startRestTimer, applyTimeBrake, initTimerBackgroundSync } from './core/timer.js';
 import { fetchSheetTelemetry, syncSessionToSheets } from './core/sync.js';
