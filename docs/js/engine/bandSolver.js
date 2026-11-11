@@ -58,6 +58,7 @@ export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, slot
 
   // STEP 2: Identify primary counterpart and check if it has a registered PR
  // 1. Identify primary counterpart (strip qualifiers for PR lookup)
+  // 1. Identify primary counterpart (strip parenthetical qualifiers for PR lookup)
   const trueGymName = getGymCounterpart(bandExerciseName) || gymExerciseName;
   const cleanGymName = trueGymName.replace(/\s*\([^)]*\)/g, '').trim();
   const gymPR = prVault[cleanGymName] || prVault[trueGymName];
@@ -71,27 +72,23 @@ export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, slot
     multiplier = 0.20; // Drops metcon front squat from 0.50x down to light cadence
   }
 
+  // 3. Stage Gym Load Resolution
   if (gymPR && gymPR.e1rm > 0) {
     stageGymLoad = calculateTargetLoad(gymPR.e1rm, slotTarget, defaultFallbackLoad, trueGymName);
+  } else if (gymPR && gymPR.load > 0) {
+    stageGymLoad = gymPR.load;
   } else if (trueGymName.includes('Leg Press')) {
     stageGymLoad = calculateTargetLoad(350, slotTarget, 140, trueGymName);
+  } else if (trueGymName.includes('Chest Press') || trueGymName.includes('High Row')) {
+    stageGymLoad = calculateTargetLoad(140, slotTarget, 110, trueGymName);
   } else {
     stageGymLoad = defaultFallbackLoad;
   }
 
-  // 3. Final Band Load
+  // 4. Final Band Load Calculation & Preset Solution
   const effectiveBandLoad = Math.max(15, Math.round(stageGymLoad * multiplier));
-  return solveBestBandCombination(effectiveBandLoad, candidateBands); else {
-    // Fallback baseline defaults if no PR exists anywhere yet
-    if (trueGymName.includes('Leg Press')) {
-      stageGymLoad = calculateTargetLoad(350, slotTarget, 250, trueGymName);
-    } else if (trueGymName.includes('Chest Press') || trueGymName.includes('High Row')) {
-      stageGymLoad = calculateTargetLoad(140, slotTarget, 110, trueGymName);
-    } else {
-      stageGymLoad = defaultFallbackLoad;
-    }
-  }
-
+  return solveBestBandCombination(effectiveBandLoad, candidateBands);
+}
   // Apply movement modifier to the stage load
   const effectiveBandLoad = Math.max(10, Math.round(stageGymLoad * multiplier));
 
