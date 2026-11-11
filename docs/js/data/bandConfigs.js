@@ -157,17 +157,45 @@ export const BAND_CONFIG = {
  * Filters appropriate bands based on movement biomechanics.
  * Mini movements get mini loops; all other band exercises expose 41" loops and tubes.
  */
+// docs/js/data/bandConfigs.js (At the very bottom)
+
+/**
+ * Strict Equipment Separation Gate:
+ * 1. Mini Loops: Locomotion, Ankles, Hips
+ * 2. Handled Tubes: Door-Anchored pushes, pulls, curls, rotations
+ * 3. 41" Continuous Loops: Body-Anchored compound squats, hinges, push-ups
+ */
 export function getBandsForMovement(exerciseName = '') {
   const name = (exerciseName || '').toLowerCase();
-  const isMini = name.includes('mini') || 
-                 name.includes('walk') || 
-                 name.includes('march') || 
-                 name.includes('deadbug') || 
-                 name.includes('y-t-w') || 
-                 name.includes('step-jack') || 
-                 name.includes('climber');
 
-  return Object.values(BAND_CONFIG).filter(b => 
-    isMini ? b.type === 'mini' : (b.type === '41_loop' || b.type === 'tube')
-  );
+  // 1. Mini Loops Only (Hips, Locomotion, Ankles)
+  if (
+    name.includes('mini') || 
+    name.includes('walk') || 
+    name.includes('march') || 
+    name.includes('deadbug') || 
+    name.includes('y-t-w') || 
+    name.includes('climber') ||
+    name.includes('step-jack')
+  ) {
+    return Object.values(BAND_CONFIG).filter(b => b.type === 'mini');
+  }
+
+  // 2. Handled Door-Anchor Tubes Only (Pushes, Pulls, Rotations, Curls)
+  if (
+    name.includes('anchor') || 
+    name.includes('pulldown') || 
+    name.includes('woodchopper') || 
+    name.includes('pallof') || 
+    name.includes('crunch') || 
+    name.includes('face pull') || 
+    name.includes('curl') || 
+    name.includes('adduction') || 
+    name.includes('fly')
+  ) {
+    return Object.values(BAND_CONFIG).filter(b => b.type === 'tube');
+  }
+
+  // 3. 41" Continuous Power Loops Only (Squats, Hinges, Push-Ups)
+  return Object.values(BAND_CONFIG).filter(b => b.type === '41_loop');
 }
