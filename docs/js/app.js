@@ -821,49 +821,62 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
   }
 
-  // Live Sheet Telemetry Sync on boot
+// Live Sheet Telemetry Sync on boot (Zero LocalStorage Architecture)
   fetchSheetTelemetry().then(data => {
     if (data && data.status === 'success') {
+      // 1. Ingest Lifetime EXP & Pilot Progress
       if (data.lifetimeExp !== undefined) {
-        localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
-        updatePilotExpUI();
+        runtimeLifetimeExp = data.lifetimeExp; // update runtime memory variable
+        updatePilotExpUI(data.lifetimeExp);
       }
+
+      // 2. Ingest Standard Gold Rings
       if (data.goldRings !== undefined) {
         saveStandardRings(data.goldRings);
       }
-      // Hydrate Red Star Ring ground truth directly from COMMAND_HUB!G3
-      if (data.totalRedRings !== undefined) {
-        localStorage.setItem('sonic_total_red_rings', data.totalRedRings);
+
+      // 3. Ingest Red Star Rings
+      if (data.totalRedRings !== undefined || data.redRings !== undefined) {
+        const remoteRed = data.totalRedRings ?? data.redRings;
+        setRuntimeRedRings(remoteRed);
       }
+
+      // 4. Ingest Stage High Records directly into runtime memory
       if (data.stageRecords && typeof data.stageRecords === 'object') {
-        const existingRecords = JSON.parse(localStorage.getItem('sonic_stage_records') || '{}');
-        Object.keys(data.stageRecords).forEach(stg => {
-          if (!existingRecords[stg] || data.stageRecords[stg].bestScore > existingRecords[stg].bestScore) {
-            existingRecords[stg] = data.stageRecords[stg];
-          }
-        });
-        localStorage.setItem('sonic_stage_records', JSON.stringify(existingRecords));
-        renderStageRecordBanner(activeStageKey);
+        setRuntimeStageRecords(data.stageRecords);
+        if (typeof renderStageRecordBanner === 'function') {
+          renderStageRecordBanner(activeStageKey);
+        }
+        if (typeof renderAllStageRecords === 'function') {
+          renderAllStageRecords();
+        }
       }
+
+      // 5. Ingest Flight Path / Stage Statuses
       if (data.stages) {
-        localStorage.setItem('sonic_stage_statuses', JSON.stringify(data.stages));
         checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
           selectStage(nextStage);
           showToast(`FLIGHT PATH ENGAGED: ${nextStage.replace('_', ' ')}!`);
         });
       }
+
+      // 6. Ingest PR Vault into runtime memory
       if (data.prVault) {
         savePRVault(data.prVault);
         if (typeof renderPRVaultUI === 'function') {
           renderPRVaultUI();
         }
       }
+
+      // 7. Ingest Movement Mastery Vault
       if (data.vault && Array.isArray(data.vault) && data.vault.length > 0) {
         saveVaultData(data.vault);
       }
-      renderVault();
-      renderArtifactsTray();
-      updateHudRingBar();
+
+      // Re-render UI components with freshly hydrated data
+      if (typeof renderVault === 'function') renderVault();
+      if (typeof renderArtifactsTray === 'function') renderArtifactsTray();
+      if (typeof updateHudRingBar === 'function') updateHudRingBar();
     }
   });
 
