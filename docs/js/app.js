@@ -804,7 +804,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       const resolved = resolveExerciseTarget(val, defaultTarget);
       const targetTag = document.getElementById('currentTargetTag');
       if (targetTag) {
-        targetTag.innerText = resolved.targetText.startsWith('TARGET:') 
+        targetTag.innerText = resolved.targetText.startsWith('TARGET:')
           ? resolved.targetText 
           : `TARGET: ${resolved.targetText}`;
       }
@@ -822,7 +822,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       const loadInput = document.getElementById('loadInput');
       if (loadInput) loadInput.value = dynamicLoad;
-
+      // In app.js inside exSelect.onchange:
+if (currentSlotGearMode === 'BANDS' || isBandMovement(val)) {
+  clearBandSelections();
+  activeBandCombo = { nominalLoad: 0, comboLabel: 'None' };
+  if (loadInput) loadInput.value = 0;
+}
       // 3. Update tactical cues, input labels, and sync equipment UI
       renderMovementIntel(val);
       updateInputLabelsForExercise(val);
