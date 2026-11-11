@@ -267,9 +267,11 @@ export const STAGES = {
       }
     ]
   },
+  // docs/js/data/stages.js
+
   DAY_E: {
     id: "DAY_E",
-    name: "Hypertrophy & Machine Overload",
+    name: "Hypertrophy & Heavy Tension",
     prehab: "Prehab: 90/90 Hip Switches + Band Shoulder Dislocates",
     prehabDetails: [
       { name: "90/90 Hip Switches", dose: "2 sets × 8 reps / side", cue: "Smoothly transition internal to external rotation. Keep chest tall." },
@@ -279,9 +281,9 @@ export const STAGES = {
     slots: [
       {
         slot: "E1",
-        target: "3x10-12",
+        target: "3x6-8",
         primary: "Cybex VR2 Articulating Leg Press",
-        defaultLoad: 180,
+        defaultLoad: 235,
         alts: [
           "Cybex VR2 Articulating Leg Press",
           "Suitcase DB Squat",
@@ -293,9 +295,9 @@ export const STAGES = {
       },
       {
         slot: "E2",
-        target: "3x10-12",
+        target: "3x6-8",
         primary: "Cybex VR2 Converging Chest Press",
-        defaultLoad: 110,
+        defaultLoad: 125,
         alts: [
           "Cybex VR2 Converging Chest Press",
           "Cybex VR2 Pec Fly (Machine)",
@@ -307,9 +309,9 @@ export const STAGES = {
       },
       {
         slot: "E3",
-        target: "3x10-12",
+        target: "3x8-10",
         primary: "Cybex VR2 Leg Curl",
-        defaultLoad: 90,
+        defaultLoad: 100,
         alts: [
           "Cybex VR2 Leg Curl",
           "Supported Romanian Deadlift (RDL)",
@@ -321,9 +323,9 @@ export const STAGES = {
       },
       {
         slot: "E4",
-        target: "3x10-12",
+        target: "3x8-10",
         primary: "Cybex VR2 High Row (Chest Supported)",
-        defaultLoad: 120,
+        defaultLoad: 130,
         alts: [
           "Cybex VR2 High Row (Chest Supported)",
           "Chest-Supported Dumbbell Row",
@@ -335,6 +337,7 @@ export const STAGES = {
       }
     ]
   },
+
   DAY_F: {
     id: "DAY_F",
     name: "Joint Sparing & Deload Recon",
@@ -347,9 +350,9 @@ export const STAGES = {
     slots: [
       {
         slot: "F1",
-        target: "3x12-15",
+        target: "3x15-20",
         primary: "Cybex VR2 Leg Extension",
-        defaultLoad: 70,
+        defaultLoad: 60,
         alts: [
           "Cybex VR2 Leg Extension",
           "Cybex VR2 Articulating Leg Press (Light Tempo)",
@@ -359,9 +362,9 @@ export const STAGES = {
       },
       {
         slot: "F2",
-        target: "3x12-15",
+        target: "3x15-20",
         primary: "Cybex VR2 Hip Adduction (Inner Thigh)",
-        defaultLoad: 75,
+        defaultLoad: 65,
         alts: [
           "Cybex VR2 Hip Adduction (Inner Thigh)",
           "Cybex VR2 Hip Abduction (Outer Glute)",
@@ -372,9 +375,9 @@ export const STAGES = {
       },
       {
         slot: "F3",
-        target: "3x12-15",
+        target: "3x15-20",
         primary: "Cybex VR2 Rear Delt Fly",
-        defaultLoad: 50,
+        defaultLoad: 45,
         alts: [
           "Cybex VR2 Rear Delt Fly",
           "Cable External Rotations (Bravo)",
@@ -385,9 +388,9 @@ export const STAGES = {
       },
       {
         slot: "F4",
-        target: "3x10-12",
+        target: "3x12-15",
         primary: "Cable Pallof Press (Bravo)",
-        defaultLoad: 30,
+        defaultLoad: 25,
         alts: [
           "Cable Pallof Press (Bravo)",
           "Cybex VR2 Seated Abdominal Crunch",
