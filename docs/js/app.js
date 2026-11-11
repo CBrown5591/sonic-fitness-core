@@ -32,7 +32,10 @@ import {
   getStandardRings,
   saveStandardRings,
   addStandardRings,
-  updateHudRingBar
+  updateHudRingBar,
+  setRuntimeEmeralds,
+  setRuntimeWorldRings,
+  setRuntimeUnlockedPerks
 } from './ui/renderArtifacts.js';
 import { getTotalRedRings } from './ui/renderVault.js';
 import { renderVault, creditVaultRings, saveVaultData } from './ui/renderVault.js';
@@ -827,29 +830,20 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
   }
 
-// Live Sheet Telemetry Sync on boot (Zero LocalStorage Architecture)
+// Live Sheet Telemetry Sync on boot
   fetchSheetTelemetry().then(data => {
     if (data && data.status === 'success') {
-      // 1. Ingest Lifetime EXP & Pilot Progress
-      // AFTER:
-if (data.lifetimeExp !== undefined) {
-  localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
-  updatePilotExpUI();
-}
-
-      // 2. Ingest Standard Gold Rings
+      if (data.lifetimeExp !== undefined) {
+        localStorage.setItem('sonic_lifetime_exp', data.lifetimeExp);
+        updatePilotExpUI();
+      }
       if (data.goldRings !== undefined) {
         saveStandardRings(data.goldRings);
       }
-
-      // 3. Ingest Red Star Rings
-      // AFTER (stores the remote total from COMMAND_HUB directly):
-if (data.totalRedRings !== undefined || data.redRings !== undefined) {
-  const remoteRed = data.totalRedRings ?? data.redRings;
-  localStorage.setItem('sonic_total_red_rings', remoteRed);
-}
-
-      // 4. Ingest Stage High Records directly into runtime memory
+      // Hydrate Red Star Ring ground truth directly from COMMAND_HUB!G3
+      if (data.totalRedRings !== undefined) {
+        localStorage.setItem('sonic_total_red_rings', data.totalRedRings);
+      }
       if (data.stageRecords && typeof data.stageRecords === 'object') {
         setRuntimeStageRecords(data.stageRecords);
         if (typeof renderStageRecordBanner === 'function') {
@@ -859,32 +853,72 @@ if (data.totalRedRings !== undefined || data.redRings !== undefined) {
           renderAllStageRecords();
         }
       }
+      
+      // -------------------------------------------------------------
+// RUNTIME RELIC & PERK CACHE (ZERO LOCALSTORAGE)
+// -------------------------------------------------------------
 
-      // 5. Ingest Flight Path / Stage Statuses
+// Pure in-memory cache populated from Google Sheet telemetry on boot
+let runtimeChaosEmeralds = {};
+let runtimeWorldRings = [];
+let runtimeUnlockedPerks = [];
+
+export function setRuntimeEmeralds(emeralds) {
+  runtimeChaosEmeralds = emeralds || {};
+}
+
+export function getChaosEmeralds() {
+  return runtimeChaosEmeralds;
+}
+
+export function setRuntimeWorldRings(rings) {
+  runtimeWorldRings = Array.isArray(rings) ? rings : [];
+}
+
+export function getWorldRings() {
+  return runtimeWorldRings;
+}
+
+export function setRuntimeUnlockedPerks(perks) {
+  runtimeUnlockedPerks = Array.isArray(perks) ? perks : [];
+}
+
+export function getUnlockedPerks() {
+  return runtimeUnlockedPerks;
+}
+      if (data.emeralds || data.chaosEmeralds) {
+        setRuntimeEmeralds(data.emeralds || data.chaosEmeralds);
+      }
+      if (data.worldRings) {
+        setRuntimeWorldRings(data.worldRings);
+      }
+      if (data.unlockedPerks) {
+        setRuntimeUnlockedPerks(data.unlockedPerks);
+      }
+      // =========================================================
+
       if (data.stages) {
+        localStorage.setItem('sonic_stage_statuses', JSON.stringify(data.stages));
         checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
           selectStage(nextStage);
           showToast(`FLIGHT PATH ENGAGED: ${nextStage.replace('_', ' ')}!`);
         });
       }
-
-      // 6. Ingest PR Vault into runtime memory
       if (data.prVault) {
         savePRVault(data.prVault);
         if (typeof renderPRVaultUI === 'function') {
           renderPRVaultUI();
         }
       }
-
-      // 7. Ingest Movement Mastery Vault
       if (data.vault && Array.isArray(data.vault) && data.vault.length > 0) {
         saveVaultData(data.vault);
       }
 
-      // Re-render UI components with freshly hydrated data
-      if (typeof renderVault === 'function') renderVault();
-      if (typeof renderArtifactsTray === 'function') renderArtifactsTray();
-      if (typeof updateHudRingBar === 'function') updateHudRingBar();
+      // Re-render UI views with fresh cloud state
+      renderVault();
+      renderArtifactsTray();
+      updateHudRingBar();
+      if (typeof renderSkillTree === 'function') renderSkillTree();
     }
   });
 
