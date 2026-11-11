@@ -34,12 +34,16 @@ import { renderSkillTree, switchSkillTreeBranch, unlockPerk } from './ui/renderS
 import { initMusicDrawer } from './ui/renderMusicDrawer.js';
 import { switchMainTab } from './ui/renderTabs.js';
 import { renderPRVaultUI } from './ui/renderPRVault.js';
+import { BAND_EQUIVALENTS, getBandEquivalent } from './data/bandEquivalents.js';
+import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSelections } from './ui/renderBandSelector.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
 let activeSlotIndex = 0;
 let tempoClean = true;
 let currentSetPain = false;
 let devDarkspineOverride = null; // null: follow standard logic; true/false: manual force
+let currentSlotGearMode = 'GYM'; // Defaults to Gym on every slot load
+let activeBandCombo = { nominalLoad: 0, comboLabel: 'None' };
 
 let activeSession = {
   stage: activeStageKey,
@@ -160,18 +164,17 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
 
   return { targetText: defaultSlotTarget, defaultReps: 8 };
 }
-function loadSlotData() {
+
+function hydrateExerciseDropdown() {
   const stageDef = STAGES[activeStageKey];
   if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
   const slotDef = stageDef.slots[activeSlotIndex];
-
-  const currentSlotTag = document.getElementById('currentSlotTag');
-  const currentTargetTag = document.getElementById('currentTargetTag');
-  if (currentSlotTag) currentSlotTag.innerText = `SLOT ${slotDef.slot}`;
-
   const select = document.getElementById('exerciseSelect');
-  if (select) {
-    select.innerHTML = '';
+  if (!select) return;
+
+  select.innerHTML = '';
+  
+  if (currentSlotGearMode === 'GYM') {
     slotDef.alts.forEach(alt => {
       const opt = document.createElement('option');
       opt.value = alt;
@@ -179,7 +182,85 @@ function loadSlotData() {
       select.appendChild(opt);
     });
     select.value = slotDef.primary;
+  } else {
+    const bandedAlts = slotDef.alts.map(alt => getBandEquivalent(alt));
+    bandedAlts.forEach(bandAlt => {
+      const opt = document.createElement('option');
+      opt.value = bandAlt;
+      opt.innerText = bandAlt;
+      select.appendChild(opt);
+    });
+    select.value = getBandEquivalent(slotDef.primary);
   }
+
+  // Trigger movement intel, target bracket, and load recalculation
+  if (select.onchange) select.onchange();
+}
+
+function syncEquipmentInputs() {
+  const loadInputWrapper = document.getElementById('loadInput')?.closest('.input-group') || document.getElementById('loadInput')?.parentElement;
+  const bandMount = document.getElementById('bandSelectorMount');
+  const exSelect = document.getElementById('exerciseSelect');
+  const currentEx = exSelect?.value || '';
+
+  if (currentSlotGearMode === 'BANDS' || isBandMovement(currentEx)) {
+    if (loadInputWrapper) loadInputWrapper.style.display = 'none';
+    if (bandMount) {
+      bandMount.style.display = 'block';
+      renderBandSelector(bandMount, currentEx, (combo) => {
+        activeBandCombo = combo;
+        const loadInput = document.getElementById('loadInput');
+        if (loadInput) loadInput.value = combo.nominalLoad;
+      });
+    }
+  } else {
+    if (loadInputWrapper) loadInputWrapper.style.display = '';
+    if (bandMount) bandMount.style.display = 'none';
+  }
+}
+
+function loadSlotData() {
+  const stageDef = STAGES[activeStageKey];
+  if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
+  const slotDef = stageDef.slots[activeSlotIndex];
+
+  // Inside loadSlotData():
+currentSlotGearMode = 'GYM'; // Rule: Always default to Gym
+clearBandSelections();
+activeBandCombo = { nominalLoad: 0, comboLabel: 'None' };
+
+const gymBtn = document.getElementById('gearModeGymBtn');
+const bandBtn = document.getElementById('gearModeBandBtn');
+if (gymBtn && bandBtn) {
+  gymBtn.style.background = '#38bdf8';
+  gymBtn.style.color = '#0f172a';
+  bandBtn.style.background = 'transparent';
+  bandBtn.style.color = '#94a3b8';
+}
+
+hydrateExerciseDropdown();
+syncEquipmentInputs();
+  
+  const currentSlotTag = document.getElementById('currentSlotTag');
+  const currentTargetTag = document.getElementById('currentTargetTag');
+  if (currentSlotTag) currentSlotTag.innerText = `SLOT ${slotDef.slot}`;
+
+// Reset gear mode strictly to GYM on each slot load
+  currentSlotGearMode = 'GYM';
+  clearBandSelections();
+  activeBandCombo = { nominalLoad: 0, comboLabel: 'None' };
+
+  const gymBtn = document.getElementById('gearModeGymBtn');
+  const bandBtn = document.getElementById('gearModeBandBtn');
+  if (gymBtn && bandBtn) {
+    gymBtn.style.background = '#38bdf8';
+    gymBtn.style.color = '#0f172a';
+    bandBtn.style.background = 'transparent';
+    bandBtn.style.color = '#94a3b8';
+  }
+
+  hydrateExerciseDropdown();
+  syncEquipmentInputs();
 
   // Resolve dynamic target and auto-preload rep count for primary movement
   const resolved = resolveExerciseTarget(slotDef.primary, slotDef.target);
@@ -309,8 +390,15 @@ export function logActiveSet() {
   }
 
   let equivReps = reps;
-  let equivVolume = Math.round(load * reps);
+  let finalLoad = load;
   let displayMetric = `${load}lbs × ${reps}r`;
+
+  const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(exercise);
+  if (isBand && activeBandCombo.nominalLoad > 0) {
+    finalLoad = activeBandCombo.nominalLoad;
+    displayMetric = `${activeBandCombo.comboLabel} (${finalLoad} lbs) × ${reps}r`;
+  }
+  let equivVolume = Math.round(finalLoad * reps);
 
   if (isCardio) {
     const cMetrics = CARDIO_CONFIGS[exercise].calcEquiv(load, reps);
@@ -321,16 +409,16 @@ export function logActiveSet() {
 
   const resolved = resolveExerciseTarget(exercise, slotDef.target);
 
-  const completedSetObj = {
+const completedSetObj = {
     slot: slotDef.slot,
     exercise,
     setNum: setsInSlot,
-    load,
+    load: finalLoad,                     // Numerical nominal load for e1RM & volume
     reps,
     target: resolved.targetText,
     equivReps,
-    equivVolume,
-    displayMetric,
+    equivVolume,                         // Accurately calculated with finalLoad
+    displayMetric,                       // "Green + Red (105 lbs) × 8r"
     rpe,
     e1rm: setE1RM,
     isNewPR,
@@ -669,8 +757,31 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderVault();
   renderArtifactsTray();
   initMusicDrawer();
-
   initTimerBackgroundSync();
+  const gymBtn = document.getElementById('gearModeGymBtn');
+  const bandBtn = document.getElementById('gearModeBandBtn');
+
+  if (gymBtn && bandBtn) {
+    gymBtn.onclick = () => {
+      currentSlotGearMode = 'GYM';
+      gymBtn.style.background = '#38bdf8';
+      gymBtn.style.color = '#0f172a';
+      bandBtn.style.background = 'transparent';
+      bandBtn.style.color = '#94a3b8';
+      hydrateExerciseDropdown();
+      syncEquipmentInputs();
+    };
+
+    bandBtn.onclick = () => {
+      currentSlotGearMode = 'BANDS';
+      bandBtn.style.background = '#38bdf8';
+      bandBtn.style.color = '#0f172a';
+      gymBtn.style.background = 'transparent';
+      gymBtn.style.color = '#94a3b8';
+      hydrateExerciseDropdown();
+      syncEquipmentInputs();
+    };
+  }
   checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
     selectStage(nextStage);
     showToast(`FLIGHT PATH ENGAGED: ${nextStage.replace('_', ' ')}!`);
