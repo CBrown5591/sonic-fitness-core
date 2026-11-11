@@ -57,8 +57,7 @@ export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, slot
   }
 
   // STEP 2: Identify primary counterpart and check if it has a registered PR
- // 1. Identify primary counterpart (strip qualifiers for PR lookup)
-  // 1. Identify primary counterpart (strip parenthetical qualifiers for PR lookup)
+// 1. Identify primary counterpart (strip parenthetical qualifiers for PR lookup)
   const trueGymName = getGymCounterpart(bandExerciseName) || gymExerciseName;
   const cleanGymName = trueGymName.replace(/\s*\([^)]*\)/g, '').trim();
   const gymPR = prVault[cleanGymName] || prVault[trueGymName];
