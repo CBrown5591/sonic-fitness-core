@@ -51,16 +51,28 @@ export function calculateE1RM(load, reps, rpe = 10.0) {
 /**
  * Target Percentage Extractor from target bracket string
  */
-export function getTargetPercentage(targetStr) {
-  if (!targetStr) return 0.70;
-  const s = String(targetStr).toLowerCase();
-  if (s.includes('88%') || s.includes('3-5') || s.includes('1rm') || s.includes('strike')) return 0.88;
-  if (s.includes('amrap') || s.includes('70%') || s.includes('failure') || s.includes('overdrive')) return 0.70;
-  if (s.includes('6-8')) return 0.78;
-  if (s.includes('8-10')) return 0.72;
-  if (s.includes('10-12')) return 0.65;
-  if (s.includes('12-15')) return 0.58;
-  if (s.includes('paces') || s.includes('carry')) return 0.60;
+// docs/js/engine/calc.js
+
+export function getTargetPercentage(targetStr = '') {
+  const str = String(targetStr).toLowerCase();
+
+  // 1. Heavy Peak / Benchmark brackets
+  if (str.includes('1x1') || str.includes('100%')) return 1.00;
+  if (str.includes('1x3-5') || str.includes('88%')) return 0.88;
+
+  // 2. Heavy Hypertrophy & Mechanical Tension (Day E recalibration)
+  if (str.includes('6-8')) return 0.80; // 80% 1RM
+
+  // 3. Moderate Hypertrophy
+  if (str.includes('8-10')) return 0.74; // 74% 1RM
+  if (str.includes('10-12')) return 0.68; // 68% 1RM
+
+  // 4. Active Recovery & High-Rep Deload (Day F recalibration)
+  if (str.includes('12-15')) return 0.62; // 62% 1RM
+  if (str.includes('15-20')) return 0.55; // 55% 1RM (Joint sparing flush)
+  if (str.includes('20-25')) return 0.48; // 48% 1RM
+
+  // Default fallback
   return 0.70;
 }
 
