@@ -32,7 +32,7 @@
   <button type="button" class="main-tab-btn" data-target="vaultTab" onclick="switchMainTab('vaultTab')">🏛️ VAULT</button>
   <button type="button" class="main-tab-btn" data-target="skillsTab" onclick="switchMainTab('skillsTab')">✨ SKILL TREES</button>
   <!-- Replace the music tab button -->
-<button class="main-tab-btn" id="tabBtnCalc" onclick="switchMainTab('calc')" type="button">
+<button class="main-tab-btn" onclick="switchMainTab('calcTab')" data-target="calcTab" type="button">
   <span>🧮</span>
   <span>CALC</span>
 </button>
@@ -276,9 +276,10 @@
 <!-- TAB 5: AUDIO RIG // COCKPIT PLAYER         -->
 <!-- ========================================== -->
 <!-- REPLACE THE MUSIC VIEW CONTAINER WITH: -->
-<div id="tabViewCalc" class="tab-view-content" style="display: none; padding: 16px;">
+<!-- In docs/index.html -->
+<section id="calcTab" class="main-tab-view" style="display: none; padding: 12px;">
   <div id="calculatorMount"></div>
-</div>
+</section>
  <!-- PERSISTENT COCKPIT DOCK (FIXED AT BOTTOM) -->
 <div class="fixed-cockpit-dock">
   <!-- SHELF 1: MEDIA SHELF (Collapsible Upper Level) -->
