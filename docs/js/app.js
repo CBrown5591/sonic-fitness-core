@@ -863,6 +863,10 @@ bandBtn.onclick = () => {
         setActiveBandSelection(selectedKeys);
         syncEquipmentInputs();
 
+        // Make sure intel updates on dropdown change:
+        renderMovementIntel(val);
+        updateInputLabelsForExercise(val);
+
         const loadInput = document.getElementById('loadInput');
         if (loadInput) loadInput.value = nominalTotal;
       } else {
