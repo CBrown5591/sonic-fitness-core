@@ -76,6 +76,18 @@ export function getSelectedBandCombo() {
   };
 }
 
+// docs/js/ui/renderBandSelector.js
+
+export function setActiveBandSelection(keys = []) {
+  selectedBandKeys.clear();
+  keys.forEach(k => selectedBandKeys.add(k));
+
+  const mount = document.getElementById('bandSelectorMount');
+  if (mount) {
+    updateUIAndNotify(mount);
+  }
+}
+
 export function clearBandSelections() {
   selectedBandKeys.clear();
 }
