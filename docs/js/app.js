@@ -45,6 +45,8 @@ import { switchMainTab } from './ui/renderTabs.js';
 import { renderPRVaultUI } from './ui/renderPRVault.js';
 import { BAND_EQUIVALENTS, getBandEquivalent } from './data/bandEquivalents.js';
 import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSelections } from './ui/renderBandSelector.js';
+import { resolveInitialBandPreset } from './engine/bandSolver.js';
+import { setActiveBandSelection } from './ui/renderBandSelector.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
 let activeSlotIndex = 0;
@@ -762,14 +764,38 @@ document.addEventListener('DOMContentLoaded', async () => {
     };
 
     bandBtn.onclick = () => {
-      currentSlotGearMode = 'BANDS';
-      bandBtn.style.background = '#38bdf8';
-      bandBtn.style.color = '#0f172a';
-      gymBtn.style.background = 'transparent';
-      gymBtn.style.color = '#94a3b8';
-      hydrateExerciseDropdown();
-      syncEquipmentInputs();
-    };
+    currentSlotGearMode = 'BANDS';
+    bandBtn.style.background = '#38bdf8';
+    bandBtn.style.color = '#0f172a';
+    gymBtn.style.background = 'transparent';
+    gymBtn.style.color = '#94a3b8';
+
+    hydrateExerciseDropdown();
+
+    const stageDef = STAGES[activeStageKey];
+    const slotDef = stageDef?.slots?.[activeSlotIndex];
+    const gymPrimary = slotDef ? slotDef.primary : '';
+    const currentBandExercise = document.getElementById('exerciseSelect')?.value || '';
+    const currentGymLoad = parseFloat(document.getElementById('loadInput')?.value) || 50;
+
+    // 1. Calculate the scaled target & solve optimal band combo
+    const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
+      currentBandExercise,
+      gymPrimary,
+      currentGymLoad
+    );
+
+    // 2. Mount and activate the pills
+    syncEquipmentInputs();
+    if (selectedKeys.length > 0) {
+      setActiveBandSelection(selectedKeys);
+    }
+
+    // 3. Set the numeric nominal load
+    if (nominalTotal > 0 && document.getElementById('loadInput')) {
+      document.getElementById('loadInput').value = nominalTotal;
+    }
+  };
   }
 
   checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
