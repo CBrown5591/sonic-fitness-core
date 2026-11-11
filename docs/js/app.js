@@ -854,38 +854,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
       }
       
-      // -------------------------------------------------------------
-// RUNTIME RELIC & PERK CACHE (ZERO LOCALSTORAGE)
-// -------------------------------------------------------------
-
-// Pure in-memory cache populated from Google Sheet telemetry on boot
-let runtimeChaosEmeralds = {};
-let runtimeWorldRings = [];
-let runtimeUnlockedPerks = [];
-
-export function setRuntimeEmeralds(emeralds) {
-  runtimeChaosEmeralds = emeralds || {};
-}
-
-export function getChaosEmeralds() {
-  return runtimeChaosEmeralds;
-}
-
-export function setRuntimeWorldRings(rings) {
-  runtimeWorldRings = Array.isArray(rings) ? rings : [];
-}
-
-export function getWorldRings() {
-  return runtimeWorldRings;
-}
-
-export function setRuntimeUnlockedPerks(perks) {
-  runtimeUnlockedPerks = Array.isArray(perks) ? perks : [];
-}
-
-export function getUnlockedPerks() {
-  return runtimeUnlockedPerks;
-}
+   
       if (data.emeralds || data.chaosEmeralds) {
         setRuntimeEmeralds(data.emeralds || data.chaosEmeralds);
       }
