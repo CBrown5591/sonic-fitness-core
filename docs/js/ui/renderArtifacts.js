@@ -100,6 +100,11 @@ export function getWorldRings() {
   return runtimeWorldRings;
 }
 
+// Alias to ensure backwards compatibility with Darkspine & Secret Ring triggers
+export function getSecretRings() {
+  return runtimeWorldRings;
+}
+
 export function setRuntimeUnlockedPerks(perks) {
   runtimeUnlockedPerks = Array.isArray(perks) ? perks : [];
 }
