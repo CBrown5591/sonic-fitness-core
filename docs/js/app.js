@@ -224,28 +224,7 @@ function loadSlotData() {
   if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
   const slotDef = stageDef.slots[activeSlotIndex];
 
-  // Inside loadSlotData():
-currentSlotGearMode = 'GYM'; // Rule: Always default to Gym
-clearBandSelections();
-activeBandCombo = { nominalLoad: 0, comboLabel: 'None' };
-
-const gymBtn = document.getElementById('gearModeGymBtn');
-const bandBtn = document.getElementById('gearModeBandBtn');
-if (gymBtn && bandBtn) {
-  gymBtn.style.background = '#38bdf8';
-  gymBtn.style.color = '#0f172a';
-  bandBtn.style.background = 'transparent';
-  bandBtn.style.color = '#94a3b8';
-}
-
-hydrateExerciseDropdown();
-syncEquipmentInputs();
-  
-  const currentSlotTag = document.getElementById('currentSlotTag');
-  const currentTargetTag = document.getElementById('currentTargetTag');
-  if (currentSlotTag) currentSlotTag.innerText = `SLOT ${slotDef.slot}`;
-
-// Reset gear mode strictly to GYM on each slot load
+  // Reset gear mode strictly to GYM on each slot load
   currentSlotGearMode = 'GYM';
   clearBandSelections();
   activeBandCombo = { nominalLoad: 0, comboLabel: 'None' };
@@ -261,6 +240,10 @@ syncEquipmentInputs();
 
   hydrateExerciseDropdown();
   syncEquipmentInputs();
+  
+  const currentSlotTag = document.getElementById('currentSlotTag');
+  const currentTargetTag = document.getElementById('currentTargetTag');
+  if (currentSlotTag) currentSlotTag.innerText = `SLOT ${slotDef.slot}`;
 
   // Resolve dynamic target and auto-preload rep count for primary movement
   const resolved = resolveExerciseTarget(slotDef.primary, slotDef.target);
@@ -409,7 +392,7 @@ export function logActiveSet() {
 
   const resolved = resolveExerciseTarget(exercise, slotDef.target);
 
-const completedSetObj = {
+  const completedSetObj = {
     slot: slotDef.slot,
     exercise,
     setNum: setsInSlot,
@@ -589,10 +572,6 @@ function renderSessionUI() {
   }
 }
 
-// docs/js/app.js
-
-// docs/js/app.js
-
 function ensureStageTabsExist() {
   const stageNav = document.querySelector('.stage-nav') || document.querySelector('.stage-tabs');
   if (!stageNav) return;
@@ -758,6 +737,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderArtifactsTray();
   initMusicDrawer();
   initTimerBackgroundSync();
+
   const gymBtn = document.getElementById('gearModeGymBtn');
   const bandBtn = document.getElementById('gearModeBandBtn');
 
@@ -782,6 +762,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       syncEquipmentInputs();
     };
   }
+
   checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
     selectStage(nextStage);
     showToast(`FLIGHT PATH ENGAGED: ${nextStage.replace('_', ' ')}!`);
@@ -833,9 +814,10 @@ document.addEventListener('DOMContentLoaded', async () => {
       const loadInput = document.getElementById('loadInput');
       if (loadInput) loadInput.value = dynamicLoad;
 
-      // 3. Update tactical cues and input unit labels
+      // 3. Update tactical cues, input labels, and sync equipment UI
       renderMovementIntel(val);
       updateInputLabelsForExercise(val);
+      syncEquipmentInputs();
     };
   }
 
@@ -1019,7 +1001,6 @@ window.__sonicDev = {
   }
 };
 console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicDev');
-// docs/js/app.js
 
 export function appendCardioFinisherSlot() {
   const stageDef = STAGES[activeStageKey];
