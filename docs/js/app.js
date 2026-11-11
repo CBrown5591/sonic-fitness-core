@@ -40,7 +40,6 @@ import {
 import { getTotalRedRings } from './ui/renderVault.js';
 import { renderVault, creditVaultRings, saveVaultData } from './ui/renderVault.js';
 import { renderSkillTree, switchSkillTreeBranch, unlockPerk } from './ui/renderSkillTree.js';
-import { initMusicDrawer } from './ui/renderMusicDrawer.js';
 import { switchMainTab } from './ui/renderTabs.js';
 import { renderPRVaultUI } from './ui/renderPRVault.js';
 import { BAND_EQUIVALENTS, getBandEquivalent } from './data/bandEquivalents.js';
@@ -746,7 +745,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   selectStage(activeStageKey, false);
   renderVault();
   renderArtifactsTray();
-  initMusicDrawer();
   initTimerBackgroundSync();
 
   // File: docs/js/app.js (Inside DOMContentLoaded listener)
