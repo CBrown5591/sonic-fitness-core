@@ -87,12 +87,32 @@ export function clearBandSelections() {
 /**
  * Programmatically activates band pills (used by the auto-selection solver)
  */
+// docs/js/ui/renderBandSelector.js
+
 export function setActiveBandSelection(keys = []) {
   selectedBandKeys.clear();
   keys.forEach(k => selectedBandKeys.add(k));
 
   const mount = document.getElementById('bandSelectorMount');
   if (mount) {
+    // 1. Immediately toggle active classes & styles on all pill buttons
+    mount.querySelectorAll('.band-pill-btn').forEach(btn => {
+      const key = btn.dataset.key;
+      const isSel = selectedBandKeys.has(key);
+      if (isSel) {
+        btn.classList.add('active');
+        btn.style.background = 'rgba(56, 189, 248, 0.28)';
+        btn.style.borderColor = '#38bdf8';
+        btn.style.color = '#ffffff';
+      } else {
+        btn.classList.remove('active');
+        btn.style.background = 'rgba(15, 23, 42, 0.85)';
+        btn.style.borderColor = 'rgba(255,255,255,0.15)';
+        btn.style.color = '#94a3b8';
+      }
+    });
+
+    // 2. Refresh total display & notify app callbacks
     updateUIAndNotify(mount, activeSelectionCallback);
   }
 }
