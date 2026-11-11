@@ -788,12 +788,22 @@ document.addEventListener('DOMContentLoaded', async () => {
     hydrateExerciseDropdown();
     syncEquipmentInputs(); // Mounts the container and saves activeSelectionCallback
 
+   const slotTarget = slotDef ? slotDef.target : "3x8-10";
     const currentBandExercise = document.getElementById('exerciseSelect')?.value || '';
+    
     const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
       currentBandExercise,
       gymPrimary,
-      gymWorkingLoad
+      slotTarget,
+      slotDef?.defaultLoad || 50
     );
+
+    if (selectedKeys.length > 0) {
+      setActiveBandSelection(selectedKeys);
+    }
+    if (nominalTotal > 0 && document.getElementById('loadInput')) {
+      document.getElementById('loadInput').value = nominalTotal;
+    }
 
     if (selectedKeys.length > 0) {
       setActiveBandSelection(selectedKeys);
@@ -854,8 +864,12 @@ document.addEventListener('DOMContentLoaded', async () => {
 
       if (isBand) {
         const gymPrimary = slotDef ? slotDef.primary : '';
-        const gymBaseLoad = getDefaultGymLoad(gymPrimary, slotDef?.defaultLoad);
-        const { selectedKeys, nominalTotal } = resolveInitialBandPreset(val, gymPrimary, gymBaseLoad);
+        const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
+          val, 
+          gymPrimary, 
+          defaultTarget, 
+          slotDef?.defaultLoad || 50
+        );
 
         syncEquipmentInputs();
         if (typeof setActiveBandSelection === 'function' && selectedKeys.length > 0) {
@@ -863,6 +877,7 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         const loadInput = document.getElementById('loadInput');
         if (loadInput) loadInput.value = nominalTotal;
+      }
       } else {
         const baseLoad = getDefaultGymLoad(val, slotDef?.defaultLoad);
         const dynamicLoad = pr && pr.e1rm > 0 
