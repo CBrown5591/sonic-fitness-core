@@ -78,27 +78,24 @@ export function getSelectedBandCombo() {
 
 // docs/js/ui/renderBandSelector.js
 
+// docs/js/ui/renderBandSelector.js
+
+let activeSelectionCallback = null;
+
 export function setActiveBandSelection(keys = []) {
   selectedBandKeys.clear();
   keys.forEach(k => selectedBandKeys.add(k));
 
   const mount = document.getElementById('bandSelectorMount');
   if (mount) {
-    updateUIAndNotify(mount);
+    updateUIAndNotify(mount, activeSelectionCallback);
   }
 }
 
-export function clearBandSelections() {
-  selectedBandKeys.clear();
-}
-
-/**
- * Main UI Mount: Renders interactive pills filtered to the selected exercise
- */
 export function renderBandSelector(containerEl, exerciseName, onSelectionChange) {
   if (!containerEl) return;
+  activeSelectionCallback = onSelectionChange; // Persist callback for programmatic updates
 
-  // Filter bands using the strict category rules above
   const relevantBands = getBandsForMovement(exerciseName);
 
   containerEl.innerHTML = `
@@ -134,7 +131,6 @@ export function renderBandSelector(containerEl, exerciseName, onSelectionChange)
     </div>
   `;
 
-  // Attach button toggle click listeners
   containerEl.querySelectorAll('.band-pill-btn').forEach(btn => {
     btn.onclick = (e) => {
       e.preventDefault();
