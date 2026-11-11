@@ -764,7 +764,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       syncEquipmentInputs();
     };
 
-    bandBtn.onclick = () => {
+bandBtn.onclick = () => {
       currentSlotGearMode = 'BANDS';
       bandBtn.style.background = '#38bdf8';
       bandBtn.style.color = '#0f172a';
@@ -793,7 +793,11 @@ document.addEventListener('DOMContentLoaded', async () => {
       setActiveBandSelection(selectedKeys);
       syncEquipmentInputs();
 
-      // 5. Explicitly assign loadInput
+      // 5. Update tactical cues/intel for the newly selected banded exercise!
+      renderMovementIntel(currentBandExercise);
+      updateInputLabelsForExercise(currentBandExercise);
+
+      // 6. Explicitly assign loadInput
       const loadInput = document.getElementById('loadInput');
       if (loadInput) loadInput.value = nominalTotal;
     };
