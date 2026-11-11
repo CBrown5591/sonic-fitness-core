@@ -1,6 +1,7 @@
 // docs/js/ui/renderTabs.js
 import { renderVault } from './renderVault.js';
 import { refreshRecordsTab } from './renderRecordsTab.js';
+import { renderCalculator } from './renderCalculator.js';
 
 export function switchMainTab(targetTabId) {
   // 1. Hide all views
@@ -33,6 +34,9 @@ export function switchMainTab(targetTabId) {
     refreshRecordsTab();
   } else if (targetTabId === 'vaultTab') {
     renderVault();
+  } else if (targetTabId === 'calcTab') {
+    const mount = document.getElementById('calculatorMount');
+    if (mount) renderCalculator(mount);
   }
 }
 
