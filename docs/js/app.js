@@ -877,7 +877,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         }
         const loadInput = document.getElementById('loadInput');
         if (loadInput) loadInput.value = nominalTotal;
-      }
       } else {
         const baseLoad = getDefaultGymLoad(val, slotDef?.defaultLoad);
         const dynamicLoad = pr && pr.e1rm > 0 
