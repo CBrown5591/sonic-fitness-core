@@ -1,4 +1,5 @@
 // docs/js/engine/bandSolver.js
+import { BAND_EQUIVALENTS } from '../data/bandEquivalents.js';
 import { getBandsForMovement } from '../data/bandConfigs.js';
 import { getPRVault } from './records.js';
 
@@ -71,26 +72,43 @@ export function solveBestBandCombination(targetLoad, candidateBands = []) {
 
 // docs/js/engine/bandSolver.js
 
+// Reverse lookup: finds the actual gym parent lift for any chosen band alt
+function getGymCounterpart(bandExerciseName) {
+  for (const [gymName, bandName] of Object.entries(BAND_EQUIVALENTS)) {
+    if (bandName.toLowerCase() === (bandExerciseName || '').toLowerCase()) {
+      return gymName;
+    }
+  }
+  return bandExerciseName;
+}
+
 export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, gymTargetLoad = 50) {
   const prVault = getPRVault();
+  
+  // 1. Check if this banded movement has its own dedicated 1RM/PR
   const dedicatedPR = prVault[bandExerciseName];
-
-  let effectiveTargetLoad = 0;
-
-  if (dedicatedPR && dedicatedPR.e1rm > 0) {
-    // 1. Dedicated band history exists
-    effectiveTargetLoad = dedicatedPR.load || Math.round(dedicatedPR.e1rm * 0.70);
-  } else {
-    // 2. Fetch the gym movement's actual load or PR if gymTargetLoad is generic
-    let gymLoad = gymTargetLoad;
-    const gymPR = prVault[gymExerciseName];
-    if ((!gymLoad || gymLoad < 120) && gymPR && gymPR.e1rm > 0) {
-      gymLoad = Math.round(gymPR.e1rm * 0.75); // Use working gym weight (~260 lbs)
-    }
-
-    const multiplier = getMovementScaler(bandExerciseName || gymExerciseName);
-    effectiveTargetLoad = Math.round(gymLoad * multiplier);
+  if (dedicatedPR && dedicatedPR.load > 0) {
+    const candidateBands = getBandsForMovement(bandExerciseName);
+    return solveBestBandCombination(dedicatedPR.load, candidateBands);
   }
+
+  // 2. Identify the true gym counterpart (e.g., Spanish Squat -> Cybex Leg Press)
+  const trueGymName = getGymCounterpart(bandExerciseName) || gymExerciseName;
+  const gymPR = prVault[trueGymName];
+
+  // 3. Resolve baseline load for that true counterpart
+  let baseGymLoad = gymTargetLoad;
+  if (gymPR && gymPR.load > 0) {
+    baseGymLoad = gymPR.load;
+  } else if (trueGymName.includes('Leg Press')) {
+    baseGymLoad = 250; 
+  } else if (trueGymName.includes('Chest Press') || trueGymName.includes('High Row')) {
+    baseGymLoad = 110;
+  }
+
+  // 4. Scale with the movement multiplier
+  const multiplier = getMovementScaler(bandExerciseName || trueGymName);
+  const effectiveTargetLoad = Math.max(20, Math.round(baseGymLoad * multiplier));
 
   const candidateBands = getBandsForMovement(bandExerciseName);
   return solveBestBandCombination(effectiveTargetLoad, candidateBands);
