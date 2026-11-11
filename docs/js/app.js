@@ -801,15 +801,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     };
   }
-    if (selectedKeys.length > 0) {
-      setActiveBandSelection(selectedKeys);
-    }
-
-    if (nominalTotal > 0 && document.getElementById('loadInput')) {
-      document.getElementById('loadInput').value = nominalTotal;
-    }
-  };
-}
   checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
     selectStage(nextStage);
     showToast(`FLIGHT PATH ENGAGED: ${nextStage.replace('_', ' ')}!`);
