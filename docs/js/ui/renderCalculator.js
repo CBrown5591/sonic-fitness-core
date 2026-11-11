@@ -63,4 +63,185 @@ export function renderCalculator(containerEl) {
             <select id="calcTargetBracket" style="width: 100%; box-sizing: border-box; background: #0b0f19; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 700;">
               <option value="3x6-8">3x6-8 (Heavy Power)</option>
               <option value="3x8-10" selected>3x8-10 (Hypertrophy)</option>
-              <option value="3x10-12">3x10-12 (P
+              <option value="3x10-12">3x10-12 (Paced Hypertrophy)</option>
+              <option value="3x12-15">3x12-15 (Metcon Pump)</option>
+              <option value="3x20-25 reps">3x20-25 (High Cadence)</option>
+            </select>
+          </div>
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="display: flex; align-items: center; gap: 6px; font-size: 12px; color: #cbd5e1; cursor: pointer;">
+            <input type="checkbox" id="calcIsDb" checked>
+            <span>Apply 65 lb Dumbbell Ceiling</span>
+          </label>
+        </div>
+
+        <div id="calcGymOutput" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px;">
+        </div>
+      </div>
+
+      <!-- PANEL 2: BAND SIMULATOR -->
+      <div id="calcPanelBand" style="display: none;">
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 10px; color: #94a3b8; font-weight: 700; margin-bottom: 4px;">GYM BASELINE LOAD (OR 1RM)</label>
+          <input type="number" id="calcBandBaseLoad" value="260" style="width: 100%; box-sizing: border-box; background: #0b0f19; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px; font-size: 14px; font-weight: 700;">
+        </div>
+
+        <div style="margin-bottom: 12px;">
+          <label style="display: block; font-size: 10px; color: #94a3b8; font-weight: 700; margin-bottom: 4px;">MOVEMENT SCALING CATEGORY</label>
+          <select id="calcBandScaler" style="width: 100%; box-sizing: border-box; background: #0b0f19; border: 1px solid #334155; color: #fff; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 700;">
+            <option value="0.25">Spanish Squat / Knee Brace (0.25x)</option>
+            <option value="0.20">Metcon Front Squat 20-25r (0.20x)</option>
+            <option value="0.50">Standard Front Squat (0.50x)</option>
+            <option value="0.60">Romanian Deadlift / Hinge (0.60x)</option>
+            <option value="0.75">Adductor / Abductor Sweep (0.75x)</option>
+            <option value="0.70">Curls / Biceps (0.70x)</option>
+            <option value="1.00">Upper Body Press / Row (1.00x)</option>
+          </select>
+        </div>
+
+        <div id="calcBandRecommendation" style="background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; padding: 12px; margin-bottom: 14px;">
+        </div>
+
+        <div style="font-size: 11px; font-weight: 800; color: #38bdf8; margin-bottom: 8px;">
+          BAND TESTER (TAP PILLS TO COMBINE)
+        </div>
+        <div id="calcBandPillContainer" style="display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 8px;">
+        </div>
+        <div id="calcBandTotalDisplay" style="font-size: 12px; font-weight: 700; color: #facc15;">
+          TOTAL TEST TENSION: 0 LBS
+        </div>
+      </div>
+    </div>
+  `;
+
+  attachCalcEvents(containerEl);
+  recomputeGym();
+  recomputeBand();
+  renderTesterPills(containerEl);
+}
+
+function attachCalcEvents(containerEl) {
+  const gymBtn = containerEl.querySelector('#calcModeGym');
+  const bandBtn = containerEl.querySelector('#calcModeBand');
+  const panelGym = containerEl.querySelector('#calcPanelGym');
+  const panelBand = containerEl.querySelector('#calcPanelBand');
+
+  if (gymBtn && bandBtn) {
+    gymBtn.onclick = () => {
+      gymBtn.style.background = '#38bdf8';
+      gymBtn.style.color = '#0f172a';
+      bandBtn.style.background = 'rgba(255,255,255,0.05)';
+      bandBtn.style.color = '#94a3b8';
+      if (panelGym) panelGym.style.display = 'block';
+      if (panelBand) panelBand.style.display = 'none';
+    };
+
+    bandBtn.onclick = () => {
+      bandBtn.style.background = '#38bdf8';
+      bandBtn.style.color = '#0f172a';
+      gymBtn.style.background = 'rgba(255,255,255,0.05)';
+      gymBtn.style.color = '#94a3b8';
+      if (panelGym) panelGym.style.display = 'none';
+      if (panelBand) panelBand.style.display = 'block';
+    };
+  }
+
+  ['#calcWeightInput', '#calcRepsInput', '#calcRpeInput', '#calcTargetBracket', '#calcIsDb'].forEach(id => {
+    const el = containerEl.querySelector(id);
+    if (el) el.oninput = recomputeGym;
+  });
+
+  ['#calcBandBaseLoad', '#calcBandScaler'].forEach(id => {
+    const el = containerEl.querySelector(id);
+    if (el) el.oninput = recomputeBand;
+  });
+}
+
+function recomputeGym() {
+  const load = parseFloat(document.getElementById('calcWeightInput')?.value) || 0;
+  const reps = parseInt(document.getElementById('calcRepsInput')?.value, 10) || 0;
+  const rpe = parseFloat(document.getElementById('calcRpeInput')?.value) || 7.5;
+  const target = document.getElementById('calcTargetBracket')?.value || "3x8-10";
+  const isDb = document.getElementById('calcIsDb')?.checked;
+
+  const e1rm = getE1RM(load, reps, rpe);
+  let nextTargetLoad = calculateTargetLoad(e1rm, target, load);
+  if (isDb) {
+    nextTargetLoad = Math.min(65, nextTargetLoad);
+  }
+
+  const out = document.getElementById('calcGymOutput');
+  if (out) {
+    out.innerHTML = `
+      <div style="font-size: 11px; color: #94a3b8;">ESTIMATED 1RM (E1RM): <strong style="color: #38bdf8; font-size: 13px;">${e1rm} LBS</strong></div>
+      <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">RECOMMENDED FOR ${target}: <strong style="color: #facc15; font-size: 13px;">${nextTargetLoad} LBS</strong> ${isDb && nextTargetLoad >= 65 ? '<span style="color: #ef4444; font-weight:800;">(65 LB DB CAP)</span>' : ''}</div>
+      <div style="font-size: 10px; color: #64748b; margin-top: 6px;">Single Set Volume: ${load * reps} lbs</div>
+    `;
+  }
+}
+
+function recomputeBand() {
+  const baseLoad = parseFloat(document.getElementById('calcBandBaseLoad')?.value) || 0;
+  const mult = parseFloat(document.getElementById('calcBandScaler')?.value) || 1.0;
+  const scaled = Math.round(baseLoad * mult);
+
+  const candidateBands = Object.values(BAND_CONFIG).filter(b => b.type === '41_loop');
+  const combo = solveBestBandCombination(scaled, candidateBands);
+
+  const out = document.getElementById('calcBandRecommendation');
+  if (out) {
+    out.innerHTML = `
+      <div style="font-size: 11px; color: #94a3b8;">SCALED EFFECTIVE LOAD: <strong style="color: #38bdf8; font-size: 13px;">${scaled} LBS</strong></div>
+      <div style="font-size: 11px; color: #94a3b8; margin-top: 4px;">SOLVER RECOMMENDATION: <strong style="color: #facc15; font-size: 13px;">${combo.nominalTotal} LBS</strong></div>
+      <div style="font-size: 10px; color: #cbd5e1; margin-top: 4px;">Pills: ${combo.selectedKeys.map(k => BAND_CONFIG[k]?.name).join(' + ') || 'None'}</div>
+    `;
+  }
+}
+
+function renderTesterPills(containerEl) {
+  const mount = containerEl.querySelector('#calcBandPillContainer');
+  if (!mount) return;
+
+  mount.innerHTML = Object.values(BAND_CONFIG).map(b => {
+    const isSel = calcSelectedBands.has(b.id);
+    return `
+      <button type="button" class="calc-pill-btn" data-key="${b.id}" style="
+        background: ${isSel ? 'rgba(56, 189, 248, 0.28)' : 'rgba(15, 23, 42, 0.85)'};
+        border: 1px solid ${isSel ? '#38bdf8' : 'rgba(255,255,255,0.15)'};
+        color: ${isSel ? '#ffffff' : '#94a3b8'};
+        padding: 5px 8px; border-radius: 6px; font-size: 10px; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px;">
+        <span style="display: inline-block; width: 6px; height: 6px; border-radius: 50%; background: ${b.color};"></span>
+        ${b.name} (${b.nominal} lbs)
+      </button>
+    `;
+  }).join('');
+
+  mount.querySelectorAll('.calc-pill-btn').forEach(btn => {
+    btn.onclick = () => {
+      const k = btn.dataset.key;
+      if (calcSelectedBands.has(k)) calcSelectedBands.delete(k);
+      else calcSelectedBands.add(k);
+      renderTesterPills(containerEl);
+      updateTesterTotal(containerEl);
+    };
+  });
+}
+
+function updateTesterTotal(containerEl) {
+  let sum = 0;
+  let names = [];
+  calcSelectedBands.forEach(k => {
+    const b = BAND_CONFIG[k];
+    if (b) {
+      sum += b.nominal;
+      names.push(b.name);
+    }
+  });
+
+  const disp = containerEl.querySelector('#calcBandTotalDisplay');
+  if (disp) {
+    disp.innerHTML = `TOTAL TEST TENSION: <strong>${sum} LBS</strong> (${names.join(' + ') || 'None'})`;
+  }
+}
