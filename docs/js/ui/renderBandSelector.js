@@ -5,13 +5,10 @@
 import { BAND_CONFIG } from '../data/bandConfigs.js';
 
 let selectedBandKeys = new Set();
+let activeSelectionCallback = null;
 
 /**
- * 1. STRICT EQUIPMENT FILTER
- * Mutually exclusive separation:
- * - Mini Loops: Locomotion, Ankles, Hips
- * - Handled Tubes: Door-Anchored pulls, presses, crunches, rotations, curls
- * - 41" Continuous Loops: Body-anchored heavy compound hinges, squats, push-ups
+ * Filter available bands based on exercise movement mechanics
  */
 export function getBandsForMovement(exerciseName = '') {
   const name = (exerciseName || '').toLowerCase();
@@ -49,7 +46,7 @@ export function getBandsForMovement(exerciseName = '') {
 }
 
 /**
- * Helper to check if movement requires band controls
+ * Checks whether an exercise requires the resistance band selector
  */
 export function isBandMovement(exerciseName = '') {
   const name = (exerciseName || '').toLowerCase();
@@ -76,12 +73,20 @@ export function getSelectedBandCombo() {
   };
 }
 
-// docs/js/ui/renderBandSelector.js
+/**
+ * Resets active band selections (called on slot reset/transitions)
+ */
+export function clearBandSelections() {
+  selectedBandKeys.clear();
+  const mount = document.getElementById('bandSelectorMount');
+  if (mount) {
+    updateUIAndNotify(mount, activeSelectionCallback);
+  }
+}
 
-// docs/js/ui/renderBandSelector.js
-
-let activeSelectionCallback = null;
-
+/**
+ * Programmatically activates band pills (used by the auto-selection solver)
+ */
 export function setActiveBandSelection(keys = []) {
   selectedBandKeys.clear();
   keys.forEach(k => selectedBandKeys.add(k));
@@ -92,9 +97,12 @@ export function setActiveBandSelection(keys = []) {
   }
 }
 
+/**
+ * Main UI Mount: Renders interactive pills filtered to the selected exercise
+ */
 export function renderBandSelector(containerEl, exerciseName, onSelectionChange) {
   if (!containerEl) return;
-  activeSelectionCallback = onSelectionChange; // Persist callback for programmatic updates
+  activeSelectionCallback = onSelectionChange;
 
   const relevantBands = getBandsForMovement(exerciseName);
 
@@ -131,6 +139,7 @@ export function renderBandSelector(containerEl, exerciseName, onSelectionChange)
     </div>
   `;
 
+  // Attach button toggle click listeners
   containerEl.querySelectorAll('.band-pill-btn').forEach(btn => {
     btn.onclick = (e) => {
       e.preventDefault();
