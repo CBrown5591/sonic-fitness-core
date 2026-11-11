@@ -753,9 +753,6 @@ document.addEventListener('DOMContentLoaded', async () => {
   const gymBtn = document.getElementById('gearModeGymBtn');
   const bandBtn = document.getElementById('gearModeBandBtn');
 
-  const gymBtn = document.getElementById('gearModeGymBtn');
-  const bandBtn = document.getElementById('gearModeBandBtn');
-
   if (gymBtn && bandBtn) {
     gymBtn.onclick = () => {
       currentSlotGearMode = 'GYM';
