@@ -57,18 +57,31 @@ export function resolveInitialBandPreset(bandExerciseName, gymExerciseName, slot
   }
 
   // STEP 2: Identify primary counterpart and check if it has a registered PR
+ // 1. Identify primary counterpart (strip qualifiers for PR lookup)
   const trueGymName = getGymCounterpart(bandExerciseName) || gymExerciseName;
-  const gymPR = prVault[trueGymName];
+  const cleanGymName = trueGymName.replace(/\s*\([^)]*\)/g, '').trim();
+  const gymPR = prVault[cleanGymName] || prVault[trueGymName];
 
   let stageGymLoad = defaultFallbackLoad;
-  const multiplier = getMovementScaler(bandExerciseName || trueGymName);
+  let multiplier = getMovementScaler(bandExerciseName || trueGymName);
+
+  // 2. High-Rep / Metcon Cadence Dampener (20+ reps)
+  const isHighRepMetcon = slotTarget.includes('20') || slotTarget.includes('25') || (bandExerciseName || '').toLowerCase().includes('tempo');
+  if (isHighRepMetcon && (bandExerciseName || '').toLowerCase().includes('front squat')) {
+    multiplier = 0.20; // Drops metcon front squat from 0.50x down to light cadence
+  }
 
   if (gymPR && gymPR.e1rm > 0) {
-    // STEP 3: Counterpart PR exists -> Calculate stage load from e1RM, then apply multiplier
     stageGymLoad = calculateTargetLoad(gymPR.e1rm, slotTarget, defaultFallbackLoad, trueGymName);
-  } else if (gymPR && gymPR.load > 0) {
-    stageGymLoad = gymPR.load;
+  } else if (trueGymName.includes('Leg Press')) {
+    stageGymLoad = calculateTargetLoad(350, slotTarget, 140, trueGymName);
   } else {
+    stageGymLoad = defaultFallbackLoad;
+  }
+
+  // 3. Final Band Load
+  const effectiveBandLoad = Math.max(15, Math.round(stageGymLoad * multiplier));
+  return solveBestBandCombination(effectiveBandLoad, candidateBands); else {
     // Fallback baseline defaults if no PR exists anywhere yet
     if (trueGymName.includes('Leg Press')) {
       stageGymLoad = calculateTargetLoad(350, slotTarget, 250, trueGymName);
