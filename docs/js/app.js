@@ -1105,3 +1105,4 @@ export function appendCardioFinisherSlot() {
 
 // Bind to window for HUD or prompt buttons
 window.appendCardioFinisherSlot = appendCardioFinisherSlot;
+window.renderCalculator = renderCalculator;
