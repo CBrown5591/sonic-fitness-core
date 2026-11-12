@@ -44,7 +44,7 @@ import { switchMainTab } from './ui/renderTabs.js';
 import { renderPRVaultUI } from './ui/renderPRVault.js';
 import { BAND_EQUIVALENTS, getBandEquivalent } from './data/bandEquivalents.js';
 import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSelections } from './ui/renderBandSelector.js';
-import { resolveInitialBandPreset } from './engine/bandSolver.js';
+import { resolveInitialBandPreset, solveBestBandCombination, solveOverdriveBandBridge } from './engine/bandSolver.js';
 import { setActiveBandSelection } from './ui/renderBandSelector.js';
 import { getDefaultGymLoad } from './data/movementIntel.js';
 import { renderCalculator } from './ui/renderCalculator.js';
@@ -366,6 +366,7 @@ export function logActiveSet() {
   const isCardio = !!CARDIO_CONFIGS[exercise];
   const setE1RM = isCardio ? 0 : calculateE1RM(load, reps, rpe);
 
+  // (#1) PR VAULT TRACKING — Already isolated to exact `exercise` name!
   const prVault = getPRVault();
   const currentPR = prVault[exercise] ? (prVault[exercise].e1rm || 0) : 0;
   let isNewPR = false;
@@ -384,15 +385,8 @@ export function logActiveSet() {
   }
 
   let equivReps = reps;
-  let finalLoad = load;
+  let equivVolume = Math.round(load * reps);
   let displayMetric = `${load}lbs × ${reps}r`;
-
-  const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(exercise);
-  if (isBand && activeBandCombo.nominalLoad > 0) {
-    finalLoad = activeBandCombo.nominalLoad;
-    displayMetric = `${activeBandCombo.comboLabel} (${finalLoad} lbs) × ${reps}r`;
-  }
-  let equivVolume = Math.round(finalLoad * reps);
 
   if (isCardio) {
     const cMetrics = CARDIO_CONFIGS[exercise].calcEquiv(load, reps);
@@ -401,18 +395,15 @@ export function logActiveSet() {
     displayMetric = cMetrics.display;
   }
 
-  const resolved = resolveExerciseTarget(exercise, slotDef.target);
-
   const completedSetObj = {
     slot: slotDef.slot,
     exercise,
     setNum: setsInSlot,
-    load: finalLoad,                     // Numerical nominal load for e1RM & volume
+    load,
     reps,
-    target: resolved.targetText,
     equivReps,
-    equivVolume,                         // Accurately calculated with finalLoad
-    displayMetric,                       // "Green + Red (105 lbs) × 8r"
+    equivVolume,
+    displayMetric,
     rpe,
     e1rm: setE1RM,
     isNewPR,
@@ -420,11 +411,9 @@ export function logActiveSet() {
     jointPain: currentSetPain
   };
 
-  // 1. Commit the completed set object
   activeSession.sets.push(completedSetObj);
   checkSecretRingTriggers(completedSetObj, showToast);
 
-  // 2. Apply strain penalty ONLY if the logged set recorded joint pain
   if (completedSetObj.jointPain) {
     activeSession.jointPain = true;
     if (typeof applySuperSonicDamagePenalty === 'function') {
@@ -437,7 +426,6 @@ export function logActiveSet() {
     }
   }
 
-  // 3. Reset toggle state and button for the next set
   saveSessionState();
   renderSessionUI();
   playRingChime();
@@ -461,9 +449,23 @@ export function logActiveSet() {
     updateLogButtonText();
     const autoAdj = autoRegulateNextSet(completedSetObj);
     if (autoAdj) {
-      if (autoAdj.load && document.getElementById('loadInput')) document.getElementById('loadInput').value = autoAdj.load;
-      if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
-      showToast(autoAdj.message);
+      // (#3) OVERDRIVE BAND BRIDGE: If autoReg wants to add weight (+5 lbs) on a Band exercise:
+      const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(exercise);
+      if (isBand && autoAdj.load && autoAdj.load > load) {
+        const bridge = solveOverdriveBandBridge(load, exercise);
+        if (bridge && bridge.nominalTotal > load) {
+          setActiveBandSelection(bridge.selectedKeys);
+          syncEquipmentInputs();
+          if (document.getElementById('loadInput')) document.getElementById('loadInput').value = bridge.nominalTotal;
+          if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
+          showToast(`⚡ OVERDRIVE BRIDGE: Stacked to ${bridge.nominalTotal} lbs × ${autoAdj.reps} reps!`);
+        }
+      } else {
+        // Standard Dumbbell / Machine Auto-Regulation
+        if (autoAdj.load && document.getElementById('loadInput')) document.getElementById('loadInput').value = autoAdj.load;
+        if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
+        showToast(autoAdj.message);
+      }
     }
   }
 
