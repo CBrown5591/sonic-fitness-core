@@ -450,9 +450,11 @@ export function logActiveSet() {
     const autoAdj = autoRegulateNextSet(completedSetObj);
     if (autoAdj) {
       // (#3) OVERDRIVE BAND BRIDGE: If autoReg wants to add weight (+5 lbs) on a Band exercise:
+// Inside logActiveSet() -> else block where autoRegulateNextSet runs:
       const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(exercise);
       if (isBand && autoAdj.load && autoAdj.load > load) {
-        const bridge = solveOverdriveBandBridge(load, exercise);
+        const currentCombo = typeof getSelectedBandCombo === 'function' ? getSelectedBandCombo() : { selectedKeys: [] };
+        const bridge = solveOverdriveBandBridge(load, exercise, currentCombo.selectedKeys);
         if (bridge && bridge.nominalTotal > load) {
           setActiveBandSelection(bridge.selectedKeys);
           syncEquipmentInputs();
