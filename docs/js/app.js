@@ -691,15 +691,41 @@ export function finishSession() {
       totalScore = Math.round(totalScore * mult);
     }
 
-    const rank = totalScore >= 75000 ? "S" : (totalScore >= 55000 ? "A" : "B");
+    // 1. Evaluate Perfect Day criteria (Prehab done + 0 joint pain + 100% clean sets at RPE <= 8.0)
+    const totalSetsLogged = activeSession.sets.length;
+    const hasJointStrain = Boolean(activeSession.jointPain || activeSession.sets.some(s => s.jointPain));
+    const cleanRatio = totalSetsLogged > 0 ? (ringsBanked / totalSetsLogged) : 0;
+    const isPerfectDay = Boolean(
+      activeSession.prehabChecked &&
+      !hasJointStrain &&
+      totalSetsLogged > 0 &&
+      ringsBanked >= totalSetsLogged
+    );
+
+    // 2. Stage-scaled score floors (12-set standard vs 8-set Cardio vs 4-set Challenge)
+    const isChallengeStage = ['CH_1RM', 'CH_AMRAP'].includes(activeStageKey);
+    const isCardioStage = activeStageKey === 'DAY_G';
+
+    const sFloor = isChallengeStage ? 75000 : (isCardioStage ? 140000 : 155000);
+    const aFloor = isChallengeStage ? 62000 : (isCardioStage ? 115000 : 125000);
+    const bFloor = isChallengeStage ? 50000 : (isCardioStage ? 80000 : 85000);
+
+    // 3. Strict Rank Assignment
+    let rank = "C";
+    if (isPerfectDay && totalScore >= sFloor) {
+      rank = "S";
+    } else if (totalScore >= aFloor && cleanRatio >= 0.75) {
+      rank = "A";
+    } else if (totalScore >= bFloor) {
+      rank = "B";
+    }
 
     // Award Standard Gold Rings (Total Score / 1000)
     const standardRingsEarned = Math.floor(totalScore / 1000);
     addStandardRings(standardRingsEarned);
 
     // Check Perfect Day for Chaos Emerald Award
-    const isPerfectDay = rank === 'S' && !activeSession.jointPain && !activeSession.sets.some(s => s.jointPain) && ringsBanked >= activeSession.sets.length;
-    const emeraldWon = evaluatePerfectDayEmerald(activeStageKey, isPerfectDay, showToast);
+    const emeraldWon = evaluatePerfectDayEmerald(activeStageKey, rank === 'S', showToast);
 
     const recordRes = saveStageRecord(activeStageKey, totalScore, rank);
     localStorage.setItem('sonic_last_stage', activeStageKey);
