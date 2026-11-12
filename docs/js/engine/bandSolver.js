@@ -127,3 +127,49 @@ export function solveBestBandCombination(targetLoad, candidateBands = []) {
     nominalTotal: bestCombo.reduce((acc, b) => acc + (b.nominal || 0), 0)
   };
 }
+// docs/js/engine/bandSolver.js (Add at bottom)
+
+/**
+ * Overdrive Micro-Loading Bridge Solver
+ * Generates an intermediate 2-band stacked progression (+5 to +15 lbs above current load)
+ * instead of jumping 25-30 lbs to the next single loop tier.
+ */
+export function solveOverdriveBandBridge(currentNominalLoad, bandExerciseName) {
+  const candidateBands = getBandsForMovement(bandExerciseName);
+  if (!currentNominalLoad || currentNominalLoad <= 0 || candidateBands.length === 0) {
+    return solveBestBandCombination(currentNominalLoad + 10, candidateBands);
+  }
+
+  // Aim for a controlled +7.5 to +15 lb micro-jump
+  const bridgeTarget = currentNominalLoad + 10;
+  let bestBridge = [];
+  let minDiff = Infinity;
+
+  // Prioritize 2-band bridge stacks that sit strictly above currentNominalLoad (+5 to +20 lbs)
+  for (let i = 0; i < candidateBands.length; i++) {
+    for (let j = i + 1; j < candidateBands.length; j++) {
+      const b1 = candidateBands[i];
+      const b2 = candidateBands[j];
+      const sum = b1.nominal + b2.nominal;
+
+      if (sum > currentNominalLoad && sum <= currentNominalLoad + 20) {
+        const diff = Math.abs(sum - bridgeTarget);
+        if (diff < minDiff) {
+          minDiff = diff;
+          bestBridge = [b1, b2];
+        }
+      }
+    }
+  }
+
+  // If a clean 2-band bridge exists, return it; otherwise fall back to standard closest solver
+  if (bestBridge.length > 0) {
+    return {
+      selectedKeys: bestBridge.map(b => b.id),
+      nominalTotal: bestBridge.reduce((acc, b) => acc + (b.nominal || 0), 0),
+      isBridge: true
+    };
+  }
+
+  return solveBestBandCombination(bridgeTarget, candidateBands);
+}
