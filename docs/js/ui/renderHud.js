@@ -91,15 +91,70 @@ export function renderMovementIntel(exerciseName) {
     safety: "Discontinue immediately if sharp joint pain occurs."
   };
 
+  const muscleLabel = info.muscles || inferMuscleGroups(exerciseName);
+
   intelBox.innerHTML = `
-    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 5px;">
       <span style="font-weight: 800; color: var(--accent-blue); font-size: 10px; letter-spacing: 0.5px;">TACTICAL CUES // INTEL</span>
       <span style="font-size: 9px; color: var(--accent-gold); font-weight: 700;">TEMPO: 3-0-1</span>
+    </div>
+    <div style="color: #38bdf8; margin-bottom: 4px; font-size: 11px;">
+      <strong>🎯 Target Muscles:</strong> <span style="color: #e2e8f0; font-weight: 600;">${muscleLabel}</span>
     </div>
     <div style="color: var(--text-main); margin-bottom: 4px;"><strong>Setup:</strong> ${info.setup}</div>
     <div style="color: var(--text-dim); margin-bottom: 4px;"><strong>Cue:</strong> ${info.cue}</div>
     <div style="color: var(--accent-red); font-size: 10px;"><strong>Safety Lock:</strong> ${info.safety}</div>
   `;
+}
+
+function inferMuscleGroups(name = '') {
+  const n = name.toLowerCase();
+  if (n.includes('romanian') || n.includes('rdl') || n.includes('hinge') || n.includes('deadlift')) {
+    return "Hamstrings & Glute Max (Primary) • Spinal Erectors & Lats (Isometric Brace)";
+  }
+  if (n.includes('spanish squat') || n.includes('tke') || n.includes('leg extension')) {
+    return "Quadriceps / VMO (Primary, Patellar-Sparing)";
+  }
+  if (n.includes('suitcase squat')) {
+    return "Quadriceps & Glutes (Primary) • Obliques, Traps & Grip (Stabilizers)";
+  }
+  if (n.includes('squat') || n.includes('leg press') || n.includes('split squat') || n.includes('lunge')) {
+    return "Quadriceps & Glutes (Primary) • Adductors & Core (Stabilizers)";
+  }
+  if (n.includes('hamstring curl') || n.includes('glute bridge')) {
+    return "Hamstrings & Glute Max (Primary)";
+  }
+  if (n.includes('incline') && (n.includes('press') || n.includes('bench') || n.includes('push-up'))) {
+    return "Upper Chest / Clavicular Pecs & Anterior Delts (Primary) • Triceps";
+  }
+  if (n.includes('press') || n.includes('push-up') || n.includes('fly')) {
+    return "Mid/Inner Pectorals, Anterior Deltoids & Triceps (Primary)";
+  }
+  if (n.includes('high row') || n.includes('face pull') || n.includes('rear delt') || n.includes('pull-apart') || n.includes('y-t-w')) {
+    return "Rear Deltoids, Rhomboids & Mid/Lower Traps (Primary)";
+  }
+  if (n.includes('row') || n.includes('pulldown')) {
+    return "Latissimus Dorsi, Rhomboids & Mid-Traps (Primary) • Biceps & Brachialis";
+  }
+  if (n.includes('adduction') || n.includes('adductor') || n.includes('copenhagen')) {
+    return "Inner Thigh / Hip Adductors (Primary) • Pelvic Floor";
+  }
+  if (n.includes('monster walk') || n.includes('abduction') || n.includes('clamshell')) {
+    return "Gluteus Medius & Lateral Hip Stabilizers (Primary)";
+  }
+  if (n.includes('march')) {
+    return "Hip Flexors / Iliopsoas, Lower Abs & Glute Medius (Stance Leg)";
+  }
+  if (n.includes('curl')) {
+    return "Biceps Brachii & Brachioradialis (Primary)";
+  }
+  if (n.includes('tricep') || n.includes('pushdown') || n.includes('extension')) {
+    return "Triceps Brachii (Primary)";
+  }
+  if (n.includes('pallof') || n.includes('plank') || n.includes('bird-dog') || n.includes('deadbug') || n.includes('crunch') || n.includes('carry') || n.includes('windmill') || n.includes('woodchopper')) {
+    return "Transverse Abdominis, Internal/External Obliques & Deep Spinal Stabilizers";
+  }
+  return "Full-Body Kinetic Chain & Core Stabilizers";
 }
 
 export function updateInputLabelsForExercise(exerciseName) {
