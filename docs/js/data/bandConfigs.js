@@ -165,10 +165,12 @@ export const BAND_CONFIG = {
  * 2. Handled Tubes: Door-Anchored pushes, pulls, curls, rotations
  * 3. 41" Continuous Loops: Body-Anchored compound squats, hinges, push-ups
  */
+// docs/js/data/bandConfigs.js (At the very bottom)
+
 export function getBandsForMovement(exerciseName = '') {
   const name = (exerciseName || '').toLowerCase();
 
-  // 1. Mini Loops Only (Hips, Locomotion, Ankles)
+  // 1. Locomotion, Hips, Marches, & Core: Allow BOTH Mini Loops and 41" Continuous Loops
   if (
     name.includes('mini') || 
     name.includes('walk') || 
@@ -178,7 +180,7 @@ export function getBandsForMovement(exerciseName = '') {
     name.includes('climber') ||
     name.includes('step-jack')
   ) {
-    return Object.values(BAND_CONFIG).filter(b => b.type === 'mini');
+    return Object.values(BAND_CONFIG).filter(b => b.type === 'mini' || b.type === '41_loop');
   }
 
   // 2. Handled Door-Anchor Tubes Only (Pushes, Pulls, Rotations, Curls)
@@ -195,6 +197,10 @@ export function getBandsForMovement(exerciseName = '') {
   ) {
     return Object.values(BAND_CONFIG).filter(b => b.type === 'tube');
   }
+
+  // 3. 41" Continuous Power Loops Only (Squats, Hinges, Push-Ups)
+  return Object.values(BAND_CONFIG).filter(b => b.type === '41_loop');
+}
 
   // 3. 41" Continuous Power Loops Only (Squats, Hinges, Push-Ups)
   return Object.values(BAND_CONFIG).filter(b => b.type === '41_loop');
