@@ -197,4 +197,6 @@ export function getBandsForMovement(exerciseName = '') {
   ) {
     return Object.values(BAND_CONFIG).filter(b => b.type === 'tube');
   }
-
+  // 3. 41" Continuous Power Loops Only (Squats, Hinges, Push-Ups)
+  return Object.values(BAND_CONFIG).filter(b => b.type === '41_loop');
+}
