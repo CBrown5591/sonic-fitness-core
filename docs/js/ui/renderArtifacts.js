@@ -85,7 +85,25 @@ let runtimeWorldRings = [];
 let runtimeUnlockedPerks = [];
 
 export function setRuntimeEmeralds(emeralds) {
-  runtimeChaosEmeralds = emeralds || {};
+  runtimeChaosEmeralds = {};
+  if (!emeralds || typeof emeralds !== 'object') return;
+
+  const stageToColor = {
+    DAY_A: 'green',
+    DAY_B: 'yellow',
+    DAY_C: 'blue',
+    DAY_D: 'red',
+    DAY_E: 'cyan',
+    DAY_F: 'purple',
+    DAY_G: 'white'
+  };
+
+  Object.entries(emeralds).forEach(([key, val]) => {
+    runtimeChaosEmeralds[key] = val;
+    const colorKey = (val.color || stageToColor[key.toUpperCase()] || key).toLowerCase();
+    runtimeChaosEmeralds[colorKey] = val;
+    runtimeChaosEmeralds[colorKey.toUpperCase()] = val;
+  });
 }
 
 export function getChaosEmeralds() {
