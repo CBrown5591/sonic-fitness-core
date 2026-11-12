@@ -130,31 +130,59 @@ export function solveBestBandCombination(targetLoad, candidateBands = []) {
 // docs/js/engine/bandSolver.js (Add at bottom)
 
 /**
- * Overdrive Micro-Loading Bridge Solver
- * Generates an intermediate 2-band stacked progression (+5 to +15 lbs above current load)
- * instead of jumping 25-30 lbs to the next single loop tier.
+ * Overdrive Micro-Loading Bridge Solver (Strict Band-Type Isolation)
+ * Locks candidate bands to the exact band type (e.g. 'mini' OR '41_loop') 
+ * the user currently has selected so Mini Bands and 41" Loops never mix.
  */
-export function solveOverdriveBandBridge(currentNominalLoad, bandExerciseName) {
-  const candidateBands = getBandsForMovement(bandExerciseName);
-  if (!currentNominalLoad || currentNominalLoad <= 0 || candidateBands.length === 0) {
-    return solveBestBandCombination(currentNominalLoad + 10, candidateBands);
+export function solveOverdriveBandBridge(currentNominalLoad, bandExerciseName, activeSelectedKeys = []) {
+  let candidateBands = getBandsForMovement(bandExerciseName);
+
+  // 1. Detect active band type from user's current selection (e.g. 'mini' vs '41_loop')
+  if (Array.isArray(activeSelectedKeys) && activeSelectedKeys.length > 0) {
+    const firstKey = activeSelectedKeys[0];
+    const activeType = BAND_CONFIG[firstKey]?.type;
+    if (activeType) {
+      const typeLockedBands = candidateBands.filter(b => b.type === activeType);
+      if (typeLockedBands.length > 0) {
+        candidateBands = typeLockedBands;
+      }
+    }
   }
 
-  // Aim for a controlled +7.5 to +15 lb micro-jump
-  const bridgeTarget = currentNominalLoad + 10;
+  if (!currentNominalLoad || currentNominalLoad <= 0 || candidateBands.length === 0) {
+    return solveBestBandCombination(currentNominalLoad + 5, candidateBands);
+  }
+
+  // 2. Scale step-up target based on band family (Mini bands use +5 to +10 lb steps; 41" Loops use +10 to +20 lb steps)
+  const isMiniMode = candidateBands[0]?.type === 'mini';
+  const idealStep = isMiniMode ? 7.5 : 10;
+  const maxStep = isMiniMode ? 15 : 22.5;
+  const bridgeTarget = currentNominalLoad + idealStep;
+
   let bestBridge = [];
   let minDiff = Infinity;
 
-  // Prioritize 2-band bridge stacks that sit strictly above currentNominalLoad (+5 to +20 lbs)
+  // Check single-band upgrades first within the SAME band family
+  for (const b of candidateBands) {
+    if (b.nominal > currentNominalLoad && b.nominal <= currentNominalLoad + maxStep) {
+      const diff = Math.abs(b.nominal - bridgeTarget);
+      if (diff < minDiff) {
+        minDiff = diff;
+        bestBridge = [b];
+      }
+    }
+  }
+
+  // Check 2-band bridge stacks within the SAME band family
   for (let i = 0; i < candidateBands.length; i++) {
     for (let j = i + 1; j < candidateBands.length; j++) {
       const b1 = candidateBands[i];
       const b2 = candidateBands[j];
       const sum = b1.nominal + b2.nominal;
 
-      if (sum > currentNominalLoad && sum <= currentNominalLoad + 20) {
+      if (sum > currentNominalLoad && sum <= currentNominalLoad + maxStep) {
         const diff = Math.abs(sum - bridgeTarget);
-        if (diff < minDiff) {
+        if (diff < minDiff || (diff === minDiff && bestBridge.length > 2)) {
           minDiff = diff;
           bestBridge = [b1, b2];
         }
@@ -162,7 +190,6 @@ export function solveOverdriveBandBridge(currentNominalLoad, bandExerciseName) {
     }
   }
 
-  // If a clean 2-band bridge exists, return it; otherwise fall back to standard closest solver
   if (bestBridge.length > 0) {
     return {
       selectedKeys: bestBridge.map(b => b.id),
