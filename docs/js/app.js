@@ -844,12 +844,10 @@ bandBtn.onclick = () => {
       const repsInput = document.getElementById('repsInput');
       if (repsInput) repsInput.value = resolved.defaultReps;
 
-      // 2. Load Resolution & Equipment Autoset
+      // 2. Recalculate load & solve band presets if in BANDS mode
       const prVault = getPRVault();
       const pr = prVault[val];
       const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(val);
-
-     // docs/js/app.js (inside exSelect.onchange)
 
       if (isBand) {
         const gymPrimary = slotDef ? slotDef.primary : '';
@@ -863,14 +861,10 @@ bandBtn.onclick = () => {
         setActiveBandSelection(selectedKeys);
         syncEquipmentInputs();
 
-        // Make sure intel updates on dropdown change:
-        renderMovementIntel(val);
-        updateInputLabelsForExercise(val);
-
         const loadInput = document.getElementById('loadInput');
         if (loadInput) loadInput.value = nominalTotal;
       } else {
-        const baseLoad = getDefaultGymLoad(val, slotDef?.defaultLoad);
+        const baseLoad = slotDef ? slotDef.defaultLoad : 50;
         const dynamicLoad = pr && pr.e1rm > 0 
           ? calculateTargetLoad(pr.e1rm, defaultTarget, baseLoad, val) 
           : baseLoad;
@@ -880,7 +874,7 @@ bandBtn.onclick = () => {
         syncEquipmentInputs();
       }
 
-      // 3. Update tactical cues and labels
+      // 3. Update tactical cues and input unit labels
       renderMovementIntel(val);
       updateInputLabelsForExercise(val);
     };
