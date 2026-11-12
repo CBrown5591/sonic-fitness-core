@@ -125,9 +125,38 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
   if (!exerciseName) return { targetText: defaultSlotTarget, defaultReps: 8 };
 
   const name = exerciseName.toLowerCase();
+  const slotStr = (defaultSlotTarget || '');
+  const slotLower = slotStr.toLowerCase();
 
-  // 1. Embedded specific rep/hold notes in name: (12r/side), (5s hold), (45s), etc.
-  const matchReps = exerciseName.match(/\((\d+r\/side|\d+[-–—]\d+|\d+s hold|\d+s|\d+ reps?)/i);
+  // 1. Zone 2 Continuous Cardio (Minutes) — e.g. "10-12 Mins @ Zone 2"
+  if (slotLower.includes('min') || name.includes('zone 2')) {
+    return { targetText: "1 × 10-12 Mins (Zone 2)", defaultReps: 12 };
+  }
+
+  // 2. Surge Intervals (Rounds) — e.g. "6-8 Rounds (30s on / 60s off)" or "(30s/60s)"
+  if (
+    slotLower.includes('round') || 
+    name.includes('30s/60s') || 
+    name.includes('30s on') || 
+    name.includes('surge') || 
+    name.includes('sprint') && !name.includes('500m')
+  ) {
+    return { targetText: "6-8 Rounds (30s On / 60s Off)", defaultReps: 8 };
+  }
+
+  // 3. Timed Sets & Apex Sprints (45s High Knees / 45s TUT / 90s AMRAP / 500m Sprint)
+  if (name.includes('500m')) {
+    return { targetText: "1 × 500m Sprint (Sub-1:45)", defaultReps: 105 };
+  }
+  if (name.includes('90s') || slotLower.includes('90s')) {
+    return { targetText: "1 × 90s Max Effort", defaultReps: 90 };
+  }
+  if (name.includes('45s') || slotLower.includes('45s')) {
+    return { targetText: "3 × 45s Time-Under-Tension", defaultReps: 45 };
+  }
+
+  // 4. Embedded specific rep/hold notes in name: (12r/side), (5s hold), (25r), (20r), etc.
+  const matchReps = exerciseName.match(/\((\d+r\/side|\d+[-–—]\d+|\d+s hold|\d+s|\d+r|\d+\s*reps?)/i);
   if (matchReps) {
     const raw = matchReps[1];
     const numMatch = raw.match(/\d+/);
@@ -137,17 +166,29 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
     };
   }
 
-  // 2. Carries & Locomotion (Paces)
-  if (name.includes('carry') || (name.includes('walk') && !name.includes('treadmill')) || name.includes('crawl')) {
+  // 5. Carries & Locomotion (Paces) — excludes Treadmill & Power Walks
+  if (
+    name.includes('carry') || 
+    name.includes('waiter') || 
+    name.includes('suitcase march') || 
+    name.includes('march in place') ||
+    (name.includes('walk') && !name.includes('treadmill') && !name.includes('power walk')) || 
+    name.includes('crawl')
+  ) {
     return { targetText: "3 × 40-50 paces", defaultReps: 50 };
   }
 
-  // 3. Isometric Holds & Core Bracing (Seconds)
-  if (name.includes('hold') || name.includes('plank') || name.includes('deadbug')) {
+  // 6. Isometric Holds & Core Bracing (Seconds)
+  if (name.includes('hold') || name.includes('plank') || slotLower.includes('hold')) {
     return { targetText: "3 × 20-30s hold", defaultReps: 30 };
   }
 
-  // 4. Isolation, Hip Armor & Accessories (Adduction, Abduction, Flyes, Raises, Curls, Extensions)
+  // 7. Deadbugs (Controlled Reps per Side)
+  if (name.includes('deadbug')) {
+    return { targetText: "3 × 8-10 / side", defaultReps: 10 };
+  }
+
+  // 8. Isolation, Hip Armor & Accessories (Adduction, Abduction, Flyes, Raises, Curls, Extensions)
   if (
     name.includes('adduct') || 
     name.includes('abduct') || 
@@ -161,13 +202,13 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
     return { targetText: "3 × 12-15", defaultReps: 15 };
   }
 
-  // 5. Trunk & Core Compression
+  // 9. Trunk & Core Compression
   if (name.includes('crunch') || name.includes('pallof')) {
     return { targetText: "3 × 10-12", defaultReps: 12 };
   }
 
-  // 6. Inherit the stage slot definition if no specific movement override matched
-  const slotMatch = (defaultSlotTarget || '').match(/(\d+)\s*[-–—]\s*(\d+)/);
+  // 10. Inherit the stage slot definition if no specific movement override matched
+  const slotMatch = slotStr.match(/(\d+)\s*[-–—]\s*(\d+)/);
   if (slotMatch) {
     const minR = parseInt(slotMatch[1], 10);
     const maxR = parseInt(slotMatch[2], 10);
@@ -176,7 +217,6 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
 
   return { targetText: defaultSlotTarget, defaultReps: 8 };
 }
-
 function hydrateExerciseDropdown() {
   const stageDef = STAGES[activeStageKey];
   if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
