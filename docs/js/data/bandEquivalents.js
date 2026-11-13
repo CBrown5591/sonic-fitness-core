@@ -209,20 +209,53 @@ export const SLOT_BAND_EXTRAS = {
     "Low Door-Anchor Supine Leg Lift"
   ],
 
-  // DAY G & H: Cardio / Metcon
+ // DAY G: Sonic Velocity // Ergo & Machine Cardio
+  G2: [
+    "41\" Loop Band Squat-to-Press Thruster",
+    "Low Door-Anchor Resisted Bicycle Crunch"
+  ],
   G3: [
     "Low Door-Anchor Reverse Woodchopper (Low-to-High)",
-    "Mid Door-Anchor Seated Russian Twist"
+    "Mid Door-Anchor Seated Russian Twist",
+    "Low Door-Anchor Standing Oblique Side Bend"
   ],
+  G4: [
+    "Low Door-Anchor Standing Oblique Side Bend"
+  ],
+
+  // DAY H: Speed Highway // Non-Impact DB & Cable Metcon
   H1: [
-    "41\" Loop Band Squat-to-Press Thruster"
+    "41\" Loop Band Squat-to-Press Thruster",
+    "41\" Loop Band Seated Calf Extension"
   ],
   H2: [
     "41\" Loop Band Broomstick Standard Deadlift",
-    "41\" Loop Band Broomstick Stiff-Leg Deadlift"
+    "41\" Loop Band Broomstick Stiff-Leg Deadlift",
+    "Low Door-Anchor Standing Glute Kickback"
   ],
   H3: [
-    "41\" Loop Band Bent-Over Row (Stand-on-Loop)"
+    "41\" Loop Band Bent-Over Row (Stand-on-Loop)",
+    "Low Door-Anchor Tube Upright Row",
+    "Low Door-Anchor Bent-Over Rear Delt Raise"
+  ],
+  H4: [
+    "Low Door-Anchor Standing Oblique Side Bend",
+    "Low Door-Anchor Standing Band Abduction"
+  ],
+
+  // DAY I: Emerald Coast // Flow & Core
+  I1: [
+    "Low Door-Anchor Standing Band Abduction",
+    "Low Door-Anchor Standing Glute Kickback",
+    "41\" Loop Band Seated Calf Extension"
+  ],
+  I3: [
+    "Low Door-Anchor Supine Reverse Crunch",
+    "Low Door-Anchor Supine Leg Lift"
+  ],
+  I4: [
+    "Low Door-Anchor Resisted Bicycle Crunch",
+    "Mid Door-Anchor Seated Russian Twist"
   ]
 };
 
