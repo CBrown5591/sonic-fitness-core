@@ -16,7 +16,7 @@ import {
 } from './engine/records.js';
 import { playRingChime, toggleAudioTheme, getAudioTheme, stopAllFanfare } from './core/audio.js';
 import { setTimerDuration, startRestTimer, applyTimeBrake, initTimerBackgroundSync } from './core/timer.js';
-import { fetchSheetTelemetry, syncSessionToSheets } from './core/sync.js';
+import { fetchSheetTelemetry } from './core/sync.js';
 import { showToast, renderStageRecordBanner, renderMovementIntel, updateInputLabelsForExercise, togglePrehabDrawer, renderPrehabInstructions } from './ui/renderHud.js';
 import { openAuditModal } from './ui/auditModal.js';
 import { renderResultsOverlay } from './ui/resultsOverlay.js';
