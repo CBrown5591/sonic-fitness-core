@@ -98,6 +98,12 @@ export function recordSlotRotationHistory(stageKey, slotId, exerciseName) {
  * - FRESH: Picks least-recently-used variation in slotDef.alts across sessions
  * - FOCUS: Scores each variation by cumulative muscle-tag overlap across ALL preceding slots in activeSession
  */
+/**
+ * Resolves the recommended exercise for the active slot based on mode:
+ * - FOCUS: Maximizes cumulative muscle-tag overlap across all preceding slots in activeSession
+ * - FRESH: Minimizes cumulative muscle-tag overlap across all preceding slots (Full-Body Spread),
+ *          using cross-session history as a tie-breaker so variations stay fresh week-to-week.
+ */
 export function resolveSlotPreset(stageKey, slotDef, slotIndex, activeSessionSets = []) {
   if (!slotDef || !Array.isArray(slotDef.alts) || slotDef.alts.length === 0) {
     return slotDef?.primary || '';
@@ -106,76 +112,89 @@ export function resolveSlotPreset(stageKey, slotDef, slotIndex, activeSessionSet
   const mode = getRotatorMode();
   const candidates = slotDef.alts;
 
-  // 1. FOCUS MODE: Cumulative synergy across all preceding slots (A1 -> A2 -> A3 -> A4)
-  if (mode === 'FOCUS' && slotIndex > 0 && Array.isArray(activeSessionSets) && activeSessionSets.length > 0) {
-    // Collect unique exercises performed in preceding slots in order
-    const priorExercises = [];
-    const seenSlots = new Set();
+  // Load cross-session history for tie-breaking / Slot 1 rotation
+  let recentList = [];
+  try {
+    const raw = localStorage.getItem(ROTATOR_HISTORY_KEY);
+    const history = raw ? JSON.parse(raw) : {};
+    recentList = history[`${stageKey}_${slotDef.slot}`] || [];
+  } catch (e) {
+    recentList = [];
+  }
+
+  // Build cumulative muscle frequency map from ALL preceding slots in the current session
+  const priorExercises = [];
+  const seenSlots = new Set();
+  if (Array.isArray(activeSessionSets)) {
     for (const s of activeSessionSets) {
       if (s.slot && s.slot !== slotDef.slot && !seenSlots.has(s.slot) && s.exercise) {
         seenSlots.add(s.slot);
         priorExercises.push(s.exercise);
       }
     }
-
-    if (priorExercises.length > 0) {
-      // Build weighted muscle frequency map from all preceding slots
-      const targetMuscleWeights = {};
-      priorExercises.forEach((exName, idx) => {
-        const tags = getExerciseMuscleTags(exName);
-        // Earlier anchor slots (e.g., Slot 1) + immediate prior slot both contribute
-        const weight = idx === 0 ? 1.5 : 1.0;
-        tags.forEach(tag => {
-          targetMuscleWeights[tag] = (targetMuscleWeights[tag] || 0) + weight;
-        });
-      });
-
-      let bestAlt = slotDef.primary;
-      let bestScore = -1;
-
-      candidates.forEach((alt) => {
-        const altTags = getExerciseMuscleTags(alt);
-        let score = 0;
-        altTags.forEach(tag => {
-          if (targetMuscleWeights[tag]) {
-            score += targetMuscleWeights[tag];
-          }
-        });
-        if (score > bestScore) {
-          bestScore = score;
-          bestAlt = alt;
-        }
-      });
-
-      return bestAlt;
-    }
   }
 
-  // 2. FRESH MODE (or Slot 1 default): Rotate to least-recently used alt in this slot
-  try {
-    const raw = localStorage.getItem(ROTATOR_HISTORY_KEY);
-    const history = raw ? JSON.parse(raw) : {};
-    const recentList = history[`${stageKey}_${slotDef.slot}`] || [];
+  // Intra-session scoring when preceding slots have been logged (Slot 2, 3, 4...)
+  if (slotIndex > 0 && priorExercises.length > 0) {
+    const workedMuscleWeights = {};
+    priorExercises.forEach((exName, idx) => {
+      const tags = getExerciseMuscleTags(exName);
+      // Anchor slot (Slot 1) carries slightly higher weight; all prior slots accumulate
+      const weight = idx === 0 ? 1.5 : 1.0;
+      tags.forEach(tag => {
+        workedMuscleWeights[tag] = (workedMuscleWeights[tag] || 0) + weight;
+      });
+    });
 
-    if (recentList.length > 0) {
-      // Prefer an option not in recent history at all
-      const unplayed = candidates.find(alt => !recentList.includes(alt));
-      if (unplayed) return unplayed;
+    let bestAlt = candidates[0];
+    let bestScore = -Infinity;
 
-      // Otherwise pick the oldest used option (furthest back in recentList)
-      let oldestAlt = candidates[0];
-      let oldestIdx = Infinity;
-      candidates.forEach(alt => {
-        const idx = recentList.indexOf(alt);
-        if (idx !== -1 && idx < oldestIdx) {
-          oldestIdx = idx;
-          oldestAlt = alt;
+    candidates.forEach((alt) => {
+      const altTags = getExerciseMuscleTags(alt);
+      let overlapScore = 0;
+
+      altTags.forEach(tag => {
+        if (workedMuscleWeights[tag]) {
+          overlapScore += workedMuscleWeights[tag];
         }
       });
-      return oldestAlt;
-    }
-  } catch (e) {
-    // Fallback cleanly to primary
+
+      if (mode === 'FOCUS') {
+        // FOCUS: Reward high muscle overlap (+), slight tie-breaker toward primary/familiar moves
+        const totalScore = overlapScore;
+        if (totalScore > bestScore) {
+          bestScore = totalScore;
+          bestAlt = alt;
+        }
+      } else {
+        // FRESH: Penalize overlapping muscles (-), reward unplayed cross-session variations (+)
+        const historyPenalty = recentList.includes(alt) ? (recentList.indexOf(alt) + 1) * 0.25 : 0;
+        const totalScore = -overlapScore - historyPenalty;
+        if (totalScore > bestScore) {
+          bestScore = totalScore;
+          bestAlt = alt;
+        }
+      }
+    });
+
+    return bestAlt;
+  }
+
+  // Slot 1 (or empty session): Rotate least-recently-used in FRESH mode, or default primary in FOCUS
+  if (mode === 'FRESH' && recentList.length > 0) {
+    const unplayed = candidates.find(alt => !recentList.includes(alt));
+    if (unplayed) return unplayed;
+
+    let oldestAlt = candidates[0];
+    let oldestIdx = Infinity;
+    candidates.forEach(alt => {
+      const idx = recentList.indexOf(alt);
+      if (idx !== -1 && idx < oldestIdx) {
+        oldestIdx = idx;
+        oldestAlt = alt;
+      }
+    });
+    return oldestAlt;
   }
 
   return slotDef.primary;
