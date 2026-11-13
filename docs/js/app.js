@@ -283,48 +283,74 @@ function loadSlotData() {
   if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
   const slotDef = stageDef.slots[activeSlotIndex];
 
-  // Reset gear mode strictly to GYM on each slot load
-  currentSlotGearMode = 'GYM';
+  const currentSlotTag = document.getElementById('currentSlotTag');
+  const currentTargetTag = document.getElementById('currentTargetTag');
+  if (currentSlotTag) currentSlotTag.innerText = `SLOT ${slotDef.slot}`;
+
+  // Clear previous slot's pill selections, but KEEP currentSlotGearMode sticky across slots
   clearBandSelections();
   activeBandCombo = { nominalLoad: 0, comboLabel: 'None' };
 
   const gymBtn = document.getElementById('gearModeGymBtn');
   const bandBtn = document.getElementById('gearModeBandBtn');
   if (gymBtn && bandBtn) {
-    gymBtn.style.background = '#38bdf8';
-    gymBtn.style.color = '#0f172a';
-    bandBtn.style.background = 'transparent';
-    bandBtn.style.color = '#94a3b8';
+    if (currentSlotGearMode === 'BANDS') {
+      bandBtn.style.background = '#38bdf8';
+      bandBtn.style.color = '#0f172a';
+      gymBtn.style.background = 'transparent';
+      gymBtn.style.color = '#94a3b8';
+    } else {
+      gymBtn.style.background = '#38bdf8';
+      gymBtn.style.color = '#0f172a';
+      bandBtn.style.background = 'transparent';
+      bandBtn.style.color = '#94a3b8';
+    }
   }
 
+  // Hydrates dropdown using TSK-14 Fresh/Focus rotator + active gear mode
   hydrateExerciseDropdown();
   syncEquipmentInputs();
-  
-  const currentSlotTag = document.getElementById('currentSlotTag');
-  const currentTargetTag = document.getElementById('currentTargetTag');
-  if (currentSlotTag) currentSlotTag.innerText = `SLOT ${slotDef.slot}`;
 
-  // Resolve dynamic target and auto-preload rep count for primary movement
-  const resolved = resolveExerciseTarget(slotDef.primary, slotDef.target);
+  const select = document.getElementById('exerciseSelect');
+  const activeExercise = select ? select.value : slotDef.primary;
+
+  // Resolve dynamic target bracket & default reps for the selected movement
+  const resolved = resolveExerciseTarget(activeExercise, slotDef.target);
   if (currentTargetTag) {
     currentTargetTag.innerText = resolved.targetText.startsWith('TARGET:')
-      ? resolved.targetText 
+      ? resolved.targetText
       : `TARGET: ${resolved.targetText}`;
   }
 
-  const prVault = getPRVault();
-  const pr = prVault[slotDef.primary];
-  const dynamicLoad = pr && pr.e1rm > 0 
-    ? calculateTargetLoad(pr.e1rm, slotDef.target, slotDef.defaultLoad, slotDef.primary) 
-    : slotDef.defaultLoad;
-
-  const loadInput = document.getElementById('loadInput');
   const repsInput = document.getElementById('repsInput');
-  if (loadInput) loadInput.value = dynamicLoad;
   if (repsInput) repsInput.value = resolved.defaultReps;
 
-  renderMovementIntel(slotDef.primary);
-  updateInputLabelsForExercise(slotDef.primary);
+  const loadInput = document.getElementById('loadInput');
+  if (currentSlotGearMode === 'BANDS' || isBandMovement(activeExercise)) {
+    // Auto-solve optimal band pills for the rotated band exercise
+    const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
+      activeExercise,
+      slotDef.primary,
+      slotDef.target,
+      slotDef.defaultLoad || 50
+    );
+    if (selectedKeys && selectedKeys.length > 0 && typeof setActiveBandSelection === 'function') {
+      setActiveBandSelection(selectedKeys);
+    }
+    if (loadInput && nominalTotal > 0) {
+      loadInput.value = nominalTotal;
+    }
+  } else {
+    const prVault = getPRVault();
+    const pr = prVault[activeExercise];
+    const dynamicLoad = pr && pr.e1rm > 0
+      ? calculateTargetLoad(pr.e1rm, slotDef.target, slotDef.defaultLoad, activeExercise)
+      : slotDef.defaultLoad;
+    if (loadInput) loadInput.value = dynamicLoad;
+  }
+
+  renderMovementIntel(activeExercise);
+  updateInputLabelsForExercise(activeExercise);
   updateLogButtonText();
 }
 
