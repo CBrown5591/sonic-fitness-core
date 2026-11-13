@@ -45,6 +45,7 @@ export const STAGES = {
           "Bravo Standing Cable Straight-Arm Pullover",
           "Bravo Dual-Cable Row (Mid-Height)",
           "Lat Pulldown (Neutral/Mag-Grip)",
+          "Single-Arm Iso-Lateral Pulldown",
           "Doorframe Row (Single-Arm Strict Pause)"
         ]
       },
@@ -189,6 +190,7 @@ export const STAGES = {
         defaultLoad: 130,
         alts: [
           "Lat Pulldown (Neutral/Mag-Grip)",
+          "Single-Arm Iso-Lateral Pulldown",
           "Cybex Eagle High Row (Chest Supported)",
           "Bravo Standing Cable Straight-Arm Pullover",
           "Cybex Eagle Single-Arm Iso-Lateral High Row",
@@ -378,6 +380,7 @@ export const STAGES = {
           "Elevated DB/KB Gorilla Row",
           "Bravo Dual-Cable Row (Mid-Height)",
           "Lat Pulldown (Neutral/Mag-Grip)",
+          "Single-Arm Iso-Lateral Pulldown",
           "Doorframe Row (Single-Arm Strict Pause)",
           "Prone Scapular Y-T-W Raises"
         ]
@@ -564,6 +567,7 @@ export const STAGES = {
         defaultLoad: 100,
         alts: [
           "Lat Pulldown (Neutral/Mag-Grip)",
+          "Single-Arm Iso-Lateral Pulldown",
           "Bravo Dual-Cable Row (Mid-Height)",
           "Chest-Supported Dumbbell Row",
           "Elevated DB/KB Gorilla Row",
@@ -703,6 +707,7 @@ export const STAGES = {
           "Farmer's Carries (Dual DB/KB - Max Distance)",
           "Cybex Eagle High Row (Chest Supported)",
           "Lat Pulldown (Neutral/Mag-Grip)",
+          "Single-Arm Iso-Lateral Pulldown",
           "Doorframe Row (Single-Arm 3s Pause)"
         ]
       }
