@@ -277,7 +277,6 @@ export function renderResultsOverlay(data, onClose) {
         background: linear-gradient(90deg, #38bdf8, #facc15);
         border-radius: 5px;
         box-shadow: 0 0 10px rgba(56, 189, 248, 0.6);
-        transition: width 0.1s linear;
       }
       .results-gold-ring-payout {
         background: #0f1828;
@@ -309,6 +308,7 @@ export function renderResultsOverlay(data, onClose) {
         letter-spacing: 1px;
         cursor: pointer;
         margin-top: 4px;
+        transition: opacity 0.35s ease, transform 0.2s ease;
       }
       .animate-stamp-slam {
         animation: stampSlam 0.53s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
@@ -401,8 +401,7 @@ export function renderResultsOverlay(data, onClose) {
 
       <div class="results-body">
         ${recordHtml}
-        ${levelUpHtml}
-        ${transformMultiplierHtml}
+        ${levelUpHtml}${transformMultiplierHtml}
 
         <!-- 1. HERO RANK SECTION (WITH GUARANTEED INLINE METALLIC SHADERS) -->
         <div class="results-hero-rank-container">
@@ -436,151 +435,4 @@ export function renderResultsOverlay(data, onClose) {
           </div>
           <div class="breakdown-row">
             <span class="breakdown-lbl">RED STAR RINGS (${data.ringsBanked || 0} BANKED)</span>
-            <span class="breakdown-val highlight-red">+${(data.redRingBonus || 0).toLocaleString()} PTS</span>
-          </div>
-        </div>
-
-        <!-- 3. TOTAL SCORE BANNER -->
-        <div class="results-total-container">
-          <div class="results-total-lbl">TOTAL SCORE</div>
-          <div id="resultsScoreCounter" class="results-total-num">0 PTS</div>
-        </div>
-
-        <!-- 4. EXPERIENCE BAR (FULL WIDTH) -->
-        <div class="results-exp-block">
-          <div class="results-exp-header">
-            <span class="results-exp-lvl">PILOT LVL ${currentLevel}</span>
-            <span class="results-exp-gained">+${expGained.toLocaleString()} EXP GAINED</span>
-          </div>
-          <div class="results-exp-bar-track">
-            <div id="resultsExpFill" class="results-exp-bar-fill" style="width: 0%;"></div>
-          </div>
-        </div>
-
-        <!-- 5. STANDARD GOLD RINGS BANKED -->
-        <div class="results-gold-ring-payout">
-          <div class="gold-ring-payout-label">STANDARD GOLD RINGS BANKED</div>
-          <div id="resultsGoldRingsCounter" class="gold-ring-payout-val">🪙 +0 RINGS</div>
-        </div>
-
-        ${emeraldHtml}
-
-        <button id="continueResultsBtn" class="results-continue-btn" style="opacity: 0.5; pointer-events: none;">
-          CALCULATING RATING...
-        </button>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(overlay);
-
-  // Play Stage Clear Fanfare in the background
-  try {
-    playStageClearFanfare(data.rank);
-  } catch (e) {
-    console.warn("Audio fanfare bypassed:", e);
-  }
-
-  // Rolling score, gold ring tally & animated EXP bar (Slowed 50%: 1400ms -> 2100ms)
-  const counterEl = document.getElementById('resultsScoreCounter');
-  const goldEl = document.getElementById('resultsGoldRingsCounter');
-  const expFillEl = document.getElementById('resultsExpFill');
-  const targetScore = data.totalScore || 0;
-  const targetGold = goldRings;
-  const tallyDuration = 2100; // ms
-  const startTime = performance.now();
-
-  function runRollingTally(now) {
-    const elapsed = now - startTime;
-    const progress = Math.min(1, elapsed / tallyDuration);
-    const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
-
-    const currentScore = Math.floor(eased * targetScore);
-    const currentGold = Math.floor(eased * targetGold);
-
-    if (counterEl) counterEl.innerText = `${currentScore.toLocaleString()} PTS`;
-    if (goldEl) goldEl.innerText = `🪙 +${currentGold} RINGS`;
-    if (expFillEl) expFillEl.style.width = `${Math.min(100, Math.floor(eased * expProgressPct))}%`;
-
-    if (progress < 1) {
-      requestAnimationFrame(runRollingTally);
-    } else {
-      // Score tally finished -> SLAM THE RANK STAMP DOWN!
-      if (counterEl) counterEl.innerText = `${targetScore.toLocaleString()} PTS`;
-      if (goldEl) goldEl.innerText = `🪙 +${targetGold} RINGS`;
-      if (expFillEl) expFillEl.style.width = `${expProgressPct}%`;
-      triggerRankStampSlam();
-    }
-  }
-
-  function triggerRankStampSlam() {
-    const stampEl = document.getElementById('resultsRankStamp');
-    const labelEl = document.getElementById('resultsRankLabel');
-    const btn = document.getElementById('continueResultsBtn');
-    const emeraldBanner = document.getElementById('resultsEmeraldBanner');
-
-    if (stampEl) {
-      stampEl.className = 'results-rank-stamp animate-stamp-slam';
-    }
-    if (labelEl) {
-      labelEl.style.transition = 'opacity 0.45s ease';
-      labelEl.style.opacity = '1';
-    }
-
-    if (navigator.vibrate) {
-      navigator.vibrate([80, 40, 140]);
-    }
-
-    // Delayed S-Rank Slam Upgrade (A -> S) after initial A-Rank stamp lands (Slowed 50%: 650ms -> 975ms)
-    if (isTrueSRank) {
-      setTimeout(() => {
-        const letterEl = document.getElementById('resultsRankLetter');
-        const sStyle = letterStyles['S'];
-        if (letterEl && sStyle) {
-          letterEl.textContent = 'S';
-          letterEl.style.setProperty('color', sStyle.color, 'important');
-          letterEl.style.setProperty('text-shadow', sStyle.shadow, 'important');
-          letterEl.classList.add('s-rank-slam-active');
-        }
-        if (stampEl) {
-          stampEl.style.borderColor = '#facc15';
-          stampEl.style.boxShadow = 'inset 0 2px 6px rgba(0, 0, 0, 0.8), 0 0 24px rgba(250, 204, 21, 0.55)';
-        }
-        if (navigator.vibrate) {
-          navigator.vibrate([40, 30, 110]);
-        }
-      }, 975);
-    }
-
-    if (emeraldBanner) {
-      setTimeout(() => {
-        emeraldBanner.style.display = 'block';
-        emeraldBanner.classList.add('animate-pop-in');
-        if (navigator.vibrate) navigator.vibrate([50, 30, 80]);
-      }, isTrueSRank ? 1575 : 450);
-    }
-
-    if (btn) {
-      btn.style.opacity = '1';
-      btn.style.pointerEvents = 'auto';
-      btn.innerText = 'CONTINUE TO COMMAND HUB ▶';
-    }
-  }
-
-  requestAnimationFrame(runRollingTally);
-
-  const dismiss = () => {
-    stopAllFanfare();
-    overlay.classList.add('animate-fade-out');
-    setTimeout(() => {
-      overlay.remove();
-      if (onClose) onClose();
-    }, 250);
-  };
-
-  document.getElementById('continueResultsBtn').onclick = dismiss;
-  document.getElementById('closeResultsXBtn').onclick = dismiss;
-}
-
-// Bind to window for Chrome DevTools Console testing
-window.renderResultsOverlay = renderResultsOverlay;
+            <span class="breakdown-
