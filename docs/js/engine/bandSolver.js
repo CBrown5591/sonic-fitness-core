@@ -10,6 +10,7 @@ import { calculateTargetLoad } from './calc.js';
 // Movement-specific scale factors
 export const EQUIPMENT_LOAD_SCALERS = {
   "spanish squat": 0.25,
+  "upright row": 0.45,
   "front squat": 0.50,
   "thruster": 0.50,
   "rdl": 0.60,
