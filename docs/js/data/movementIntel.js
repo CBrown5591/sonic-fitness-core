@@ -129,85 +129,85 @@ export const MOVEMENT_INTEL = {
     cue: "Drive elbows straight back toward back pockets. Squeeze shoulder blades together for 1s pause.",
     safety: "Chest stays pinned to pad. Zero lower back involvement or jerking."
   },
-  "Cybex VR2 Articulating Leg Press": {
+  "Cybex Eagle Articulating Leg Press": {
     muscles: "Quadriceps, Gluteus Maximus & Adductors",
     setup: "Seat positioned so knees are ~90° at bottom. Feet shoulder-width on carriage platform.",
     cue: "Release safety stops. Lower weight under control until knees reach 90°. Drive through mid-foot to extend legs.",
     safety: "NEVER lock knees out fully at top. Keep lower back and sacrum glued to seat pad."
   },
-  "Cybex VR2 Articulating Leg Press (Light Tempo 25r)": {
+  "Cybex Eagle Articulating Leg Press (Light Tempo 25r)": {
     muscles: "Quadriceps (VMO / Vastus Lateralis) & Glutes",
     setup: "Seat positioned comfortably. Light load (~40-50% e1RM). Feet shoulder-width.",
     cue: "Continuous rhythmic pump: 1s down, 1s up with zero rest at top or bottom. Flush quads with oxygenated blood.",
     safety: "NEVER lock out knees at top. Stop immediately if any patellar tracking strain occurs."
   },
-  "Cybex VR2 Articulating Leg Press (Light Tempo)": {
+  "Cybex Eagle Articulating Leg Press (Light Tempo)": {
     muscles: "Quadriceps (VMO / Vastus Lateralis) & Glutes",
     setup: "Seat positioned comfortably. Light load (~40-50% e1RM). Feet shoulder-width on platform.",
     cue: "Continuous rhythmic pump: 1s down, 1s up with zero rest at top or bottom. Flush quads with oxygenated blood.",
     safety: "NEVER lock out knees at top. Stop immediately if any patellar tracking strain occurs."
   },
-  "Cybex VR2 Converging Chest Press": {
+  "Cybex Eagle Converging Chest Press": {
     muscles: "Sternal Pectorals, Anterior Deltoids & Triceps Brachii",
     setup: "Adjust seat height so handles align with mid-nipple line. Plant feet firmly.",
     cue: "Press forward smoothly as handles converge. Exhale at lockout, control return.",
     safety: "Keep wrists neutral and shoulders back; do not let anterior delts roll forward."
   },
-  "Cybex VR2 High Row (Chest Supported)": {
+  "Cybex Eagle High Row (Chest Supported)": {
     muscles: "Latissimus Dorsi, Teres Major, Rhomboids & Mid-Traps",
     setup: "Adjust chest pad so handles are reached with full lat stretch. Feet flat.",
     cue: "Pull handles down and back leading with elbows. Contract lats and rhomboids hard for 1s.",
     safety: "Keep sternum against pad; do not rock backward to pull weight."
   },
-  "Cybex VR2 Leg Curl": {
+  "Cybex Eagle Leg Curl": {
     muscles: "Hamstrings (Biceps Femoris, Semitendinosus & Semimembranosus)",
     setup: "Align knee pivot with machine axis. Roller pad secured snugly against lower Achilles tendon.",
     cue: "Drive heels smoothly toward glutes, hold peak contraction for 1s, and control 3s eccentric return.",
     safety: "Keep hips pinned to the seat pad throughout. Do not let lower back arch off the backrest."
   },
-  "Cybex VR2 Leg Extension": {
+  "Cybex Eagle Leg Extension": {
     muscles: "Quadriceps (Rectus Femoris & Vastus Medialis / VMO)",
     setup: "Back pad adjusted so knees align with pivot. Roller pad resting above ankle joints.",
     cue: "Extend shins upward smoothly, pause 1s at top contraction, and control 3s eccentric descent.",
     safety: "Avoid swinging or using body momentum. Keep butt pressed firmly into seat."
   },
-  "Cybex VR2 Leg Extension (Paced 20r)": {
+  "Cybex Eagle Leg Extension (Paced 20r)": {
     muscles: "Quadriceps & Patellar Tendon Capacity",
     setup: "Back pad adjusted so knees align with pivot. Roller pad resting comfortably above ankle joints.",
     cue: "Continuous rhythmic cadence: extend shins up, squeeze quads for 1s pause, 2s return for 20 unbroken reps.",
     safety: "Maintain butt firmly in seat. Do not swing or jerk weight stack."
   },
-  "Cybex VR2 Overhead Shoulder Press": {
+  "Cybex Eagle Overhead Shoulder Press": {
     muscles: "Anterior & Lateral Deltoids, Upper Traps & Triceps",
     setup: "Seat height set so handles start at ear/chin level. Use neutral vertical grips.",
     cue: "Press straight overhead without locking elbows aggressively. Lower under control to ear level.",
     safety: "Keep core tight against backrest; avoid flaring ribcage."
   },
-  "Cybex VR2 Pec Fly (Machine)": {
+  "Cybex Eagle Pec Fly (Machine)": {
     muscles: "Pectoralis Major (Sternal & Clavicular Fibers) & Anterior Delts",
     setup: "Adjust arm reach so handles align with chest plane. Slight bend in elbows.",
     cue: "Bring handles together across chest, squeezing pecs for 1s. Open arms slowly to a gentle stretch.",
     safety: "Never over-stretch past the shoulder plane."
   },
-  "Cybex VR2 Rear Delt Fly": {
+  "Cybex Eagle Rear Delt Fly": {
     muscles: "Posterior Deltoids, Rhomboids & Mid-Traps",
     setup: "Sit facing machine with chest on pad. Handles at shoulder height.",
     cue: "Pull arms wide and back in an arc, focusing on the back of the shoulders. Squeeze 1s.",
     safety: "Keep elbows slightly bent and traps relaxed."
   },
-  "Cybex VR2 Seated Abdominal Crunch": {
+  "Cybex Eagle Seated Abdominal Crunch": {
     muscles: "Rectus Abdominis & Internal/External Obliques",
     setup: "Seat adjusted so pivot axis aligns with lower ribs. Grasp handles overhead.",
     cue: "Curl ribcage down toward pelvis by flexing abdominals. Pause 1s, return under control.",
     safety: "Pull from the abs, not by jerking arms or pulling on neck."
   },
-  "Cybex VR2 Hip Adduction (Inner Thigh)": {
+  "Cybex Eagle Hip Adduction (Inner Thigh)": {
     muscles: "Hip Adductors (Adductor Magnus, Longus, Brevis & Gracilis)",
     setup: "Adjust pads to the outer leg/knee. Set starting width to a comfortable groin stretch.",
     cue: "Squeeze knees inward toward the center line in a controlled 2-count. Squeeze adductors hard at full peak contraction, then resist over a 3-second eccentric return.",
     safety: "Do not let the stack slam at the outer stretch. Keep pelvis pressed firmly into the back pad without rounding the lumbar."
   },
-  "Cybex VR2 Hip Abduction (Outer Glute)": {
+  "Cybex Eagle Hip Abduction (Outer Glute)": {
     muscles: "Gluteus Medius, Gluteus Minimus & Tensor Fasciae Latae (TFL)",
     setup: "Flip pads to the outside of knees. Set lever arms so knees start together.",
     cue: "Drive knees outward against resistance using upper glutes (gluteus medius). Hold outer contraction for 1 full second, then control the eccentric back.",
