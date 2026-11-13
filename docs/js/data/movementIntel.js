@@ -1181,6 +1181,92 @@ export const MOVEMENT_INTEL = {
     setup: "Thread a light 41\" loop band (Blue or Green) across your upper back/shoulder blades (under armpits) and loop the ends over both thumbs/palms.",
     cue: "Stay light on balls of feet and throw continuous crisp 1-2 jabs, crosses, and slips against the forward band resistance at a steady Zone 2 pace.",
     safety: "Snap punches out and retract hands straight back to chin guard; do not let the band yank elbows behind your torso."
+  },
+  // --- MINI-BAND GUIDE: UPPER BODY & SHOULDERS ---
+  "Mini-Band Lateral Arm Extension": {
+    muscles: "Posterior Deltoids, Rhomboids & Mid-Trapezius",
+    setup: "Stand tall with feet hip-width apart and abs braced. Loop a light-to-medium mini-band around both WRISTS, extending arms straight out in front of chest at shoulder height with fists clenched.",
+    cue: "Open both arms outward horizontally against the band until shoulder blades pinch together, hold 1s at peak extension, then return slowly to center.",
+    safety: "Keep shoulders depressed away from your ears and avoid arching your lower back as you pull apart."
+  },
+
+  "Mini-Band Overhead Lat Pull": {
+    muscles: "Latissimus Dorsi, Rear Deltoids & Lower/Mid Traps",
+    setup: "Stand tall with chest proud and shoulders relaxed. Place a mini-band around both WRISTS and press arms straight overhead toward the ceiling.",
+    cue: "Pull elbows down and wide while pulling outward on the band until your forearms/band pass just behind your head/upper back, squeezing your lats. Slowly return overhead.",
+    safety: "Keep ribcage clamped down to pelvis—do not crane your neck forward or hyperextend your lower back to clear your head."
+  },
+
+  "Mini-Band Seated Knee-Anchor Bicep Curl": {
+    muscles: "Biceps Brachii & Brachioradialis",
+    setup: "Sit upright on a chair or bench with feet hip-width apart. Hook one end of a mini-band securely behind your right knee/thigh and grip the other end with your right hand.",
+    cue: "Pin your working elbow tight against your ribcage and curl your fist upward toward your shoulder against the band tension. Lower over 3 seconds, then switch sides.",
+    safety: "Do not lean back or swing your shoulder forward to lift the band; keep the movement isolated strictly to the elbow joint."
+  },
+
+  "Mini-Band Shoulder Tri-Set": {
+    muscles: "Anterior, Lateral & Posterior Deltoids, Rotator Cuff & Upper Back",
+    setup: "Stand with feet hip-width apart and chest up. Loop a light mini-band around both WRISTS with forearms held straight in front of your torso at 90°.",
+    cue: "Keeping elbows tucked tight to your sides, press forearms outward against the band's resistance (external rotation/abduction) through the tri-set sequence with minimal rest.",
+    safety: "Use a light tension level so your traps do not take over; keep elbows pinned to your ribs throughout."
+  },
+
+  // --- MINI-BAND GUIDE: LOWER BODY & HIPS ---
+  "Mini-Band Standing Hip Abduction": {
+    muscles: "Gluteus Medius, Gluteus Minimus & Lateral Hip Stabilizers",
+    setup: "Loop a mini-band around BOTH ANKLES. Stand tall with feet hip-width apart, abs tight, and place one hand lightly on a wall or post for balance.",
+    cue: "Standing firmly on your support leg, raise your working leg straight out to the side against the band without rotating your toes outward. Lower slowly without letting the band go slack.",
+    safety: "Keep your torso dead vertical—do not lean sideways away from the working leg to fake extra height."
+  },
+
+  "Mini-Band Standing Hip Extension": {
+    muscles: "Gluteus Maximus & Hamstrings",
+    setup: "Loop a mini-band around BOTH ANKLES. Stand tall facing a wall with both hands braced against it and feet hip-width apart.",
+    cue: "Keeping your working leg straight (soft knee lock), extend your heel straight backward behind your hip by squeezing your glute for 1s, then control the return.",
+    safety: "Keep the kick compact (15°–25°); kicking too high forces your lumbar spine to hyperextend."
+  },
+
+  "Mini-Band Seated Hip Abduction": {
+    muscles: "Gluteus Medius & Outer Thigh Abductors",
+    setup: "Sit upright on a chair or bench with feet hip-width apart, back straight, and abs braced. Loop a medium-to-heavy mini-band 2 inches ABOVE both knees.",
+    cue: "Drive both knees outward laterally against the band as wide as comfortably possible, hold the outer glute squeeze for 1s, then resist on the return.",
+    safety: "Keep feet planted flat on the floor and pelvis neutral—do not slouch or round your lower back."
+  },
+
+  "Mini-Band Side Lunge": {
+    muscles: "Quadriceps, Gluteus Maximus, Gluteus Medius & Adductors",
+    setup: "Loop a mini-band around BOTH ANKLES. Stand tall with feet hip-width apart, abs braced, and hands clasped under your chin.",
+    cue: "Take a wide lateral step to the right against the band and sit your hips back into a single-leg side squat while keeping the trailing left leg straight. Push off the right heel to return to start.",
+    safety: "Keep your stepping foot pointed straight ahead and track your knee directly over your second toe—never let the band pull your knee inward."
+  },
+
+  // --- MINI-BAND GUIDE: CORE & PLANK WORK ---
+  "Mini-Band Flutter Kicks": {
+    muscles: "Lower Rectus Abdominis, Transverse Abdominis & Hip Flexors",
+    setup: "Loop a mini-band around BOTH LOWER LEGS / ANKLES. Lie flat on your back with legs extended and hands placed at your sides (or tucked slightly under glutes for pelvic support).",
+    cue: "Lift both heels 5–6 inches off the floor and alternate raising one leg higher while pressing the other downward against constant band tension for 8–12 controlled cycles.",
+    safety: "Keep your lower back pressed flush into the floor; raise your leg height slightly if you feel your lumbar spine start to arch."
+  },
+
+  "Mini-Band Bicycle Crunch": {
+    muscles: "Rectus Abdominis, Internal/External Obliques & Hip Flexors",
+    setup: "Loop a mini-band around the ARCHES / FOREFEET of both feet. Lie flat on your back with hands lightly behind your ears and knees/hips bent at 90°.",
+    cue: "Curl your left shoulder toward your right knee while pressing your right foot straight out against the mini-band loop. Return smoothly and alternate sides.",
+    safety: "Do not yank on your neck with your hands; keep your lower back glued to the floor throughout every extension."
+  },
+
+  "Mini-Band Plank Knee Drive": {
+    muscles: "Transverse Abdominis, Rectus Abdominis, Hip Flexors & Anterior Deltoids",
+    setup: "Loop a mini-band around the FOREFEET / ARCHES of both shoes. Assume a sturdy high push-up plank with hands stacked directly under shoulders.",
+    cue: "Keeping your left leg locked straight to anchor the band, drive your right knee forward toward your chest against the resistance, return slowly, and switch legs.",
+    safety: "Keep hips level and spine flat as a tabletop—do not let your lower back sag or pike upward."
+  },
+
+  "Mini-Band Plank Kickback": {
+    muscles: "Gluteus Maximus, Transverse Abdominis & Shoulder Stabilizers",
+    setup: "Loop a mini-band around BOTH LOWER LEGS / ANKLES. Assume a high push-up plank with hands shoulder-width apart and core braced.",
+    cue: "Maintaining a rigid plank, squeeze your glute to lift and kick your right leg straight back 5–6 inches against the band, hold 1s, lower, and switch sides.",
+    safety: "Avoid twisting your hips or arching your lower back as the leg lifts; keep pelvis parallel to the floor."
   }
 };
 
