@@ -236,6 +236,110 @@ export const MOVEMENT_INTEL = {
     cue: "Curl one heel smoothly toward your glutes while keeping your toes pulled up (dorsiflexed) to engage the hamstrings cleanly. Pause 1 second at peak flexion and resist for 3 seconds on the return.",
     safety: "Do not let your hips lift off the seat pad at the bottom of the curl. Keep the non-working leg relaxed and stationary."
   },
+  "Cybex Eagle Single-Leg Press": {
+    muscles: "Quadriceps, Gluteus Maximus & Hip Stabilizers (Unilateral)",
+    setup: "Place one foot centered on the footplate at mid-height; rest your non-working foot flat on the floor or frame away from the linkage. Set seat stop so knee reaches 90° without pelvis lifting.",
+    cue: "Drive evenly through the mid-foot and heel of the working leg to extend smoothly without locking the knee hard, then lower over a strict 3-second eccentric.",
+    safety: "Keep your lower back and glute pinned flat against the seat pad—stop lowering before your tailbone tucks under."
+  },
+
+  "Cybex Eagle Leg Press (High-and-Wide Glute/Ham)": {
+    muscles: "Gluteus Maximus, Hamstrings & Adductor Magnus",
+    setup: "Place both feet near the top outer corners of the footplate with toes flared 30° outward. Adjust seat back to allow deep hip flexion without lumbar rounding.",
+    cue: "Push through your heels while keeping knees aligned with your toes, driving the footplate forward and squeezing glutes at top extension.",
+    safety: "Keep your lumbar spine flat against the backrest throughout the entire stroke; never allow your pelvis to curl upward at the bottom."
+  },
+
+  "Cybex Eagle Leg Press Calf Raise": {
+    muscles: "Gastrocnemius & Soleus (Calves)",
+    setup: "Extend the leg press to full length and engage the safety catch/range limiter. Slide both feet down so only the balls of your feet rest on the bottom edge of the footplate.",
+    cue: "Keep knees softly unlocked (never hyperextended). Let heels drop toward you for a full 2-second ankle stretch, then press forcefully onto your tiptoes for a 1-second peak hold.",
+    safety: "Ensure the safety catch is locked in place so the carriage cannot crush your ankles if your foot slips, and never lock your knees backward."
+  },
+
+  "Cybex Eagle Leg Extension Isometric Hold (30-45s)": {
+    muscles: "Quadriceps (Vastus Medialis / Patellar Tendon Analgesia)",
+    setup: "Align working knee with the machine pivot dot and set the roller pad just above the ankle. Extend one leg to roughly 35°–45° short of full lockout.",
+    cue: "Hold the leg completely motionless at that 45° knee angle for 30–45 seconds while maintaining steady breathing and continuous quad tension.",
+    safety: "If you feel sharp joint pain rather than muscular burn, adjust the knee angle 10° higher or lower to find a pain-free isometric zone."
+  },
+
+  "Cybex Eagle Leg Curl (2-Up / 1-Down Eccentric)": {
+    muscles: "Hamstrings (Eccentric Overload)",
+    setup: "Align knees with the pivot axis and lock the thigh pad snugly over your quads. Select a weight roughly 60%–70% of your bilateral 10RM.",
+    cue: "Curl the pad all the way to your glutes using BOTH legs, remove one leg from behind the roller, and resist the weight down over a slow 4–5 second eccentric with ONE leg.",
+    safety: "Keep hips pressed firmly into the seat during the single-leg lowering phase; do not let the stack drop faster than a 4-second count."
+  },
+
+  "Bravo Standing Cable Straight-Arm Pullover": {
+    muscles: "Latissimus Dorsi, Teres Major & Long Head of Triceps",
+    setup: "Set a single top pulley (with straight bar or rope) or both top pulleys to highest notch. Step back, hinge hips 30° with a flat back, and hold handles overhead with straight arms.",
+    cue: "Keeping elbows locked in a soft 10° bend, sweep your hands down to your thighs by driving your lats down into your back pockets. Pause 1s at thighs.",
+    safety: "Do not bend your elbows into a tricep pushdown or round your upper back as arms return overhead."
+  },
+
+  "Bravo Cable Lateral Raise (Cross-Body)": {
+    muscles: "Lateral (Medial) Deltoids & Supraspinatus",
+    setup: "Set a single Bravo pulley to its lowest notch. Stand sideways to the column, hold the frame with your inside hand, and grip the single D-handle in your outside hand across the front of your thigh.",
+    cue: "With a soft 10° elbow bend, sweep your outside arm up and out in the scapular plane (30° forward of torso) until your fist reaches shoulder height. Lower over 3 seconds.",
+    safety: "Keep traps depressed away from ears; stop at shoulder height rather than shrugging the weight higher."
+  },
+
+  "Bravo Incline Cable Y-Raise": {
+    muscles: "Lower Trapezius, Rear Deltoids & Serratus Anterior",
+    setup: "Set both Bravo pulleys to the lowest notch and step 2 feet forward so the cables cross slightly in front of your thighs.",
+    cue: "With thumbs pointed upward and arms straight, raise both arms diagonally up and outward into a wide 45° 'Y' overhead, squeezing your lower traps for 1s at the top.",
+    safety: "Keep ribcage clamped down so your lower back does not hyperextend as your arms reach overhead."
+  },
+
+  "Bravo Cable Overhead Tricep Extension": {
+    muscles: "Triceps Brachii (Long Head Emphasis)",
+    setup: "Set a single Bravo pulley to the lowest notch with a rope attachment. Face away from the column in a staggered stance, holding the rope behind your head with elbows pointed high.",
+    cue: "Keep upper arms stationary next to your ears and extend your forearms upward and slightly forward until elbows lock out. Control the 3s stretch behind your head.",
+    safety: "Brace your abs and squeeze your rear glute so the backward cable pull does not arch your lumbar spine."
+  },
+
+  "Bravo Cable Hammer Curl (Rope)": {
+    muscles: "Brachialis, Brachioradialis & Biceps Brachii",
+    setup: "Set a single Bravo pulley to the lowest notch with a rope attachment. Stand facing the column with elbows pinned tightly against your ribs and palms facing each other.",
+    cue: "Curl the rope ends upward toward your shoulders while keeping wrists neutral and elbows glued to your sides. Pause 1s at peak contraction.",
+    safety: "Zero torso swinging or elbow drifting forward; keep shoulders packed down."
+  },
+
+  "Bravo Half-Kneeling Single-Arm Cable Row": {
+    muscles: "Latissimus Dorsi, Rhomboids & Core Anti-Rotation",
+    setup: "Set a single Bravo pulley to belly-button height. Take a half-kneeling stance facing the column (working-side knee down) and grip the D-handle with a neutral palm.",
+    cue: "Pull your elbow straight back past your ribs while squeezing the glute of your down knee to prevent your torso from twisting. Hold 1s at your hip.",
+    safety: "Keep shoulders and hips completely square to the pulley column throughout every rep."
+  },
+
+  "Cybex Eagle Hip Abduction (Lean-Forward Upper Glute)": {
+    muscles: "Gluteus Medius & Upper Gluteus Maximus Shelf",
+    setup: "Set the knee pads to the outside of your knees, sit on the front third of the seat, and hinge your torso forward 30°–45° while gripping the front handles.",
+    cue: "Drive both knees outward against the pads using your upper glutes, hold the outer contraction for 1 full second, and resist the 3-second return.",
+    safety: "Keep your spine flat during the forward hinge—do not round your lower back to reach the front handles."
+  },
+
+  "Cybex Eagle Single-Arm Iso-Lateral Chest Press": {
+    muscles: "Pectoralis Major, Anterior Deltoid & Core Anti-Rotation",
+    setup: "Set seat height so handles align with mid-chest. Grip one handle with your working hand and brace your non-working hand firmly against the machine frame.",
+    cue: "Press the single independent lever arm forward along its converging arc to full extension without letting your opposite shoulder lift off the backrest.",
+    safety: "Keep both shoulder blades pinned flat to the backrest; stop if your torso twists toward the pressing arm."
+  },
+
+  "Cybex Eagle Single-Arm Iso-Lateral High Row": {
+    muscles: "Latissimus Dorsi, Rhomboids & Core Anti-Rotation",
+    setup: "Adjust seat and chest pad snugly against your sternum. Grip one independent lever handle and brace your opposite hand on the front frame.",
+    cue: "Pull the single handle back into your hip pocket, driving your elbow past your ribs for a 1-second lat squeeze before controlling the 3-second stretch.",
+    safety: "Keep chest pinned squarely against the support pad—do not rotate your ribcage to pull extra weight."
+  },
+
+  "Bravo Behind-the-Back Cable Shrug": {
+    muscles: "Upper & Mid Trapezius (Zero Spinal Compression)",
+    setup: "Set both Bravo pulleys to the lowest notch. Stand centered between the columns with the cables running behind your glutes, gripping both D-handles at your sides.",
+    cue: "With arms straight, shrug your shoulders straight up and slightly back toward your ears, holding the peak trap contraction for 2 full seconds before lowering.",
+    safety: "Do not roll your shoulders in circles or crane your neck forward; move strictly up and down along the cable line."
+  },
   "DB Bulgarian Split Squat": {
     muscles: "Quadriceps & Gluteus Maximus (Lead Leg) • Glute Medius (Stabilizer)",
     setup: "Rear foot laces resting on bench behind you. Front foot placed 3 feet forward.",
