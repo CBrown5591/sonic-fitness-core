@@ -122,6 +122,7 @@ export const SLOT_BAND_EXTRAS = {
   B2: [
     "Low Door-Anchor Front / Side Delt Raise",
     "Low Door-Anchor Tube Upright Row",
+    "41\" Loop Band Upright Row (Stand-on-Loop)",
     "Mini-Band Shoulder Tri-Set"
   ],
   B3: [
@@ -146,6 +147,7 @@ export const SLOT_BAND_EXTRAS = {
   C2: [
     "41\" Loop Band Bent-Over Row (Stand-on-Loop)",
     "Low Door-Anchor Tube Upright Row",
+    "41\" Loop Band Upright Row (Stand-on-Loop)",
     "Low Door-Anchor Tube Bicep Curl",
     "Mini-Band Overhead Lat Pull",
     "Mini-Band Seated Knee-Anchor Bicep Curl"
@@ -269,6 +271,7 @@ export const SLOT_BAND_EXTRAS = {
   H3: [
     "41\" Loop Band Bent-Over Row (Stand-on-Loop)",
     "Low Door-Anchor Tube Upright Row",
+    "41\" Loop Band Upright Row (Stand-on-Loop)",
     "Low Door-Anchor Bent-Over Rear Delt Raise"
   ],
   H4: [
