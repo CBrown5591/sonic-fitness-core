@@ -95,7 +95,7 @@ export function renderVault(filterText = '') {
   // Update total Red Star Rings header
   const totalCounter = document.getElementById('vaultTotalRedRings');
   if (totalCounter) {
-    totalCounter.innerText = `${getTotalRedRings()} / 50 RED STAR RINGS`;
+    totalCounter.innerText = `${getTotalRedRings()} RED STAR RINGS`;
   }
 
   if (filtered.length === 0) {
