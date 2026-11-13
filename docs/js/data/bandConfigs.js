@@ -170,9 +170,13 @@ export const BAND_CONFIG = {
 export function getBandsForMovement(exerciseName = '') {
   const name = (exerciseName || '').toLowerCase();
 
-  // 1. Locomotion, Hips, Marches, & Core: Allow BOTH Mini Loops and 41" Continuous Loops
+  // 1. Strict Mini-Band Movements (Checked FIRST so "mini...curl" or "mini...abduction" stays Mini-Only)
+  if (name.includes('mini')) {
+    return Object.values(BAND_CONFIG).filter(b => b.type === 'mini');
+  }
+
+  // 2. Locomotion, Marches & Deadbugs (Allow BOTH Mini Loops and 41" Continuous Loops)
   if (
-    name.includes('mini') || 
     name.includes('walk') || 
     name.includes('march') || 
     name.includes('deadbug') || 
@@ -183,7 +187,7 @@ export function getBandsForMovement(exerciseName = '') {
     return Object.values(BAND_CONFIG).filter(b => b.type === 'mini' || b.type === '41_loop');
   }
 
-// 2. Handled Door-Anchor Tubes Only (Pushes, Pulls, Rotations, Curls, Ankle Straps)
+  // 3. Handled Door-Anchor Tubes Only
   if (
     name.includes('anchor') || 
     name.includes('pulldown') || 
@@ -198,6 +202,7 @@ export function getBandsForMovement(exerciseName = '') {
   ) {
     return Object.values(BAND_CONFIG).filter(b => b.type === 'tube');
   }
-  // 3. 41" Continuous Power Loops Only (Squats, Hinges, Push-Ups)
+
+  // 4. 41" Continuous Power Loops Only
   return Object.values(BAND_CONFIG).filter(b => b.type === '41_loop');
 }
