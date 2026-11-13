@@ -401,7 +401,8 @@ export function renderResultsOverlay(data, onClose) {
 
       <div class="results-body">
         ${recordHtml}
-        ${levelUpHtml}${transformMultiplierHtml}
+        ${levelUpHtml}
+        ${transformMultiplierHtml}
 
         <!-- 1. HERO RANK SECTION (WITH GUARANTEED INLINE METALLIC SHADERS) -->
         <div class="results-hero-rank-container">
@@ -435,4 +436,192 @@ export function renderResultsOverlay(data, onClose) {
           </div>
           <div class="breakdown-row">
             <span class="breakdown-lbl">RED STAR RINGS (${data.ringsBanked || 0} BANKED)</span>
-            <span class="breakdown-
+            <span class="breakdown-val highlight-red">+${(data.redRingBonus || 0).toLocaleString()} PTS</span>
+          </div>
+        </div>
+
+        <!-- 3. TOTAL SCORE BANNER -->
+        <div class="results-total-container">
+          <div class="results-total-lbl">TOTAL SCORE</div>
+          <div id="resultsScoreCounter" class="results-total-num">0 PTS</div>
+        </div>
+
+        <!-- 4. STANDARD GOLD RINGS BANKED -->
+        <div class="results-gold-ring-payout">
+          <div class="gold-ring-payout-label">STANDARD GOLD RINGS BANKED</div>
+          <div id="resultsGoldRingsCounter" class="gold-ring-payout-val">🪙 +0 RINGS</div>
+        </div>
+
+        ${emeraldHtml}
+
+        <!-- 5. EXPERIENCE BAR (FINAL STEP BEFORE BUTTON UNLOCK) -->
+        <div class="results-exp-block">
+          <div class="results-exp-header">
+            <span class="results-exp-lvl">PILOT LVL ${currentLevel}</span>
+            <span id="resultsExpGainedText" class="results-exp-gained">+0 EXP GAINED</span>
+          </div>
+          <div class="results-exp-bar-track">
+            <div id="resultsExpFill" class="results-exp-bar-fill" style="width: 0%;"></div>
+          </div>
+        </div>
+
+        <button id="continueResultsBtn" class="results-continue-btn" style="opacity: 0.45; pointer-events: none;">
+          CALCULATING RATING...
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+
+  // Play Stage Clear Fanfare in the background
+  try {
+    playStageClearFanfare(data.rank);
+  } catch (e) {
+    console.warn("Audio fanfare bypassed:", e);
+  }
+
+  // Stage 1: Rolling score & gold ring tally (EXP bar waits until ranks & banners finish)
+  const counterEl = document.getElementById('resultsScoreCounter');
+  const goldEl = document.getElementById('resultsGoldRingsCounter');
+  const expFillEl = document.getElementById('resultsExpFill');
+  const expGainedEl = document.getElementById('resultsExpGainedText');
+  const targetScore = data.totalScore || 0;
+  const targetGold = goldRings;
+  const tallyDuration = 1650; // ms
+  const startTime = performance.now();
+
+  function runRollingTally(now) {
+    const elapsed = now - startTime;
+    const progress = Math.min(1, elapsed / tallyDuration);
+    const eased = 1 - Math.pow(1 - progress, 3); // ease-out cubic
+
+    const currentScore = Math.floor(eased * targetScore);
+    const currentGold = Math.floor(eased * targetGold);
+
+    if (counterEl) counterEl.innerText = `${currentScore.toLocaleString()} PTS`;
+    if (goldEl) goldEl.innerText = `🪙 +${currentGold} RINGS`;
+
+    if (progress < 1) {
+      requestAnimationFrame(runRollingTally);
+    } else {
+      if (counterEl) counterEl.innerText = `${targetScore.toLocaleString()} PTS`;
+      if (goldEl) goldEl.innerText = `🪙 +${targetGold} RINGS`;
+      triggerRankStampSlam();
+    }
+  }
+
+  // Stage 2 & 3: Rank Stamp Slam -> Optional S-Rank Slam -> Optional Emerald Banner -> Final EXP Fill
+  function triggerRankStampSlam() {
+    const stampEl = document.getElementById('resultsRankStamp');
+    const labelEl = document.getElementById('resultsRankLabel');
+    const emeraldBanner = document.getElementById('resultsEmeraldBanner');
+
+    if (stampEl) {
+      stampEl.className = 'results-rank-stamp animate-stamp-slam';
+    }
+    if (labelEl) {
+      labelEl.style.transition = 'opacity 0.45s ease';
+      labelEl.style.opacity = '1';
+    }
+
+    if (navigator.vibrate) {
+      navigator.vibrate([80, 40, 140]);
+    }
+
+    // Delayed S-Rank Slam Upgrade (A -> S) after initial A-Rank stamp lands
+    if (isTrueSRank) {
+      setTimeout(() => {
+        const letterEl = document.getElementById('resultsRankLetter');
+        const sStyle = letterStyles['S'];
+        if (letterEl && sStyle) {
+          letterEl.textContent = 'S';
+          letterEl.style.setProperty('color', sStyle.color, 'important');
+          letterEl.style.setProperty('text-shadow', sStyle.shadow, 'important');
+          letterEl.classList.add('s-rank-slam-active');
+        }
+        if (stampEl) {
+          stampEl.style.borderColor = '#facc15';
+          stampEl.style.boxShadow = 'inset 0 2px 6px rgba(0, 0, 0, 0.8), 0 0 24px rgba(250, 204, 21, 0.55)';
+        }
+        if (navigator.vibrate) {
+          navigator.vibrate([40, 30, 110]);
+        }
+      }, 975);
+    }
+
+    // Reveal Chaos Emerald Banner (if awarded) after rank settles
+    const emeraldDelay = isTrueSRank ? 1575 : 450;
+    if (emeraldBanner) {
+      setTimeout(() => {
+        emeraldBanner.style.display = 'block';
+        emeraldBanner.classList.add('animate-pop-in');
+        if (navigator.vibrate) navigator.vibrate([50, 30, 80]);
+      }, emeraldDelay);
+    }
+
+    // Stage 4: Animate EXP bar & "+EXP GAINED" LAST, then unlock Continue button
+    const expStartDelay = emeraldBanner
+      ? emeraldDelay + 600
+      : (isTrueSRank ? 1600 : 650);
+
+    setTimeout(() => {
+      runExpBarFill();
+    }, expStartDelay);
+  }
+
+  function runExpBarFill() {
+    const btn = document.getElementById('continueResultsBtn');
+    if (btn) {
+      btn.innerText = 'SYNCING PILOT EXP...';
+    }
+
+    const expDuration = 1200; // ms
+    const expStart = performance.now();
+
+    function stepExp(now) {
+      const elapsed = now - expStart;
+      const progress = Math.min(1, elapsed / expDuration);
+      const eased = 1 - Math.pow(1 - progress, 3);
+
+      const currentExp = Math.floor(eased * expGained);
+      const currentPct = Math.min(100, eased * expProgressPct);
+
+      if (expGainedEl) expGainedEl.innerText = `+${currentExp.toLocaleString()} EXP GAINED`;
+      if (expFillEl) expFillEl.style.width = `${currentPct.toFixed(1)}%`;
+
+      if (progress < 1) {
+        requestAnimationFrame(stepExp);
+      } else {
+        if (expGainedEl) expGainedEl.innerText = `+${expGained.toLocaleString()} EXP GAINED`;
+        if (expFillEl) expFillEl.style.width = `${expProgressPct}%`;
+
+        // Final step: Unlock Continue to Command Hub button
+        if (btn) {
+          btn.style.opacity = '1';
+          btn.style.pointerEvents = 'auto';
+          btn.innerText = 'CONTINUE TO COMMAND HUB ▶';
+        }
+      }
+    }
+
+    requestAnimationFrame(stepExp);
+  }
+
+  requestAnimationFrame(runRollingTally);
+
+  const dismiss = () => {
+    stopAllFanfare();
+    overlay.classList.add('animate-fade-out');
+    setTimeout(() => {
+      overlay.remove();
+      if (onClose) onClose();
+    }, 250);
+  };
+
+  document.getElementById('continueResultsBtn').onclick = dismiss;
+  document.getElementById('closeResultsXBtn').onclick = dismiss;
+}
+
+// Bind to window for Chrome DevTools Console testing
+window.renderResultsOverlay = renderResultsOverlay;
