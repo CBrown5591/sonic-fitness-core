@@ -24,6 +24,7 @@ export const BAND_EQUIVALENTS = {
   "Cybex VR2 Seated Abdominal Crunch": "High Door-Anchor Kneeling Band Crunch",
   "Suitcase Carry (Single-Arm)": "Single-Arm Banded Suitcase Isometric March",
   "Tall-Kneeling Pallof Hold (20s)": "Tall-Kneeling Banded Pallof Hold (20s)",
+  "Elevated DB/KB Gorilla Row": "Banded Gorilla Row (41\" Loop Under Feet)",
 
   // --- DAY B ---
   "Suitcase DB Squat": "Banded Dual-Loop Suitcase Squat",
