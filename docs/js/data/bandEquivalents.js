@@ -89,7 +89,7 @@ export const BAND_EQUIVALENTS = {
   "Fast Step-Jacks (30s on / 60s off)": "Mini-Band Step-Jacks (30s/60s)"
 };
 
-// Extra standalone band movements from User Guide + Broomstick Barbell
+// Extra standalone band movements from User Guide, Broomstick Barbell & Mini-Band Manual
 export const SLOT_BAND_EXTRAS = {
   // DAY A: Hinge & Horizontal Power
   A1: [
@@ -99,7 +99,9 @@ export const SLOT_BAND_EXTRAS = {
   ],
   A2: [
     "41\" Loop Band Bent-Over Row (Stand-on-Loop)",
-    "Low Door-Anchor Tube Bicep Curl"
+    "Low Door-Anchor Tube Bicep Curl",
+    "Mini-Band Overhead Lat Pull",
+    "Mini-Band Seated Knee-Anchor Bicep Curl"
   ],
   A3: [
     "High Door-Anchor Tricep Pushdown",
@@ -114,31 +116,39 @@ export const SLOT_BAND_EXTRAS = {
   // DAY B: Knee Stability & Shoulder Rehab
   B1: [
     "41\" Loop Band Squat-to-Press Thruster",
-    "41\" Loop Band Seated Calf Extension"
+    "41\" Loop Band Seated Calf Extension",
+    "Mini-Band Side Lunge"
   ],
   B2: [
     "Low Door-Anchor Front / Side Delt Raise",
-    "Low Door-Anchor Tube Upright Row"
+    "Low Door-Anchor Tube Upright Row",
+    "Mini-Band Shoulder Tri-Set"
   ],
   B3: [
     "41\" Loop Band Broomstick Stiff-Leg Deadlift",
-    "Low Door-Anchor Standing Glute Kickback"
+    "Low Door-Anchor Standing Glute Kickback",
+    "Mini-Band Standing Hip Extension"
   ],
   B4: [
     "Low Door-Anchor Bent-Over Rear Delt Raise",
-    "Low Door-Anchor Front / Side Delt Raise"
+    "Low Door-Anchor Front / Side Delt Raise",
+    "Mini-Band Lateral Arm Extension",
+    "Mini-Band Shoulder Tri-Set"
   ],
 
   // DAY C: Full-Body Capacity & Hinge Resilience
   C1: [
     "41\" Loop Band Squat-to-Press Thruster",
     "Low Door-Anchor Standing Glute Kickback",
-    "41\" Loop Band Seated Calf Extension"
+    "41\" Loop Band Seated Calf Extension",
+    "Mini-Band Side Lunge"
   ],
   C2: [
     "41\" Loop Band Bent-Over Row (Stand-on-Loop)",
     "Low Door-Anchor Tube Upright Row",
-    "Low Door-Anchor Tube Bicep Curl"
+    "Low Door-Anchor Tube Bicep Curl",
+    "Mini-Band Overhead Lat Pull",
+    "Mini-Band Seated Knee-Anchor Bicep Curl"
   ],
   C3: [
     "High Door-Anchor Tricep Pushdown",
@@ -147,7 +157,9 @@ export const SLOT_BAND_EXTRAS = {
   ],
   C4: [
     "Low Door-Anchor Standing Band Abduction",
-    "Low Door-Anchor Supine Leg Lift"
+    "Low Door-Anchor Supine Leg Lift",
+    "Mini-Band Standing Hip Abduction",
+    "Mini-Band Seated Hip Abduction"
   ],
 
   // DAY D: Trunk Fortress & Core Integrity
@@ -160,14 +172,20 @@ export const SLOT_BAND_EXTRAS = {
     "Low Door-Anchor Supine Reverse Crunch",
     "Low Door-Anchor Resisted Bicycle Crunch",
     "Low Door-Anchor Resisted Sit-Up",
-    "Low Door-Anchor Supine Leg Lift"
+    "Low Door-Anchor Supine Leg Lift",
+    "Mini-Band Flutter Kicks",
+    "Mini-Band Bicycle Crunch"
   ],
   D3: [
-    "Low Door-Anchor Standing Oblique Side Bend"
+    "Low Door-Anchor Standing Oblique Side Bend",
+    "Mini-Band Plank Knee Drive"
   ],
   D4: [
     "Low Door-Anchor Standing Band Abduction",
-    "Low Door-Anchor Standing Glute Kickback"
+    "Low Door-Anchor Standing Glute Kickback",
+    "Mini-Band Standing Hip Abduction",
+    "Mini-Band Seated Hip Abduction",
+    "Mini-Band Plank Kickback"
   ],
 
   // DAY E: Hypertrophy & Machine Overload
@@ -188,7 +206,9 @@ export const SLOT_BAND_EXTRAS = {
   E4: [
     "41\" Loop Band Bent-Over Row (Stand-on-Loop)",
     "Low Door-Anchor Bent-Over Rear Delt Raise",
-    "Low Door-Anchor Tube Bicep Curl"
+    "Low Door-Anchor Tube Bicep Curl",
+    "Mini-Band Lateral Arm Extension",
+    "Mini-Band Seated Knee-Anchor Bicep Curl"
   ],
 
   // DAY F: Joint Sparing & Deload Recon
@@ -197,22 +217,32 @@ export const SLOT_BAND_EXTRAS = {
   ],
   F2: [
     "Low Door-Anchor Standing Band Abduction",
-    "Low Door-Anchor Standing Glute Kickback"
+    "Low Door-Anchor Standing Glute Kickback",
+    "Mini-Band Standing Hip Abduction",
+    "Mini-Band Seated Hip Abduction",
+    "Mini-Band Standing Hip Extension"
   ],
   F3: [
     "Low Door-Anchor Bent-Over Rear Delt Raise",
-    "Low Door-Anchor Front / Side Delt Raise"
+    "Low Door-Anchor Front / Side Delt Raise",
+    "Mini-Band Lateral Arm Extension",
+    "Mini-Band Shoulder Tri-Set"
   ],
   F4: [
     "Low Door-Anchor Supine Reverse Crunch",
     "Low Door-Anchor Resisted Bicycle Crunch",
-    "Low Door-Anchor Supine Leg Lift"
+    "Low Door-Anchor Supine Leg Lift",
+    "Mini-Band Flutter Kicks",
+    "Mini-Band Bicycle Crunch",
+    "Mini-Band Plank Knee Drive"
   ],
 
- // DAY G: Sonic Velocity // Ergo & Machine Cardio
+  // DAY G: Sonic Velocity // Ergo & Machine Cardio
   G2: [
     "41\" Loop Band Squat-to-Press Thruster",
-    "Low Door-Anchor Resisted Bicycle Crunch"
+    "Low Door-Anchor Resisted Bicycle Crunch",
+    "Mini-Band Plank Knee Drive",
+    "Mini-Band Flutter Kicks"
   ],
   G3: [
     "Low Door-Anchor Reverse Woodchopper (Low-to-High)",
@@ -226,12 +256,15 @@ export const SLOT_BAND_EXTRAS = {
   // DAY H: Speed Highway // Non-Impact DB & Cable Metcon
   H1: [
     "41\" Loop Band Squat-to-Press Thruster",
-    "41\" Loop Band Seated Calf Extension"
+    "41\" Loop Band Seated Calf Extension",
+    "Mini-Band Side Lunge"
   ],
   H2: [
     "41\" Loop Band Broomstick Standard Deadlift",
     "41\" Loop Band Broomstick Stiff-Leg Deadlift",
-    "Low Door-Anchor Standing Glute Kickback"
+    "Low Door-Anchor Standing Glute Kickback",
+    "Mini-Band Standing Hip Extension",
+    "Mini-Band Plank Kickback"
   ],
   H3: [
     "41\" Loop Band Bent-Over Row (Stand-on-Loop)",
@@ -240,22 +273,29 @@ export const SLOT_BAND_EXTRAS = {
   ],
   H4: [
     "Low Door-Anchor Standing Oblique Side Bend",
-    "Low Door-Anchor Standing Band Abduction"
+    "Low Door-Anchor Standing Band Abduction",
+    "Mini-Band Standing Hip Abduction"
   ],
 
   // DAY I: Emerald Coast // Flow & Core
   I1: [
     "Low Door-Anchor Standing Band Abduction",
     "Low Door-Anchor Standing Glute Kickback",
-    "41\" Loop Band Seated Calf Extension"
+    "41\" Loop Band Seated Calf Extension",
+    "Mini-Band Side Lunge",
+    "Mini-Band Seated Hip Abduction"
   ],
   I3: [
     "Low Door-Anchor Supine Reverse Crunch",
-    "Low Door-Anchor Supine Leg Lift"
+    "Low Door-Anchor Supine Leg Lift",
+    "Mini-Band Plank Knee Drive",
+    "Mini-Band Plank Kickback"
   ],
   I4: [
     "Low Door-Anchor Resisted Bicycle Crunch",
-    "Mid Door-Anchor Seated Russian Twist"
+    "Mid Door-Anchor Seated Russian Twist",
+    "Mini-Band Flutter Kicks",
+    "Mini-Band Bicycle Crunch"
   ]
 };
 
