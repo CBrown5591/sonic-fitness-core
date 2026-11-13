@@ -698,7 +698,7 @@ export function finishSession() {
       totalScore = Math.round(totalScore * mult);
     }
 
-    // 1. Evaluate Perfect Day criteria (Prehab done + 0 joint pain + 100% clean sets at RPE <= 8.0)
+// 1. Evaluate Perfect Day criteria (Prehab done + 0 joint pain + 100% clean sets at RPE <= 8.0)
     const totalSetsLogged = activeSession.sets.length;
     const hasJointStrain = Boolean(activeSession.jointPain || activeSession.sets.some(s => s.jointPain));
     const cleanRatio = totalSetsLogged > 0 ? (ringsBanked / totalSetsLogged) : 0;
