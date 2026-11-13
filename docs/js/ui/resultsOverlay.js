@@ -8,7 +8,38 @@ export function renderResultsOverlay(data, onClose) {
   // Remove existing overlay if present
   const existing = document.getElementById('resultsOverlay');
   if (existing) existing.remove();
+  if (!document.getElementById('sonicSlamAnimStyle')) {
+    const styleEl = document.createElement('style');
+    styleEl.id = 'sonicSlamAnimStyle';
+    styleEl.textContent = `
+      @keyframes sRankSlam {
+        0% {
+          opacity: 0;
+          transform: scale(3.2) rotate(-18deg);
+          filter: brightness(2.5) drop-shadow(0 0 24px rgba(250, 204, 21, 0.95));
+        }
+        65% {
+          opacity: 1;
+          transform: scale(0.92) rotate(2deg);
+          filter: brightness(1.4) drop-shadow(0 0 18px rgba(250, 204, 21, 0.85));
+        }
+        100% {
+          opacity: 1;
+          transform: scale(1) rotate(0deg);
+          filter: brightness(1) drop-shadow(0 0 12px rgba(250, 204, 21, 0.6));
+        }
+      }
+      .s-rank-slam-active {
+        animation: sRankSlam 0.42s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+      }
+    `;
+    document.head.appendChild(styleEl);
+  }
 
+  const isTrueSRank = stats.rank === 'S';
+  const initialRank = isTrueSRank ? 'A' : stats.rank;
+  const initialColor = initialRank === 'A' ? '#38bdf8' : (initialRank === 'B' ? '#22c55e' : '#94a3b8');
+  
   const overlay = document.createElement('div');
   overlay.id = 'resultsOverlay';
   overlay.className = 'results-overlay-backdrop';
@@ -441,6 +472,17 @@ export function renderResultsOverlay(data, onClose) {
 
   document.body.appendChild(overlay);
 
+  if (isTrueSRank) {
+    setTimeout(() => {
+      const badge = document.getElementById('resultsRankBadge');
+      if (!badge) return;
+      badge.textContent = 'S';
+      badge.style.color = '#facc15';
+      badge.classList.add('s-rank-slam-active');
+      if (navigator.vibrate) navigator.vibrate([40, 30, 90]);
+    }, 900);
+  }
+  
   // Play Stage Clear Fanfare in the background
   try {
     playStageClearFanfare(data.rank);
