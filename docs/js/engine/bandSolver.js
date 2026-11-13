@@ -11,9 +11,12 @@ import { calculateTargetLoad } from './calc.js';
 export const EQUIPMENT_LOAD_SCALERS = {
   "spanish squat": 0.25,
   "front squat": 0.50,
+  "thruster": 0.50,
   "rdl": 0.60,
+  "deadlift": 0.60,
   "adduct": 0.75,
   "abduct": 0.75,
+  "kickback": 0.65,
   "curl": 0.70,
   "extension": 0.65,
   "default": 1.00
