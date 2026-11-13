@@ -107,6 +107,7 @@ export const BAND_EQUIVALENTS = {
   "Cybex Eagle Single-Arm Iso-Lateral Chest Press": "Mid-Anchor Half-Kneeling Single-Arm Band Press",
   "Cybex Eagle Single-Arm Iso-Lateral High Row": "High Door-Anchor Half-Kneeling Pulldown",
   "Bravo Behind-the-Back Cable Shrug": "41\" Loop Band Upright Row (Stand-on-Loop)",
+  "Single-Arm Iso-Lateral Pulldown": "High Door-Anchor Half-Kneeling Pulldown"
 };
 
 // Extra standalone band movements from User Guide, Broomstick Barbell & Mini-Band Manual
