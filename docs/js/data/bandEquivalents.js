@@ -89,6 +89,143 @@ export const BAND_EQUIVALENTS = {
   "Fast Step-Jacks (30s on / 60s off)": "Mini-Band Step-Jacks (30s/60s)"
 };
 
+// Extra standalone band movements from User Guide + Broomstick Barbell
+export const SLOT_BAND_EXTRAS = {
+  // DAY A: Hinge & Horizontal Power
+  A1: [
+    "41\" Loop Band Broomstick Standard Deadlift",
+    "41\" Loop Band Broomstick Stiff-Leg Deadlift",
+    "Low Door-Anchor Standing Glute Kickback"
+  ],
+  A2: [
+    "41\" Loop Band Bent-Over Row (Stand-on-Loop)",
+    "Low Door-Anchor Tube Bicep Curl"
+  ],
+  A3: [
+    "High Door-Anchor Tricep Pushdown",
+    "Low Door-Anchor Overhead Tricep Extension",
+    "Low Door-Anchor Tricep Kickback"
+  ],
+  A4: [
+    "Low Door-Anchor Standing Oblique Side Bend",
+    "Low Door-Anchor Resisted Sit-Up"
+  ],
+
+  // DAY B: Knee Stability & Shoulder Rehab
+  B1: [
+    "41\" Loop Band Squat-to-Press Thruster",
+    "41\" Loop Band Seated Calf Extension"
+  ],
+  B2: [
+    "Low Door-Anchor Front / Side Delt Raise",
+    "Low Door-Anchor Tube Upright Row"
+  ],
+  B3: [
+    "41\" Loop Band Broomstick Stiff-Leg Deadlift",
+    "Low Door-Anchor Standing Glute Kickback"
+  ],
+  B4: [
+    "Low Door-Anchor Bent-Over Rear Delt Raise",
+    "Low Door-Anchor Front / Side Delt Raise"
+  ],
+
+  // DAY C: Full-Body Capacity & Hinge Resilience
+  C1: [
+    "41\" Loop Band Squat-to-Press Thruster",
+    "Low Door-Anchor Standing Glute Kickback",
+    "41\" Loop Band Seated Calf Extension"
+  ],
+  C2: [
+    "41\" Loop Band Bent-Over Row (Stand-on-Loop)",
+    "Low Door-Anchor Tube Upright Row",
+    "Low Door-Anchor Tube Bicep Curl"
+  ],
+  C3: [
+    "High Door-Anchor Tricep Pushdown",
+    "Low Door-Anchor Overhead Tricep Extension",
+    "Low Door-Anchor Tricep Kickback"
+  ],
+  C4: [
+    "Low Door-Anchor Standing Band Abduction",
+    "Low Door-Anchor Supine Leg Lift"
+  ],
+
+  // DAY D: Trunk Fortress & Core Integrity
+  D1: [
+    "Low Door-Anchor Reverse Woodchopper (Low-to-High)",
+    "Mid Door-Anchor Seated Russian Twist",
+    "Low Door-Anchor Standing Oblique Side Bend"
+  ],
+  D2: [
+    "Low Door-Anchor Supine Reverse Crunch",
+    "Low Door-Anchor Resisted Bicycle Crunch",
+    "Low Door-Anchor Resisted Sit-Up",
+    "Low Door-Anchor Supine Leg Lift"
+  ],
+  D3: [
+    "Low Door-Anchor Standing Oblique Side Bend"
+  ],
+  D4: [
+    "Low Door-Anchor Standing Band Abduction",
+    "Low Door-Anchor Standing Glute Kickback"
+  ],
+
+  // DAY E: Hypertrophy & Machine Overload
+  E1: [
+    "41\" Loop Band Broomstick Standard Deadlift",
+    "41\" Loop Band Squat-to-Press Thruster",
+    "41\" Loop Band Seated Calf Extension"
+  ],
+  E2: [
+    "High Door-Anchor Tricep Pushdown",
+    "Low Door-Anchor Overhead Tricep Extension",
+    "Low Door-Anchor Tricep Kickback"
+  ],
+  E3: [
+    "41\" Loop Band Broomstick Stiff-Leg Deadlift",
+    "Low Door-Anchor Standing Glute Kickback"
+  ],
+  E4: [
+    "41\" Loop Band Bent-Over Row (Stand-on-Loop)",
+    "Low Door-Anchor Bent-Over Rear Delt Raise",
+    "Low Door-Anchor Tube Bicep Curl"
+  ],
+
+  // DAY F: Joint Sparing & Deload Recon
+  F1: [
+    "41\" Loop Band Seated Calf Extension"
+  ],
+  F2: [
+    "Low Door-Anchor Standing Band Abduction",
+    "Low Door-Anchor Standing Glute Kickback"
+  ],
+  F3: [
+    "Low Door-Anchor Bent-Over Rear Delt Raise",
+    "Low Door-Anchor Front / Side Delt Raise"
+  ],
+  F4: [
+    "Low Door-Anchor Supine Reverse Crunch",
+    "Low Door-Anchor Resisted Bicycle Crunch",
+    "Low Door-Anchor Supine Leg Lift"
+  ],
+
+  // DAY G & H: Cardio / Metcon
+  G3: [
+    "Low Door-Anchor Reverse Woodchopper (Low-to-High)",
+    "Mid Door-Anchor Seated Russian Twist"
+  ],
+  H1: [
+    "41\" Loop Band Squat-to-Press Thruster"
+  ],
+  H2: [
+    "41\" Loop Band Broomstick Standard Deadlift",
+    "41\" Loop Band Broomstick Stiff-Leg Deadlift"
+  ],
+  H3: [
+    "41\" Loop Band Bent-Over Row (Stand-on-Loop)"
+  ]
+};
+
 export function getBandEquivalent(gymExercise) {
   return BAND_EQUIVALENTS[gymExercise] || `Banded ${gymExercise}`;
 }
