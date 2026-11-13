@@ -224,7 +224,31 @@ export const CARDIO_CONFIGS = {
       display: `${rounds} Rounds @ ${bandLoad} lbs Band`
     })
   },
-
+"41\" Loop Band Thruster Sprints (30s/60s)": {
+    label1: "BAND LOAD (LBS)",
+    label2: "ROUNDS",
+    label3: "PEAK RPE",
+    default1: 27.5,
+    default2: 8,
+    calcEquiv: (bandLoad, rounds) => ({
+      equivReps: Math.round(rounds * 16),
+      equivVolume: Math.round(rounds * 240 * (1 + (bandLoad || 27.5) * 0.025)),
+      display: `${rounds} Rounds (30s/60s) @ ${bandLoad} lbs Band`
+    })
+  },
+  "Low Door-Anchor Resisted Bicycle Crunch": {
+    label1: "BAND LOAD (LBS)",
+    label2: "ROUNDS",
+    label3: "PEAK RPE",
+    default1: 20,
+    default2: 8,
+    calcEquiv: (bandLoad, rounds) => ({
+      equivReps: Math.round(rounds * 20),
+      equivVolume: Math.round(rounds * 210 * (1 + (bandLoad || 20) * 0.02)),
+      display: `${rounds} Rounds (30s/60s) @ ${bandLoad} lbs Band`
+    })
+  },
+  
   // --- TIMED SETS & ISOMETRIC HOLDS (SECONDS) ---
   "March in Place (Strict High Knees 45s)": {
     label1: "LOAD (LBS)",
@@ -308,6 +332,42 @@ export const CARDIO_CONFIGS = {
       equivReps: Math.round(secs / 2.5),
       equivVolume: Math.round(secs * 15 * (1 + (load || 0) * 0.05)),
       display: `${secs}s Hollow Hold`
+    })
+  },
+  "41\" Loop Band Bent-Over Row (Stand-on-Loop) (45s TUT)": {
+    label1: "BAND LOAD (LBS)",
+    label2: "SECONDS",
+    label3: "RPE",
+    default1: 40,
+    default2: 45,
+    calcEquiv: (bandLoad, secs) => ({
+      equivReps: Math.round(secs / 2.5),
+      equivVolume: Math.round((secs / 2.5) * Math.max(30, bandLoad)),
+      display: `${secs}s TUT @ ${bandLoad} lbs Band`
+    })
+  },
+  "Low Door-Anchor Tube Upright Row (45s TUT)": {
+    label1: "BAND LOAD (LBS)",
+    label2: "SECONDS",
+    label3: "RPE",
+    default1: 30,
+    default2: 45,
+    calcEquiv: (bandLoad, secs) => ({
+      equivReps: Math.round(secs / 2.5),
+      equivVolume: Math.round((secs / 2.5) * Math.max(25, bandLoad)),
+      display: `${secs}s TUT @ ${bandLoad} lbs Band`
+    })
+  },
+  "Low Door-Anchor Bent-Over Rear Delt Raise (45s TUT)": {
+    label1: "BAND LOAD (LBS)",
+    label2: "SECONDS",
+    label3: "RPE",
+    default1: 20,
+    default2: 45,
+    calcEquiv: (bandLoad, secs) => ({
+      equivReps: Math.round(secs / 2.5),
+      equivVolume: Math.round((secs / 2.5) * Math.max(20, bandLoad)),
+      display: `${secs}s TUT @ ${bandLoad} lbs Band`
     })
   },
   "Banded Hollow Body Hold": {
