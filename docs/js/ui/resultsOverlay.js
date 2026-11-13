@@ -8,6 +8,7 @@ export function renderResultsOverlay(data, onClose) {
   // Remove existing overlay if present
   const existing = document.getElementById('resultsOverlay');
   if (existing) existing.remove();
+
   if (!document.getElementById('sonicSlamAnimStyle')) {
     const styleEl = document.createElement('style');
     styleEl.id = 'sonicSlamAnimStyle';
@@ -36,10 +37,6 @@ export function renderResultsOverlay(data, onClose) {
     document.head.appendChild(styleEl);
   }
 
-  const isTrueSRank = stats.rank === 'S';
-  const initialRank = isTrueSRank ? 'A' : stats.rank;
-  const initialColor = initialRank === 'A' ? '#38bdf8' : (initialRank === 'B' ? '#22c55e' : '#94a3b8');
-  
   const overlay = document.createElement('div');
   overlay.id = 'resultsOverlay';
   overlay.className = 'results-overlay-backdrop';
@@ -57,11 +54,16 @@ export function renderResultsOverlay(data, onClose) {
     'B': {
       color: '#4ade80',
       shadow: '0 1px 0 #f0fdf4, 0 2px 0 #22c55e, 0 3px 0 #16a34a, 0 4px 0 #15803d, 0 5px 0 #14532d, 0 6px 2px rgba(0,0,0,0.7), 0 0 22px rgba(74, 222, 128, 0.75)'
+    },
+    'C': {
+      color: '#94a3b8',
+      shadow: '0 1px 0 #f8fafc, 0 2px 0 #64748b, 0 3px 0 #475569, 0 4px 0 #334155, 0 5px 2px rgba(0,0,0,0.7)'
     }
   };
 
-  const rankKey = (data.rank === 'S' || data.rank === 'A' || data.rank === 'B') ? data.rank : 'S';
-  const activeLetterStyle = letterStyles[rankKey];
+  const isTrueSRank = data.rank === 'S';
+  const initialRankKey = isTrueSRank ? 'A' : ((data.rank === 'A' || data.rank === 'B' || data.rank === 'C') ? data.rank : 'B');
+  const activeLetterStyle = letterStyles[initialRankKey];
   const goldRings = data.goldRingsEarned || Math.floor((data.totalScore || 0) / 1000);
 
   let emeraldHtml = '';
@@ -413,7 +415,7 @@ export function renderResultsOverlay(data, onClose) {
               letter-spacing: -2px;
               color: ${activeLetterStyle.color} !important;
               text-shadow: ${activeLetterStyle.shadow} !important;
-            ">${data.rank}</span>
+            ">${initialRankKey}</span>
           </div>
           <div id="resultsRankLabel" class="results-rank-label" style="opacity: 0;">SONIC RATING</div>
         </div>
@@ -472,17 +474,6 @@ export function renderResultsOverlay(data, onClose) {
 
   document.body.appendChild(overlay);
 
-  if (isTrueSRank) {
-    setTimeout(() => {
-      const badge = document.getElementById('resultsRankBadge');
-      if (!badge) return;
-      badge.textContent = 'S';
-      badge.style.color = '#facc15';
-      badge.classList.add('s-rank-slam-active');
-      if (navigator.vibrate) navigator.vibrate([40, 30, 90]);
-    }, 900);
-  }
-  
   // Play Stage Clear Fanfare in the background
   try {
     playStageClearFanfare(data.rank);
@@ -540,12 +531,33 @@ export function renderResultsOverlay(data, onClose) {
       navigator.vibrate([80, 40, 140]);
     }
 
+    // Delayed S-Rank Slam Upgrade (A -> S) after initial A-Rank stamp lands
+    if (isTrueSRank) {
+      setTimeout(() => {
+        const letterEl = document.getElementById('resultsRankLetter');
+        const sStyle = letterStyles['S'];
+        if (letterEl && sStyle) {
+          letterEl.textContent = 'S';
+          letterEl.style.setProperty('color', sStyle.color, 'important');
+          letterEl.style.setProperty('text-shadow', sStyle.shadow, 'important');
+          letterEl.classList.add('s-rank-slam-active');
+        }
+        if (stampEl) {
+          stampEl.style.borderColor = '#facc15';
+          stampEl.style.boxShadow = 'inset 0 2px 6px rgba(0, 0, 0, 0.8), 0 0 24px rgba(250, 204, 21, 0.55)';
+        }
+        if (navigator.vibrate) {
+          navigator.vibrate([40, 30, 110]);
+        }
+      }, 650);
+    }
+
     if (emeraldBanner) {
       setTimeout(() => {
         emeraldBanner.style.display = 'block';
         emeraldBanner.classList.add('animate-pop-in');
         if (navigator.vibrate) navigator.vibrate([50, 30, 80]);
-      }, 300);
+      }, isTrueSRank ? 1050 : 300);
     }
 
     if (btn) {
