@@ -710,6 +710,13 @@ export const MOVEMENT_INTEL = {
     safety: "Never let elbows hyperextend or travel behind the plane of your shoulders during the backward stretch."
   },
 
+  "41\" Loop Band Upright Row (Stand-on-Loop)": {
+    muscles: "Lateral Deltoids, Upper Trapezius & Brachialis",
+    setup: "Stand tall with both feet hip-width on the center of a 41\" loop band (Blue, Green, or Purple). Grip the top loop with hands shoulder-width apart in front of your thighs.",
+    cue: "Lead with your elbows, pulling them high and wide toward shoulder height while keeping the band close to your torso. Pause 1s at the collarbone, then lower over 3 seconds.",
+    safety: "Stop elbows at shoulder height and keep hands at least shoulder-width apart—narrow grips or pulling above the clavicles can impinge the rotator cuff."
+  },
+  
   "Banded Overhead Press (Stand-on-Loop)": {
     muscles: "Anterior & Lateral Deltoids, Triceps & Upper Traps",
     setup: "Stand on bottom of 41\" loop band with both feet (or drop to one knee in half-kneeling if band tension is too heavy standing). Bring top loop to collarbones with palms facing in or forward.",
