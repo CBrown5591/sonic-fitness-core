@@ -34,6 +34,7 @@ export const STAGES = {
         defaultLoad: 50,
         alts: [
           "Chest-Supported Dumbbell Row",
+          "Elevated DB/KB Gorilla Row",
           "Cybex VR2 High Row (Chest Supported)",
           "Bravo Dual-Cable Row (Mid-Height)",
           "Lat Pulldown (Neutral/Mag-Grip)",
@@ -169,6 +170,7 @@ export const STAGES = {
           "Bravo Dual-Cable Pulldown",
           "Half-Kneeling Single-Arm Pulldown",
           "Chest-Supported Dumbbell Row",
+          "Elevated DB/KB Gorilla Row",
           "Prone Floor Lat Pull (Towel Slide)",
           "Doorframe Row (Single-Arm Strict Pause)"
         ]
@@ -325,16 +327,17 @@ export const STAGES = {
         slot: "E4",
         target: "3x8-10",
         primary: "Cybex VR2 High Row (Chest Supported)",
-        defaultLoad: 130,
+        defaultLoad: 120,
         alts: [
           "Cybex VR2 High Row (Chest Supported)",
           "Chest-Supported Dumbbell Row",
+          "Elevated DB/KB Gorilla Row",
           "Bravo Dual-Cable Row (Mid-Height)",
           "Lat Pulldown (Neutral/Mag-Grip)",
           "Doorframe Row (Single-Arm Strict Pause)",
           "Prone Scapular Y-T-W Raises"
         ]
-      }
+      },
     ]
   },
 
@@ -501,7 +504,7 @@ export const STAGES = {
           "Bodyweight Single-Leg RDL (Wall Supported)"
         ]
       },
-      {
+    {
         slot: "H3",
         target: "3x45s Time-Under-Tension",
         primary: "Lat Pulldown (Neutral/Mag-Grip)",
@@ -510,6 +513,7 @@ export const STAGES = {
           "Lat Pulldown (Neutral/Mag-Grip)",
           "Bravo Dual-Cable Row (Mid-Height)",
           "Chest-Supported Dumbbell Row",
+          "Elevated DB/KB Gorilla Row",
           "Cybex VR2 High Row (Chest Supported)",
           "Doorframe Row (Single-Arm Strict Pause)",
           "Prone Floor Lat Pull (Towel Slide)"
@@ -641,6 +645,7 @@ export const STAGES = {
         defaultLoad: 60,
         alts: [
           "Chest-Supported Dumbbell Row",
+          "Elevated DB/KB Gorilla Row",
           "Rower 500m Apex Sprint (Sub-1:45 Pace)",
           "Farmer's Carries (Dual DB/KB - Max Distance)",
           "Cybex VR2 High Row (Chest Supported)",
