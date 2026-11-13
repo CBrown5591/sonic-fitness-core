@@ -42,7 +42,7 @@ import { renderVault, creditVaultRings, saveVaultData } from './ui/renderVault.j
 import { renderSkillTree, switchSkillTreeBranch, unlockPerk } from './ui/renderSkillTree.js';
 import { switchMainTab } from './ui/renderTabs.js';
 import { renderPRVaultUI } from './ui/renderPRVault.js';
-import { BAND_EQUIVALENTS, getBandEquivalent } from './data/bandEquivalents.js';
+import { BAND_EQUIVALENTS, getBandEquivalent, SLOT_BAND_EXTRAS } from './data/bandEquivalents.js';
 import { resolveInitialBandPreset, solveBestBandCombination, solveOverdriveBandBridge } from './engine/bandSolver.js';
 import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSelections, setActiveBandSelection } from './ui/renderBandSelector.js';
 import { getDefaultGymLoad } from './data/movementIntel.js';
@@ -225,6 +225,7 @@ function hydrateExerciseDropdown() {
 
   select.innerHTML = '';
   
+  // In docs/js/app.js inside hydrateExerciseDropdown():
   if (currentSlotGearMode === 'GYM') {
     slotDef.alts.forEach(alt => {
       const opt = document.createElement('option');
@@ -234,8 +235,11 @@ function hydrateExerciseDropdown() {
     });
     select.value = slotDef.primary;
   } else {
-    const bandedAlts = slotDef.alts.map(alt => getBandEquivalent(alt));
-    bandedAlts.forEach(bandAlt => {
+    const mappedAlts = slotDef.alts.map(alt => getBandEquivalent(alt));
+    const extraAlts = SLOT_BAND_EXTRAS[slotDef.slot] || [];
+    const allBandedAlts = [...new Set([...mappedAlts, ...extraAlts])];
+
+    allBandedAlts.forEach(bandAlt => {
       const opt = document.createElement('option');
       opt.value = bandAlt;
       opt.innerText = bandAlt;
