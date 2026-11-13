@@ -396,7 +396,7 @@ export function renderArtifactsTray() {
       <div class="ring-counter-block" id="hudRedRingsBlock" style="cursor: pointer;" title="Open Frontiers Skill Tree">
         <span class="ring-icon-symbol">⭐</span>
         <div class="ring-counter-meta">
-          <span id="hudRedRingsVal" class="ring-count-val" style="color: #f87171;">${totalRed} / 50</span>
+          <span id="hudRedRingsVal" class="ring-count-val" style="color: #f87171;">${totalRed}</span>
           <span class="ring-counter-lbl">RED STAR RINGS ▾</span>
         </div>
       </div>
