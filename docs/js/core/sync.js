@@ -20,7 +20,7 @@ export function setWebhookUrl(url) {
 }
 
 /**
- * GET: Fetches live Lifetime EXP, PR Vault, and Relics on boot
+ * GET: Fetches live Lifetime EXP, PR Vault, Relics, and 2-Session History on boot
  */
 export async function fetchSheetTelemetry() {
   const url = getActiveWebhookUrl();
@@ -32,33 +32,33 @@ export async function fetchSheetTelemetry() {
     if (!res.ok) return null;
     const data = await res.json();
     if (data && data.status === 'success') {
+      // TSK-13: Sync recent session history from Sheet if available
+      const remoteHistory = data.recentSessions || data.sessionHistory;
+      if (Array.isArray(remoteHistory) && remoteHistory.length > 0) {
+        try {
+          const localRaw = localStorage.getItem('sonic_session_history');
+          const localHistory = localRaw ? JSON.parse(localRaw) : [];
+          // Merge remote + local by timestamp/stage and keep latest 15 sorties
+          const merged = [...remoteHistory, ...localHistory];
+          const seen = new Set();
+          const deduped = [];
+          for (const entry of merged) {
+            const key = `${entry.timestamp || entry.date || ''}_${entry.stage || entry.Stage || ''}`;
+            if (!seen.has(key)) {
+              seen.add(key);
+              deduped.push(entry);
+            }
+          }
+          deduped.sort((a, b) => new Date(b.timestamp || b.date || 0) - new Date(a.timestamp || a.date || 0));
+          localStorage.setItem('sonic_session_history', JSON.stringify(deduped.slice(0, 15)));
+        } catch (e) {
+          console.warn('[Telemetry] Could not merge session history:', e);
+        }
+      }
       return data;
     }
   } catch (err) {
     console.warn('[Telemetry] Offline or sheet sync error:', err);
   }
   return null;
-}
-
-/**
- * POST: Transmits completed stage telemetry payload to Google Sheets
- */
-export async function syncSessionToSheets(sessionPayload) {
-  const url = getActiveWebhookUrl();
-  if (!url) return false;
-
-  try {
-    console.log('[Webhook] Transmitting session telemetry to Google Sheets...');
-    await fetch(url, {
-      method: 'POST',
-      mode: 'no-cors',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(sessionPayload)
-    });
-    console.log('[Webhook] Telemetry synced cleanly.');
-    return true;
-  } catch (err) {
-    console.warn('[Webhook] Sync error:', err);
-    return false;
-  }
 }
