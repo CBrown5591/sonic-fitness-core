@@ -1,42 +1,35 @@
 // -------------------------------------------------------------
 // EQUIPMENT-AWARE DOUBLE PROGRESSION & AUTO-REGULATION ENGINE
-// Modular Engine: autoReg.js
+// Modular Engine: docs/js/engine/autoReg.js
 // -------------------------------------------------------------
 
 /**
  * Parses min and max rep boundaries from target string or DOM element
  * e.g., "3x8-10" -> { minReps: 8, maxReps: 10 }
- * e.g., "3x6-8"  -> { minReps: 6, maxReps: 8 }
- * e.g., "3x12-15" -> { minReps: 12, maxReps: 15 }
+ * e.g., "3x12-15 / side" -> { minReps: 12, maxReps: 15 }
  */
-// docs/js/engine/autoReg.js
+export function parseRepBracket(targetStr) {
+  if (!targetStr) return { minReps: 8, maxReps: 10 };
 
-export function parseRepBracket(targetStr, fallbackMin = 8, fallbackMax = 10) {
-  if (!targetStr) return { minReps: fallbackMin, maxReps: fallbackMax };
-
-  // 1. Matches range brackets across hyphens, en-dashes, em-dashes, and spaces
-  // Examples: "3x10-12", "3 × 12–15", "10 - 12", "40–50"
-  const rangeMatch = targetStr.match(/(\d+)\s*[-–—]\s*(\d+)/);
-  if (rangeMatch) {
+  const match = targetStr.match(/(\d+)\s*[-–—]\s*(\d+)/);
+  if (match) {
     return {
-      minReps: parseInt(rangeMatch[1], 10),
-      maxReps: parseInt(rangeMatch[2], 10)
+      minReps: parseInt(match[1], 10),
+      maxReps: parseInt(match[2], 10)
     };
   }
 
-  // 2. Single target notations (e.g. "15 reps", "12r/side")
-  const singleMatch = targetStr.match(/(\d+)\s*(?:reps?|r\b|\/side)/i);
+  const singleMatch = targetStr.match(/(\d+)\s*(?:reps?|r\b|paces?|mins?|rounds?|s\b|seconds?)/i);
   if (singleMatch) {
     const val = parseInt(singleMatch[1], 10);
     return { minReps: Math.max(1, val - 2), maxReps: val };
   }
 
-  // 3. Fall back to the passed-in stage/slot defaults rather than a static 8-10
-  return { minReps: fallbackMin, maxReps: fallbackMax };
+  return { minReps: 8, maxReps: 10 };
 }
 
 /**
- * Determines if movement is a dumbbell variation subject to physical equipment ceiling
+ * Determines if movement is a dumbbell variation subject to the 65 lb physical ceiling
  */
 export function isDumbbellMovement(exerciseName) {
   if (!exerciseName) return false;
@@ -45,7 +38,7 @@ export function isDumbbellMovement(exerciseName) {
     name.includes('db') ||
     name.includes('dumbbell') ||
     name.includes("farmer's") ||
-    name.includes("suitcase")
+    name.includes('suitcase')
   );
 }
 
@@ -64,34 +57,16 @@ export function autoRegulateNextSet(completedSet) {
   const numReps = parseInt(reps, 10) || 0;
   const numRpe = parseFloat(rpe) || 8.0;
 
-// Read current target directly from DOM or completed set
-  let targetStr = "";
+  // Retrieve current active target string from completedSet or DOM
+  let targetStr = completedSet.target || "3x8-10";
   const targetTag = typeof document !== 'undefined' ? document.getElementById('currentTargetTag') : null;
   if (targetTag && targetTag.innerText) {
     targetStr = targetTag.innerText.replace(/^TARGET:\s*/i, '').trim();
-  } else if (completedSet.target) {
-    targetStr = completedSet.target;
   }
 
-  // Use completedSet.reps as the floor fallback if targetStr fails to resolve
-  const fallbackFloor = completedSet.reps || 8;
-  const { minReps, maxReps } = parseRepBracket(targetStr, fallbackFloor, fallbackFloor + 2);
-
+  const { minReps, maxReps } = parseRepBracket(targetStr);
   const isDumbbell = isDumbbellMovement(exercise);
-  // Inside autoRegulateNextSet() in docs/js/engine/autoReg.js:
-  const isBand = (exercise || '').toLowerCase().includes('band') || 
-               (exercise || '').toLowerCase().includes('loop') ||
-               (exercise || '').toLowerCase().includes('pull-through');
 
-if (isBand) {
-  if (reps >= maxReps && rpe <= 7.5 && tempoClean && !jointPain) {
-    return {
-      load: currentLoad,
-      reps: minReps,
-      message: `★ BRACKET CLEARED (${reps}r @ RPE ${rpe})! Step up to next band tier or stack a micro band × ${minReps} reps.`
-    };
-  }
-}
   // 1. Safety Hold / Joint Strain / Severe Overshoot (RPE >= 9.5)
   if (jointPain || numRpe >= 9.5) {
     const deLoad = Math.max(5, numLoad - 5);
@@ -126,7 +101,6 @@ if (isBand) {
     // Phase 2: Max Rep Ceiling Achieved -> Overload Weight & Reset Rep Floor
     if (numReps >= maxReps) {
       if (isDumbbell && numLoad >= 65) {
-        // Dumbbell ceiling reached: progress via tempo density or top-bracket holds
         return {
           load: 65,
           reps: maxReps,
@@ -134,7 +108,6 @@ if (isBand) {
         };
       }
 
-      // Normal weight advancement: +5 lbs, reset reps to bracket floor
       let nextLoad = numLoad + 5;
       if (isDumbbell) {
         nextLoad = Math.min(65, nextLoad);
@@ -148,10 +121,10 @@ if (isBand) {
     }
   }
 
-  // 4. In the Pocket (RPE 8.0): Steady State
+  // 4. In the Pocket (RPE 8.0 - 8.5): Steady State
   return {
     load: numLoad,
     reps: numReps,
-    message: `🎯 SWEET SPOT (RPE 8.0): Repeat ${numLoad} lbs × ${numReps} reps.`
+    message: `🎯 SWEET SPOT (RPE ${numRpe}): Repeat ${numLoad} lbs × ${numReps} reps.`
   };
 }
