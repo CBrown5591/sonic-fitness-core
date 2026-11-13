@@ -92,6 +92,21 @@ export const BAND_EQUIVALENTS = {
   "Cybex Eagle Leg Extension Glute Kickback": "Low Door-Anchor Standing Glute Kickback",
   "Cybex Eagle Single-Leg Extension": "Single-Leg Terminal Knee Extension (TKE)",
   "Cybex Eagle Single-Leg Curl": "Low Door-Anchor Prone Band Hamstring Curl",
+  "Cybex Eagle Single-Leg Press": "Banded Bulgarian Split Squat",
+  "Cybex Eagle Leg Press (High-and-Wide Glute/Ham)": "41\" Loop Band Romanian Deadlift",
+  "Cybex Eagle Leg Press Calf Raise": "41\" Loop Band Seated Calf Extension",
+  "Cybex Eagle Leg Extension Isometric Hold (30-45s)": "Banded Terminal Knee Extension (TKE)",
+  "Cybex Eagle Leg Curl (2-Up / 1-Down Eccentric)": "Low Door-Anchor Prone Band Hamstring Curl",
+  "Bravo Standing Cable Straight-Arm Pullover": "Prone Banded Straight-Arm Lat Pull",
+  "Bravo Cable Lateral Raise (Cross-Body)": "Low Door-Anchor Front / Side Delt Raise",
+  "Bravo Incline Cable Y-Raise": "Mini-Band Scapular Y-T-W Raises",
+  "Bravo Cable Overhead Tricep Extension": "Low Door-Anchor Overhead Tricep Extension",
+  "Bravo Cable Hammer Curl (Rope)": "Low Door-Anchor Tube Bicep Curl",
+  "Bravo Half-Kneeling Single-Arm Cable Row": "Single-Arm Resisted Doorframe Row",
+  "Cybex Eagle Hip Abduction (Lean-Forward Upper Glute)": "Mini-Band Seated Hip Abduction",
+  "Cybex Eagle Single-Arm Iso-Lateral Chest Press": "Mid-Anchor Half-Kneeling Single-Arm Band Press",
+  "Cybex Eagle Single-Arm Iso-Lateral High Row": "High Door-Anchor Half-Kneeling Pulldown",
+  "Bravo Behind-the-Back Cable Shrug": "41\" Loop Band Upright Row (Stand-on-Loop)",
 };
 
 // Extra standalone band movements from User Guide, Broomstick Barbell & Mini-Band Manual
