@@ -783,6 +783,22 @@ export function finishSession() {
     renderVault();
     renderArtifactsTray();
 
+    localStorage.setItem('sonic_last_stage', activeStageKey);
+    localStorage.setItem('sonic_last_strain', (activeSession.jointPain || activeSession.sets.some(s => s.jointPain)) ? 'true' : 'false');
+
+    // TSK-13: Persist completed session sets into rolling 2-session Flight Path history
+    try {
+      const rawHist = localStorage.getItem('sonic_session_history');
+      const hist = rawHist ? JSON.parse(rawHist) : [];
+      hist.unshift({
+        timestamp: new Date().toISOString(),
+        stage: activeStageKey,
+        jointPain: activeSession.jointPain || activeSession.sets.some(s => s.jointPain),
+        sets: [...activeSession.sets]
+      });
+      localStorage.setItem('sonic_session_history', JSON.stringify(hist.slice(0, 15)));
+    } catch (e) {}
+    
     renderResultsOverlay({
       stage: activeStageKey,
       totalScore,
