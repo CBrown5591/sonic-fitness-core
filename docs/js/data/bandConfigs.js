@@ -183,7 +183,7 @@ export function getBandsForMovement(exerciseName = '') {
     return Object.values(BAND_CONFIG).filter(b => b.type === 'mini' || b.type === '41_loop');
   }
 
-  // 2. Handled Door-Anchor Tubes Only (Pushes, Pulls, Rotations, Curls)
+// 2. Handled Door-Anchor Tubes Only (Pushes, Pulls, Rotations, Curls, Ankle Straps)
   if (
     name.includes('anchor') || 
     name.includes('pulldown') || 
@@ -193,6 +193,7 @@ export function getBandsForMovement(exerciseName = '') {
     name.includes('face pull') || 
     name.includes('curl') || 
     name.includes('adduction') || 
+    name.includes('abduction') || 
     name.includes('fly')
   ) {
     return Object.values(BAND_CONFIG).filter(b => b.type === 'tube');
