@@ -1015,6 +1015,18 @@ export const MOVEMENT_INTEL = {
     safety: "Hinge strictly from the hips with a neutral flat back; never round the lower spine."
   },
 
+"Elevated DB/KB Gorilla Row": {
+    setup: "Place two heavy DBs or KBs on a low riser, step, or aerobic box (4–8 inches off floor). Take a wide sumo stance straddling the weights and hinge hips back to ~75° with a flat back.",
+    cue: "Push your non-working hand hard DOWN into the resting handle to create a rigid tripod brace while rowing the working arm up into your hip pocket. Alternate or complete all reps per side.",
+    safety: "Elevating the bells prevents lumbar flexion at the bottom. Maintain downward pressure through the support hand to spare the lower back from unsupported shear."
+  },
+
+  "Banded Gorilla Row (41\" Loop Under Feet)": {
+    setup: "Stand in a wide sumo stance with both feet anchoring a 41\" loop band. Hinge at the hips with a neutral spine, resting your non-working forearm firmly across your thigh (or hand on a low bench) to brace the trunk.",
+    cue: "Grab the center/opposite side of the loop band and drive your elbow straight back past your ribs, pausing 1 full second at peak lat contraction.",
+    safety: "Do not let the band pull your torso into rotation. Keep the support forearm pressed hard into your quad to offload the lumbar spine."
+  },
+  
   "Banded Shadow Boxing Flow (Zone 2)": {
     muscles: "Anterior Deltoids, Serratus Anterior, Core Obliques & Calves",
     setup: "Thread a light 41\" loop band (Blue or Green) across your upper back/shoulder blades (under armpits) and loop the ends over both thumbs/palms.",
