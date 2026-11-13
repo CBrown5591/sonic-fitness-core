@@ -12,6 +12,7 @@ export const EQUIPMENT_LOAD_SCALERS = {
   "spanish squat": 0.25,
   "upright row": 0.45,
   "front squat": 0.50,
+  "iso-lateral pulldown": 0.50,
   "thruster": 0.50,
   "rdl": 0.60,
   "deadlift": 0.60,
