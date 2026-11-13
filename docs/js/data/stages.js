@@ -28,6 +28,7 @@ export const STAGES = {
           "Cybex Eagle Leg Extension Hip Thrust",
           "Cybex Eagle Leg Extension Glute Kickback",
           "Cybex Eagle Single-Leg Curl",
+          "Cybex Eagle Leg Press (High-and-Wide Glute/Ham)"
         ]
       },
       {
@@ -39,6 +40,9 @@ export const STAGES = {
           "Chest-Supported Dumbbell Row",
           "Elevated DB/KB Gorilla Row",
           "Cybex Eagle High Row (Chest Supported)",
+          "Cybex Eagle Single-Arm Iso-Lateral High Row",
+          "Bravo Half-Kneeling Single-Arm Cable Row",
+          "Bravo Standing Cable Straight-Arm Pullover",
           "Bravo Dual-Cable Row (Mid-Height)",
           "Lat Pulldown (Neutral/Mag-Grip)",
           "Doorframe Row (Single-Arm Strict Pause)"
@@ -54,6 +58,7 @@ export const STAGES = {
           "Cybex Eagle Converging Chest Press",
           "Incline DB Bench Press (30°)",
           "Cybex Eagle Overhead Shoulder Press",
+          "Cybex Eagle Single-Arm Iso-Lateral Chest Press",
           "Incline Push-Up (Hands on Bench)",
           "Tempo Push-Up (3-0-1 Pause)"
         ]
@@ -93,6 +98,9 @@ export const STAGES = {
           "Goblet Squat (Tempo 3-0-1)",
           "Cybex Eagle Articulating Leg Press",
           "Cybex Eagle Single-Leg Extension",
+          "Cybex Eagle Single-Leg Press",
+          "Cybex Eagle Leg Press (High-and-Wide Glute/Ham)",
+          "Cybex Eagle Leg Extension Isometric Hold (30-45s)",
           "DB Bulgarian Split Squat",
           "Bodyweight Squat / TRX Squat"
         ]
@@ -107,6 +115,8 @@ export const STAGES = {
           "Cybex Eagle Overhead Shoulder Press",
           "Cybex Eagle Converging Chest Press",
           "Bravo Half-Kneeling Cable Press",
+          "Bravo Cable Lateral Raise (Cross-Body)",
+          "Bravo Incline Cable Y-Raise",
           "Neutral-Grip DB Floor Press",
           "Pike Push-Up (Hands or Feet Elevated)",
           "Incline Push-Up (Hands on Bench)"
@@ -122,6 +132,7 @@ export const STAGES = {
           "Cybex Eagle Leg Curl",
           "Cybex Eagle Single-Leg Curl",
           "Cybex Eagle Leg Extension Glute Kickback",
+          "Cybex Eagle Leg Curl (2-Up / 1-Down Eccentric)",
           "B-Stance DB Hinge",
           "Supported Romanian Deadlift (Heavy DBs)",
           "Bodyweight Single-Leg RDL (Wall Supported)",
@@ -136,6 +147,8 @@ export const STAGES = {
         alts: [
           "Cable External Rotations",
           "Cybex Eagle Rear Delt Fly",
+          "Bravo Incline Cable Y-Raise",
+          "Bravo Cable Lateral Raise (Cross-Body)",
           "Side-Lying DB External Rotation",
           "Prone Scapular Y-T-W Raises"
         ]
@@ -162,6 +175,8 @@ export const STAGES = {
           "Cybex Eagle Leg Extension",
           "Cybex Eagle Single-Leg Extension",
           "Cybex Eagle Single-Leg Curl",
+          "Cybex Eagle Single-Leg Press",
+          "Cybex Eagle Leg Press Calf Raise",
           "Supported Reverse Lunge (Rack/Wall)",
           "Goblet Squat (Tempo 3-0-1)",
           "Bodyweight Squat / TRX Squat"
@@ -175,6 +190,8 @@ export const STAGES = {
         alts: [
           "Lat Pulldown (Neutral/Mag-Grip)",
           "Cybex Eagle High Row (Chest Supported)",
+          "Bravo Standing Cable Straight-Arm Pullover",
+          "Cybex Eagle Single-Arm Iso-Lateral High Row",
           "Bravo Dual-Cable Pulldown",
           "Half-Kneeling Single-Arm Pulldown",
           "Chest-Supported Dumbbell Row",
@@ -207,6 +224,7 @@ export const STAGES = {
           "Suitcase Carry (Single-Arm)",
           "Cybex Eagle Hip Adduction (Inner Thigh)",
           "Cybex Eagle Hip Abduction (Outer Glute)",
+          "Cybex Eagle Hip Abduction (Lean-Forward Upper Glute)",
           "Cable Pallof Press",
           "Bear Crawl (Forward & Reverse Paced)",
           "March in Place (Strict High Knees 45s)"
@@ -270,6 +288,7 @@ export const STAGES = {
         alts: [
           "Cybex Eagle Hip Adduction (Inner Thigh)",
           "Cybex Eagle Hip Abduction (Outer Glute)",
+          "Cybex Eagle Hip Abduction (Lean-Forward Upper Glute)",
           "Cybex Eagle Leg Extension Hip Thrust",
           "Cybex Eagle Leg Extension Glute Kickback",
           "Med Ball Rotational Wall Chest Pass",
@@ -299,6 +318,9 @@ export const STAGES = {
         alts: [
           "Cybex Eagle Articulating Leg Press",
           "Cybex Eagle Single-Leg Extension",
+          "Cybex Eagle Single-Leg Press",
+          "Cybex Eagle Leg Press (High-and-Wide Glute/Ham)",
+          "Cybex Eagle Leg Press Calf Raise",
           "Suitcase DB Squat",
           "DB Bulgarian Split Squat",
           "Goblet Squat (Tempo 3-0-1)",
@@ -314,6 +336,8 @@ export const STAGES = {
         alts: [
           "Cybex Eagle Converging Chest Press",
           "Cybex Eagle Pec Fly (Machine)",
+          "Cybex Eagle Single-Arm Iso-Lateral Chest Press",
+          "Bravo Cable Overhead Tricep Extension",
           "Incline DB Bench Press (30°)",
           "Neutral-Grip DB Floor Press",
           "Incline Push-Up (Hands on Bench)",
@@ -327,6 +351,7 @@ export const STAGES = {
         defaultLoad: 100,
         alts: [
           "Cybex Eagle Leg Curl",
+          "Cybex Eagle Leg Curl (2-Up / 1-Down Eccentric)",
           "Cybex Eagle Single-Leg Curl",
           "Cybex Eagle Leg Extension Hip Thrust",
           "Cybex Eagle Leg Extension Glute Kickback",
@@ -344,6 +369,11 @@ export const STAGES = {
         defaultLoad: 120,
         alts: [
           "Cybex Eagle High Row (Chest Supported)",
+          "Cybex Eagle Single-Arm Iso-Lateral High Row",
+          "Bravo Half-Kneeling Single-Arm Cable Row",
+          "Bravo Standing Cable Straight-Arm Pullover",
+          "Bravo Behind-the-Back Cable Shrug",
+          "Bravo Cable Hammer Curl (Rope)",
           "Chest-Supported Dumbbell Row",
           "Elevated DB/KB Gorilla Row",
           "Bravo Dual-Cable Row (Mid-Height)",
@@ -374,6 +404,8 @@ export const STAGES = {
           "Cybex Eagle Leg Extension",
           "Cybex Eagle Single-Leg Extension",
           "Cybex Eagle Articulating Leg Press (Light Tempo)",
+          "Cybex Eagle Leg Extension Isometric Hold (30-45s)",
+          "Cybex Eagle Leg Press Calf Raise",
           "Bodyweight Squat / TRX Squat",
           "Tibialis Wall Raises"
         ]
@@ -386,6 +418,7 @@ export const STAGES = {
         alts: [
           "Cybex Eagle Hip Adduction (Inner Thigh)",
           "Cybex Eagle Hip Abduction (Outer Glute)",
+          "Cybex Eagle Hip Abduction (Lean-Forward Upper Glute)",
           "Cybex Eagle Single-Leg Curl",
           "Cybex Eagle Leg Extension Hip Thrust",
           "Cybex Eagle Leg Extension Glute Kickback",
@@ -403,6 +436,8 @@ export const STAGES = {
           "Cybex Eagle Rear Delt Fly",
           "Cable External Rotations (Bravo)",
           "Bravo Dual-Cable Face Pulls",
+          "Bravo Incline Cable Y-Raise",
+          "Bravo Cable Lateral Raise (Cross-Body)",
           "Side-Lying DB External Rotation",
           "Prone Scapular Y-T-W Raises"
         ]
