@@ -24,7 +24,10 @@ export const STAGES = {
           "B-Stance DB Hinge",
           "Glute Bridge / DB RDL (to Bench)",
           "Bodyweight Single-Leg RDL (Wall Supported)",
-          "Single-Leg Glute Bridge (12r/side)"
+          "Single-Leg Glute Bridge (12r/side)",
+          "Cybex Eagle Leg Extension Hip Thrust",
+          "Cybex Eagle Leg Extension Glute Kickback",
+          "Cybex Eagle Single-Leg Curl",
         ]
       },
       {
@@ -89,6 +92,7 @@ export const STAGES = {
           "Suitcase DB Squat",
           "Goblet Squat (Tempo 3-0-1)",
           "Cybex Eagle Articulating Leg Press",
+          "Cybex Eagle Single-Leg Extension",
           "DB Bulgarian Split Squat",
           "Bodyweight Squat / TRX Squat"
         ]
@@ -116,6 +120,8 @@ export const STAGES = {
         alts: [
           "Supported Romanian Deadlift (RDL)",
           "Cybex Eagle Leg Curl",
+          "Cybex Eagle Single-Leg Curl",
+          "Cybex Eagle Leg Extension Glute Kickback",
           "B-Stance DB Hinge",
           "Supported Romanian Deadlift (Heavy DBs)",
           "Bodyweight Single-Leg RDL (Wall Supported)",
@@ -154,6 +160,8 @@ export const STAGES = {
           "DB Bulgarian Split Squat",
           "Cybex Eagle Articulating Leg Press",
           "Cybex Eagle Leg Extension",
+          "Cybex Eagle Single-Leg Extension",
+          "Cybex Eagle Single-Leg Curl",
           "Supported Reverse Lunge (Rack/Wall)",
           "Goblet Squat (Tempo 3-0-1)",
           "Bodyweight Squat / TRX Squat"
@@ -262,6 +270,8 @@ export const STAGES = {
         alts: [
           "Cybex Eagle Hip Adduction (Inner Thigh)",
           "Cybex Eagle Hip Abduction (Outer Glute)",
+          "Cybex Eagle Leg Extension Hip Thrust",
+          "Cybex Eagle Leg Extension Glute Kickback",
           "Med Ball Rotational Wall Chest Pass",
           "Cable Pull-Through (Bravo Low Pulley)",
           "McGill Curl-Up (Strict Pause)"
@@ -288,6 +298,7 @@ export const STAGES = {
         defaultLoad: 235,
         alts: [
           "Cybex Eagle Articulating Leg Press",
+          "Cybex Eagle Single-Leg Extension",
           "Suitcase DB Squat",
           "DB Bulgarian Split Squat",
           "Goblet Squat (Tempo 3-0-1)",
@@ -316,6 +327,9 @@ export const STAGES = {
         defaultLoad: 100,
         alts: [
           "Cybex Eagle Leg Curl",
+          "Cybex Eagle Single-Leg Curl",
+          "Cybex Eagle Leg Extension Hip Thrust",
+          "Cybex Eagle Leg Extension Glute Kickback",
           "Supported Romanian Deadlift (RDL)",
           "B-Stance DB Hinge",
           "Cable Pull-Through (Bravo Low Pulley)",
@@ -358,6 +372,7 @@ export const STAGES = {
         defaultLoad: 60,
         alts: [
           "Cybex Eagle Leg Extension",
+          "Cybex Eagle Single-Leg Extension",
           "Cybex Eagle Articulating Leg Press (Light Tempo)",
           "Bodyweight Squat / TRX Squat",
           "Tibialis Wall Raises"
@@ -371,6 +386,9 @@ export const STAGES = {
         alts: [
           "Cybex Eagle Hip Adduction (Inner Thigh)",
           "Cybex Eagle Hip Abduction (Outer Glute)",
+          "Cybex Eagle Single-Leg Curl",
+          "Cybex Eagle Leg Extension Hip Thrust",
+          "Cybex Eagle Leg Extension Glute Kickback",
           "Tall-Kneeling Pallof Hold (20s)",
           "Single-Arm DB Suitcase Carry",
           "Med Ball Deadbug Compression"
