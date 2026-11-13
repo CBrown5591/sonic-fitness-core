@@ -359,6 +359,7 @@ export function selectStage(stageKey, resetIfNew = true) {
     if (activeSession.sets.length > 0 && !confirm("Switching stages will start a new session. Proceed?")) return;
     activeSession = { stage: stageKey, slotIndex: 0, prehabChecked: false, jointPain: false, sets: [] };
     activeSlotIndex = 0;
+    currentSlotGearMode = 'GYM'; // Reset to Gym only when starting a fresh stage
     window.activeSession = activeSession;
   }
   activeStageKey = stageKey;
