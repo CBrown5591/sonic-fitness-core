@@ -477,7 +477,7 @@ export function logActiveSet() {
     if (clk) clk.innerText = `${String(mins).padStart(2,'0')}:${String(rem).padStart(2,'0')}`;
   });
 
-  if (setsInSlot >= 3 && activeSlotIndex < stageDef.slots.length - 1) {
+ if (setsInSlot >= 3 && activeSlotIndex < stageDef.slots.length - 1) {
     activeSlotIndex++;
     saveSessionState();
     renderSlotStepper();
@@ -513,13 +513,6 @@ export function logActiveSet() {
         showToast(autoAdj.message);
       }
     }
-      } else {
-        // Standard Dumbbell / Machine Auto-Regulation
-        if (autoAdj.load && document.getElementById('loadInput')) document.getElementById('loadInput').value = autoAdj.load;
-        if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
-        showToast(autoAdj.message);
-      }
-    }
   }
 
   currentSetPain = false;
@@ -529,7 +522,6 @@ export function logActiveSet() {
     painBtn.innerText = "Joint Strain: No";
   }
 }
-
 export function togglePrehab() {
   if (!window.activeSession) return;
 
