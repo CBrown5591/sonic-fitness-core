@@ -1026,6 +1026,155 @@ export const MOVEMENT_INTEL = {
     cue: "Grab the center/opposite side of the loop band and drive your elbow straight back past your ribs, pausing 1 full second at peak lat contraction.",
     safety: "Do not let the band pull your torso into rotation. Keep the support forearm pressed hard into your quad to offload the lumbar spine."
   },
+
+  // --- BROOMSTICK / DOWEL BARBELL DEADLIFTS (41" LOOPS) ---
+  "41\" Loop Band Broomstick Standard Deadlift": {
+    muscles: "Gluteus Maximus, Hamstrings, Quadriceps & Erector Spinae",
+    setup: "Step both feet hip-width onto the center of a 41\" loop band. Thread both loop ends over a sturdy hardwood dowel/broomstick, placing your hands right next to the bands to minimize bending torque on the center of the stick.",
+    cue: "Drop hips into a conventional deadlift start (shins touching the stick, chest proud, lats packed). Drive the floor away with your legs and hips simultaneously to stand tall to lockout.",
+    safety: "Grip the stick directly beside the band loops so the shaft does not bow or snap in the middle. Keep the stick grazing your shins and thighs throughout the pull."
+  },
+
+  "41\" Loop Band Broomstick Stiff-Leg Deadlift": {
+    muscles: "Hamstrings (Biceps Femoris / Semitendinosus), Glutes & Lumbar Erectors",
+    setup: "Stand on a 41\" loop band with feet hip-width and thread the top loops over the ends of your broomstick/dowel. Start from the top standing lockout with knees unlocked in a fixed 10°–15° soft bend.",
+    cue: "Keeping your knee angle frozen, push your hips straight back as far as possible while lowering the stick down your shins until your hamstrings reach peak stretch, then snap hips forward.",
+    safety: "Keep hands positioned right against the band loops to prevent snapping a hollow broomstick. Never let your lower back round at the bottom—stop the descent as soon as your hips stop moving backward."
+  },
+
+  // --- USER GUIDE ADDITIONS (41" LOOPS & DOOR-ANCHOR TUBES) ---
+  "41\" Loop Band Squat-to-Press Thruster": {
+    muscles: "Quadriceps, Glutes, Anterior/Lateral Deltoids & Triceps (Total Body)",
+    setup: "Stand on the bottom of a 41\" loop band with feet shoulder-width. Bring the top of the loop up to collarbones in a front-rack grip with elbows pointed forward.",
+    cue: "Descend into a full parallel squat, then explode upward out of the hole and use that momentum to press the band straight overhead in one fluid motion.",
+    safety: "Keep core braced at the top overhead lockout so your lower back does not hyperextend."
+  },
+
+  "Low Door-Anchor Tube Bicep Curl": {
+    muscles: "Biceps Brachii (Long & Short Head) & Brachioradialis",
+    setup: "Secure door anchor at the BOTTOM of the door (or stand on the middle of the tube). Stand tall facing the door holding both handles with palms facing up (supinated).",
+    cue: "Pin elbows tightly against your ribs and curl the handles toward your shoulders. Squeeze biceps hard for 1s at peak contraction before a 3s lowering.",
+    safety: "Do not swing your torso backward or let your elbows drift forward to cheat the weight up."
+  },
+
+  "High Door-Anchor Tricep Pushdown": {
+    muscles: "Triceps Brachii (Lateral & Medial Heads)",
+    setup: "Secure door anchor at the TOP of the door frame. Stand facing the door in a slight athletic hinge, holding handles with elbows tucked firmly against your sides at 90°.",
+    cue: "Press the handles straight down toward your thighs until your elbows are completely locked out. Hold the tricep squeeze for 1s, then return to 90°.",
+    safety: "Keep upper arms glued to your ribcage; only your forearms should move around the elbow hinge."
+  },
+
+  "Low Door-Anchor Tricep Kickback": {
+    muscles: "Triceps Brachii (Long & Lateral Heads) & Rear Deltoid Stabilizers",
+    setup: "Secure door anchor at the BOTTOM of the door. Hinge forward 45°–60° in a staggered stance facing the door, pulling your elbows up past your ribs.",
+    cue: "Keeping your upper arms parallel to the floor, extend your forearms straight back until your elbows lock out. Pause 1s at the top.",
+    safety: "Do not let your elbows drop during the set; keep spine flat and neck neutral."
+  },
+
+  "Low Door-Anchor Overhead Tricep Extension": {
+    muscles: "Triceps Brachii (Long Head Emphasis)",
+    setup: "Secure door anchor at the BOTTOM of the door. Stand facing AWAY from the door in a staggered stance, holding the handles behind your head with elbows pointed high toward the ceiling.",
+    cue: "Extend your forearms overhead and slightly forward until elbows lock out, stretching the long head of the triceps on the 3-second eccentric return.",
+    safety: "Clamp your ribs down to your pelvis so the band tension behind you doesn't pull your lower back into an arch."
+  },
+
+  "Low Door-Anchor Tube Upright Row": {
+    muscles: "Lateral Deltoids, Upper Trapezius & Biceps",
+    setup: "Secure door anchor at the BOTTOM of the door (or stand on the band). Stand tall holding the handles in front of your thighs with an overhand grip.",
+    cue: "Lead with your elbows, pulling them high and wide up to shoulder height (stopping at the collarbone). Lower slowly over 3 seconds.",
+    safety: "Stop elbows at shoulder level—pulling higher with internally rotated shoulders can impinge the rotator cuff."
+  },
+
+  "Low Door-Anchor Front / Side Delt Raise": {
+    muscles: "Anterior Deltoids & Lateral (Medial) Deltoids",
+    setup: "Secure door anchor at the BOTTOM of the door (or stand on the band). Hold handles at your sides with a soft 10° bend in the elbows.",
+    cue: "Raise arms straight out in front to eye level (Front Raise) or out to the sides in the scapular plane (30° forward of torso for Side Raise), pausing 1s at shoulder height.",
+    safety: "Do not shrug your traps toward your ears; lead with your knuckles/elbows and keep torso stationary."
+  },
+
+  "Low Door-Anchor Reverse Woodchopper (Low-to-High)": {
+    muscles: "Internal/External Obliques, Anterior Deltoids & Transverse Abdominis",
+    setup: "Secure door anchor at the BOTTOM of the door. Stand perpendicular to the door in a wide athletic stance, gripping the handle with both hands down by your inside hip.",
+    cue: "Pivot your inside foot and hips to sweep the handle diagonally UPWARD across your body to above your opposite shoulder. Control the return.",
+    safety: "Rotate through your hips and thoracic spine simultaneously—never twist from a locked lower back."
+  },
+
+  "Mid Door-Anchor Seated Russian Twist": {
+    muscles: "Internal/External Obliques & Rectus Abdominis",
+    setup: "Anchor tube at MID-LOWER door height. Sit on the floor perpendicular to the door with knees bent and heels dug into the mat, holding the handle at your sternum.",
+    cue: "Brace your abs and rotate your entire ribcage and shoulders away from the door against the band's pull, then control the return.",
+    safety: "Keep your spine long and tall—do not slouch into lumbar flexion while rotating."
+  },
+
+  "Low Door-Anchor Resisted Bicycle Crunch": {
+    muscles: "Rectus Abdominis, Obliques & Hip Flexors",
+    setup: "Secure door anchor at the BOTTOM of the door and strap ankle cuffs to both ankles (or loop around feet). Lie on your back facing away from the door with hands lightly behind ears.",
+    cue: "Press lower back flat into the floor and alternate driving one knee toward the opposite elbow against the band tension while extending the other leg.",
+    safety: "Never yank on the back of your neck; rotate your shoulder blade toward the knee while keeping lumbar glued to the floor."
+  },
+
+  "Low Door-Anchor Supine Reverse Crunch": {
+    muscles: "Lower Rectus Abdominis & Transverse Abdominis",
+    setup: "Secure door anchor at the BOTTOM of the door and strap ankle cuffs around both ankles. Lie flat on your back facing the door with knees bent at 90°.",
+    cue: "Contract your lower abs to curl your pelvis and tailbone slightly off the floor, pulling your knees toward your chest, then lower slowly over 3 seconds.",
+    safety: "Use pure abdominal curling rather than swinging your legs with momentum."
+  },
+
+  "Low Door-Anchor Resisted Sit-Up": {
+    muscles: "Rectus Abdominis & Hip Flexors",
+    setup: "Secure door anchor at the BOTTOM of the door behind your head. Lie on your back with knees bent, holding both handles tight against your collarbones.",
+    cue: "Exhale and curl your torso up to a seated position against the band tension, then lower vertebra-by-vertebra over 3 seconds.",
+    safety: "If you feel any lower back strain (especially after RDL sessions), substitute with Resisted McGill Curl-Ups or High-Anchor Kneeling Crunches."
+  },
+
+  "Low Door-Anchor Standing Oblique Side Bend": {
+    muscles: "External/Internal Obliques & Quadratus Lumborum (QL)",
+    setup: "Secure door anchor at the BOTTOM of the door (or stand on a 41\" loop band with one foot). Stand perpendicular to the anchor holding the handle in your inside hand.",
+    cue: "Keeping your hips locked and shoulders square in a flat plane, flex your torso laterally away from the band to return to dead vertical, then squeeze the side obliques.",
+    safety: "Do not twist or lean forward—move strictly side-to-side as if standing between two panes of glass."
+  },
+
+  "Low Door-Anchor Bent-Over Rear Delt Raise": {
+    muscles: "Posterior Deltoids, Rhomboids & Mid-Traps",
+    setup: "Secure door anchor at the BOTTOM of the door (or stand on the band, crossing the handles). Hinge forward at the hips to 45°–60° with a flat back and soft knees.",
+    cue: "Sweep both handles out wide to the sides with slightly bent elbows until arms are level with your back, squeezing the rear delts for 1s at the top.",
+    safety: "Keep your spine neutral and chest supported by your hip hinge—do not round the lower back."
+  },
+
+  "41\" Loop Band Bent-Over Row (Stand-on-Loop)": {
+    muscles: "Latissimus Dorsi, Rhomboids, Mid-Traps & Posterior Deltoids",
+    setup: "Stand with both feet hip-width on the center of a 41\" loop band. Hinge hips back to a 45° torso angle with a flat back, gripping the left and right loop ends.",
+    cue: "Drive elbows straight back past your ribs toward your hip pockets, squeezing your shoulder blades together for 1 full second at the top.",
+    safety: "Brace your core hard and keep knees softly bent; if your lower back is fatigued from RDLs, use Door-Anchor Seated Row instead."
+  },
+
+  "Low Door-Anchor Supine Leg Lift": {
+    muscles: "Lower Abdominis, Iliopsoas (Hip Flexors) & Rectus Femoris",
+    setup: "Secure door anchor at the BOTTOM of the door and attach ankle straps to one or both ankles. Lie flat on your back with your feet closest to the door and hands tucked under your glutes.",
+    cue: "Keeping legs straight (or softly bent), lift your heels toward the ceiling to 90° against the downward pull of the band, then lower slowly.",
+    safety: "Keep your lower back pressed firmly into the floor; stop lowering the legs the instant you feel your lumbar spine start to arch."
+  },
+
+  "Low Door-Anchor Standing Band Abduction": {
+    muscles: "Gluteus Medius, Gluteus Minimus & Tensor Fasciae Latae (TFL)",
+    setup: "Secure door anchor at the BOTTOM of the door and fasten the ankle strap around your OUTER ankle (leg farthest from the door). Stand tall holding the wall or a chair.",
+    cue: "Keeping toes pointed straight ahead (not flared out), sweep your outer leg laterally away from the door to 45°, hold 1s, and resist the pull back.",
+    safety: "Stand completely upright—do not lean your torso toward the door to fake a higher leg raise."
+  },
+
+  "Low Door-Anchor Standing Glute Kickback": {
+    muscles: "Gluteus Maximus (Primary) & Hamstrings",
+    setup: "Secure door anchor at the BOTTOM of the door and strap the cuff to one ankle. Stand facing the door with a slight 15° forward torso lean, bracing both hands against the door frame.",
+    cue: "Keeping your working knee straight or softly locked, drive your heel straight back by clenching your glute for 1 full second at peak extension.",
+    safety: "Keep the range of motion compact (15°–25° hip extension)—kicking too high forces your lower back to hyperextend."
+  },
+
+  "41\" Loop Band Seated Calf Extension": {
+    muscles: "Gastrocnemius & Soleus (Calves)",
+    setup: "Sit tall on the floor with legs extended straight in front of you. Loop a 41\" loop band around the balls of your feet (forefeet) and pull the other end taut to your waist/chest.",
+    cue: "Point your toes forcefully away from your shins (plantarflexion) against the band, hold the peak calf cramp for 2 seconds, then flex toes back toward shins for a full stretch.",
+    safety: "Place the band firmly across the ball of the foot so it cannot slip off the toes under tension."
+  },
   
   "Banded Shadow Boxing Flow (Zone 2)": {
     muscles: "Anterior Deltoids, Serratus Anterior, Core Obliques & Calves",
