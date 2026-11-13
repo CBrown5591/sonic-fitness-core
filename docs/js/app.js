@@ -460,6 +460,7 @@ export function logActiveSet() {
   };
 
   activeSession.sets.push(completedSetObj);
+  recordSlotRotationHistory(activeStageKey, slotDef.slot, exercise);
   checkSecretRingTriggers(completedSetObj, showToast);
 
   if (completedSetObj.jointPain) {
@@ -906,6 +907,48 @@ bandBtn.onclick = () => {
 
 // docs/js/app.js (inside DOMContentLoaded listener)
 
+  function syncRotatorModeUI() {
+  const mode = getRotatorMode();
+  const freshBtn = document.getElementById('rotatorFreshBtn');
+  const focusBtn = document.getElementById('rotatorFocusBtn');
+  if (!freshBtn || !focusBtn) return;
+
+  if (mode === 'FOCUS') {
+    focusBtn.style.background = '#f59e0b';
+    focusBtn.style.borderColor = '#f59e0b';
+    focusBtn.style.color = '#0f172a';
+    freshBtn.style.background = 'transparent';
+    freshBtn.style.borderColor = '#334155';
+    freshBtn.style.color = '#94a3b8';
+  } else {
+    freshBtn.style.background = '#38bdf8';
+    freshBtn.style.borderColor = '#38bdf8';
+    freshBtn.style.color = '#0f172a';
+    focusBtn.style.background = 'transparent';
+    focusBtn.style.borderColor = '#334155';
+    focusBtn.style.color = '#94a3b8';
+  }
+}
+
+syncRotatorModeUI();
+
+const freshBtn = document.getElementById('rotatorFreshBtn');
+const focusBtn = document.getElementById('rotatorFocusBtn');
+if (freshBtn && focusBtn) {
+  freshBtn.onclick = () => {
+    setRotatorMode('FRESH');
+    syncRotatorModeUI();
+    loadSlotData();
+    showToast('⚡ ROTATOR: Fresh Variety Mode Active');
+  };
+  focusBtn.onclick = () => {
+    setRotatorMode('FOCUS');
+    syncRotatorModeUI();
+    loadSlotData();
+    showToast('🎯 ROTATOR: Cumulative Synergy Focus Active');
+  };
+}
+  
   const exSelect = document.getElementById('exerciseSelect');
   if (exSelect) {
     exSelect.onchange = () => {
