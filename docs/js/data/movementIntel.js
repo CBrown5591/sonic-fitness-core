@@ -213,6 +213,29 @@ export const MOVEMENT_INTEL = {
     cue: "Drive knees outward against resistance using upper glutes (gluteus medius). Hold outer contraction for 1 full second, then control the eccentric back.",
     safety: "Keep hips pushed deep into the seat backrest. Avoid leaning forward or using momentum to jerk the weight stack."
   },
+  "Cybex Eagle Leg Extension Hip Thrust": {
+    setup: "Set the ankle roller pad to its lowest/furthest forward notch and raise the thigh hold-down pad out of the way. Sit on the front edge of the seat (or brace upper back against the seat edge) with the roller pad positioned across your hip crease.",
+    cue: "Plant both feet flat and hip-width apart on the floor. Drive through your heels to extend your hips upward against the roller pad, squeezing glutes hard for 1 second at top lockout without hyperextending your lower back.",
+    safety: "Keep chin tucked and ribs down at lockout so the movement stays strictly in the glutes rather than the lumbar spine. Control the eccentric lowering so the weight stack doesn't slam."
+  },
+
+  "Cybex Eagle Leg Extension Glute Kickback": {
+    setup: "Adjust the ankle roller pad to its highest/closest starting position. Stand facing the machine, gripping the seat frame or backrest handles for stability, and place the back of one ankle/heel against the roller pad.",
+    cue: "Keep your torso braced with a slight forward lean (~15°). Drive your working heel straight back and slightly upward into hip extension, pausing 1 second at peak glute squeeze.",
+    safety: "Avoid twisting your pelvis or arching your lower back to get extra height. Stop hip extension once the glute reaches full contraction."
+  },
+
+  "Cybex Eagle Single-Leg Extension": {
+    setup: "Align your working knee joint directly with the machine's red pivot axis dot. Set the shin roller pad just above your ankle dorsiflexion crease and lock the thigh pad snugly.",
+    cue: "Extend one leg smoothly to full knee lockout, holding the top quad squeeze for 1 full second, then lower over a strict 3-second eccentric. Complete all reps on one leg before switching.",
+    safety: "Keep your hips pinned flat into the seat—do not lift your glute off the pad to heave the weight up."
+  },
+
+  "Cybex Eagle Single-Leg Curl": {
+    setup: "Align your working knee with the machine's pivot axis. Position the ankle roller pad just above the heel/Achilles and secure the thigh stabilization pad firmly over your quads.",
+    cue: "Curl one heel smoothly toward your glutes while keeping your toes pulled up (dorsiflexed) to engage the hamstrings cleanly. Pause 1 second at peak flexion and resist for 3 seconds on the return.",
+    safety: "Do not let your hips lift off the seat pad at the bottom of the curl. Keep the non-working leg relaxed and stationary."
+  },
   "DB Bulgarian Split Squat": {
     muscles: "Quadriceps & Gluteus Maximus (Lead Leg) • Glute Medius (Stabilizer)",
     setup: "Rear foot laces resting on bench behind you. Front foot placed 3 feet forward.",
