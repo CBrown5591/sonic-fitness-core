@@ -598,6 +598,12 @@ export const MOVEMENT_INTEL = {
     cue: "Walk paced laps with zero lateral lean until grip or lateral oblique stability reaches failure. Switch sides.",
     safety: "Stop immediately if posture begins to compromise or lumbar spine bends sideways."
   },
+  "Single-Arm Iso-Lateral Pulldown": {
+    muscles: "Latissimus Dorsi, Teres Major, Lower Trapezius & Core Anti-Lateral Flexion",
+    setup: "Lock your thighs snugly under the knee pad. Grip one independent pulldown arm with a neutral or semi-supinated palm while bracing your non-working hand firmly against the seat frame or thigh pad.",
+    cue: "Let the independent arm stretch your lat fully at the top without shrugging your shoulder to your ear, then drive your elbow straight down in front of your shoulder plane into your hip pocket. Hold 1s at the bottom.",
+    safety: "Keep your torso dead vertical—do not lean sideways toward the working arm to pull heavier weight."
+  },
   "Single-Leg Box Squat (Strict 3s Pause)": {
     muscles: "Quadriceps, Glute Max & Glute Medius (Knee Tracking)",
     setup: "Stand on one leg facing away from hotel bed or sturdy chair. Opposite leg extended forward.",
