@@ -47,6 +47,7 @@ import { resolveInitialBandPreset, solveBestBandCombination, solveOverdriveBandB
 import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSelections, setActiveBandSelection } from './ui/renderBandSelector.js';
 import { getDefaultGymLoad } from './data/movementIntel.js';
 import { renderCalculator } from './ui/renderCalculator.js';
+import { getRotatorMode, setRotatorMode, resolveSlotPreset, recordSlotRotationHistory } from './engine/slotRotator.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
 let activeSlotIndex = 0;
@@ -223,9 +224,16 @@ function hydrateExerciseDropdown() {
   const select = document.getElementById('exerciseSelect');
   if (!select) return;
 
+  // TSK-14: Auto-select exercise based on FRESH vs. cumulative FOCUS mode
+  const recommendedExercise = resolveSlotPreset(
+    activeStageKey,
+    slotDef,
+    activeSlotIndex,
+    activeSession?.sets || []
+  );
+
   select.innerHTML = '';
-  
-  // In docs/js/app.js inside hydrateExerciseDropdown():
+
   if (currentSlotGearMode === 'GYM') {
     slotDef.alts.forEach(alt => {
       const opt = document.createElement('option');
@@ -233,19 +241,16 @@ function hydrateExerciseDropdown() {
       opt.innerText = alt;
       select.appendChild(opt);
     });
-    select.value = slotDef.primary;
+    select.value = recommendedExercise;
   } else {
-    const mappedAlts = slotDef.alts.map(alt => getBandEquivalent(alt));
-    const extraAlts = SLOT_BAND_EXTRAS[slotDef.slot] || [];
-    const allBandedAlts = [...new Set([...mappedAlts, ...extraAlts])];
-
-    allBandedAlts.forEach(bandAlt => {
+    const bandedAlts = slotDef.alts.map(alt => getBandEquivalent(alt));
+    bandedAlts.forEach(bandAlt => {
       const opt = document.createElement('option');
       opt.value = bandAlt;
       opt.innerText = bandAlt;
       select.appendChild(opt);
     });
-    select.value = getBandEquivalent(slotDef.primary);
+    select.value = getBandEquivalent(recommendedExercise);
   }
 }
 
