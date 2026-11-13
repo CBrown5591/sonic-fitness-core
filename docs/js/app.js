@@ -43,9 +43,8 @@ import { renderSkillTree, switchSkillTreeBranch, unlockPerk } from './ui/renderS
 import { switchMainTab } from './ui/renderTabs.js';
 import { renderPRVaultUI } from './ui/renderPRVault.js';
 import { BAND_EQUIVALENTS, getBandEquivalent } from './data/bandEquivalents.js';
-import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSelections } from './ui/renderBandSelector.js';
 import { resolveInitialBandPreset, solveBestBandCombination, solveOverdriveBandBridge } from './engine/bandSolver.js';
-import { setActiveBandSelection } from './ui/renderBandSelector.js';
+import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSelections, setActiveBandSelection } from './ui/renderBandSelector.js';
 import { getDefaultGymLoad } from './data/movementIntel.js';
 import { renderCalculator } from './ui/renderCalculator.js';
 
@@ -489,19 +488,31 @@ export function logActiveSet() {
     updateLogButtonText();
     const autoAdj = autoRegulateNextSet(completedSetObj);
     if (autoAdj) {
-      // (#3) OVERDRIVE BAND BRIDGE: If autoReg wants to add weight (+5 lbs) on a Band exercise:
-// Inside logActiveSet() -> else block where autoRegulateNextSet runs:
       const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(exercise);
-      if (isBand && autoAdj.load && autoAdj.load > load) {
-        const currentCombo = typeof getSelectedBandCombo === 'function' ? getSelectedBandCombo() : { selectedKeys: [] };
-        const bridge = solveOverdriveBandBridge(load, exercise, currentCombo.selectedKeys);
-        if (bridge && bridge.nominalTotal > load) {
+      const activeLoad = typeof finalLoad !== 'undefined' ? finalLoad : load;
+
+      if (isBand && autoAdj.load && autoAdj.load > activeLoad) {
+        const currentCombo = typeof getSelectedBandCombo === 'function'
+          ? getSelectedBandCombo()
+          : { selectedKeys: [] };
+        const bridge = solveOverdriveBandBridge(activeLoad, exercise, currentCombo.selectedKeys);
+
+        if (bridge && bridge.nominalTotal > activeLoad) {
           setActiveBandSelection(bridge.selectedKeys);
           syncEquipmentInputs();
           if (document.getElementById('loadInput')) document.getElementById('loadInput').value = bridge.nominalTotal;
           if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
           showToast(`⚡ OVERDRIVE BRIDGE: Stacked to ${bridge.nominalTotal} lbs × ${autoAdj.reps} reps!`);
+        } else {
+          if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
+          showToast(`★ MAX BAND TIER REACHED (${activeLoad} lbs) — Hold ${autoAdj.reps} reps!`);
         }
+      } else {
+        if (autoAdj.load && document.getElementById('loadInput')) document.getElementById('loadInput').value = autoAdj.load;
+        if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
+        showToast(autoAdj.message);
+      }
+    }
       } else {
         // Standard Dumbbell / Machine Auto-Regulation
         if (autoAdj.load && document.getElementById('loadInput')) document.getElementById('loadInput').value = autoAdj.load;
