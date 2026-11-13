@@ -35,7 +35,7 @@ export const STAGES = {
         alts: [
           "Chest-Supported Dumbbell Row",
           "Elevated DB/KB Gorilla Row",
-          "Cybex VR2 High Row (Chest Supported)",
+          "Cybex Eagle High Row (Chest Supported)",
           "Bravo Dual-Cable Row (Mid-Height)",
           "Lat Pulldown (Neutral/Mag-Grip)",
           "Doorframe Row (Single-Arm Strict Pause)"
@@ -48,9 +48,9 @@ export const STAGES = {
         defaultLoad: 60,
         alts: [
           "Neutral-Grip DB Floor Press",
-          "Cybex VR2 Converging Chest Press",
+          "Cybex Eagle Converging Chest Press",
           "Incline DB Bench Press (30°)",
-          "Cybex VR2 Overhead Shoulder Press",
+          "Cybex Eagle Overhead Shoulder Press",
           "Incline Push-Up (Hands on Bench)",
           "Tempo Push-Up (3-0-1 Pause)"
         ]
@@ -63,7 +63,7 @@ export const STAGES = {
         alts: [
           "Cable Pallof Press",
           "Tall-Kneeling Pallof Hold",
-          "Cybex VR2 Seated Abdominal Crunch",
+          "Cybex Eagle Seated Abdominal Crunch",
           "Suitcase Carry (Single-Arm)",
           "Tall-Kneeling Pallof Hold (20s)"
         ]
@@ -88,7 +88,7 @@ export const STAGES = {
         alts: [
           "Suitcase DB Squat",
           "Goblet Squat (Tempo 3-0-1)",
-          "Cybex VR2 Articulating Leg Press",
+          "Cybex Eagle Articulating Leg Press",
           "DB Bulgarian Split Squat",
           "Bodyweight Squat / TRX Squat"
         ]
@@ -100,8 +100,8 @@ export const STAGES = {
         defaultLoad: 45,
         alts: [
           "Half-Kneeling Landmine Press",
-          "Cybex VR2 Overhead Shoulder Press",
-          "Cybex VR2 Converging Chest Press",
+          "Cybex Eagle Overhead Shoulder Press",
+          "Cybex Eagle Converging Chest Press",
           "Bravo Half-Kneeling Cable Press",
           "Neutral-Grip DB Floor Press",
           "Pike Push-Up (Hands or Feet Elevated)",
@@ -115,7 +115,7 @@ export const STAGES = {
         defaultLoad: 65,
         alts: [
           "Supported Romanian Deadlift (RDL)",
-          "Cybex VR2 Leg Curl",
+          "Cybex Eagle Leg Curl",
           "B-Stance DB Hinge",
           "Supported Romanian Deadlift (Heavy DBs)",
           "Bodyweight Single-Leg RDL (Wall Supported)",
@@ -129,7 +129,7 @@ export const STAGES = {
         defaultLoad: 15,
         alts: [
           "Cable External Rotations",
-          "Cybex VR2 Rear Delt Fly",
+          "Cybex Eagle Rear Delt Fly",
           "Side-Lying DB External Rotation",
           "Prone Scapular Y-T-W Raises"
         ]
@@ -152,8 +152,8 @@ export const STAGES = {
         defaultLoad: 40,
         alts: [
           "DB Bulgarian Split Squat",
-          "Cybex VR2 Articulating Leg Press",
-          "Cybex VR2 Leg Extension",
+          "Cybex Eagle Articulating Leg Press",
+          "Cybex Eagle Leg Extension",
           "Supported Reverse Lunge (Rack/Wall)",
           "Goblet Squat (Tempo 3-0-1)",
           "Bodyweight Squat / TRX Squat"
@@ -166,7 +166,7 @@ export const STAGES = {
         defaultLoad: 130,
         alts: [
           "Lat Pulldown (Neutral/Mag-Grip)",
-          "Cybex VR2 High Row (Chest Supported)",
+          "Cybex Eagle High Row (Chest Supported)",
           "Bravo Dual-Cable Pulldown",
           "Half-Kneeling Single-Arm Pulldown",
           "Chest-Supported Dumbbell Row",
@@ -182,8 +182,8 @@ export const STAGES = {
         defaultLoad: 65,
         alts: [
           "Incline DB Bench Press (30°)",
-          "Cybex VR2 Converging Chest Press",
-          "Cybex VR2 Pec Fly (Machine)",
+          "Cybex Eagle Converging Chest Press",
+          "Cybex Eagle Pec Fly (Machine)",
           "Neutral-Grip DB Floor Press",
           "Incline Push-Up (Hands on Bench)",
           "Tempo Push-Up (3-0-1 Pause)"
@@ -197,8 +197,8 @@ export const STAGES = {
         alts: [
           "Farmer's Carries",
           "Suitcase Carry (Single-Arm)",
-          "Cybex VR2 Hip Adduction (Inner Thigh)",
-          "Cybex VR2 Hip Abduction (Outer Glute)",
+          "Cybex Eagle Hip Adduction (Inner Thigh)",
+          "Cybex Eagle Hip Abduction (Outer Glute)",
           "Cable Pallof Press",
           "Bear Crawl (Forward & Reverse Paced)",
           "March in Place (Strict High Knees 45s)"
@@ -231,10 +231,10 @@ export const STAGES = {
       {
         slot: "D2",
         target: "3x10-12",
-        primary: "Cybex VR2 Seated Abdominal Crunch",
+        primary: "Cybex Eagle Seated Abdominal Crunch",
         defaultLoad: 70,
         alts: [
-          "Cybex VR2 Seated Abdominal Crunch",
+          "Cybex Eagle Seated Abdominal Crunch",
           "Bravo Kneeling Cable Crunch",
           "Med Ball Deadbug Compression (8-12 lbs)",
           "Hollow Body Isometric Hold (30s)"
@@ -257,11 +257,11 @@ export const STAGES = {
       {
         slot: "D4",
         target: "3x12-15",
-        primary: "Cybex VR2 Hip Adduction (Inner Thigh)",
+        primary: "Cybex Eagle Hip Adduction (Inner Thigh)",
         defaultLoad: 80,
         alts: [
-          "Cybex VR2 Hip Adduction (Inner Thigh)",
-          "Cybex VR2 Hip Abduction (Outer Glute)",
+          "Cybex Eagle Hip Adduction (Inner Thigh)",
+          "Cybex Eagle Hip Abduction (Outer Glute)",
           "Med Ball Rotational Wall Chest Pass",
           "Cable Pull-Through (Bravo Low Pulley)",
           "McGill Curl-Up (Strict Pause)"
@@ -284,10 +284,10 @@ export const STAGES = {
       {
         slot: "E1",
         target: "3x6-8",
-        primary: "Cybex VR2 Articulating Leg Press",
+        primary: "Cybex Eagle Articulating Leg Press",
         defaultLoad: 235,
         alts: [
-          "Cybex VR2 Articulating Leg Press",
+          "Cybex Eagle Articulating Leg Press",
           "Suitcase DB Squat",
           "DB Bulgarian Split Squat",
           "Goblet Squat (Tempo 3-0-1)",
@@ -298,11 +298,11 @@ export const STAGES = {
       {
         slot: "E2",
         target: "3x6-8",
-        primary: "Cybex VR2 Converging Chest Press",
+        primary: "Cybex Eagle Converging Chest Press",
         defaultLoad: 125,
         alts: [
-          "Cybex VR2 Converging Chest Press",
-          "Cybex VR2 Pec Fly (Machine)",
+          "Cybex Eagle Converging Chest Press",
+          "Cybex Eagle Pec Fly (Machine)",
           "Incline DB Bench Press (30°)",
           "Neutral-Grip DB Floor Press",
           "Incline Push-Up (Hands on Bench)",
@@ -312,10 +312,10 @@ export const STAGES = {
       {
         slot: "E3",
         target: "3x8-10",
-        primary: "Cybex VR2 Leg Curl",
+        primary: "Cybex Eagle Leg Curl",
         defaultLoad: 100,
         alts: [
-          "Cybex VR2 Leg Curl",
+          "Cybex Eagle Leg Curl",
           "Supported Romanian Deadlift (RDL)",
           "B-Stance DB Hinge",
           "Cable Pull-Through (Bravo Low Pulley)",
@@ -326,10 +326,10 @@ export const STAGES = {
       {
         slot: "E4",
         target: "3x8-10",
-        primary: "Cybex VR2 High Row (Chest Supported)",
+        primary: "Cybex Eagle High Row (Chest Supported)",
         defaultLoad: 120,
         alts: [
-          "Cybex VR2 High Row (Chest Supported)",
+          "Cybex Eagle High Row (Chest Supported)",
           "Chest-Supported Dumbbell Row",
           "Elevated DB/KB Gorilla Row",
           "Bravo Dual-Cable Row (Mid-Height)",
@@ -354,11 +354,11 @@ export const STAGES = {
       {
         slot: "F1",
         target: "3x15-20",
-        primary: "Cybex VR2 Leg Extension",
+        primary: "Cybex Eagle Leg Extension",
         defaultLoad: 60,
         alts: [
-          "Cybex VR2 Leg Extension",
-          "Cybex VR2 Articulating Leg Press (Light Tempo)",
+          "Cybex Eagle Leg Extension",
+          "Cybex Eagle Articulating Leg Press (Light Tempo)",
           "Bodyweight Squat / TRX Squat",
           "Tibialis Wall Raises"
         ]
@@ -366,11 +366,11 @@ export const STAGES = {
       {
         slot: "F2",
         target: "3x15-20",
-        primary: "Cybex VR2 Hip Adduction (Inner Thigh)",
+        primary: "Cybex Eagle Hip Adduction (Inner Thigh)",
         defaultLoad: 65,
         alts: [
-          "Cybex VR2 Hip Adduction (Inner Thigh)",
-          "Cybex VR2 Hip Abduction (Outer Glute)",
+          "Cybex Eagle Hip Adduction (Inner Thigh)",
+          "Cybex Eagle Hip Abduction (Outer Glute)",
           "Tall-Kneeling Pallof Hold (20s)",
           "Single-Arm DB Suitcase Carry",
           "Med Ball Deadbug Compression"
@@ -379,10 +379,10 @@ export const STAGES = {
       {
         slot: "F3",
         target: "3x15-20",
-        primary: "Cybex VR2 Rear Delt Fly",
+        primary: "Cybex Eagle Rear Delt Fly",
         defaultLoad: 45,
         alts: [
-          "Cybex VR2 Rear Delt Fly",
+          "Cybex Eagle Rear Delt Fly",
           "Cable External Rotations (Bravo)",
           "Bravo Dual-Cable Face Pulls",
           "Side-Lying DB External Rotation",
@@ -396,7 +396,7 @@ export const STAGES = {
         defaultLoad: 25,
         alts: [
           "Cable Pallof Press (Bravo)",
-          "Cybex VR2 Seated Abdominal Crunch",
+          "Cybex Eagle Seated Abdominal Crunch",
           "Cable Pull-Through (Bravo Low Pulley)",
           "Bravo Anti-Extension Overhead Hold",
           "Tall-Kneeling Pallof Hold (20s)",
@@ -481,11 +481,11 @@ export const STAGES = {
       {
         slot: "H1",
         target: "3x20-25 reps (Light Cadence)",
-        primary: "Cybex VR2 Articulating Leg Press (Light Tempo 25r)",
+        primary: "Cybex Eagle Articulating Leg Press (Light Tempo 25r)",
         defaultLoad: 140,
         alts: [
-          "Cybex VR2 Articulating Leg Press (Light Tempo 25r)",
-          "Cybex VR2 Leg Extension (Paced 20r)",
+          "Cybex Eagle Articulating Leg Press (Light Tempo 25r)",
+          "Cybex Eagle Leg Extension (Paced 20r)",
           "Suitcase DB Squat",
           "Bodyweight Squat / TRX Squat"
         ]
@@ -514,7 +514,7 @@ export const STAGES = {
           "Bravo Dual-Cable Row (Mid-Height)",
           "Chest-Supported Dumbbell Row",
           "Elevated DB/KB Gorilla Row",
-          "Cybex VR2 High Row (Chest Supported)",
+          "Cybex Eagle High Row (Chest Supported)",
           "Doorframe Row (Single-Arm Strict Pause)",
           "Prone Floor Lat Pull (Towel Slide)"
         ]
@@ -617,10 +617,10 @@ export const STAGES = {
       {
         slot: "X2",
         target: "1x3-5 @ 88%",
-        primary: "Cybex VR2 Articulating Leg Press",
+        primary: "Cybex Eagle Articulating Leg Press",
         defaultLoad: 235,
         alts: [
-          "Cybex VR2 Articulating Leg Press",
+          "Cybex Eagle Articulating Leg Press",
           "Suitcase DB Squat",
           "Goblet Squat (Tempo 3-0-1)",
           "Single-Leg Box Squat (Strict 3s Pause)"
@@ -633,7 +633,7 @@ export const STAGES = {
         defaultLoad: 60,
         alts: [
           "Neutral-Grip DB Floor Press",
-          "Cybex VR2 Converging Chest Press",
+          "Cybex Eagle Converging Chest Press",
           "Incline DB Bench Press (30°)",
           "Feet-Elevated Decline Push-Up (Strict 1s Pause)"
         ]
@@ -648,7 +648,7 @@ export const STAGES = {
           "Elevated DB/KB Gorilla Row",
           "Rower 500m Apex Sprint (Sub-1:45 Pace)",
           "Farmer's Carries (Dual DB/KB - Max Distance)",
-          "Cybex VR2 High Row (Chest Supported)",
+          "Cybex Eagle High Row (Chest Supported)",
           "Lat Pulldown (Neutral/Mag-Grip)",
           "Doorframe Row (Single-Arm 3s Pause)"
         ]
@@ -668,11 +668,11 @@ export const STAGES = {
       {
         slot: "Y1",
         target: "AMRAP @ 70%",
-        primary: "Cybex VR2 Articulating Leg Press",
+        primary: "Cybex Eagle Articulating Leg Press",
         defaultLoad: 180,
         alts: [
-          "Cybex VR2 Articulating Leg Press",
-          "Cybex VR2 Leg Extension",
+          "Cybex Eagle Articulating Leg Press",
+          "Cybex Eagle Leg Extension",
           "Suitcase DB Squat",
           "Bodyweight Squat / TRX Squat (AMRAP to Failure)"
         ]
@@ -680,10 +680,10 @@ export const STAGES = {
       {
         slot: "Y2",
         target: "AMRAP @ 70%",
-        primary: "Cybex VR2 Converging Chest Press",
+        primary: "Cybex Eagle Converging Chest Press",
         defaultLoad: 100,
         alts: [
-          "Cybex VR2 Converging Chest Press",
+          "Cybex Eagle Converging Chest Press",
           "Neutral-Grip DB Floor Press",
           "Incline DB Bench Press (30°)",
           "Incline Push-Up (Hands on Bench - AMRAP)"
@@ -697,17 +697,17 @@ export const STAGES = {
         alts: [
           "Lat Pulldown (Neutral/Mag-Grip)",
           "Chest-Supported Dumbbell Row",
-          "Cybex VR2 High Row (Chest Supported)",
+          "Cybex Eagle High Row (Chest Supported)",
           "Doorframe Row (Single-Arm AMRAP)"
         ]
       },
       {
         slot: "Y4",
         target: "AMRAP @ 70% (or Engine Burnout)",
-        primary: "Cybex VR2 Seated Abdominal Crunch",
+        primary: "Cybex Eagle Seated Abdominal Crunch",
         defaultLoad: 70,
         alts: [
-          "Cybex VR2 Seated Abdominal Crunch",
+          "Cybex Eagle Seated Abdominal Crunch",
           "Single-Arm DB Suitcase Carry (AMRAP Laps to Failure)",
           "Rower / Incline Treadmill (90s Max Effort AMRAP)",
           "Cable Pallof Press (Bravo)",
