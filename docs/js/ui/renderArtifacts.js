@@ -508,7 +508,7 @@ export function updateHudRingBar() {
 
   const redEl = document.getElementById('hudRedRingsVal');
   if (redEl) {
-    redEl.innerText = `${getTotalRedRings()} / 50`;
+    redEl.innerText = `${getTotalRedRings()}`;
   }
 
   const superBtn = document.getElementById('hudSuperModeBtn');
