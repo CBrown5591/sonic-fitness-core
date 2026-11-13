@@ -86,7 +86,7 @@ export const BAND_EQUIVALENTS = {
   "Stationary Bike Surge Intervals": "Banded Resisted Sprint Marches (30s/60s)",
   "Incline Power Walk Surges": "Banded Power Marches (30s/60s)",
   "Mountain Climbers (Hands on Bed - Low Shear)": "Mini-Band Mountain Climbers",
-  "Fast Step-Jacks (30s on / 60s off)": "Mini-Band Step-Jacks (30s/60s)"
+  "Fast Step-Jacks (30s on / 60s off)": "Mini-Band Step-Jacks (30s/60s)",
 
   "Cybex Eagle Leg Extension Hip Thrust": "Banded Glute Bridge / Bar-Loop Thrust",
   "Cybex Eagle Leg Extension Glute Kickback": "Low Door-Anchor Standing Glute Kickback",
