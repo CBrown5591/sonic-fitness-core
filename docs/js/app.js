@@ -48,6 +48,7 @@ import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSele
 import { getDefaultGymLoad } from './data/movementIntel.js';
 import { renderCalculator } from './ui/renderCalculator.js';
 import { getRotatorMode, setRotatorMode, resolveSlotPreset, recordSlotRotationHistory } from './engine/slotRotator.js';
+import { renderBiometricsUI } from './ui/renderBiometrics.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
 let activeSlotIndex = 0;
@@ -1104,6 +1105,8 @@ if (freshBtn && focusBtn) {
         saveVaultData(data.vault);
       }
 
+      renderBiometricsUI();
+      
       // Re-render UI views with fresh cloud state
       renderVault();
       renderArtifactsTray();
