@@ -472,6 +472,26 @@ export const MOVEMENT_INTEL = {
     cue: "March or walk forward keeping shoulders and hips dead level despite the uneven load.",
     safety: "Resist lateral spine flexion. Fight the pull to tilt."
   },
+  "DB Lateral Raise (Scapular Plane)": {
+    muscles: "Lateral (Medial) Deltoids & Supraspinatus",
+    setup: "Stand tall (or sit upright on a bench) holding light dumbbells at your sides with a soft 10° bend in your elbows and thumbs tilted slightly upward.",
+    cue: "Raise both dumbbells out in the scapular plane (30° forward of your torso rather than dead straight to the sides) until elbows reach shoulder height. Pause 1s at top, then lower over 3 seconds.",
+    safety: "Keep upper traps relaxed and depressed away from your ears—if you have to shrug or swing your torso to clear shoulder height, drop the dumbbell weight."
+  },
+
+  "DB Front-to-Lateral Raise Combo": {
+    muscles: "Anterior Deltoids & Lateral (Medial) Deltoids",
+    setup: "Stand with feet shoulder-width apart and abs braced, holding light dumbbells in front of your thighs with a soft 10° elbow bend.",
+    cue: "Perform 1 strict front raise to eye level (palms down/neutral), lower with control, then immediately perform 1 lateral raise in the scapular plane to shoulder height = 1 full rep.",
+    safety: "Keep ribcage clamped down to your pelvis so your lower back does not hyperextend during the front-raise portion."
+  },
+
+  "Seated DB Rear Delt Raise (Bent-Over)": {
+    muscles: "Posterior Deltoids, Rhomboids & Mid-Trapezius",
+    setup: "Sit on the end of a flat bench with feet planted together, hinge your torso forward until your chest rests near your thighs, and hold light dumbbells hanging under your knees.",
+    cue: "With elbows softly bent and palms facing each other (or slightly backward), sweep both dumbbells out wide to the sides until upper arms are parallel to the floor. Squeeze rear delts for 1s at top.",
+    safety: "Keep your head neutral and chest supported over your legs—do not jerk your torso upward to lift the weights."
+  },
   "Lat Pulldown (Neutral/Mag-Grip)": {
     muscles: "Latissimus Dorsi, Teres Major, Lower Traps & Brachialis",
     setup: "Lock thighs firmly under roller pads. Grasp neutral or Mag-Grip attachment.",
