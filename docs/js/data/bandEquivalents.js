@@ -128,6 +128,8 @@ export const SLOT_BAND_EXTRAS = {
   A3: [
     "High Door-Anchor Tricep Pushdown",
     "Low Door-Anchor Overhead Tricep Extension",
+  "41\" Loop Band Seated Floor Z-Press",
+  "Low Door-Anchor Seated Z-Press",
     "Low Door-Anchor Tricep Kickback"
   ],
   A4: [
@@ -145,6 +147,8 @@ export const SLOT_BAND_EXTRAS = {
     "Low Door-Anchor Front / Side Delt Raise",
     "Low Door-Anchor Tube Upright Row",
     "41\" Loop Band Upright Row (Stand-on-Loop)",
+    "41\" Loop Band Seated Floor Z-Press",
+  "Low Door-Anchor Seated Z-Press",
     "Mini-Band Shoulder Tri-Set"
   ],
   B3: [
@@ -202,6 +206,8 @@ export const SLOT_BAND_EXTRAS = {
   ],
   D3: [
     "Low Door-Anchor Standing Oblique Side Bend",
+    "41\" Loop Band Seated Floor Z-Press",
+    "Low Door-Anchor Seated Z-Press",
     "Mini-Band Plank Knee Drive"
   ],
   D4: [
@@ -221,6 +227,8 @@ export const SLOT_BAND_EXTRAS = {
   E2: [
     "High Door-Anchor Tricep Pushdown",
     "Low Door-Anchor Overhead Tricep Extension",
+    "41\" Loop Band Seated Floor Z-Press",
+    "Low Door-Anchor Seated Z-Press",
     "Low Door-Anchor Tricep Kickback"
   ],
   E3: [
