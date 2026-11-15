@@ -40,7 +40,31 @@ function parseBiometricScans() {
 }
 
 /**
- * Finds the historical scan closest to `targetDaysAgo` (within a generous tolerance window)
+ * Finds the most recent non-zero / non-empty reading for a given field across all cached entries
+ */
+function getLatestMetricReading(allEntries, field, isNumeric = true) {
+  for (const entry of allEntries) {
+    const rawVal = entry[field];
+    if (isNumeric) {
+      const num = Number(rawVal);
+      if (num > 0) {
+        return {
+          value: num,
+          date: String(entry.date || entry.timestamp || '').split('T')[0]
+        };
+      }
+    } else if (rawVal && String(rawVal).trim() !== '') {
+      return {
+        value: String(rawVal).trim(),
+        date: String(entry.date || entry.timestamp || '').split('T')[0]
+      };
+    }
+  }
+  return null;
+}
+
+/**
+ * Finds the historical scale scan closest to `targetDaysAgo`
  */
 function findHistoricalAnchor(scaleScans, targetDaysAgo) {
   if (scaleScans.length < 2) return null;
@@ -51,7 +75,6 @@ function findHistoricalAnchor(scaleScans, targetDaysAgo) {
   let bestScan = null;
   let smallestDiff = Infinity;
 
-  // Skip index 0 (the current scan itself)
   for (let i = 1; i < scaleScans.length; i++) {
     const scanMs = scaleScans[i].dateObj.getTime();
     if (scanMs >= nowMs) continue;
@@ -73,15 +96,12 @@ function formatDeltaBadge(val, unit, invertColor = false) {
     return `<span style="color: #94a3b8; font-weight: 700; font-size: 11px;">0.0${unit}</span>`;
   }
   const sign = rounded > 0 ? '+' : '';
-  // invertColor = true for Lean Mass (gain = green, loss = amber/red)
-  // invertColor = false for Weight / Fat Mass / BF% (loss = green, gain = amber)
   const isPositiveOutcome = invertColor ? rounded > 0 : rounded < 0;
   const color = isPositiveOutcome ? '#4ade80' : '#facc15';
   return `<span style="color: ${color}; font-weight: 800; font-size: 11px; font-family: monospace;">${sign}${rounded}${unit}</span>`;
 }
 
 function buildTrendChartSVG(scaleScans, metricKey) {
-  // Take up to 24 most recent scans in chronological order (oldest -> newest)
   const points = [...scaleScans].slice(0, 24).reverse();
   if (points.length < 2) {
     return `
@@ -167,9 +187,9 @@ export function renderBiometricsUI() {
 
   const { allEntries, scaleScans } = parseBiometricScans();
   const latestScale = scaleScans[0] || null;
-  const latestWatch = allEntries[0] || null;
+  const latestSync = allEntries[0] || null;
 
-  if (!latestScale && !latestWatch) {
+  if (!latestScale && !latestSync) {
     mount.innerHTML = `
       <div class="card" style="text-align: center; padding: 24px 16px;">
         <div style="font-size: 13px; font-weight: 800; color: #38bdf8; margin-bottom: 6px;">🧬 BIOMETRIC TELEMETRY STANDBY</div>
@@ -180,6 +200,14 @@ export function renderBiometricsUI() {
     `;
     return;
   }
+
+  // Pull most recent valid reading per Watch8 / Health Connect vital
+  const latestSleep  = getLatestMetricReading(allEntries, 'sleepHrs', true);
+  const latestSteps  = getLatestMetricReading(allEntries, 'steps', true);
+  const latestHr     = getLatestMetricReading(allEntries, 'avgHr', true);
+  const latestSpo2   = getLatestMetricReading(allEntries, 'spo2Pct', true);
+  const latestBp     = getLatestMetricReading(allEntries, 'bp', false);
+  const latestCardio = getLatestMetricReading(allEntries, 'cardioMins', true);
 
   // Timeframe anchors: 1W (7d), 1M (30d), 3M (90d), 6M (180d)
   const horizons = [
@@ -205,11 +233,13 @@ export function renderBiometricsUI() {
     <div class="card" style="margin-bottom: 12px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
         <span class="card-title">🧬 LATEST BODY COMPOSITION</span>
-        <span style="font-size: 10px; font-weight: 700; color: #38bdf8;">${latestScale ? latestScale.dateLabel : 'WATCH ONLY'}</span>
+        <span style="font-size: 10px; font-weight: 700; color: #38bdf8;">
+          ${latestScale ? `SCALE: ${latestScale.dateLabel}` : 'AWAITING SCALE'}
+        </span>
       </div>
 
       ${latestScale ? `
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px;">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">
           <div style="background: rgba(15, 23, 42, 0.7); padding: 10px; border-radius: 8px; border-left: 3px solid #38bdf8;">
             <div style="font-size: 10px; color: #94a3b8; font-weight: 700;">TOTAL WEIGHT</div>
             <div style="font-size: 18px; font-weight: 900; color: #f8fafc; font-family: monospace;">${latestScale.weight.toFixed(1)} <span style="font-size: 11px; color: #94a3b8;">LBS</span></div>
@@ -229,14 +259,45 @@ export function renderBiometricsUI() {
         </div>
       ` : ''}
 
-      <!-- Galaxy Watch8 Vitals Strip -->
-      ${latestWatch ? `
-        <div style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 10px; color: #cbd5e1;">
-          ${Number(latestWatch.sleepHrs) > 0 ? `<span style="background: rgba(56,189,248,0.12); padding: 3px 7px; border-radius: 4px;">😴 Sleep: <b>${latestWatch.sleepHrs}h</b></span>` : ''}
-          ${Number(latestWatch.spo2Pct) > 0 ? `<span style="background: rgba(56,189,248,0.12); padding: 3px 7px; border-radius: 4px;">🫁 SpO2: <b>${latestWatch.spo2Pct}%</b></span>` : ''}
-          ${Number(latestWatch.avgHr) > 0 ? `<span style="background: rgba(56,189,248,0.12); padding: 3px 7px; border-radius: 4px;">❤️ Avg HR: <b>${latestWatch.avgHr} bpm</b></span>` : ''}
-          ${latestWatch.bp ? `<span style="background: rgba(56,189,248,0.12); padding: 3px 7px; border-radius: 4px;">🩺 BP: <b>${latestWatch.bp}</b></span>` : ''}
-          ${Number(latestWatch.cardioMins) > 0 ? `<span style="background: rgba(74,222,128,0.12); padding: 3px 7px; border-radius: 4px;">🏃 Cardio: <b>${latestWatch.cardioMins}m</b></span>` : ''}
+      <!-- Galaxy Watch8 Full Vitals Grid -->
+      ${latestSync ? `
+        <div style="padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08);">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 10px; font-weight: 800; color: #94a3b8; letter-spacing: 0.4px;">⌚ WATCH8 / HEALTH CONNECT VITALS</span>
+            <span style="font-size: 10px; color: #64748b;">SYNC: ${String(latestSync.date || '').split('T')[0]}</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 11px;">
+            <div style="background: rgba(15,23,42,0.55); padding: 6px 8px; border-radius: 6px;">
+              <div style="font-size: 9px; color: #94a3b8;">SLEEP</div>
+              <div style="font-weight: 800; color: #f8fafc; font-family: monospace;">${latestSleep ? `${latestSleep.value}h` : '—'}</div>
+              ${latestSleep ? `<div style="font-size: 8px; color: #64748b;">${latestSleep.date.slice(5)}</div>` : ''}
+            </div>
+            <div style="background: rgba(15,23,42,0.55); padding: 6px 8px; border-radius: 6px;">
+              <div style="font-size: 9px; color: #94a3b8;">STEPS</div>
+              <div style="font-weight: 800; color: #f8fafc; font-family: monospace;">${latestSteps ? latestSteps.value.toLocaleString() : '—'}</div>
+              ${latestSteps ? `<div style="font-size: 8px; color: #64748b;">${latestSteps.date.slice(5)}</div>` : ''}
+            </div>
+            <div style="background: rgba(15,23,42,0.55); padding: 6px 8px; border-radius: 6px;">
+              <div style="font-size: 9px; color: #94a3b8;">AVG HR</div>
+              <div style="font-weight: 800; color: #f8fafc; font-family: monospace;">${latestHr ? `${latestHr.value} bpm` : '—'}</div>
+              ${latestHr ? `<div style="font-size: 8px; color: #64748b;">${latestHr.date.slice(5)}</div>` : ''}
+            </div>
+            <div style="background: rgba(15,23,42,0.55); padding: 6px 8px; border-radius: 6px;">
+              <div style="font-size: 9px; color: #94a3b8;">SPO2</div>
+              <div style="font-weight: 800; color: #f8fafc; font-family: monospace;">${latestSpo2 ? `${latestSpo2.value}%` : '—'}</div>
+              ${latestSpo2 ? `<div style="font-size: 8px; color: #64748b;">${latestSpo2.date.slice(5)}</div>` : ''}
+            </div>
+            <div style="background: rgba(15,23,42,0.55); padding: 6px 8px; border-radius: 6px;">
+              <div style="font-size: 9px; color: #94a3b8;">BLOOD PRESS.</div>
+              <div style="font-weight: 800; color: #f8fafc; font-family: monospace;">${latestBp ? latestBp.value : '—'}</div>
+              ${latestBp ? `<div style="font-size: 8px; color: #64748b;">${latestBp.date.slice(5)}</div>` : ''}
+            </div>
+            <div style="background: rgba(15,23,42,0.55); padding: 6px 8px; border-radius: 6px;">
+              <div style="font-size: 9px; color: #94a3b8;">CARDIO</div>
+              <div style="font-weight: 800; color: #4ade80; font-family: monospace;">${latestCardio ? `${latestCardio.value}m` : '0m'}</div>
+              ${latestCardio ? `<div style="font-size: 8px; color: #64748b;">${latestCardio.date.slice(5)}</div>` : ''}
+            </div>
+          </div>
         </div>
       ` : ''}
     </div>
