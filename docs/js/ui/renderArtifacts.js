@@ -14,7 +14,7 @@ export const CHAOS_EMERALDS = [
   { id: 'blue',   name: 'Blue Chaos Emerald',   color: '#38bdf8', symbol: '💎', day: 'DAY_D' },
   { id: 'cyan',   name: 'Cyan Chaos Emerald',   color: '#22d3ee', symbol: '💎', day: 'DAY_E' },
   { id: 'red',    name: 'Red Chaos Emerald',    color: '#f87171', symbol: '💎', day: 'DAY_F' },
-  { id: 'white',  name: 'White Chaos Emerald',  color: '#f8fafc', symbol: '💎', day: 'CH_1RM' }
+  { id: 'white',  name: 'White Chaos Emerald',  color: '#f8fafc', symbol: '💎', day: 'DAY_G' }
 ];
 
 export const WORLD_RINGS = [
