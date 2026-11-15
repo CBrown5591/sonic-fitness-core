@@ -98,7 +98,8 @@ export function evaluateBiometricStatus(biometricsHistory = []) {
     latest,
     weeklyWatchCardioMins,
     hasWatchCardio: weeklyWatchCardioMins >= 15,
-    recoveryWarning
+    recoveryWarning,
+    bodyComp
   };
 }
 
