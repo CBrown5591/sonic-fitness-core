@@ -25,6 +25,7 @@ export const BAND_EQUIVALENTS = {
   "Suitcase Carry (Single-Arm)": "Single-Arm Banded Suitcase Isometric March",
   "Tall-Kneeling Pallof Hold (20s)": "Tall-Kneeling Banded Pallof Hold (20s)",
   "Elevated DB/KB Gorilla Row": "Banded Gorilla Row (41\" Loop Under Feet)",
+  "Seated Floor DB Z-Press": "41\" Loop Band Seated Floor Z-Press",
 
   // --- DAY B ---
   "Suitcase DB Squat": "Banded Dual-Loop Suitcase Squat",
