@@ -81,6 +81,7 @@ export function evaluateBiometricStatus(biometricsHistory = []) {
 
   const latest = recentBio[0] || null;
   const weeklyWatchCardioMins = recentBio.reduce((sum, b) => sum + (Number(b.cardioMins) || 0), 0);
+  const bodyComp = computeBodyCompDeltas(biometricsHistory);
 
   let recoveryWarning = null;
   if (latest) {
