@@ -826,15 +826,16 @@ export function finishSession() {
     });
 
     syncSessionToSheets({
-      stage: activeStageKey,
-      totalScore,
-      rank,
-      ringsBanked,
-      totalReps,
-      prehab: activeSession.prehabChecked,
-      jointPain: activeSession.jointPain,
-      sets: activeSession.sets
-    });
+        stage: activeStageKey,
+        totalScore,
+        rank,
+        ringsBanked,
+        goldRingsEarned: standardRingsEarned, // <--- ADD THIS LINE
+        totalReps,
+        prehab: activeSession.prehabChecked,
+        jointPain: activeSession.jointPain,
+        sets: activeSession.sets
+      });
   });
 }
 
