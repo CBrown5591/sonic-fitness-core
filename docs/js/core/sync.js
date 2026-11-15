@@ -1,6 +1,6 @@
 // -------------------------------------------------------------
 // GOOGLE SHEETS & COMMAND CORE TELEMETRY SYNC
-// Modular Core Subsystem: sync.js
+// Modular Core Subsystem: docs/js/core/sync.js
 // -------------------------------------------------------------
 
 const DEFAULT_WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxVl5oX6U2OwD6vI-KcJnR0srmjg64MLKY3CDuovFi20I_k_4Cc_t0a4XRy5KMo1AZo/exec";
@@ -56,13 +56,13 @@ export async function fetchSheetTelemetry() {
         }
       }
 
-      // 2. Sync Galaxy Watch8 / Health Connect BIOMETRICS rows from Sheet
+      // 2. Sync Galaxy Watch8 / Health Connect BIOMETRICS rows from Sheet (up to 200 rows for 6M trends)
       if (Array.isArray(data.biometrics)) {
         try {
           const sortedBio = [...data.biometrics].sort(
             (a, b) => new Date(b.timestamp || b.date || 0) - new Date(a.timestamp || a.date || 0)
           );
-          localStorage.setItem('sonic_biometrics_history', JSON.stringify(sortedBio.slice(0, 14)));
+          localStorage.setItem('sonic_biometrics_history', JSON.stringify(sortedBio.slice(0, 200)));
         } catch (e) {
           console.warn('[Telemetry] Could not cache biometrics history:', e);
         }
