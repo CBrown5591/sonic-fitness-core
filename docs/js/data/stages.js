@@ -60,6 +60,7 @@ export const STAGES = {
           "Incline DB Bench Press (30°)",
           "Cybex Eagle Overhead Shoulder Press",
           "Cybex Eagle Single-Arm Iso-Lateral Chest Press",
+          "Seated Floor DB Z-Press",
           "Incline Push-Up (Hands on Bench)",
           "Tempo Push-Up (3-0-1 Pause)"
         ]
@@ -119,6 +120,7 @@ export const STAGES = {
           "Bravo Cable Lateral Raise (Cross-Body)",
           "Bravo Incline Cable Y-Raise",
           "Neutral-Grip DB Floor Press",
+          "Seated Floor DB Z-Press",
           "Pike Push-Up (Hands or Feet Elevated)",
           "Incline Push-Up (Hands on Bench)"
         ]
@@ -278,6 +280,7 @@ export const STAGES = {
           "Farmer's Carries (Dual DB/KB)",
           "Overhead Waiter's Walk (Single DB)",
           "Bravo Anti-Extension Overhead Hold",
+          "Seated Floor DB Z-Press",
           "March in Place (Strict High Knees 45s)",
           "Bear Crawl (Forward & Reverse Paced)"
         ]
@@ -340,6 +343,7 @@ export const STAGES = {
           "Cybex Eagle Pec Fly (Machine)",
           "Cybex Eagle Single-Arm Iso-Lateral Chest Press",
           "Bravo Cable Overhead Tricep Extension",
+          "Seated Floor DB Z-Press",
           "Incline DB Bench Press (30°)",
           "Neutral-Grip DB Floor Press",
           "Incline Push-Up (Hands on Bench)",
