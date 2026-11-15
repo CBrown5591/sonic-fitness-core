@@ -1,5 +1,5 @@
 // -------------------------------------------------------------
-// 2-SESSION FLIGHT PATH, BIOMETRIC TELEMETRY & CARDIO ENGINE
+// 2-SESSION FLIGHT PATH, BIOMETRIC RECOVERY & BP ENGINE
 // Modular Engine: docs/js/engine/flightPath.js
 // -------------------------------------------------------------
 import { STAGES } from '../data/stages.js';
@@ -30,85 +30,70 @@ function getSessionMuscleTags(sessionObj) {
   return tags;
 }
 
-export function computeBodyCompDeltas(biometricsHistory = []) {
-  const validScans = [...biometricsHistory]
-    .filter(b => Number(b.weightLbs) > 0 && Number(b.bodyFatPct) > 0)
-    .sort((a, b) => new Date(b.timestamp || b.date || 0) - new Date(a.timestamp || a.date || 0))
-    .map(b => {
-      const weight = Number(b.weightLbs);
-      const bfPct = Number(b.bodyFatPct);
-      const fatMass = Number((weight * (bfPct / 100)).toFixed(1));
-      const leanMass = Number((weight - fatMass).toFixed(1));
-      return { ...b, weight, bfPct, fatMass, leanMass };
-    });
-
-  if (validScans.length === 0) return null;
-
-  const current = validScans[0];
-  const previous = validScans[1] || null;
-  const baseline = validScans[validScans.length - 1];
-
-  return {
-    current,
-    vsPrevious: previous ? {
-      deltaWeight: Number((current.weight - previous.weight).toFixed(1)),
-      deltaBfPct: Number((current.bfPct - previous.bfPct).toFixed(2)),
-      deltaFatMass: Number((current.fatMass - previous.fatMass).toFixed(1)),
-      deltaLeanMass: Number((current.leanMass - previous.leanMass).toFixed(1))
-    } : null,
-    vsBaseline: validScans.length > 1 ? {
-      deltaWeight: Number((current.weight - baseline.weight).toFixed(1)),
-      deltaBfPct: Number((current.bfPct - baseline.bfPct).toFixed(2)),
-      deltaFatMass: Number((current.fatMass - baseline.fatMass).toFixed(1)),
-      deltaLeanMass: Number((current.leanMass - baseline.leanMass).toFixed(1))
-    } : null
-  };
-}
-
 /**
- * Evaluates Galaxy Watch8 / Health Connect biometric trends over the last 7 days
+ * Extracts the latest non-zero biometric signals (Sleep, SpO2, BP, Scale)
  */
-export function evaluateBiometricStatus(biometricsHistory = []) {
-  const now = new Date();
-  const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
+function getLatestBiometricSignals() {
+  let bioHistory = [];
+  try {
+    bioHistory = JSON.parse(localStorage.getItem('sonic_biometrics_history') || '[]');
+  } catch (e) {
+    bioHistory = [];
+  }
+  if (!Array.isArray(bioHistory) || bioHistory.length === 0) return null;
 
-  const recentBio = biometricsHistory
-    .filter(b => {
-      const d = new Date(b.timestamp || b.date);
-      return !isNaN(d) && d >= sevenDaysAgo;
-    })
-    .sort((a, b) => new Date(b.timestamp || b.date || 0) - new Date(a.timestamp || a.date || 0));
+  const sorted = [...bioHistory].sort(
+    (a, b) => new Date(b.timestamp || b.date || 0) - new Date(a.timestamp || a.date || 0)
+  );
 
-  const latest = recentBio[0] || null;
-  const weeklyWatchCardioMins = recentBio.reduce((sum, b) => sum + (Number(b.cardioMins) || 0), 0);
-  const bodyComp = computeBodyCompDeltas(biometricsHistory);
+  const nowMs = Date.now();
+  const fortyEightHoursMs = 48 * 60 * 60 * 1000;
 
-  let recoveryWarning = null;
-  if (latest) {
-    const sleep = Number(latest.sleepHrs) || 0;
-    const spo2 = Number(latest.spo2Pct) || 0;
-
-    if (sleep > 0 && sleep < 6.0) {
-      recoveryWarning = `Low Sleep (${sleep}h) — Recovery Deload Recommended`;
-    } else if (spo2 > 0 && spo2 < 94) {
-      recoveryWarning = `Low SpO2 (${spo2}%) — Recovery Deload Recommended`;
+  // 1. Latest Blood Pressure within last 48 hours
+  let latestBp = null;
+  for (const row of sorted) {
+    const bpRaw = String(row.bp || '').trim();
+    if (bpRaw && bpRaw.includes('/')) {
+      const [sysStr, diaStr] = bpRaw.split('/');
+      const sys = parseInt(sysStr, 10);
+      const dia = parseInt(diaStr, 10);
+      const ts = new Date(row.timestamp || row.date || 0).getTime();
+      if (!isNaN(sys) && !isNaN(dia) && sys > 0 && dia > 0) {
+        const isRecent = !isNaN(ts) && (nowMs - ts) <= fortyEightHoursMs;
+        latestBp = { sys, dia, raw: `${sys}/${dia}`, isRecent };
+        break;
+      }
     }
   }
 
-  return {
-    latest,
-    weeklyWatchCardioMins,
-    hasWatchCardio: weeklyWatchCardioMins >= 15,
-    recoveryWarning,
-    bodyComp
-  };
+  // 2. Latest Sleep & SpO2 within last 48 hours
+  const latestSleepRow = sorted.find(r => Number(r.sleepHrs) > 0);
+  const latestSpo2Row = sorted.find(r => Number(r.spo2Pct) > 0);
+
+  let recentSleepHrs = null;
+  if (latestSleepRow) {
+    const ts = new Date(latestSleepRow.timestamp || latestSleepRow.date || 0).getTime();
+    if (!isNaN(ts) && (nowMs - ts) <= fortyEightHoursMs) {
+      recentSleepHrs = Number(latestSleepRow.sleepHrs);
+    }
+  }
+
+  let recentSpo2Pct = null;
+  if (latestSpo2Row) {
+    const ts = new Date(latestSpo2Row.timestamp || latestSpo2Row.date || 0).getTime();
+    if (!isNaN(ts) && (nowMs - ts) <= fortyEightHoursMs) {
+      recentSpo2Pct = Number(latestSpo2Row.spo2Pct);
+    }
+  }
+
+  return { latestBp, recentSleepHrs, recentSpo2Pct };
 }
 
 /**
- * Evaluates whether at least one cardio sortie (Days G/H/I, cardio finisher, or Watch8 workout)
+ * Evaluates whether at least one cardio sortie (Days G/H/I or cardio finisher)
  * was completed within the rolling 7-day training window.
  */
-export function evaluateWeeklyCardioStatus(sessionHistory = [], biometricsHistory = []) {
+export function evaluateWeeklyCardioStatus(sessionHistory = []) {
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
 
@@ -129,9 +114,7 @@ export function evaluateWeeklyCardioStatus(sessionHistory = [], biometricsHistor
     return s.sets.some(set => CARDIO_CONFIGS[set.exercise] !== undefined);
   });
 
-  const bioStatus = evaluateBiometricStatus(biometricsHistory);
-  const cardioFulfilled = hasDedicatedCardio || hasCardioFinisher || bioStatus.hasWatchCardio;
-
+  const cardioFulfilled = hasDedicatedCardio || hasCardioFinisher;
   const daysSinceMonday = (now.getDay() + 6) % 7; // 0 = Mon, 6 = Sun
   const isUrgent = !cardioFulfilled && daysSinceMonday >= 3; // Escalates starting Thursday
 
@@ -139,24 +122,19 @@ export function evaluateWeeklyCardioStatus(sessionHistory = [], biometricsHistor
     cardioFulfilled,
     hasDedicatedCardio,
     hasCardioFinisher,
-    hasWatchCardio: bioStatus.hasWatchCardio,
-    weeklyWatchCardioMins: bioStatus.weeklyWatchCardioMins,
     isUrgent,
     sessionsInWindow: recentSessions.length
   };
 }
 
 /**
- * Recommends the next sortie by analyzing:
- * 1. Weekly Cardio Guarantee (PWA sessions + Watch8 ExerciseSessionRecord)
- * 2. Joint Strain OR Watch8 Sleep/SpO2 Recovery Warning -> elevates Day F
- * 3. 2-Session Cumulative Muscle Freshness (lowest fatigue overlap wins)
+ * Recommends the next sortie using Biometrics (BP, Sleep, SpO2),
+ * Weekly Cardio Guarantee, Joint Strain, and 2-Session Muscle Freshness.
  */
-export function determineFlightPath(lastStages = [], sessionHistory = [], biometricsHistory = []) {
-  const cardioStatus = evaluateWeeklyCardioStatus(sessionHistory, biometricsHistory);
-  const bioStatus = evaluateBiometricStatus(biometricsHistory);
+export function determineFlightPath(lastStages = [], sessionHistory = []) {
+  const cardioStatus = evaluateWeeklyCardioStatus(sessionHistory);
+  const bioSignals = getLatestBiometricSignals();
 
-  // Normalize last 2 sessions (newest first)
   const sortedHistory = [...sessionHistory].sort(
     (a, b) => new Date(b.timestamp || b.date || 0) - new Date(a.timestamp || a.date || 0)
   );
@@ -173,36 +151,62 @@ export function determineFlightPath(lastStages = [], sessionHistory = [], biomet
   }
   const lastTwoStageIds = recentStageIds.slice(0, 2);
 
-  // 1. Weekly Cardio Guarantee Override (Mid-to-late week if unfulfilled)
+  // 1. HIGH BLOOD PRESSURE OVERRIDE (Tier 1: >= 160/100 within 48h)
+  let bpElevatesZone2 = false;
+  if (bioSignals?.latestBp?.isRecent) {
+    const { sys, dia, raw } = bioSignals.latestBp;
+    if (sys >= 160 || dia >= 100) {
+      const targetStage = !lastTwoStageIds.includes('DAY_F') && STAGES.DAY_F ? 'DAY_F' : 'DAY_G';
+      return {
+        recommendedStage: targetStage,
+        reason: `BP Alert (${raw} mmHg) — Pause heavy straining; favor ${targetStage === 'DAY_F' ? 'Day F Recovery' : 'Zone 2 Aerobic Base'}`,
+        isCardioOverride: true,
+        isBiometricAlert: true,
+        canPairFinisher: true,
+        analyzedSessions: lastTwoSessions.length
+      };
+    }
+    if (sys >= 135 || dia >= 85) {
+      bpElevatesZone2 = true;
+    }
+  }
+
+  // 2. SLEEP / SpO2 / JOINT STRAIN DELOAD OVERRIDE
+  const lowSleep = bioSignals?.recentSleepHrs !== null && bioSignals?.recentSleepHrs < 5.5;
+  const lowSpo2 = bioSignals?.recentSpo2Pct !== null && bioSignals?.recentSpo2Pct < 93;
+  const hadRecentStrain =
+    lastTwoSessions.some(s => s.jointPain === true || s.jointPain === 'true') ||
+    localStorage.getItem('sonic_last_strain') === 'true';
+
+  if ((lowSleep || lowSpo2 || hadRecentStrain) && !lastTwoStageIds.includes('DAY_F') && STAGES.DAY_F) {
+    let deloadReason = "Joint Shield Recovery — Active Deload after recent strain flag";
+    if (lowSleep) deloadReason = `Recovery Deload — Low sleep logged (${bioSignals.recentSleepHrs} hrs)`;
+    else if (lowSpo2) deloadReason = `Recovery Deload — Low SpO2 logged (${bioSignals.recentSpo2Pct}%)`;
+
+    return {
+      recommendedStage: 'DAY_F',
+      reason: deloadReason,
+      isCardioOverride: false,
+      isBiometricAlert: lowSleep || lowSpo2,
+      canPairFinisher: !cardioStatus.cardioFulfilled || bpElevatesZone2,
+      analyzedSessions: lastTwoSessions.length
+    };
+  }
+
+  // 3. WEEKLY CARDIO GUARANTEE OVERRIDE (Mid-to-late week if unfulfilled)
   if (!cardioStatus.cardioFulfilled && cardioStatus.isUrgent) {
     const nextCardio = DEDICATED_CARDIO_DAYS.find(c => !lastTwoStageIds.includes(c)) || 'DAY_G';
     return {
       recommendedStage: nextCardio,
       reason: "Weekly Cardio Guarantee (0 conditioning sorties in 7 days)",
       isCardioOverride: true,
+      isBiometricAlert: false,
       canPairFinisher: true,
       analyzedSessions: lastTwoSessions.length
     };
   }
 
-  // 2. Joint Strain OR Biometric Sleep/SpO2 Recovery Override -> Day F (Deload)
-  const hadRecentStrain =
-    lastTwoSessions.some(s => s.jointPain === true || s.jointPain === 'true') ||
-    localStorage.getItem('sonic_last_strain') === 'true';
-
-  if ((hadRecentStrain || bioStatus.recoveryWarning) && !lastTwoStageIds.includes('DAY_F') && STAGES.DAY_F) {
-    return {
-      recommendedStage: 'DAY_F',
-      reason: hadRecentStrain
-        ? "Joint Shield Recovery — Active Deload after recent strain flag"
-        : bioStatus.recoveryWarning,
-      isCardioOverride: false,
-      canPairFinisher: !cardioStatus.cardioFulfilled,
-      analyzedSessions: lastTwoSessions.length
-    };
-  }
-
-  // 3. 2-Session Cumulative Muscle-Freshness Scoring
+  // 4. 2-SESSION CUMULATIVE MUSCLE-FRESHNESS SCORING
   const fatigueWeights = {};
   if (lastTwoSessions.length > 0) {
     lastTwoSessions.forEach((sess, idx) => {
@@ -257,19 +261,21 @@ export function determineFlightPath(lastStages = [], sessionHistory = [], biomet
     .slice(0, 2)
     .map(([muscle]) => muscle.replace('_', ' '));
 
-  let reasonText = topFatiguedMuscles.length > 0
-    ? `2-Session Freshness Pick (Spares ${topFatiguedMuscles.join(' & ')})`
-    : "2-Session Freshness Rotation";
+  let reasonText =
+    topFatiguedMuscles.length > 0
+      ? `2-Session Freshness Pick (Spares ${topFatiguedMuscles.join(' & ')})`
+      : "2-Session Freshness Rotation";
 
-  if (bioStatus.hasWatchCardio) {
-    reasonText += ` • Watch Cardio ✓ (${bioStatus.weeklyWatchCardioMins}m)`;
+  if (bpElevatesZone2) {
+    reasonText += ` • Elevated BP (${bioSignals.latestBp.raw}) — Zone 2 Finisher Advised`;
   }
 
   return {
     recommendedStage: bestStage,
     reason: reasonText,
     isCardioOverride: false,
-    canPairFinisher: !cardioStatus.cardioFulfilled,
+    isBiometricAlert: bpElevatesZone2,
+    canPairFinisher: !cardioStatus.cardioFulfilled || bpElevatesZone2,
     analyzedSessions: Math.max(lastTwoSessions.length, lastTwoStageIds.length)
   };
 }
@@ -281,19 +287,21 @@ export function checkAndRenderFlightPathPrompt(activeSession, onSelectStage) {
   const mount = document.getElementById('flightPathMount');
   if (!mount) return;
 
+  const rawHistory = localStorage.getItem('sonic_session_history');
   let history = [];
-  try { history = JSON.parse(localStorage.getItem('sonic_session_history')) || []; } catch (e) {}
-
-  let biometrics = [];
-  try { biometrics = JSON.parse(localStorage.getItem('sonic_biometrics_history')) || []; } catch (e) {}
+  try { history = JSON.parse(rawHistory) || []; } catch (e) {}
 
   const lastStage = localStorage.getItem('sonic_last_stage') || 'DAY_A';
-  const flight = determineFlightPath([lastStage], history, biometrics);
+  const flight = determineFlightPath([lastStage], history);
+
+  const badgeLabel = flight.isBiometricAlert
+    ? '🩺 BIOMETRIC FLIGHT ALERT'
+    : (flight.isCardioOverride ? '🚨 CARDIO MANDATE' : '🧭 2-SESSION FLIGHT PATH');
 
   mount.innerHTML = `
-    <div class="flight-path-card ${flight.isCardioOverride ? 'is-mandate' : ''}">
+    <div class="flight-path-card ${flight.isCardioOverride || flight.isBiometricAlert ? 'is-mandate' : ''}">
       <div class="flight-path-info">
-        <div class="flight-path-tag">${flight.isCardioOverride ? '🚨 CARDIO MANDATE' : '🧭 FLIGHT PATH RECOMMENDATION'}</div>
+        <div class="flight-path-tag">${badgeLabel}</div>
         <div class="flight-path-text">
           <b>${flight.recommendedStage.replace('_', ' ')}</b> <span>— ${flight.reason}</span>
         </div>
