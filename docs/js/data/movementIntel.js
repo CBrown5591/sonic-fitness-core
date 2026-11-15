@@ -1281,6 +1281,27 @@ export const MOVEMENT_INTEL = {
     safety: "Keep your spine neutral and chest supported by your hip hinge—do not round the lower back."
   },
 
+  "Seated Floor DB Z-Press": {
+    muscles: "Anterior & Lateral Deltoids, Triceps, Thoracic Extensors & Anterior Core",
+    setup: "Sit flat on the floor with legs extended straight out in a comfortable 'V' (use a folded pad/abmat under glutes if hamstrings are tight). Hold dumbbells at shoulder height with palms semi-neutral.",
+    cue: "Sit tall like a pillar with ribs clamped down over pelvis. Press dumbbells straight overhead in the scapular plane to full lockout without leaning backward, then lower over 3 seconds.",
+    safety: "Zero backrest support—if your lower back arches or you lean backward to press the weight, drop the dumbbell load immediately."
+  },
+
+  "41\" Loop Band Seated Floor Z-Press": {
+    muscles: "Anterior & Lateral Deltoids, Triceps & Anti-Extension Trunk",
+    setup: "Sit flat on the floor with legs extended straight in front. Anchor one end of a 41\" loop band flat under your glutes/upper hamstrings (or hooked around the arches of your feet) and hold the top loop at shoulder height.",
+    cue: "Brace your abs hard to keep your torso dead vertical. Press the band straight overhead against ascending elastic tension, pausing 1 second at full extension.",
+    safety: "Keep heels firmly planted if anchoring under your feet so the band cannot slip off your shoes."
+  },
+
+  "Low Door-Anchor Seated Z-Press": {
+    muscles: "Anterior & Lateral Deltoids, Triceps & Core Stability",
+    setup: "Anchor handled tubes at the VERY BOTTOM of the door frame. Sit on the floor facing away from the door with legs extended straight out in front, holding handles at shoulder height.",
+    cue: "Keep your torso upright and ribs tucked down. Press handles upward and slightly forward to full overhead lockout, resisting the backward cable pull.",
+    safety: "Do not let the low door anchor pull your shoulders backward or hyperextend your lumbar spine."
+  },
+
   "41\" Loop Band Bent-Over Row (Stand-on-Loop)": {
     muscles: "Latissimus Dorsi, Rhomboids, Mid-Traps & Posterior Deltoids",
     setup: "Stand with both feet hip-width on the center of a 41\" loop band. Hinge hips back to a 45° torso angle with a flat back, gripping the left and right loop ends.",
