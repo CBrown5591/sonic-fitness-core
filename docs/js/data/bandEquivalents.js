@@ -26,6 +26,9 @@ export const BAND_EQUIVALENTS = {
   "Tall-Kneeling Pallof Hold (20s)": "Tall-Kneeling Banded Pallof Hold (20s)",
   "Elevated DB/KB Gorilla Row": "Banded Gorilla Row (41\" Loop Under Feet)",
   "Seated Floor DB Z-Press": "41\" Loop Band Seated Floor Z-Press",
+  "DB Lateral Raise (Scapular Plane)": "Low Door-Anchor Front / Side Delt Raise",
+  "DB Front-to-Lateral Raise Combo": "Low Door-Anchor Front / Side Delt Raise",
+  "Seated DB Rear Delt Raise (Bent-Over)": "Low Door-Anchor Bent-Over Rear Delt Raise",
 
   // --- DAY B ---
   "Suitcase DB Squat": "Banded Dual-Loop Suitcase Squat",
