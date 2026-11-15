@@ -121,6 +121,8 @@ export const STAGES = {
           "Bravo Incline Cable Y-Raise",
           "Neutral-Grip DB Floor Press",
           "Seated Floor DB Z-Press",
+          "DB Lateral Raise (Scapular Plane)",
+          "DB Front-to-Lateral Raise Combo",
           "Pike Push-Up (Hands or Feet Elevated)",
           "Incline Push-Up (Hands on Bench)"
         ]
@@ -152,6 +154,8 @@ export const STAGES = {
           "Cybex Eagle Rear Delt Fly",
           "Bravo Incline Cable Y-Raise",
           "Bravo Cable Lateral Raise (Cross-Body)",
+          "DB Lateral Raise (Scapular Plane)",
+          "DB Front-to-Lateral Raise Combo",
           "Side-Lying DB External Rotation",
           "Prone Scapular Y-T-W Raises"
         ]
@@ -346,6 +350,8 @@ export const STAGES = {
           "Seated Floor DB Z-Press",
           "Incline DB Bench Press (30°)",
           "Neutral-Grip DB Floor Press",
+          "DB Lateral Raise (Scapular Plane)",
+          "DB Front-to-Lateral Raise Combo",
           "Incline Push-Up (Hands on Bench)",
           "Tempo Push-Up (3-0-1 Pause)"
         ]
@@ -382,6 +388,7 @@ export const STAGES = {
           "Bravo Cable Hammer Curl (Rope)",
           "Chest-Supported Dumbbell Row",
           "Elevated DB/KB Gorilla Row",
+          "Seated DB Rear Delt Raise (Bent-Over)",
           "Bravo Dual-Cable Row (Mid-Height)",
           "Lat Pulldown (Neutral/Mag-Grip)",
           "Single-Arm Iso-Lateral Pulldown",
@@ -446,6 +453,9 @@ export const STAGES = {
           "Bravo Incline Cable Y-Raise",
           "Bravo Cable Lateral Raise (Cross-Body)",
           "Side-Lying DB External Rotation",
+          "Seated DB Rear Delt Raise (Bent-Over)",
+          "DB Lateral Raise (Scapular Plane)",
+          "DB Front-to-Lateral Raise Combo",
           "Prone Scapular Y-T-W Raises"
         ]
       },
