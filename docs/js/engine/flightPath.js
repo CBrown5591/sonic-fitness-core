@@ -1,5 +1,5 @@
 // -------------------------------------------------------------
-// 2-SESSION FLIGHT PATH & CUMULATIVE FRESHNESS ENGINE (TSK-13)
+// 2-SESSION FLIGHT PATH, BIOMETRIC TELEMETRY & CARDIO ENGINE
 // Modular Engine: docs/js/engine/flightPath.js
 // -------------------------------------------------------------
 import { STAGES } from '../data/stages.js';
@@ -23,7 +23,6 @@ function getSessionMuscleTags(sessionObj) {
       }
     }
   } else if (sessionObj?.stage && STAGES[sessionObj.stage]?.slots) {
-    // Fallback to stage primary movements if historical row only stored stage ID
     for (const slot of STAGES[sessionObj.stage].slots) {
       tags.push(...getExerciseMuscleTags(slot.primary));
     }
@@ -32,10 +31,47 @@ function getSessionMuscleTags(sessionObj) {
 }
 
 /**
- * Evaluates whether at least one cardio sortie (Days G/H/I or cardio finisher)
+ * Evaluates Galaxy Watch8 / Health Connect biometric trends over the last 7 days
+ */
+export function evaluateBiometricStatus(biometricsHistory = []) {
+  const now = new Date();
+  const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
+
+  const recentBio = biometricsHistory
+    .filter(b => {
+      const d = new Date(b.timestamp || b.date);
+      return !isNaN(d) && d >= sevenDaysAgo;
+    })
+    .sort((a, b) => new Date(b.timestamp || b.date || 0) - new Date(a.timestamp || a.date || 0));
+
+  const latest = recentBio[0] || null;
+  const weeklyWatchCardioMins = recentBio.reduce((sum, b) => sum + (Number(b.cardioMins) || 0), 0);
+
+  let recoveryWarning = null;
+  if (latest) {
+    const sleep = Number(latest.sleepHrs) || 0;
+    const spo2 = Number(latest.spo2Pct) || 0;
+
+    if (sleep > 0 && sleep < 6.0) {
+      recoveryWarning = `Low Sleep (${sleep}h) — Recovery Deload Recommended`;
+    } else if (spo2 > 0 && spo2 < 94) {
+      recoveryWarning = `Low SpO2 (${spo2}%) — Recovery Deload Recommended`;
+    }
+  }
+
+  return {
+    latest,
+    weeklyWatchCardioMins,
+    hasWatchCardio: weeklyWatchCardioMins >= 15,
+    recoveryWarning
+  };
+}
+
+/**
+ * Evaluates whether at least one cardio sortie (Days G/H/I, cardio finisher, or Watch8 workout)
  * was completed within the rolling 7-day training window.
  */
-export function evaluateWeeklyCardioStatus(sessionHistory = []) {
+export function evaluateWeeklyCardioStatus(sessionHistory = [], biometricsHistory = []) {
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
 
@@ -56,7 +92,9 @@ export function evaluateWeeklyCardioStatus(sessionHistory = []) {
     return s.sets.some(set => CARDIO_CONFIGS[set.exercise] !== undefined);
   });
 
-  const cardioFulfilled = hasDedicatedCardio || hasCardioFinisher;
+  const bioStatus = evaluateBiometricStatus(biometricsHistory);
+  const cardioFulfilled = hasDedicatedCardio || hasCardioFinisher || bioStatus.hasWatchCardio;
+
   const daysSinceMonday = (now.getDay() + 6) % 7; // 0 = Mon, 6 = Sun
   const isUrgent = !cardioFulfilled && daysSinceMonday >= 3; // Escalates starting Thursday
 
@@ -64,19 +102,22 @@ export function evaluateWeeklyCardioStatus(sessionHistory = []) {
     cardioFulfilled,
     hasDedicatedCardio,
     hasCardioFinisher,
+    hasWatchCardio: bioStatus.hasWatchCardio,
+    weeklyWatchCardioMins: bioStatus.weeklyWatchCardioMins,
     isUrgent,
     sessionsInWindow: recentSessions.length
   };
 }
 
 /**
- * Recommends the next sortie by analyzing the LAST 2 SESSIONS:
- * 1. Enforces Weekly Cardio Guarantee if urgent.
- * 2. Checks for recent Joint Strain -> elevates Day F (Deload) if fresh.
- * 3. Scores remaining stages by 2-Session Cumulative Muscle Freshness (lowest overlap wins).
+ * Recommends the next sortie by analyzing:
+ * 1. Weekly Cardio Guarantee (PWA sessions + Watch8 ExerciseSessionRecord)
+ * 2. Joint Strain OR Watch8 Sleep/SpO2 Recovery Warning -> elevates Day F
+ * 3. 2-Session Cumulative Muscle Freshness (lowest fatigue overlap wins)
  */
-export function determineFlightPath(lastStages = [], sessionHistory = []) {
-  const cardioStatus = evaluateWeeklyCardioStatus(sessionHistory);
+export function determineFlightPath(lastStages = [], sessionHistory = [], biometricsHistory = []) {
+  const cardioStatus = evaluateWeeklyCardioStatus(sessionHistory, biometricsHistory);
+  const bioStatus = evaluateBiometricStatus(biometricsHistory);
 
   // Normalize last 2 sessions (newest first)
   const sortedHistory = [...sessionHistory].sort(
@@ -84,7 +125,6 @@ export function determineFlightPath(lastStages = [], sessionHistory = []) {
   );
   const lastTwoSessions = sortedHistory.slice(0, 2);
 
-  // Build ordered list of last 2 stage IDs (merging history + fallback localStorage stages)
   const recentStageIds = [];
   for (const s of lastTwoSessions) {
     const stg = (s.stage || s.Stage || '').toUpperCase();
@@ -108,26 +148,28 @@ export function determineFlightPath(lastStages = [], sessionHistory = []) {
     };
   }
 
-  // 2. Joint Strain Recovery Check across the last 2 sorties
+  // 2. Joint Strain OR Biometric Sleep/SpO2 Recovery Override -> Day F (Deload)
   const hadRecentStrain =
     lastTwoSessions.some(s => s.jointPain === true || s.jointPain === 'true') ||
     localStorage.getItem('sonic_last_strain') === 'true';
 
-  if (hadRecentStrain && !lastTwoStageIds.includes('DAY_F') && STAGES.DAY_F) {
+  if ((hadRecentStrain || bioStatus.recoveryWarning) && !lastTwoStageIds.includes('DAY_F') && STAGES.DAY_F) {
     return {
       recommendedStage: 'DAY_F',
-      reason: "Joint Shield Recovery — Active Deload after recent strain flag",
+      reason: hadRecentStrain
+        ? "Joint Shield Recovery — Active Deload after recent strain flag"
+        : bioStatus.recoveryWarning,
       isCardioOverride: false,
       canPairFinisher: !cardioStatus.cardioFulfilled,
       analyzedSessions: lastTwoSessions.length
     };
   }
 
-  // 3. 2-Session Cumulative Muscle-Freshness Scoring (Fresh Mode cross-session extension)
+  // 3. 2-Session Cumulative Muscle-Freshness Scoring
   const fatigueWeights = {};
   if (lastTwoSessions.length > 0) {
     lastTwoSessions.forEach((sess, idx) => {
-      const weight = idx === 0 ? 1.5 : 1.0; // Most recent session carries 1.5x fatigue weight
+      const weight = idx === 0 ? 1.5 : 1.0;
       const tags = getSessionMuscleTags(sess);
       tags.forEach(tag => {
         if (tag !== 'general') {
@@ -136,7 +178,6 @@ export function determineFlightPath(lastStages = [], sessionHistory = []) {
       });
     });
   } else {
-    // Fallback if history array is empty: infer from lastTwoStageIds primary slots
     lastTwoStageIds.forEach((stgId, idx) => {
       const weight = idx === 0 ? 1.5 : 1.0;
       const tags = getSessionMuscleTags({ stage: stgId });
@@ -148,7 +189,6 @@ export function determineFlightPath(lastStages = [], sessionHistory = []) {
     });
   }
 
-  // Filter out the last 2 stages played so we never ping-pong back-to-back
   const candidateStages = LIFTING_STAGES.filter(
     stg => STAGES[stg] && !lastTwoStageIds.includes(stg)
   );
@@ -166,7 +206,6 @@ export function determineFlightPath(lastStages = [], sessionHistory = []) {
       }
     });
 
-    // Normalize by number of slots in the stage so 4-slot and 3-slot stages compare fairly
     const slotCount = STAGES[stgId]?.slots?.length || 4;
     const normalizedOverlap = overlap / slotCount;
 
@@ -176,16 +215,18 @@ export function determineFlightPath(lastStages = [], sessionHistory = []) {
     }
   });
 
-  // Format human-readable reason citing the top fatigued muscles avoided
   const topFatiguedMuscles = Object.entries(fatigueWeights)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 2)
     .map(([muscle]) => muscle.replace('_', ' '));
 
-  const reasonText =
-    topFatiguedMuscles.length > 0
-      ? `2-Session Freshness Pick (Spares ${topFatiguedMuscles.join(' & ')})`
-      : "2-Session Freshness Rotation";
+  let reasonText = topFatiguedMuscles.length > 0
+    ? `2-Session Freshness Pick (Spares ${topFatiguedMuscles.join(' & ')})`
+    : "2-Session Freshness Rotation";
+
+  if (bioStatus.hasWatchCardio) {
+    reasonText += ` • Watch Cardio ✓ (${bioStatus.weeklyWatchCardioMins}m)`;
+  }
 
   return {
     recommendedStage: bestStage,
@@ -203,17 +244,19 @@ export function checkAndRenderFlightPathPrompt(activeSession, onSelectStage) {
   const mount = document.getElementById('flightPathMount');
   if (!mount) return;
 
-  const rawHistory = localStorage.getItem('sonic_session_history');
   let history = [];
-  try { history = JSON.parse(rawHistory) || []; } catch (e) {}
+  try { history = JSON.parse(localStorage.getItem('sonic_session_history')) || []; } catch (e) {}
+
+  let biometrics = [];
+  try { biometrics = JSON.parse(localStorage.getItem('sonic_biometrics_history')) || []; } catch (e) {}
 
   const lastStage = localStorage.getItem('sonic_last_stage') || 'DAY_A';
-  const flight = determineFlightPath([lastStage], history);
+  const flight = determineFlightPath([lastStage], history, biometrics);
 
   mount.innerHTML = `
     <div class="flight-path-card ${flight.isCardioOverride ? 'is-mandate' : ''}">
       <div class="flight-path-info">
-        <div class="flight-path-tag">${flight.isCardioOverride ? '🚨 CARDIO MANDATE' : '🧭 2-SESSION FLIGHT PATH'}</div>
+        <div class="flight-path-tag">${flight.isCardioOverride ? '🚨 CARDIO MANDATE' : '🧭 FLIGHT PATH RECOMMENDATION'}</div>
         <div class="flight-path-text">
           <b>${flight.recommendedStage.replace('_', ' ')}</b> <span>— ${flight.reason}</span>
         </div>
