@@ -1084,8 +1084,11 @@ if (freshBtn && focusBtn) {
       }
       // =========================================================
 
-      if (data.stages) {
-        localStorage.setItem('sonic_stage_statuses', JSON.stringify(data.stages));
+      // Re-evaluate Flight Path once Sheet stages, sessions, or Watch8 biometrics arrive
+      if (data.stages || data.recentSessions || data.biometrics) {
+        if (data.stages) {
+          localStorage.setItem('sonic_stage_statuses', JSON.stringify(data.stages));
+        }
         checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
           selectStage(nextStage);
           showToast(`FLIGHT PATH ENGAGED: ${nextStage.replace('_', ' ')}!`);
