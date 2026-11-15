@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <title>Sonic Watch HUD</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body {
+      background: #090d16;
+      color: #f8fafc;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 18px 14px;
+      text-align: center;
+    }
+    .badge {
+      font-size: 10px;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      color: #38bdf8;
+      text-transform: uppercase;
+      margin-bottom: 4px;
+    }
+    .timer-display {
+      font-size: 46px;
+      font-weight: 900;
+      font-variant-numeric: tabular-nums;
+      color: #facc15;
+      line-height: 1.05;
+      margin: 4px 0 10px;
+    }
+    .timer-display.active { color: #4ade80; }
+    .timer-display.done { color: #f43f5e; }
+    .preset-grid {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      width: 100%;
+      max-width: 210px;
+      margin-bottom: 8px;
+    }
+    button {
+      border: none;
+      border-radius: 999px;
+      padding: 9px 6px;
+      font-size: 12px;
+      font-weight: 800;
+      cursor: pointer;
+      color: #090d16;
+      background: #38bdf8;
+    }
+    button:active { transform: scale(0.96); }
+    .btn-gold { background: #facc15; }
+    .btn-green { background: #4ade80; }
+    .btn-red { background: #f43f5e; color: #fff; }
+    .btn-dark { background: #1e293b; color: #e2e8f0; border: 1px solid #334155; }
+    .controls {
+      display: flex;
+      gap: 8px;
+      width: 100%;
+      max-width: 210px;
+      margin-bottom: 10px;
+    }
+    .controls button { flex: 1; padding: 10px; font-size: 13px; }
+    .log-box {
+      width: 100%;
+      max-width: 210px;
+      background: #111827;
+      border: 1px solid #1f2937;
+      border-radius: 16px;
+      padding: 8px;
+      margin-top: 4px;
+    }
+    .stepper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin: 4px 0 6px;
+    }
+    .stepper button { width: 32px; height: 32px; padding: 0; font-size: 16px; }
+    .stepper span { font-size: 13px; font-weight: 800; }
+    #statusMsg { font-size: 10px; color: #94a3b8; margin-top: 6px; min-height: 14px; }
+  </style>
+</head>
+<body>
+  <div class="badge" id="modeLabel">SONIC WATCH HUD</div>
+  <div class="timer-display" id="clock">00:45</div>
+
+  <!-- Quick Workout Timer Presets -->
+  <div class="preset-grid">
+    <button class="btn-dark" onclick="setTimer(30, 'HOLD / SURGE')">30s Hold</button>
+    <button class="btn-dark" onclick="setTimer(45, 'TUT SET')">45s TUT</button>
+    <button class="btn-dark" onclick="setTimer(60, 'REST / HIIT')">60s Rest</button>
+    <button class="btn-dark" onclick="setTimer(90, 'HEAVY REST')">90s Rest</button>
+  </div>
+
+  <!-- Start / Stop Controls -->
+  <div class="controls">
+    <button class="btn-green" id="toggleBtn" onclick="toggleTimer()">START</button>
+    <button class="btn-red" onclick="resetTimer()">RESET</button>
+  </div>
+
+  <!-- Quick Set Counter / Sheet Logger -->
+  <div class="log-box">
+    <div class="stepper">
+      <button class="btn-dark" onclick="adjReps(-1)">-</button>
+      <span id="repReadout">10 REPS</span>
+      <button class="btn-dark" onclick="adjReps(1)">+</button>
+    </div>
+    <button class="btn-gold" style="width:100%;" onclick="logQuickSet()">LOG SET ✓</button>
+  </div>
+
+  <div id="statusMsg">Ready</div>
+
+  <script>
+    const WEBHOOK_URL = "https://script.google.com/macros/s/AKfycbxVl5oX6U2OwD6vI-KcJnR0srmjg64MLKY3CDuovFi20I_k_4Cc_t0a4XRy5KMo1AZo/exec";
+    let defaultSec = 45;
+    let remaining = 45;
+    let intervalId = null;
+    let reps = 10;
+    let wakeLock = null;
+
+    const clockEl = document.getElementById('clock');
+    const labelEl = document.getElementById('modeLabel');
+    const toggleBtn = document.getElementById('toggleBtn');
+    const statusEl = document.getElementById('statusMsg');
+
+    function fmt(s) {
+      const m = String(Math.floor(s / 60)).padStart(2, '0');
+      const sec = String(s % 60).padStart(2, '0');
+      return `${m}:${sec}`;
+    }
+
+    function buzz(pattern) {
+      if (navigator.vibrate) navigator.vibrate(pattern);
+    }
+
+    async function keepAwake(enable) {
+      try {
+        if (enable && 'wakeLock' in navigator && !wakeLock) {
+          wakeLock = await navigator.wakeLock.request('screen');
+        } else if (!enable && wakeLock) {
+          await wakeLock.release();
+          wakeLock = null;
+        }
+      } catch (e) {}
+    }
+
+    function setTimer(sec, label) {
+      clearInterval(intervalId);
+      intervalId = null;
+      defaultSec = sec;
+      remaining = sec;
+      labelEl.textContent = label;
+      clockEl.className = 'timer-display';
+      clockEl.textContent = fmt(remaining);
+      toggleBtn.textContent = 'START';
+      keepAwake(false);
+    }
+
+    function toggleTimer() {
+      if (intervalId) {
+        clearInterval(intervalId);
+        intervalId = null;
+        toggleBtn.textContent = 'RESUME';
+        clockEl.className = 'timer-display';
+        keepAwake(false);
+        return;
+      }
+      if (remaining <= 0) remaining = defaultSec;
+      buzz(60);
+      keepAwake(true);
+      toggleBtn.textContent = 'PAUSE';
+      clockEl.className = 'timer-display active';
+
+      intervalId = setInterval(() => {
+        remaining--;
+        clockEl.textContent = fmt(Math.max(0, remaining));
+        if (remaining <= 3 && remaining > 0) buzz(40);
+        if (remaining <= 0) {
+          clearInterval(intervalId);
+          intervalId = null;
+          clockEl.className = 'timer-display done';
+          labelEl.textContent = 'TIME!';
+          toggleBtn.textContent = 'AGAIN';
+          buzz([250, 100, 250, 100, 400]);
+          keepAwake(false);
+        }
+      }, 1000);
+    }
+
+    function resetTimer() {
+      setTimer(defaultSec, 'SONIC WATCH HUD');
+    }
+
+    function adjReps(delta) {
+      reps = Math.max(1, reps + delta);
+      document.getElementById('repReadout').textContent = `${reps} REPS`;
+    }
+
+    async function logQuickSet() {
+      statusEl.textContent = 'Syncing...';
+      buzz(50);
+      try {
+        await fetch(WEBHOOK_URL, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            type: 'watch_quick_set',
+            reps: reps,
+            durationSec: defaultSec,
+            label: labelEl.textContent,
+            timestamp: new Date().toISOString()
+          })
+        });
+        statusEl.textContent = `Logged ${reps}r ✓`;
+      } catch (e) {
+        statusEl.textContent = 'Offline (Saved)';
+      }
+    }
+  </script>
+</body>
+</html>
