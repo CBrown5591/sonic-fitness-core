@@ -29,13 +29,10 @@
 <nav class="main-tab-nav" id="mainTabNav">
   <button type="button" class="main-tab-btn active" data-target="hudTab" onclick="switchMainTab('hudTab')">⚡ WORKOUT HUD</button>
   <button type="button" class="main-tab-btn" data-target="recordsTab" onclick="switchMainTab('recordsTab')">📊 RECORDS</button>
+  <button type="button" class="main-tab-btn" data-target="biometricsTab" onclick="switchMainTab('biometricsTab')">🧬 BIOMETRICS</button>
   <button type="button" class="main-tab-btn" data-target="vaultTab" onclick="switchMainTab('vaultTab')">🏛️ VAULT</button>
   <button type="button" class="main-tab-btn" data-target="skillsTab" onclick="switchMainTab('skillsTab')">✨ SKILL TREES</button>
-  <!-- Replace the music tab button -->
-<button class="main-tab-btn" onclick="switchMainTab('calcTab')" data-target="calcTab" type="button">
-  <span>🧮</span>
-  <span>CALC</span>
-</button>
+  <button type="button" class="main-tab-btn" data-target="musicTab" onclick="switchMainTab('musicTab')">🎧 AUDIO RIG</button>
 </nav>
   <section id="hudTab" class="main-tab-view active-tab-view">
   <div class="container">
@@ -211,6 +208,14 @@
   </div>
 
 </section>
+
+<!-- ========================================== -->
+<!-- TAB: BIOMETRICS & BODY COMPOSITION HUD     -->
+<!-- ========================================== -->
+<section id="biometricsTab" class="main-tab-view" style="display: none;">
+  <div id="biometricsTabMount"></div>
+</section>
+  
 <!-- ========================================== -->
 <!-- TAB 3: MOVEMENT MASTERY VAULT              -->
 <!-- ========================================== -->
