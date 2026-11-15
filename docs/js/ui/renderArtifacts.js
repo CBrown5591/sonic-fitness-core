@@ -37,11 +37,13 @@ export function getStandardRings() {
   return Math.floor(exp / 1000);
 }
 
-export function saveStandardRings(count) {
-  const safeCount = Math.max(0, parseInt(count, 10) || 0);
-  localStorage.setItem('sonic_standard_rings', safeCount.toString());
-  updateHudRingBar();
-  return safeCount;
+export function saveStandardRings(amount) {
+  const safe = Math.max(0, parseInt(amount, 10) || 0);
+  localStorage.setItem('sonic_standard_rings', safe.toString());
+  if (typeof updateHudRingBar === 'function') {
+    updateHudRingBar();
+  }
+  return safe;
 }
 
 export function addStandardRings(amount) {
