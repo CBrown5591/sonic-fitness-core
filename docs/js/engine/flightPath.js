@@ -30,6 +30,41 @@ function getSessionMuscleTags(sessionObj) {
   return tags;
 }
 
+export function computeBodyCompDeltas(biometricsHistory = []) {
+  const validScans = [...biometricsHistory]
+    .filter(b => Number(b.weightLbs) > 0 && Number(b.bodyFatPct) > 0)
+    .sort((a, b) => new Date(b.timestamp || b.date || 0) - new Date(a.timestamp || a.date || 0))
+    .map(b => {
+      const weight = Number(b.weightLbs);
+      const bfPct = Number(b.bodyFatPct);
+      const fatMass = Number((weight * (bfPct / 100)).toFixed(1));
+      const leanMass = Number((weight - fatMass).toFixed(1));
+      return { ...b, weight, bfPct, fatMass, leanMass };
+    });
+
+  if (validScans.length === 0) return null;
+
+  const current = validScans[0];
+  const previous = validScans[1] || null;
+  const baseline = validScans[validScans.length - 1];
+
+  return {
+    current,
+    vsPrevious: previous ? {
+      deltaWeight: Number((current.weight - previous.weight).toFixed(1)),
+      deltaBfPct: Number((current.bfPct - previous.bfPct).toFixed(2)),
+      deltaFatMass: Number((current.fatMass - previous.fatMass).toFixed(1)),
+      deltaLeanMass: Number((current.leanMass - previous.leanMass).toFixed(1))
+    } : null,
+    vsBaseline: validScans.length > 1 ? {
+      deltaWeight: Number((current.weight - baseline.weight).toFixed(1)),
+      deltaBfPct: Number((current.bfPct - baseline.bfPct).toFixed(2)),
+      deltaFatMass: Number((current.fatMass - baseline.fatMass).toFixed(1)),
+      deltaLeanMass: Number((current.leanMass - baseline.leanMass).toFixed(1))
+    } : null
+  };
+}
+
 /**
  * Evaluates Galaxy Watch8 / Health Connect biometric trends over the last 7 days
  */
