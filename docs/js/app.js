@@ -784,9 +784,6 @@ export function finishSession() {
     renderVault();
     renderArtifactsTray();
 
-    localStorage.setItem('sonic_last_stage', activeStageKey);
-    localStorage.setItem('sonic_last_strain', (activeSession.jointPain || activeSession.sets.some(s => s.jointPain)) ? 'true' : 'false');
-
     // TSK-13: Persist completed session sets into rolling 2-session Flight Path history
     try {
       const rawHist = localStorage.getItem('sonic_session_history');
