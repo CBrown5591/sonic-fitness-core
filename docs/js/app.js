@@ -16,7 +16,7 @@ import {
 } from './engine/records.js';
 import { playRingChime, toggleAudioTheme, getAudioTheme, stopAllFanfare } from './core/audio.js';
 import { setTimerDuration, startRestTimer, applyTimeBrake, initTimerBackgroundSync } from './core/timer.js';
-import { fetchSheetTelemetry } from './core/sync.js';
+import { fetchSheetTelemetry, syncSessionToSheets } from './core/sync.js';
 import { showToast, renderStageRecordBanner, renderMovementIntel, updateInputLabelsForExercise, togglePrehabDrawer, renderPrehabInstructions } from './ui/renderHud.js';
 import { openAuditModal } from './ui/auditModal.js';
 import { renderResultsOverlay } from './ui/resultsOverlay.js';
@@ -1105,12 +1105,11 @@ if (freshBtn && focusBtn) {
       if (data.vault && Array.isArray(data.vault) && data.vault.length > 0) {
         saveVaultData(data.vault);
       }
-
-      renderBiometricsUI();
       
       // Re-render UI views with fresh cloud state
       renderVault();
       renderArtifactsTray();
+      renderBiometricsUI();
       updateHudRingBar();
       if (typeof renderSkillTree === 'function') renderSkillTree();
     }
