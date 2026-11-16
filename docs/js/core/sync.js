@@ -98,3 +98,33 @@ export async function syncSessionToSheets(sessionPayload) {
     return false;
   }
 }
+
+/**
+ * POST: Transmits parsed Arboleaf PDF Deep Scan data to BIOMETRICS Column R
+ */
+export async function syncArboleafDeepScan(parsedReport) {
+  const url = getActiveWebhookUrl();
+  if (!url) return false;
+
+  try {
+    console.log('[Webhook] Transmitting Arboleaf Deep Scan PDF to BIOMETRICS Column R...');
+    await fetch(url, {
+      method: 'POST',
+      mode: 'no-cors',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        action: 'import_arboleaf_pdf',
+        timestamp: parsedReport.timestamp,
+        date: parsedReport.date,
+        weightLbs: parsedReport.weightLbs,
+        bodyFatPct: parsedReport.bodyFatPct,
+        deepScan: parsedReport.deepScan
+      })
+    });
+    console.log('[Webhook] Arboleaf Deep Scan synced cleanly.');
+    return true;
+  } catch (err) {
+    console.warn('[Webhook] Deep Scan sync error:', err);
+    return false;
+  }
+}
