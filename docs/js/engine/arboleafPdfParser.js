@@ -1,5 +1,5 @@
 // -------------------------------------------------------------
-// ARBOLEAF PDF BODY COMPOSITION PARSER (MULTI-FILE + OCR)
+// ARBOLEAF PDF BODY COMPOSITION PARSER (MULTI-FILE + OCR v2)
 // Module: docs/js/engine/arboleafPdfParser.js
 // -------------------------------------------------------------
 
@@ -62,9 +62,6 @@ async function extractPdfOcrText(pdf, fileLabel, onStatus) {
   return combinedOcr.replace(/\s+/g, ' ').trim();
 }
 
-/**
- * Extracts text across all pages (selectable text first, automatic OCR fallback if image-only)
- */
 export async function extractPdfRawText(file, fileLabel, onStatus) {
   const pdfjsLib = await ensurePdfJsLoaded();
   const arrayBuffer = await file.arrayBuffer();
@@ -107,9 +104,8 @@ function matchNum(text, patterns, minVal = 0, maxVal = 9999) {
 function normalizeOcrText(rawText) {
   return rawText
     .replace(/\|/g, ' ')
-    .replace(/(\d)\s*1b\b/gi, '$1lb')
-    .replace(/(\d)\s*lbs\b/gi, '$1lb')
-    .replace(/(\d+\.\d)\s*96\b/g, '$1%') // OCR often reads '%' after decimals as '96'
+    .replace(/(\d)\s*(?:1b|1bs|ib|ibs|lbs)\b/gi, '$1lb')
+    .replace(/(\d+\.\d)\s*96\b/g, '$1%')
     .replace(/(\d)[oO](\.\d)/g, '$10$2')
     .replace(/(\d+\.)[oO]\b/g, '$10')
     .replace(/\s+/g, ' ')
@@ -117,22 +113,76 @@ function normalizeOcrText(rawText) {
 }
 
 /**
- * Extracts all 5 segmental lean mass entries (Upper L/R, Trunk, Lower L/R)
+ * Dedicated Visceral Fat extractor: ignores gauge tick marks (10)
+ * and reads the actual Visceral Fat score (e.g., 20).
+ */
+function extractVisceralFat(normText) {
+  const vfBlockMatch = normText.match(/Visceral\s*Fat([\s\S]{0,160})/i);
+  if (!vfBlockMatch) return null;
+
+  const snippet = vfBlockMatch[1];
+  // Extract all standalone 1- or 2-digit integers in the Visceral Fat gauge zone
+  const nums = [];
+  const numRegex = /\b(\d{1,2})\b/g;
+  let m;
+  while ((m = numRegex.exec(snippet)) !== null) {
+    const val = parseInt(m[1], 10);
+    if (!isNaN(val) && val >= 1 && val <= 59) {
+      nums.push(val);
+    }
+  }
+  if (nums.length === 0) return null;
+
+  // Filter out the standard gauge divider tick '10' if another reading (like 20) is present
+  const nonTick = nums.filter(n => n !== 10);
+  if (nonTick.length > 0) return nonTick[0];
+  return nums[0];
+}
+
+/**
+ * Dedicated Segmental Lean Mass extractor (Upper L/R, Trunk, Lower L/R).
+ * Handles both "11lb 95.9%" pairs AND split-line OCR where "lb" is dropped on a limb.
  */
 function extractSegmentalLean(normText) {
+  // Strategy A: Direct "<lbs>lb <pct>%" pairs where pct is in normal lean range (50%–165%)
   const pairs = [];
-  const regex = /(\d{1,3}(?:[.,]\d+)?)\s*lb\s*\/?\s*(\d{2,3}(?:[.,]\d+)?)\s*%/gi;
+  const pairRegex = /(\d{1,3}(?:[.,]\d+)?)\s*(?:lb)?\s*\/?\s*(\d{2,3}(?:[.,]\d+)?)\s*%/gi;
   let m;
-  while ((m = regex.exec(normText)) !== null) {
+  while ((m = pairRegex.exec(normText)) !== null) {
     const lbs = parseFloat(m[1].replace(',', '.'));
     const pct = parseFloat(m[2].replace(',', '.'));
-    if (!isNaN(lbs) && !isNaN(pct) && pct >= 50 && pct <= 165) {
+    // Exclude body-wide percentages (like 42.5% BF, 32.5% SM) by requiring realistic limb/trunk lb bounds
+    if (!isNaN(lbs) && !isNaN(pct) && pct >= 55 && pct <= 165 && lbs >= 4 && lbs <= 140) {
       pairs.push({ lbs, pct });
     }
   }
-  if (pairs.length < 5) return null;
 
-  const [leftArm, rightArm, trunk, leftLeg, rightLeg] = pairs.slice(0, 5);
+  let selected = pairs.length >= 5 ? pairs.slice(0, 5) : null;
+
+  // Strategy B: Fallback anchored directly inside the Soft Lean Mass / Muscle Balance block
+  if (!selected) {
+    const blockMatch = normText.match(/(?:Soft Lean Mass|Muscle Balance)([\s\S]{0,360})/i);
+    if (blockMatch) {
+      const sub = blockMatch[1];
+      const fallbackPairs = [];
+      const fbRegex = /(\d{1,3}(?:[.,]\d+)?)\s*(?:lb)?[\s\/]+(\d{2,3}(?:[.,]\d+)?)\s*%/gi;
+      let fm;
+      while ((fm = fbRegex.exec(sub)) !== null) {
+        const lbs = parseFloat(fm[1].replace(',', '.'));
+        const pct = parseFloat(fm[2].replace(',', '.'));
+        if (!isNaN(lbs) && !isNaN(pct) && pct >= 50 && pct <= 170 && lbs >= 4 && lbs <= 150) {
+          fallbackPairs.push({ lbs, pct });
+        }
+      }
+      if (fallbackPairs.length >= 5) {
+        selected = fallbackPairs.slice(0, 5);
+      }
+    }
+  }
+
+  if (!selected) return null;
+
+  const [leftArm, rightArm, trunk, leftLeg, rightLeg] = selected;
   const upperSymmetryPct = Math.round(
     (Math.min(leftArm.lbs, rightArm.lbs) / Math.max(leftArm.lbs, rightArm.lbs || 1)) * 1000
   ) / 10;
@@ -161,12 +211,12 @@ function extractSegmentalLean(normText) {
  */
 function extractSegmentalFat(normText) {
   const pairs = [];
-  const regex = /(\d{1,3}(?:[.,]\d+)?)\s*lb\s*\/?\s*(\d{2,4}(?:[.,]\d+)?)\s*%/gi;
+  const regex = /(\d{1,3}(?:[.,]\d+)?)\s*(?:lb)?\s*\/?\s*(\d{2,4}(?:[.,]\d+)?)\s*%/gi;
   let m;
   while ((m = regex.exec(normText)) !== null) {
     const lbs = parseFloat(m[1].replace(',', '.'));
     const pct = parseFloat(m[2].replace(',', '.'));
-    if (!isNaN(lbs) && !isNaN(pct) && pct > 165) {
+    if (!isNaN(lbs) && !isNaN(pct) && pct > 165 && lbs >= 1 && lbs <= 200) {
       pairs.push({ lbs, pct });
     }
   }
@@ -190,7 +240,7 @@ function extractSegmentalFat(normText) {
 export function parseArboleafReportText(rawText) {
   const normText = normalizeOcrText(rawText);
 
-  // 1. Scan Timestamp (MM/DD/YYYY HH:mm or YYYY-MM-DD HH:mm)
+  // 1. Scan Timestamp
   const tsMatch =
     normText.match(/(\d{1,2}\/\d{1,2}\/\d{4})\s+(\d{1,2}:\d{2})/) ||
     normText.match(/(\d{4}-\d{2}-\d{2})\s+(\d{1,2}:\d{2})/);
@@ -255,9 +305,7 @@ export function parseArboleafReportText(rawText) {
     /Skeletal Muscle\s*\(%\)[\s\S]{0,60}?(\d{2}[.,]\d)/i
   ], 15, 65);
 
-  const visceralFat = matchNum(normText, [
-    /Visceral Fat[\s\S]{0,160}?\b([1-4]?\d)\b/i
-  ], 1, 59);
+  const visceralFat = extractVisceralFat(normText);
 
   const subqFatLbs = matchNum(normText, [
     /Subcutaneous Fat[\s\S]{0,90}?(\d{2,3}[.,]\d)\s*lb/i,
@@ -269,9 +317,11 @@ export function parseArboleafReportText(rawText) {
     /Subcutaneous Fat Percentage[\s\S]{0,60}?(\d{1,2}[.,]\d)/i
   ], 3, 70);
 
+  // Tolerates "Waist-Hip Ratio", "Waist Hip Ratio", or "1.29<=0.9"
   const waistHipRatio = matchNum(normText, [
-    /Waist-?Hip Ratio[\s\S]{0,90}?(\d[.,]\d{1,2})/i
-  ], 0.5, 2.0);
+    /Waist[\s-]*Hip\s*Ratio[\s\S]{0,120}?([012][.,]\d{1,2})/i,
+    /([012][.,]\d{2})\s*(?:<=|≤|<)\s*0[.,]9/i
+  ], 0.5, 2.2);
 
   const smi = matchNum(normText, [
     /\bSMI[\s\S]{0,70}?(\d{1,2}(?:[.,]\d)?)/i
@@ -311,10 +361,6 @@ export function parseArboleafReportText(rawText) {
   };
 }
 
-/**
- * Merges two parsed Arboleaf reports from the same date so non-zero fields
- * from either report fill in any blanks without overwriting existing values.
- */
 function mergeParsedReports(base, incoming) {
   const merged = {
     ...base,
@@ -346,9 +392,6 @@ function mergeParsedReports(base, incoming) {
   return merged;
 }
 
-/**
- * Parses a single Arboleaf PDF File
- */
 export async function parseArboleafPdfFile(file, onStatus, fileIdx = 1, totalFiles = 1) {
   const label = totalFiles > 1 ? `Doc ${fileIdx}/${totalFiles}` : 'PDF';
   const rawText = await extractPdfRawText(file, label, onStatus);
@@ -374,9 +417,6 @@ export async function parseArboleafPdfFile(file, onStatus, fileIdx = 1, totalFil
   return parsed;
 }
 
-/**
- * Parses 1 or more selected Arboleaf PDFs in one batch and merges same-date scans
- */
 export async function parseMultipleArboleafPdfs(fileList, onStatus) {
   const files = Array.from(fileList || []);
   if (files.length === 0) return [];
