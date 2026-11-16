@@ -6,6 +6,7 @@ import { parseMultipleArboleafPdfs } from '../engine/arboleafPdfParser.js';
 import { syncArboleafDeepScan } from '../core/sync.js';
 
 let activeChartMetric = 'weight'; // 'weight' | 'leanMass' | 'fatMass' | 'bfPct'
+let isDeepScanEditorOpen = false;
 
 function parseBiometricScans() {
   let raw = [];
@@ -38,15 +39,12 @@ function parseBiometricScans() {
     })
     .filter(s => !isNaN(s.dateObj));
 
-  // Find latest entry containing an imported Arboleaf Deep Scan (Column R)
+  // Find latest entry containing an imported or manually edited Deep Scan (Column R)
   const latestDeepScanEntry = allEntries.find(b => b.deepScan && typeof b.deepScan === 'object') || null;
 
   return { allEntries, scaleScans, latestDeepScanEntry };
 }
 
-/**
- * Returns the most recent non-zero reading for a given Watch8 / Health Connect field
- */
 function latestNonZero(allEntries, field, isString = false) {
   for (const row of allEntries) {
     const val = row[field];
@@ -61,9 +59,6 @@ function latestNonZero(allEntries, field, isString = false) {
   return null;
 }
 
-/**
- * Finds the historical scan closest to `targetDaysAgo`
- */
 function findHistoricalAnchor(scaleScans, targetDaysAgo) {
   if (scaleScans.length < 2) return null;
   const nowMs = scaleScans[0].dateObj.getTime();
@@ -172,11 +167,7 @@ function buildTrendChartSVG(scaleScans, metricKey) {
   `;
 }
 
-/**
- * Merges a newly imported Arboleaf PDF into localStorage['sonic_biometrics_history']
- * so the HUD updates immediately before the next Sheet sync.
- */
-function mergeDeepScanIntoLocalHistory(parsedReport) {
+function mergeDeepScanIntoLocalHistory(parsedReport, overwriteAll = false) {
   let history = [];
   try {
     history = JSON.parse(localStorage.getItem('sonic_biometrics_history')) || [];
@@ -193,13 +184,15 @@ function mergeDeepScanIntoLocalHistory(parsedReport) {
   if (matchedIdx !== -1) {
     const existingDs = history[matchedIdx].deepScan || {};
     const incomingDs = parsedReport.deepScan || {};
-    const mergedDs = { ...existingDs };
+    const mergedDs = overwriteAll ? { ...existingDs, ...incomingDs } : { ...existingDs };
 
-    Object.entries(incomingDs).forEach(([k, v]) => {
-      if (v !== null && v !== undefined && v !== 0) {
-        mergedDs[k] = v;
-      }
-    });
+    if (!overwriteAll) {
+      Object.entries(incomingDs).forEach(([k, v]) => {
+        if (v !== null && v !== undefined && v !== 0) {
+          mergedDs[k] = v;
+        }
+      });
+    }
 
     history[matchedIdx] = {
       ...history[matchedIdx],
@@ -207,26 +200,142 @@ function mergeDeepScanIntoLocalHistory(parsedReport) {
       bodyFatPct: history[matchedIdx].bodyFatPct > 0 ? history[matchedIdx].bodyFatPct : parsedReport.bodyFatPct,
       deepScan: mergedDs
     };
+    localStorage.setItem('sonic_biometrics_history', JSON.stringify(history.slice(0, 200)));
     return history[matchedIdx];
   } else {
     const newEntry = {
-      timestamp: parsedReport.timestamp,
+      timestamp: parsedReport.timestamp || new Date().toISOString(),
       date: parsedReport.date,
       sleepHrs: 0,
       steps: 0,
       avgHr: 0,
       cardioMins: 0,
       spo2Pct: 0,
-      bodyFatPct: parsedReport.bodyFatPct,
-      weightLbs: parsedReport.weightLbs,
+      bodyFatPct: parsedReport.bodyFatPct || 0,
+      weightLbs: parsedReport.weightLbs || 0,
       bp: '',
-      source: 'Arboleaf_PDF',
+      source: 'Arboleaf_Manual_Edit',
       deepScan: parsedReport.deepScan
     };
     history.unshift(newEntry);
     localStorage.setItem('sonic_biometrics_history', JSON.stringify(history.slice(0, 200)));
     return newEntry;
   }
+}
+
+function buildDeepScanEditorDrawer(deepScanEntry, fallbackDate) {
+  if (!isDeepScanEditorOpen) return '';
+
+  const ds = deepScanEntry?.deepScan || {};
+  const segLean = ds.segmentalLean || {};
+  const scanDate = ds.scanDate || String(deepScanEntry?.date || fallbackDate || new Date().toISOString().split('T')[0]).split('T')[0];
+
+  const inputStyle = `
+    width: 100%; box-sizing: border-box; padding: 7px 8px;
+    background: #0b0f19; border: 1px solid rgba(56,189,248,0.35);
+    border-radius: 6px; color: #f8fafc; font-size: 12px; font-family: monospace;
+  `;
+  const labelStyle = `display: block; font-size: 9px; font-weight: 800; color: #94a3b8; margin-bottom: 3px;`;
+
+  return `
+    <div id="deepScanEditorPanel" style="
+      background: rgba(15, 23, 42, 0.95); border: 1px solid #38bdf8;
+      border-radius: 8px; padding: 12px; margin-bottom: 12px;
+    ">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span style="font-size: 11px; font-weight: 900; color: #38bdf8;">✏️ EDIT DEEP SCAN METRICS</span>
+        <button type="button" id="closeDeepScanEditorBtn" style="
+          background: transparent; border: 1px solid rgba(255,255,255,0.2);
+          color: #cbd5e1; border-radius: 4px; padding: 2px 8px; font-size: 10px; cursor: pointer;
+        ">✕ CLOSE</button>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px;">
+        <div>
+          <label style="${labelStyle}">SCAN DATE</label>
+          <input type="date" id="editDsDate" value="${scanDate}" style="${inputStyle}" />
+        </div>
+        <div>
+          <label style="${labelStyle}">VISCERAL FAT</label>
+          <input type="number" step="1" id="editDsVisceral" value="${ds.visceralFat || ''}" placeholder="20" style="${inputStyle}" />
+        </div>
+        <div>
+          <label style="${labelStyle}">WAIST-HIP RATIO</label>
+          <input type="number" step="0.01" id="editDsWhr" value="${ds.waistHipRatio || ''}" placeholder="1.29" style="${inputStyle}" />
+        </div>
+
+        <div>
+          <label style="${labelStyle}">SKEL. MUSCLE (LB)</label>
+          <input type="number" step="0.1" id="editDsSmLbs" value="${ds.skeletalMuscleLbs || ''}" placeholder="104.6" style="${inputStyle}" />
+        </div>
+        <div>
+          <label style="${labelStyle}">SKEL. MUSCLE (%)</label>
+          <input type="number" step="0.1" id="editDsSmPct" value="${ds.skeletalMusclePct || ''}" placeholder="32.5" style="${inputStyle}" />
+        </div>
+        <div>
+          <label style="${labelStyle}">BODY WATER (%)</label>
+          <input type="number" step="0.1" id="editDsWaterPct" value="${ds.bodyWaterPct || ''}" placeholder="42.5" style="${inputStyle}" />
+        </div>
+
+        <div>
+          <label style="${labelStyle}">BODY WATER (L)</label>
+          <input type="number" step="0.1" id="editDsWaterL" value="${ds.bodyWaterL || ''}" placeholder="62.1" style="${inputStyle}" />
+        </div>
+        <div>
+          <label style="${labelStyle}">BONE MASS (LB)</label>
+          <input type="number" step="0.1" id="editDsBoneLbs" value="${ds.boneMassLbs || ''}" placeholder="13.8" style="${inputStyle}" />
+        </div>
+        <div>
+          <label style="${labelStyle}">BONE MASS (%)</label>
+          <input type="number" step="0.1" id="editDsBonePct" value="${ds.boneMassPct || ''}" placeholder="4.3" style="${inputStyle}" />
+        </div>
+
+        <div>
+          <label style="${labelStyle}">SUBQ. FAT (LB)</label>
+          <input type="number" step="0.1" id="editDsSubqLbs" value="${ds.subqFatLbs || ''}" placeholder="108.2" style="${inputStyle}" />
+        </div>
+        <div>
+          <label style="${labelStyle}">SUBQ. FAT (%)</label>
+          <input type="number" step="0.1" id="editDsSubqPct" value="${ds.subqFatPct || ''}" placeholder="33.6" style="${inputStyle}" />
+        </div>
+        <div>
+          <label style="${labelStyle}">FITNESS SCORE</label>
+          <input type="number" step="0.1" id="editDsScore" value="${ds.fitnessScore || ''}" placeholder="41.8" style="${inputStyle}" />
+        </div>
+      </div>
+
+      <div style="font-size: 9px; font-weight: 800; color: #4ade80; margin-bottom: 6px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px;">
+        SEGMENTAL LEAN MASS (LBS)
+      </div>
+      <div style="display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 10px;">
+        <div>
+          <label style="${labelStyle}">L ARM</label>
+          <input type="number" step="0.1" id="editSegLArm" value="${segLean.leftArmLbs || ''}" placeholder="11.0" style="${inputStyle}" />
+        </div>
+        <div>
+          <label style="${labelStyle}">R ARM</label>
+          <input type="number" step="0.1" id="editSegRArm" value="${segLean.rightArmLbs || ''}" placeholder="11.2" style="${inputStyle}" />
+        </div>
+        <div>
+          <label style="${labelStyle}">TRUNK</label>
+          <input type="number" step="0.1" id="editSegTrunk" value="${segLean.trunkLbs || ''}" placeholder="82.6" style="${inputStyle}" />
+        </div>
+        <div>
+          <label style="${labelStyle}">L LEG</label>
+          <input type="number" step="0.1" id="editSegLLeg" value="${segLean.leftLegLbs || ''}" placeholder="30.4" style="${inputStyle}" />
+        </div>
+        <div>
+          <label style="${labelStyle}">R LEG</label>
+          <input type="number" step="0.1" id="editSegRLeg" value="${segLean.rightLegLbs || ''}" placeholder="31.0" style="${inputStyle}" />
+        </div>
+      </div>
+
+      <button type="button" id="saveDeepScanEditBtn" style="
+        width: 100%; background: #4ade80; color: #0f172a; border: none;
+        padding: 9px 12px; border-radius: 6px; font-size: 11px; font-weight: 900; cursor: pointer;
+      ">💾 SAVE &amp; SYNC TO SHEET (COL R)</button>
+    </div>
+  `;
 }
 
 function renderDeepScanAndSegmentalHTML(deepScanEntry) {
@@ -241,7 +350,13 @@ function renderDeepScanAndSegmentalHTML(deepScanEntry) {
     <div class="card" style="margin-bottom: 12px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
         <span class="card-title">🔬 ARBOLEAF DEEP SCAN</span>
-        <span style="font-size: 10px; font-weight: 700; color: #a78bfa;">${scanDate}</span>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span style="font-size: 10px; font-weight: 700; color: #a78bfa;">${scanDate}</span>
+          <button type="button" class="open-deepscan-edit-btn" style="
+            background: rgba(56, 189, 248, 0.16); border: 1px solid rgba(56, 189, 248, 0.45);
+            color: #38bdf8; border-radius: 5px; padding: 3px 8px; font-size: 9px; font-weight: 800; cursor: pointer;
+          ">✏️ EDIT</button>
+        </div>
       </div>
 
       <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px;">
@@ -299,7 +414,7 @@ function renderDeepScanAndSegmentalHTML(deepScanEntry) {
               </tr>
               <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
                 <td style="text-align: left; padding: 6px 4px; font-weight: 700; color: #e2e8f0;">Trunk / Core</td>
-                <td style="padding: 6px 4px; color: #4ade80; font-family: monospace;">${segLean ? `${segLean.trunkLbs} lb (${segLean.trunkPct}%)` : '—'}</td>
+                <td style="padding: 6px 4px; color: #4ade80; font-family: monospace;">${segLean ? `${segLean.trunkLbs} lb${segLean.trunkPct ? ` (${segLean.trunkPct}%)` : ''}` : '—'}</td>
                 <td style="padding: 6px 4px; color: #f43f5e; font-family: monospace;">${segFat ? `${segFat.trunkLbs} lb` : '—'}</td>
               </tr>
               <tr>
@@ -330,17 +445,25 @@ export function renderBiometricsUI() {
   const cardioLatest = latestNonZero(allEntries, 'cardioMins');
 
   const pdfDropInBarHTML = `
-    <div class="card" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px;">
-      <div>
+    <div class="card" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 12px;">
+      <div style="min-width: 0; flex: 1;">
         <div style="font-size: 11px; font-weight: 800; color: #f8fafc;">📄 ARBOLEAF DEEP SCAN</div>
-        <div id="arboleafPdfStatus" style="font-size: 10px; color: #94a3b8;">Import PDF report for Visceral Fat &amp; Segmental Map</div>
+        <div id="arboleafPdfStatus" style="font-size: 10px; color: #94a3b8;">Import PDF or edit metrics manually</div>
       </div>
-      <label for="arboleafPdfInput" style="
-        background: #38bdf8; color: #0f172a; padding: 7px 12px; border-radius: 6px;
-        font-size: 10px; font-weight: 900; cursor: pointer; white-space: nowrap;
-      ">IMPORT PDF</label>
+      <div style="display: flex; align-items: center; gap: 6px;">
+        <button type="button" class="open-deepscan-edit-btn" style="
+          background: rgba(167, 139, 250, 0.18); border: 1px solid rgba(167, 139, 250, 0.5);
+          color: #c4b5fd; padding: 7px 10px; border-radius: 6px;
+          font-size: 10px; font-weight: 900; cursor: pointer; white-space: nowrap;
+        ">✏️ EDIT</button>
+        <label for="arboleafPdfInput" style="
+          background: #38bdf8; color: #0f172a; padding: 7px 11px; border-radius: 6px;
+          font-size: 10px; font-weight: 900; cursor: pointer; white-space: nowrap;
+        ">IMPORT PDF</label>
+      </div>
       <input type="file" id="arboleafPdfInput" accept="application/pdf,.pdf" multiple style="display: none;" />
     </div>
+    ${buildDeepScanEditorDrawer(latestDeepScanEntry, latestScale?.dateLabel)}
   `;
 
   if (!latestScale && allEntries.length === 0) {
@@ -349,11 +472,11 @@ export function renderBiometricsUI() {
       <div class="card" style="text-align: center; padding: 24px 16px;">
         <div style="font-size: 13px; font-weight: 800; color: #38bdf8; margin-bottom: 6px;">🧬 BIOMETRIC TELEMETRY STANDBY</div>
         <div style="font-size: 12px; color: #94a3b8; line-height: 1.5;">
-          No scale or Galaxy Watch8 readings cached yet. Sync Health Connect or tap <b>IMPORT PDF</b> above to load an Arboleaf report.
+          No scale or Galaxy Watch8 readings cached yet. Sync Health Connect, tap <b>IMPORT PDF</b>, or tap <b>✏️ EDIT</b> above.
         </div>
       </div>
     `;
-    bindPdfInputHandler();
+    bindPdfAndEditorHandlers(latestDeepScanEntry);
     return;
   }
 
@@ -406,7 +529,7 @@ export function renderBiometricsUI() {
         </div>
       ` : ''}
 
-      <!-- Galaxy Watch8 Vitals Strip (Latest Non-Zero Across Syncs) -->
+      <!-- Galaxy Watch8 Vitals Strip -->
       <div style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 10px; color: #cbd5e1;">
         ${sleepLatest ? `<span style="background: rgba(56,189,248,0.12); padding: 3px 7px; border-radius: 4px;">😴 Sleep: <b>${sleepLatest.value}h</b></span>` : ''}
         ${spo2Latest ? `<span style="background: rgba(56,189,248,0.12); padding: 3px 7px; border-radius: 4px;">🫁 SpO2: <b>${spo2Latest.value}%</b></span>` : ''}
@@ -490,10 +613,112 @@ export function renderBiometricsUI() {
     };
   });
 
-  bindPdfInputHandler();
+  bindPdfAndEditorHandlers(latestDeepScanEntry);
 }
 
-function bindPdfInputHandler() {
+function bindPdfAndEditorHandlers(latestDeepScanEntry) {
+  // 1. Toggle Deep Scan Editor Open/Close
+  document.querySelectorAll('.open-deepscan-edit-btn').forEach(btn => {
+    btn.onclick = () => {
+      isDeepScanEditorOpen = !isDeepScanEditorOpen;
+      renderBiometricsUI();
+    };
+  });
+
+  const closeBtn = document.getElementById('closeDeepScanEditorBtn');
+  if (closeBtn) {
+    closeBtn.onclick = () => {
+      isDeepScanEditorOpen = false;
+      renderBiometricsUI();
+    };
+  }
+
+  // 2. Save & Sync Manual Deep Scan Edits
+  const saveEditBtn = document.getElementById('saveDeepScanEditBtn');
+  if (saveEditBtn) {
+    saveEditBtn.onclick = async () => {
+      const numVal = (id) => {
+        const v = parseFloat(document.getElementById(id)?.value);
+        return isNaN(v) ? 0 : v;
+      };
+
+      const scanDate = document.getElementById('editDsDate')?.value || new Date().toISOString().split('T')[0];
+      const existingDs = latestDeepScanEntry?.deepScan || {};
+      const existingSegLean = existingDs.segmentalLean || {};
+
+      const lArm = numVal('editSegLArm');
+      const rArm = numVal('editSegRArm');
+      const trunk = numVal('editSegTrunk');
+      const lLeg = numVal('editSegLLeg');
+      const rLeg = numVal('editSegRLeg');
+
+      const hasSegLean = lArm > 0 || rArm > 0 || trunk > 0 || lLeg > 0 || rLeg > 0;
+      const upperSymmetryPct = (lArm > 0 && rArm > 0)
+        ? Math.round((Math.min(lArm, rArm) / Math.max(lArm, rArm)) * 1000) / 10
+        : (existingSegLean.upperSymmetryPct || 0);
+      const lowerSymmetryPct = (lLeg > 0 && rLeg > 0)
+        ? Math.round((Math.min(lLeg, rLeg) / Math.max(lLeg, rLeg)) * 1000) / 10
+        : (existingSegLean.lowerSymmetryPct || 0);
+
+      const updatedDeepScan = {
+        ...existingDs,
+        scanDate,
+        visceralFat: numVal('editDsVisceral'),
+        waistHipRatio: numVal('editDsWhr'),
+        skeletalMuscleLbs: numVal('editDsSmLbs'),
+        skeletalMusclePct: numVal('editDsSmPct'),
+        bodyWaterPct: numVal('editDsWaterPct'),
+        bodyWaterL: numVal('editDsWaterL'),
+        boneMassLbs: numVal('editDsBoneLbs'),
+        boneMassPct: numVal('editDsBonePct'),
+        subqFatLbs: numVal('editDsSubqLbs'),
+        subqFatPct: numVal('editDsSubqPct'),
+        fitnessScore: numVal('editDsScore'),
+        segmentalLean: hasSegLean
+          ? {
+              ...existingSegLean,
+              leftArmLbs: lArm,
+              rightArmLbs: rArm,
+              trunkLbs: trunk,
+              leftLegLbs: lLeg,
+              rightLegLbs: rLeg,
+              upperSymmetryPct,
+              lowerSymmetryPct
+            }
+          : (existingDs.segmentalLean || null)
+      };
+
+      const reportPayload = {
+        timestamp: new Date(`${scanDate}T12:00:00`).toISOString(),
+        date: scanDate,
+        weightLbs: latestDeepScanEntry?.weightLbs || 0,
+        bodyFatPct: latestDeepScanEntry?.bodyFatPct || 0,
+        deepScan: updatedDeepScan
+      };
+
+      const mergedRecord = mergeDeepScanIntoLocalHistory(reportPayload, true);
+      isDeepScanEditorOpen = false;
+      renderBiometricsUI();
+
+      const statusEl = document.getElementById('arboleafPdfStatus');
+      if (statusEl) {
+        statusEl.style.color = '#38bdf8';
+        statusEl.innerText = 'Syncing edited Deep Scan to Google Sheet...';
+      }
+
+      await syncArboleafDeepScan({
+        ...reportPayload,
+        deepScan: mergedRecord.deepScan
+      });
+
+      if (statusEl) {
+        statusEl.style.color = '#4ade80';
+        statusEl.innerText = `✓ Saved & Synced ${scanDate} (Visceral: ${updatedDeepScan.visceralFat}, WHR: ${updatedDeepScan.waistHipRatio})`;
+      }
+    };
+  }
+
+  // 3. PDF File Picker Handler
   const input = document.getElementById('arboleafPdfInput');
   const statusEl = document.getElementById('arboleafPdfStatus');
   if (!input) return;
@@ -516,13 +741,7 @@ function bindPdfInputHandler() {
       });
 
       for (const report of mergedReports) {
-        const mergedRecord = mergeDeepScanIntoLocalHistory(report);
-        // Save updated localStorage array before syncing full merged deepScan to Sheet
-        let hist = JSON.parse(localStorage.getItem('sonic_biometrics_history') || '[]');
-        const idx = hist.findIndex(r => String(r.date || '').split('T')[0] === report.date);
-        if (idx !== -1) hist[idx] = mergedRecord;
-        localStorage.setItem('sonic_biometrics_history', JSON.stringify(hist.slice(0, 200)));
-
+        const mergedRecord = mergeDeepScanIntoLocalHistory(report, false);
         await syncArboleafDeepScan({
           ...report,
           deepScan: mergedRecord.deepScan
