@@ -1,5 +1,5 @@
 // -------------------------------------------------------------
-// ARBOLEAF PDF BODY COMPOSITION PARSER (TEXT + IMAGE OCR FALLBACK)
+// ARBOLEAF PDF BODY COMPOSITION PARSER (TEXT + OCR MULTI-COLUMN)
 // Module: docs/js/engine/arboleafPdfParser.js
 // -------------------------------------------------------------
 
@@ -32,11 +32,11 @@ async function ensureTesseractLoaded() {
 }
 
 /**
- * Renders each PDF page to an offscreen canvas and runs Tesseract OCR
- * for image-only Arboleaf mobile PDF exports.
+ * Renders each PDF page to an offscreen canvas at 2.5x resolution
+ * and runs Tesseract OCR for image-only Arboleaf mobile PDF exports.
  */
 async function extractPdfOcrText(pdf, onStatus) {
-  if (onStatus) onStatus('Image-only PDF detected — loading OCR engine...');
+  if (onStatus) onStatus('Image-only PDF — loading OCR engine...');
   const Tesseract = await ensureTesseractLoaded();
   const worker = await Tesseract.createWorker('eng');
 
@@ -45,8 +45,7 @@ async function extractPdfOcrText(pdf, onStatus) {
     for (let p = 1; p <= pdf.numPages; p++) {
       if (onStatus) onStatus(`Scanning page ${p} of ${pdf.numPages} via OCR...`);
       const page = await pdf.getPage(p);
-      // 2.0x scale gives crisp digits for table cells without exhausting mobile RAM
-      const viewport = page.getViewport({ scale: 2.0 });
+      const viewport = page.getViewport({ scale: 2.5 });
       const canvas = document.createElement('canvas');
       const ctx = canvas.getContext('2d');
       canvas.width = viewport.width;
@@ -87,17 +86,16 @@ export async function extractPdfRawText(file, onStatus) {
     return cleanedText;
   }
 
-  // Fallback to client-side OCR when mobile Arboleaf exports rasterized pages
   return await extractPdfOcrText(pdf, onStatus);
 }
 
-function matchNum(text, patterns) {
+function matchNum(text, patterns, minVal = 0, maxVal = 9999) {
   const list = Array.isArray(patterns) ? patterns : [patterns];
   for (const regex of list) {
     const m = text.match(regex);
     if (m && m[1]) {
-      const val = parseFloat(m[1].replace(/,/g, ''));
-      if (!isNaN(val)) return val;
+      const val = parseFloat(m[1].replace(/,/g, '.'));
+      if (!isNaN(val) && val >= minVal && val <= maxVal) return val;
     }
   }
   return null;
@@ -105,11 +103,11 @@ function matchNum(text, patterns) {
 
 function extractSegmentalLean(rawText) {
   const pairs = [];
-  const regex = /(\d{1,3}(?:\.\d+)?)\s*(?:lb|lbs)?\s*\/?\s*(\d{2,3}(?:\.\d+)?)\s*%/gi;
+  const regex = /(\d{1,3}(?:[.,]\d+)?)\s*(?:lb|lbs)?\s*\/?\s*(\d{2,3}(?:[.,]\d+)?)\s*%/gi;
   let m;
   while ((m = regex.exec(rawText)) !== null) {
-    const lbs = parseFloat(m[1]);
-    const pct = parseFloat(m[2]);
+    const lbs = parseFloat(m[1].replace(',', '.'));
+    const pct = parseFloat(m[2].replace(',', '.'));
     if (!isNaN(lbs) && !isNaN(pct) && pct >= 50 && pct <= 165) {
       pairs.push({ lbs, pct });
     }
@@ -142,11 +140,11 @@ function extractSegmentalLean(rawText) {
 
 function extractSegmentalFat(rawText) {
   const pairs = [];
-  const regex = /(\d{1,3}(?:\.\d+)?)\s*(?:lb|lbs)?\s*\/?\s*(\d{2,4}(?:\.\d+)?)\s*%/gi;
+  const regex = /(\d{1,3}(?:[.,]\d+)?)\s*(?:lb|lbs)?\s*\/?\s*(\d{2,4}(?:[.,]\d+)?)\s*%/gi;
   let m;
   while ((m = regex.exec(rawText)) !== null) {
-    const lbs = parseFloat(m[1]);
-    const pct = parseFloat(m[2]);
+    const lbs = parseFloat(m[1].replace(',', '.'));
+    const pct = parseFloat(m[2].replace(',', '.'));
     if (!isNaN(lbs) && !isNaN(pct) && pct > 165) {
       pairs.push({ lbs, pct });
     }
@@ -169,9 +167,17 @@ function extractSegmentalFat(rawText) {
 }
 
 export function parseArboleafReportText(rawText) {
+  // Normalize common OCR quirks (e.g., "1b" instead of "lb", "|" column separators)
+  const normText = rawText
+    .replace(/\|/g, ' ')
+    .replace(/(\d)\s*1b\b/gi, '$1lb')
+    .replace(/\s+/g, ' ')
+    .trim();
+
+  // 1. Scan Timestamp (MM/DD/YYYY HH:mm or YYYY-MM-DD HH:mm)
   const tsMatch =
-    rawText.match(/(\d{1,2}\/\d{1,2}\/\d{4})\s+(\d{1,2}:\d{2})/) ||
-    rawText.match(/(\d{4}-\d{2}-\d{2})\s+(\d{1,2}:\d{2})/);
+    normText.match(/(\d{1,2}\/\d{1,2}\/\d{4})\s+(\d{1,2}:\d{2})/) ||
+    normText.match(/(\d{4}-\d{2}-\d{2})\s+(\d{1,2}:\d{2})/);
 
   let isoTimestamp = new Date().toISOString();
   let dateStr = isoTimestamp.split('T')[0];
@@ -191,71 +197,72 @@ export function parseArboleafReportText(rawText) {
     }
   }
 
-  const weightLbs = matchNum(rawText, [
-    /Body Fat Mass\s*\(lb\)[\s\S]{0,40}?[\d.]+\s+(\d{2,3}\.\d)/i,
-    /Weight\s*\(lb\)[\s\S]{0,120}?(\d{2,3}\.\d)/i,
-    /(\d{2,3}\.\d)\s*(?:lb)?\s*205%/i
-  ]);
+  // 2. Wide-Window Multi-Column OCR Matchers
+  const weightLbs = matchNum(normText, [
+    /Body Fat Mass\s*\(lb\)[\s\S]{0,80}?(\d{3}[.,]\d)/i,
+    /Weight[\s\S]{0,180}?(\d{3}[.,]\d)\s*(?:lb|205%|156)/i,
+    /(\d{3}[.,]\d)\s*(?:lb)?\s*156\.8/i
+  ], 70, 600);
 
-  const bodyFatPct = matchNum(rawText, [
-    /Body\s*Fat Percentage[\s\S]{0,30}?(\d{1,2}\.\d)/i,
-    /PBF\s*\(%\)[\s\S]{0,120}?(\d{1,2}\.\d)/i
-  ]);
+  const bodyFatPct = matchNum(normText, [
+    /Body\s*Fat\s*Percentage[\s\S]{0,80}?(\d{1,2}[.,]\d)/i,
+    /PBF\s*\(%\)[\s\S]{0,160}?(\d{1,2}[.,]\d)/i
+  ], 3, 75);
 
-  const bodyWaterL = matchNum(rawText, [
-    /Body Water\s*\(L\)[\s\S]{0,25}?(\d{1,3}\.\d)/i,
-    /Body Water[\s\S]{0,40}?(\d{2,3}\.\d)\s*47~/i
-  ]);
+  const bodyWaterL = matchNum(normText, [
+    /Body Water\s*\(L\)[\s\S]{0,60}?(\d{2,3}[.,]\d)/i,
+    /Body Water[\s\S]{0,80}?(\d{2,3}[.,]\d)\s*(?:\d{2,3}[.,]\d\s*)?47~/i
+  ], 15, 120);
 
-  const bodyWaterPct = matchNum(rawText, [
-    /Body Water Percentage[\s\S]{0,25}?(\d{1,2}\.\d)\s*%/i
-  ]);
+  const bodyWaterPct = matchNum(normText, [
+    /Body Water Percentage[\s\S]{0,80}?(\d{2}[.,]\d)\s*%/i
+  ], 20, 80);
 
-  const boneMassLbs = matchNum(rawText, [
-    /Bone Mass\s*\(lb\)[\s\S]{0,25}?(\d{1,2}\.\d)/i,
-    /Bone Mass[\s\S]{0,40}?(\d{1,2}\.\d)\s+[\d.]+\s*9\.6~/i
-  ]);
+  const boneMassLbs = matchNum(normText, [
+    /Bone Mass\s*\(lb\)[\s\S]{0,60}?(\d{1,2}[.,]\d)/i,
+    /Bone Mass[\s\S]{0,80}?(\d{1,2}[.,]\d)[\s\S]{0,40}?9\.6~/i
+  ], 3, 30);
 
-  const boneMassPct = matchNum(rawText, [
-    /Bone Mass Percentage[\s\S]{0,25}?(\d{1,2}\.\d)\s*%/i
-  ]);
+  const boneMassPct = matchNum(normText, [
+    /Bone Mass Percentage[\s\S]{0,80}?(\d[.,]\d)\s*%/i
+  ], 1, 10);
 
-  const skeletalMuscleLbs = matchNum(rawText, [
-    /Skeletal Muscle[\s\S]{0,25}?(\d{2,3}\.\d)\s*lb/i,
-    /Skeletal Muscle[\s\S]{0,60}?(\d{2,3}\.\d)\s*(?:lb)?\s*79~/i
-  ]);
+  const skeletalMuscleLbs = matchNum(normText, [
+    /Skeletal Muscle[\s\S]{0,80}?(\d{2,3}[.,]\d)\s*lb/i,
+    /Skeletal Muscle[\s\S]{0,160}?(\d{2,3}[.,]\d)[\s\S]{0,40}?79~/i
+  ], 30, 250);
 
-  const skeletalMusclePct = matchNum(rawText, [
-    /Skeletal Muscle\s*\(%\)[\s\S]{0,25}?(\d{1,2}\.\d)\s*%/i
-  ]);
+  const skeletalMusclePct = matchNum(normText, [
+    /Skeletal Muscle\s*\(%\)[\s\S]{0,80}?(\d{2}[.,]\d)\s*%/i
+  ], 15, 65);
 
-  const visceralFat = matchNum(rawText, [
-    /Visceral Fat[\s\S]{0,50}?\b(\d{1,2})\b/i
-  ]);
+  const visceralFat = matchNum(normText, [
+    /Visceral Fat[\s\S]{0,120}?\b([1-4]?\d)\b/i
+  ], 1, 59);
 
-  const subqFatLbs = matchNum(rawText, [
-    /Subcutaneous Fat[\s\S]{0,25}?(\d{2,3}\.\d)\s*lb/i
-  ]);
+  const subqFatLbs = matchNum(normText, [
+    /Subcutaneous Fat[\s\S]{0,80}?(\d{2,3}[.,]\d)\s*lb/i
+  ], 5, 300);
 
-  const subqFatPct = matchNum(rawText, [
-    /Subcutaneous Fat Percentage[\s\S]{0,25}?(\d{1,2}\.\d)\s*%/i
-  ]);
+  const subqFatPct = matchNum(normText, [
+    /Subcutaneous Fat Percentage[\s\S]{0,80}?(\d{1,2}[.,]\d)\s*%/i
+  ], 3, 70);
 
-  const waistHipRatio = matchNum(rawText, [
-    /Waist-Hip Ratio[\s\S]{0,25}?(\d\.\d{1,2})/i
-  ]);
+  const waistHipRatio = matchNum(normText, [
+    /Waist-?Hip Ratio[\s\S]{0,80}?(\d[.,]\d{1,2})/i
+  ], 0.5, 2.0);
 
-  const smi = matchNum(rawText, [
-    /\bSMI[\s\S]{0,20}?(\d{1,2}(?:\.\d)?)/i
-  ]);
+  const smi = matchNum(normText, [
+    /\bSMI[\s\S]{0,60}?(\d{1,2}(?:[.,]\d)?)/i
+  ], 3, 20);
 
-  const fitnessScore = matchNum(rawText, [
-    /Fitness score:?\s*(\d{1,3}\.\d)\s*\/100/i,
-    /(\d{1,3}\.\d)\s*\/100\s*Fitness score/i
-  ]);
+  const fitnessScore = matchNum(normText, [
+    /Fitness score:?\s*(\d{1,3}[.,]\d)\s*\/100/i,
+    /(\d{1,3}[.,]\d)\s*\/100[\s\S]{0,40}?Fitness score/i
+  ], 1, 100);
 
-  const segmentalLean = extractSegmentalLean(rawText);
-  const segmentalFat = extractSegmentalFat(rawText);
+  const segmentalLean = extractSegmentalLean(normText);
+  const segmentalFat = extractSegmentalFat(normText);
 
   return {
     timestamp: isoTimestamp,
@@ -284,10 +291,12 @@ export function parseArboleafReportText(rawText) {
 }
 
 /**
- * End-to-end helper with live OCR progress callback for mobile UI feedback
+ * End-to-end helper with live OCR progress callback & diagnostic preview on mismatch
  */
 export async function parseArboleafPdfFile(file, onStatus) {
   const rawText = await extractPdfRawText(file, onStatus);
+  console.log('[Arboleaf OCR Full Text]:', rawText);
+
   if (!rawText || rawText.length < 30) {
     throw new Error('Could not read text from PDF even after OCR scan.');
   }
@@ -303,7 +312,7 @@ export async function parseArboleafPdfFile(file, onStatus) {
     ds.boneMassLbs > 0;
 
   if (!hasAnyMetric) {
-    throw new Error(`OCR completed (${rawText.length} chars) but no metrics matched. Preview: "${rawText.slice(0, 80)}..."`);
+    throw new Error(`OCR read ${rawText.length} chars, no match. Sample: "${rawText.slice(0, 120)}..."`);
   }
   return parsed;
 }
