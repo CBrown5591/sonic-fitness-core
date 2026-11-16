@@ -1,6 +1,5 @@
 // -------------------------------------------------------------
-// ARBOLEAF PDF BODY COMPOSITION PARSER (CLIENT-SIDE)
-// Supports both 2-page and 3-page Arboleaf / Yolanda PDF layouts
+// ARBOLEAF PDF BODY COMPOSITION PARSER (RESILIENT MULTI-LAYOUT)
 // Module: docs/js/engine/arboleafPdfParser.js
 // -------------------------------------------------------------
 
@@ -26,8 +25,11 @@ async function ensurePdfJsLoaded() {
 export async function extractPdfRawText(file) {
   const pdfjsLib = await ensurePdfJsLoaded();
   const arrayBuffer = await file.arrayBuffer();
-  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+  if (!arrayBuffer || arrayBuffer.byteLength === 0) {
+    throw new Error('Selected PDF file is empty (0 bytes). Save to Downloads first and re-select.');
+  }
 
+  const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
   let fullText = '';
   for (let p = 1; p <= pdf.numPages; p++) {
     const page = await pdf.getPage(p);
@@ -38,16 +40,20 @@ export async function extractPdfRawText(file) {
   return fullText.replace(/\s+/g, ' ').trim();
 }
 
-function matchNum(text, regex) {
-  const m = text.match(regex);
-  if (!m || !m[1]) return null;
-  const val = parseFloat(m[1]);
-  return isNaN(val) ? null : val;
+function matchNum(text, patterns) {
+  const list = Array.isArray(patterns) ? patterns : [patterns];
+  for (const regex of list) {
+    const m = text.match(regex);
+    if (m && m[1]) {
+      const val = parseFloat(m[1]);
+      if (!isNaN(val)) return val;
+    }
+  }
+  return null;
 }
 
 /**
  * Extracts all 5 segmental lean mass entries (Upper L/R, Trunk, Lower L/R)
- * by matching pairs like "11lb 95.9%" or "11lb/95.9%" (normal range 70%–140%)
  */
 function extractSegmentalLean(rawText) {
   const pairs = [];
@@ -56,7 +62,6 @@ function extractSegmentalLean(rawText) {
   while ((m = regex.exec(rawText)) !== null) {
     const lbs = parseFloat(m[1]);
     const pct = parseFloat(m[2]);
-    // Segmental lean normal percentages sit between 50% and 160%; segmental fat over-percentages are > 200%
     if (!isNaN(lbs) && !isNaN(pct) && pct >= 50 && pct <= 165) {
       pairs.push({ lbs, pct });
     }
@@ -89,7 +94,6 @@ function extractSegmentalLean(rawText) {
 
 /**
  * Extracts all 5 segmental fat mass entries (Upper L/R, Trunk, Lower L/R)
- * by matching pairs like "12.8lb 804.4%" or "71.8lb/619.5%" (pct > 165%)
  */
 function extractSegmentalFat(rawText) {
   const pairs = [];
@@ -123,14 +127,22 @@ function extractSegmentalFat(rawText) {
  * Parses extracted Arboleaf PDF text into a normalized telemetry + Deep Scan object
  */
 export function parseArboleafReportText(rawText) {
-  // 1. Scan Timestamp (e.g., "11/15/2026 15:09")
-  const tsMatch = rawText.match(/(\d{1,2}\/\d{1,2}\/\d{4})\s+(\d{1,2}:\d{2})/);
+  // 1. Scan Timestamp (supports MM/DD/YYYY HH:mm or YYYY-MM-DD HH:mm)
+  const tsMatch =
+    rawText.match(/(\d{1,2}\/\d{1,2}\/\d{4})\s+(\d{1,2}:\d{2})/) ||
+    rawText.match(/(\d{4}-\d{2}-\d{2})\s+(\d{1,2}:\d{2})/);
+
   let isoTimestamp = new Date().toISOString();
   let dateStr = isoTimestamp.split('T')[0];
 
   if (tsMatch) {
-    const [month, day, year] = tsMatch[1].split('/').map(Number);
     const [hour, minute] = tsMatch[2].split(':').map(Number);
+    let year, month, day;
+    if (tsMatch[1].includes('/')) {
+      [month, day, year] = tsMatch[1].split('/').map(Number);
+    } else {
+      [year, month, day] = tsMatch[1].split('-').map(Number);
+    }
     const dt = new Date(year, month - 1, day, hour, minute, 0);
     if (!isNaN(dt.getTime())) {
       isoTimestamp = dt.toISOString();
@@ -138,32 +150,69 @@ export function parseArboleafReportText(rawText) {
     }
   }
 
-  // 2. Core & Extended Body Composition Metrics
-  const weightLbs =
-    matchNum(rawText, /Body Fat Mass \(lb\)\s+[\d.]+\s+([\d.]+)\s+22~/) ??
-    matchNum(rawText, /Weight\s*\(lb\)[\s\S]{0,80}?(\d{2,3}\.\d)/);
+  // 2. Resilient Multi-Pattern Metric Extraction
+  const weightLbs = matchNum(rawText, [
+    /Body Fat Mass \(lb\)\s+[\d.]+\s+([\d.]+)\s+22~/i,
+    /Weight\s*\(lb\)[\s\S]{0,120}?(\d{2,3}\.\d)/i,
+    /(\d{2,3}\.\d)\s*(?:lb)?\s*205%/i
+  ]);
 
-  const bodyFatPct =
-    matchNum(rawText, /BodyFat Percentage\s+(\d{1,2}\.\d)/) ??
-    matchNum(rawText, /PBF\(%\)[\s\S]{0,80}?(\d{1,2}\.\d)/);
+  const bodyFatPct = matchNum(rawText, [
+    /Body\s*Fat Percentage\s+(\d{1,2}\.\d)/i,
+    /PBF\s*\(%\)[\s\S]{0,120}?(\d{1,2}\.\d)/i
+  ]);
 
-  const bodyWaterL = matchNum(rawText, /Body Water \(L\)\s+(\d{1,3}\.\d)/);
-  const bodyWaterPct = matchNum(rawText, /Body Water Percentage\s+(\d{1,2}\.\d)%/);
+  const bodyWaterL = matchNum(rawText, [
+    /Body Water\s*\(L\)\s+(\d{1,3}\.\d)/i,
+    /Body Water[\s\S]{0,40}?(\d{2,3}\.\d)\s*47~/i
+  ]);
 
-  const boneMassLbs = matchNum(rawText, /Bone Mass \(lb\)\s+(\d{1,2}\.\d)/);
-  const boneMassPct = matchNum(rawText, /Bone Mass Percentage\s+(\d\.\d)%/);
+  const bodyWaterPct = matchNum(rawText, [
+    /Body Water Percentage\s+(\d{1,2}\.\d)\s*%/i
+  ]);
 
-  const skeletalMuscleLbs = matchNum(rawText, /Skeletal Muscle\s+(\d{2,3}\.\d)\s*lb/);
-  const skeletalMusclePct = matchNum(rawText, /Skeletal Muscle \(%\)\s+(\d{1,2}\.\d)%/);
+  const boneMassLbs = matchNum(rawText, [
+    /Bone Mass\s*\(lb\)\s+(\d{1,2}\.\d)/i,
+    /Bone Mass[\s\S]{0,40}?(\d{1,2}\.\d)\s+[\d.]+\s+9\.6~/i
+  ]);
 
-  const visceralFat = matchNum(rawText, /Visceral Fat\s+(\d{1,2})\b/);
+  const boneMassPct = matchNum(rawText, [
+    /Bone Mass Percentage\s+(\d{1,2}\.\d)\s*%/i
+  ]);
 
-  const subqFatLbs = matchNum(rawText, /Subcutaneous Fat\s+(\d{2,3}\.\d)\s*lb/);
-  const subqFatPct = matchNum(rawText, /Subcutaneous Fat Percentage\s+(\d{1,2}\.\d)%/);
+  const skeletalMuscleLbs = matchNum(rawText, [
+    /Skeletal Muscle\s+(\d{2,3}\.\d)\s*lb/i,
+    /Skeletal Muscle[\s\S]{0,60}?(\d{2,3}\.\d)\s*(?:lb)?\s*79~/i
+  ]);
 
-  const waistHipRatio = matchNum(rawText, /Waist-Hip Ratio\s+(\d\.\d{1,2})/);
-  const smi = matchNum(rawText, /\bSMI\s+(\d{1,2}(?:\.\d)?)/);
-  const fitnessScore = matchNum(rawText, /Fitness score:?\s*(\d{1,3}\.\d)\/100/i);
+  const skeletalMusclePct = matchNum(rawText, [
+    /Skeletal Muscle\s*\(%\)\s+(\d{1,2}\.\d)\s*%/i
+  ]);
+
+  const visceralFat = matchNum(rawText, [
+    /Visceral Fat[\s\S]{0,50}?\b(\d{1,2})\b/i
+  ]);
+
+  const subqFatLbs = matchNum(rawText, [
+    /Subcutaneous Fat\s+(\d{2,3}\.\d)\s*lb/i
+  ]);
+
+  const subqFatPct = matchNum(rawText, [
+    /Subcutaneous Fat Percentage\s+(\d{1,2}\.\d)\s*%/i
+  ]);
+
+  const waistHipRatio = matchNum(rawText, [
+    /Waist-Hip Ratio\s+(\d\.\d{1,2})/i
+  ]);
+
+  const smi = matchNum(rawText, [
+    /\bSMI\s+(\d{1,2}(?:\.\d)?)/i
+  ]);
+
+  const fitnessScore = matchNum(rawText, [
+    /Fitness score:?\s*(\d{1,3}\.\d)\s*\/100/i,
+    /(\d{1,3}\.\d)\s*\/100\s*Fitness score/i
+  ]);
 
   const segmentalLean = extractSegmentalLean(rawText);
   const segmentalFat = extractSegmentalFat(rawText);
@@ -199,9 +248,24 @@ export function parseArboleafReportText(rawText) {
  */
 export async function parseArboleafPdfFile(file) {
   const rawText = await extractPdfRawText(file);
+  console.log('[Arboleaf PDF] Extracted text length:', rawText.length, rawText.slice(0, 300));
+
+  if (!rawText || rawText.length < 40) {
+    throw new Error('PDF contains no selectable text (image-only scan). Export as PDF Report from Arboleaf.');
+  }
+
   const parsed = parseArboleafReportText(rawText);
-  if (!parsed.weightLbs && !parsed.deepScan?.visceralFat && !parsed.deepScan?.skeletalMuscleLbs) {
-    throw new Error('Could not detect Arboleaf body composition metrics in this PDF.');
+  const ds = parsed.deepScan || {};
+  const hasAnyMetric =
+    parsed.weightLbs > 0 ||
+    parsed.bodyFatPct > 0 ||
+    ds.visceralFat > 0 ||
+    ds.skeletalMuscleLbs > 0 ||
+    ds.bodyWaterL > 0 ||
+    ds.boneMassLbs > 0;
+
+  if (!hasAnyMetric) {
+    throw new Error(`Unrecognized layout (${rawText.length} chars). Preview: "${rawText.slice(0, 90)}..."`);
   }
   return parsed;
 }
