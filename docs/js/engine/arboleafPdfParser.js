@@ -1,5 +1,6 @@
 // -------------------------------------------------------------
-// ARBOLEAF PDF BODY COMPOSITION PARSER (MULTI-FILE + OCR v2)
+// ARBOLEAF PDF BODY COMPOSITION PARSER (MULTI-FILE + OCR v3)
+// Eliminates bar-chart tick shifts & normal-range collisions
 // Module: docs/js/engine/arboleafPdfParser.js
 // -------------------------------------------------------------
 
@@ -31,10 +32,6 @@ async function ensureTesseractLoaded() {
   return window.Tesseract;
 }
 
-/**
- * Renders each PDF page to an offscreen canvas at 2.5x resolution
- * and runs Tesseract OCR for image-only Arboleaf mobile PDF exports.
- */
 async function extractPdfOcrText(pdf, fileLabel, onStatus) {
   if (onStatus) onStatus(`${fileLabel}: loading OCR engine...`);
   const Tesseract = await ensureTesseractLoaded();
@@ -98,9 +95,6 @@ function matchNum(text, patterns, minVal = 0, maxVal = 9999) {
   return null;
 }
 
-/**
- * Normalizes common Tesseract OCR character substitutions in numeric tables
- */
 function normalizeOcrText(rawText) {
   return rawText
     .replace(/\|/g, ' ')
@@ -108,20 +102,20 @@ function normalizeOcrText(rawText) {
     .replace(/(\d+\.\d)\s*96\b/g, '$1%')
     .replace(/(\d)[oO](\.\d)/g, '$10$2')
     .replace(/(\d+\.)[oO]\b/g, '$10')
+    .replace(/\b2[oO]\b/g, '20')
+    .replace(/\b1[oO]\b/g, '10')
     .replace(/\s+/g, ' ')
     .trim();
 }
 
 /**
- * Dedicated Visceral Fat extractor: ignores gauge tick marks (10)
- * and reads the actual Visceral Fat score (e.g., 20).
+ * Extracts Visceral Fat (e.g. 20) while ignoring gauge tick marks (10)
  */
 function extractVisceralFat(normText) {
-  const vfBlockMatch = normText.match(/Visceral\s*Fat([\s\S]{0,160})/i);
-  if (!vfBlockMatch) return null;
+  const vfMatch = normText.match(/Visceral(?:\s*Fat)?([\s\S]{0,220})/i);
+  if (!vfMatch) return null;
 
-  const snippet = vfBlockMatch[1];
-  // Extract all standalone 1- or 2-digit integers in the Visceral Fat gauge zone
+  const snippet = vfMatch[1];
   const nums = [];
   const numRegex = /\b(\d{1,2})\b/g;
   let m;
@@ -133,56 +127,41 @@ function extractVisceralFat(normText) {
   }
   if (nums.length === 0) return null;
 
-  // Filter out the standard gauge divider tick '10' if another reading (like 20) is present
   const nonTick = nums.filter(n => n !== 10);
-  if (nonTick.length > 0) return nonTick[0];
-  return nums[0];
+  return nonTick.length > 0 ? nonTick[0] : nums[0];
 }
 
 /**
- * Dedicated Segmental Lean Mass extractor (Upper L/R, Trunk, Lower L/R).
- * Handles both "11lb 95.9%" pairs AND split-line OCR where "lb" is dropped on a limb.
+ * Extracts all 5 segmental lean mass entries (Left Arm, Right Arm, Trunk, Left Leg, Right Leg)
+ * anchored strictly AFTER the Fat Analysis / Muscle Balance section so BMI/Weight bar ticks
+ * (like "45 55%") are never included.
  */
 function extractSegmentalLean(normText) {
-  // Strategy A: Direct "<lbs>lb <pct>%" pairs where pct is in normal lean range (50%–165%)
+  // Slice starting at "Visceral Fat" or "Muscle Balance" or "Soft Lean Mass"
+  const startIdx = Math.max(
+    normText.search(/Visceral\s*Fat/i),
+    normText.search(/Muscle\s*Balance/i),
+    normText.search(/Soft\s*Lean\s*Mass/i)
+  );
+  const searchZone = startIdx !== -1 ? normText.slice(startIdx, startIdx + 750) : normText;
+
   const pairs = [];
   const pairRegex = /(\d{1,3}(?:[.,]\d+)?)\s*(?:lb)?\s*\/?\s*(\d{2,3}(?:[.,]\d+)?)\s*%/gi;
   let m;
-  while ((m = pairRegex.exec(normText)) !== null) {
+  while ((m = pairRegex.exec(searchZone)) !== null) {
     const lbs = parseFloat(m[1].replace(',', '.'));
     const pct = parseFloat(m[2].replace(',', '.'));
-    // Exclude body-wide percentages (like 42.5% BF, 32.5% SM) by requiring realistic limb/trunk lb bounds
-    if (!isNaN(lbs) && !isNaN(pct) && pct >= 55 && pct <= 165 && lbs >= 4 && lbs <= 140) {
+    // Exclude chart scale ticks (45/55%, 150/170%, 175/205%) and keep real limb/trunk lean range (60%–150%)
+    if (!isNaN(lbs) && !isNaN(pct) && pct >= 60 && pct <= 150 && lbs >= 5 && lbs <= 130) {
+      // Guard against exact scale-tick pair 45 / 55
+      if (lbs === 45 && pct === 55) continue;
       pairs.push({ lbs, pct });
     }
   }
 
-  let selected = pairs.length >= 5 ? pairs.slice(0, 5) : null;
+  if (pairs.length < 5) return null;
 
-  // Strategy B: Fallback anchored directly inside the Soft Lean Mass / Muscle Balance block
-  if (!selected) {
-    const blockMatch = normText.match(/(?:Soft Lean Mass|Muscle Balance)([\s\S]{0,360})/i);
-    if (blockMatch) {
-      const sub = blockMatch[1];
-      const fallbackPairs = [];
-      const fbRegex = /(\d{1,3}(?:[.,]\d+)?)\s*(?:lb)?[\s\/]+(\d{2,3}(?:[.,]\d+)?)\s*%/gi;
-      let fm;
-      while ((fm = fbRegex.exec(sub)) !== null) {
-        const lbs = parseFloat(fm[1].replace(',', '.'));
-        const pct = parseFloat(fm[2].replace(',', '.'));
-        if (!isNaN(lbs) && !isNaN(pct) && pct >= 50 && pct <= 170 && lbs >= 4 && lbs <= 150) {
-          fallbackPairs.push({ lbs, pct });
-        }
-      }
-      if (fallbackPairs.length >= 5) {
-        selected = fallbackPairs.slice(0, 5);
-      }
-    }
-  }
-
-  if (!selected) return null;
-
-  const [leftArm, rightArm, trunk, leftLeg, rightLeg] = selected;
+  const [leftArm, rightArm, trunk, leftLeg, rightLeg] = pairs.slice(0, 5);
   const upperSymmetryPct = Math.round(
     (Math.min(leftArm.lbs, rightArm.lbs) / Math.max(leftArm.lbs, rightArm.lbs || 1)) * 1000
   ) / 10;
@@ -207,16 +186,25 @@ function extractSegmentalLean(normText) {
 }
 
 /**
- * Extracts all 5 segmental fat mass entries (Upper L/R, Trunk, Lower L/R)
+ * Extracts all 5 segmental fat mass entries (Left Arm, Right Arm, Trunk, Left Leg, Right Leg)
+ * anchored strictly AFTER the Fat Analysis section and excluding bar-chart ticks (175/205%, 150/170%).
  */
 function extractSegmentalFat(normText) {
+  const startIdx = Math.max(
+    normText.search(/Visceral\s*Fat/i),
+    normText.search(/Segmental\s*Fat/i),
+    normText.search(/Soft\s*Lean\s*Mass/i)
+  );
+  const searchZone = startIdx !== -1 ? normText.slice(startIdx, startIdx + 850) : normText;
+
   const pairs = [];
-  const regex = /(\d{1,3}(?:[.,]\d+)?)\s*(?:lb)?\s*\/?\s*(\d{2,4}(?:[.,]\d+)?)\s*%/gi;
+  const regex = /(\d{1,3}(?:[.,]\d+)?)\s*(?:lb)?\s*\/?\s*(\d{3,4}(?:[.,]\d+)?)\s*%/gi;
   let m;
-  while ((m = regex.exec(normText)) !== null) {
+  while ((m = regex.exec(searchZone)) !== null) {
     const lbs = parseFloat(m[1].replace(',', '.'));
     const pct = parseFloat(m[2].replace(',', '.'));
-    if (!isNaN(lbs) && !isNaN(pct) && pct > 165 && lbs >= 1 && lbs <= 200) {
+    // Segmental fat evaluation percentages are >= 210% (e.g., 362%, 619.5%, 804.4%, 824.5%)
+    if (!isNaN(lbs) && !isNaN(pct) && pct >= 210 && lbs >= 2 && lbs <= 180) {
       pairs.push({ lbs, pct });
     }
   }
@@ -263,68 +251,64 @@ export function parseArboleafReportText(rawText) {
     }
   }
 
-  // 2. High-Recall Multi-Column Matchers
+  // 2. Core & Extended Body Composition Fields (excluding normal-range ~ values)
   const weightLbs = matchNum(normText, [
     /Body Fat Mass\s*\(lb\)[\s\S]{0,90}?(\d{3}[.,]\d)/i,
-    /Weight[\s\S]{0,200}?(\d{3}[.,]\d)\s*(?:lb|205%|156)/i,
-    /(\d{3}[.,]\d)\s*(?:lb)?\s*156\.8/i
+    /Weight[\s\S]{0,200}?(\d{3}[.,]\d)\s*(?:lb|205%|156)/i
   ], 70, 600);
 
   const bodyFatPct = matchNum(normText, [
-    /Body\s*Fat\s*Percentage[\s\S]{0,100}?(\d{1,2}[.,]\d)/i,
-    /PBF\s*\(%\)[\s\S]{0,180}?(\d{1,2}[.,]\d)/i
+    /Body\s*Fat\s*Percentage[\s\S]{0,100}?(\d{1,2}[.,]\d)(?!\s*[~-])/i,
+    /PBF\s*\(%\)[\s\S]{0,180}?(\d{1,2}[.,]\d)(?!\s*[~-])/i
   ], 3, 75);
 
   const bodyWaterL = matchNum(normText, [
-    /Body Water\s*\(L\)[\s\S]{0,80}?(\d{2,3}[.,]\d)/i,
-    /Body Water[\s\S]{0,100}?(\d{2,3}[.,]\d)\s*(?:\d{2,3}[.,]\d\s*)?47/i
+    /Body Water\s*\(L\)[\s\S]{0,80}?(\d{2,3}[.,]\d)(?!\s*[~-])/i
   ], 15, 120);
 
   const bodyWaterPct = matchNum(normText, [
     /Body Water Percentage[\s\S]{0,90}?(\d{2}[.,]\d)\s*%/i,
-    /Body Water Percentage[\s\S]{0,60}?(\d{2}[.,]\d)/i
+    /Body Water Percentage[\s\S]{0,60}?(\d{2}[.,]\d)(?!\s*[~-])/i
   ], 20, 80);
 
   const boneMassLbs = matchNum(normText, [
-    /Bone Mass\s*\(lb\)[\s\S]{0,80}?(\d{1,2}[.,]\d)/i,
-    /Bone Mass[\s\S]{0,100}?(\d{1,2}[.,]\d)[\s\S]{0,50}?9\.6/i
+    /Bone Mass\s*\(lb\)[\s\S]{0,80}?(\d{1,2}[.,]\d)(?!\s*[~-])/i
   ], 3, 30);
 
   const boneMassPct = matchNum(normText, [
     /Bone Mass Percentage[\s\S]{0,90}?(\d[.,]\d)\s*%/i,
-    /Bone Mass Percentage[\s\S]{0,60}?(\d[.,]\d)/i
+    /Bone Mass Percentage[\s\S]{0,60}?(\d[.,]\d)(?!\s*[~-])/i
   ], 1, 10);
 
   const skeletalMuscleLbs = matchNum(normText, [
     /Skeletal Muscle[\s\S]{0,90}?(\d{2,3}[.,]\d)\s*lb/i,
-    /Skeletal Muscle[\s\S]{0,180}?(\d{2,3}[.,]\d)[\s\S]{0,50}?79/i
+    /Skeletal Muscle[\s\S]{0,180}?(\d{2,3}[.,]\d)(?!\s*[~-])/i
   ], 30, 250);
 
   const skeletalMusclePct = matchNum(normText, [
     /Skeletal Muscle\s*\(%\)[\s\S]{0,90}?(\d{2}[.,]\d)\s*%/i,
-    /Skeletal Muscle\s*\(%\)[\s\S]{0,60}?(\d{2}[.,]\d)/i
+    /Skeletal Muscle\s*\(%\)[\s\S]{0,60}?(\d{2}[.,]\d)(?!\s*[~-])/i
   ], 15, 65);
 
   const visceralFat = extractVisceralFat(normText);
 
   const subqFatLbs = matchNum(normText, [
     /Subcutaneous Fat[\s\S]{0,90}?(\d{2,3}[.,]\d)\s*lb/i,
-    /Subcutaneous Fat[\s\S]{0,90}?(\d{2,3}[.,]\d)[\s\S]{0,40}?27\.6/i
+    /Subcutaneous Fat[\s\S]{0,90}?(\d{2,3}[.,]\d)(?!\s*[~-])/i
   ], 5, 300);
 
   const subqFatPct = matchNum(normText, [
     /Subcutaneous Fat Percentage[\s\S]{0,90}?(\d{1,2}[.,]\d)\s*%/i,
-    /Subcutaneous Fat Percentage[\s\S]{0,60}?(\d{1,2}[.,]\d)/i
+    /Subcutaneous Fat Percentage[\s\S]{0,60}?(\d{1,2}[.,]\d)(?!\s*[~-])/i
   ], 3, 70);
 
-  // Tolerates "Waist-Hip Ratio", "Waist Hip Ratio", or "1.29<=0.9"
   const waistHipRatio = matchNum(normText, [
-    /Waist[\s-]*Hip\s*Ratio[\s\S]{0,120}?([012][.,]\d{1,2})/i,
+    /Waist[\s-]*Hip[\s\S]{0,140}?([012][.,]\d{1,2})/i,
     /([012][.,]\d{2})\s*(?:<=|≤|<)\s*0[.,]9/i
   ], 0.5, 2.2);
 
   const smi = matchNum(normText, [
-    /\bSMI[\s\S]{0,70}?(\d{1,2}(?:[.,]\d)?)/i
+    /\bSMI[\s\S]{0,70}?(\d{1,2}(?:[.,]\d)?)(?!\s*[~-])/i
   ], 3, 20);
 
   const fitnessScore = matchNum(normText, [
