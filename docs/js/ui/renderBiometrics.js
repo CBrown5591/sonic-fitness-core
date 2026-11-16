@@ -1,7 +1,9 @@
 // -------------------------------------------------------------
-// BIOMETRICS & BODY COMPOSITION TELEMETRY HUD
+// BIOMETRICS, ARBOLEAF DEEP SCAN & SEGMENTAL TELEMETRY HUD
 // Modular UI Renderer: docs/js/ui/renderBiometrics.js
 // -------------------------------------------------------------
+import { parseArboleafPdfFile } from '../engine/arboleafPdfParser.js';
+import { syncArboleafDeepScan } from '../core/sync.js';
 
 let activeChartMetric = 'weight'; // 'weight' | 'leanMass' | 'fatMass' | 'bfPct'
 
@@ -36,35 +38,31 @@ function parseBiometricScans() {
     })
     .filter(s => !isNaN(s.dateObj));
 
-  return { allEntries, scaleScans };
+  // Find latest entry containing an imported Arboleaf Deep Scan (Column R)
+  const latestDeepScanEntry = allEntries.find(b => b.deepScan && typeof b.deepScan === 'object') || null;
+
+  return { allEntries, scaleScans, latestDeepScanEntry };
 }
 
 /**
- * Finds the most recent non-zero / non-empty reading for a given field across all cached entries
+ * Returns the most recent non-zero reading for a given Watch8 / Health Connect field
  */
-function getLatestMetricReading(allEntries, field, isNumeric = true) {
-  for (const entry of allEntries) {
-    const rawVal = entry[field];
-    if (isNumeric) {
-      const num = Number(rawVal);
-      if (num > 0) {
-        return {
-          value: num,
-          date: String(entry.date || entry.timestamp || '').split('T')[0]
-        };
+function latestNonZero(allEntries, field, isString = false) {
+  for (const row of allEntries) {
+    const val = row[field];
+    if (isString) {
+      if (val && String(val).trim() !== '') {
+        return { value: String(val).trim(), date: String(row.date || '').split('T')[0] };
       }
-    } else if (rawVal && String(rawVal).trim() !== '') {
-      return {
-        value: String(rawVal).trim(),
-        date: String(entry.date || entry.timestamp || '').split('T')[0]
-      };
+    } else if (Number(val) > 0) {
+      return { value: Number(val), date: String(row.date || '').split('T')[0] };
     }
   }
   return null;
 }
 
 /**
- * Finds the historical scale scan closest to `targetDaysAgo`
+ * Finds the historical scan closest to `targetDaysAgo`
  */
 function findHistoricalAnchor(scaleScans, targetDaysAgo) {
   if (scaleScans.length < 2) return null;
@@ -105,7 +103,7 @@ function buildTrendChartSVG(scaleScans, metricKey) {
   const points = [...scaleScans].slice(0, 24).reverse();
   if (points.length < 2) {
     return `
-      <div style="padding: 24px 12px; text-align: center; font-size: 11px; color: #64748b; background: rgba(15,23,42,0.5); border-radius: 8px;">
+      <div style="padding: 20px 12px; text-align: center; font-size: 11px; color: #64748b; background: rgba(15,23,42,0.5); border-radius: 8px;">
         Log at least 2 scale weigh-ins to unlock trend line visualization.
       </div>
     `;
@@ -157,19 +155,12 @@ function buildTrendChartSVG(scaleScans, metricKey) {
             <stop offset="100%" stop-color="${meta.color}" stop-opacity="0.0" />
           </linearGradient>
         </defs>
-
-        <!-- Horizontal Gridlines & Y-Axis Labels -->
         <line x1="${leftPad}" y1="${topPad}" x2="${width - rightPad}" y2="${topPad}" stroke="rgba(255,255,255,0.07)" stroke-dasharray="3,3" />
         <text x="${leftPad - 5}" y="${topPad + 3}" text-anchor="end" fill="#64748b" font-size="8" font-family="monospace">${maxVal.toFixed(1)}</text>
-
         <line x1="${leftPad}" y1="${topPad + plotH}" x2="${width - rightPad}" y2="${topPad + plotH}" stroke="rgba(255,255,255,0.12)" />
         <text x="${leftPad - 5}" y="${topPad + plotH}" text-anchor="end" fill="#64748b" font-size="8" font-family="monospace">${minVal.toFixed(1)}</text>
-
-        <!-- Shaded Area & Trend Line -->
         <polygon points="${areaPoints}" fill="url(#bioChartGrad)" />
         <polyline fill="none" stroke="${meta.color}" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" points="${polylinePoints}" />
-
-        <!-- Data Nodes -->
         ${coords.map((c, i) => `
           <circle cx="${c.x.toFixed(1)}" cy="${c.y.toFixed(1)}" r="${i === coords.length - 1 ? 4 : 2.5}" fill="${i === coords.length - 1 ? '#ffffff' : meta.color}" stroke="${meta.color}" stroke-width="1.5" />
           ${(i === 0 || i === coords.length - 1) ? `
@@ -181,35 +172,179 @@ function buildTrendChartSVG(scaleScans, metricKey) {
   `;
 }
 
+/**
+ * Merges a newly imported Arboleaf PDF into localStorage['sonic_biometrics_history']
+ * so the HUD updates immediately before the next Sheet sync.
+ */
+function mergeDeepScanIntoLocalHistory(parsedReport) {
+  let history = [];
+  try {
+    history = JSON.parse(localStorage.getItem('sonic_biometrics_history')) || [];
+  } catch (e) {}
+
+  const targetDate = parsedReport.date;
+  let matchedIdx = history.findIndex(
+    row => String(row.date || '').split('T')[0] === targetDate && Number(row.weightLbs) > 0
+  );
+  if (matchedIdx === -1) {
+    matchedIdx = history.findIndex(row => String(row.date || '').split('T')[0] === targetDate);
+  }
+
+  if (matchedIdx !== -1) {
+    history[matchedIdx] = {
+      ...history[matchedIdx],
+      weightLbs: history[matchedIdx].weightLbs > 0 ? history[matchedIdx].weightLbs : parsedReport.weightLbs,
+      bodyFatPct: history[matchedIdx].bodyFatPct > 0 ? history[matchedIdx].bodyFatPct : parsedReport.bodyFatPct,
+      deepScan: parsedReport.deepScan
+    };
+  } else {
+    history.unshift({
+      timestamp: parsedReport.timestamp,
+      date: parsedReport.date,
+      sleepHrs: 0,
+      steps: 0,
+      avgHr: 0,
+      cardioMins: 0,
+      spo2Pct: 0,
+      bodyFatPct: parsedReport.bodyFatPct,
+      weightLbs: parsedReport.weightLbs,
+      bp: '',
+      source: 'Arboleaf_PDF',
+      deepScan: parsedReport.deepScan
+    });
+  }
+
+  localStorage.setItem('sonic_biometrics_history', JSON.stringify(history.slice(0, 200)));
+}
+
+function renderDeepScanAndSegmentalHTML(deepScanEntry) {
+  if (!deepScanEntry || !deepScanEntry.deepScan) return '';
+  const ds = deepScanEntry.deepScan;
+  const scanDate = ds.scanDate || String(deepScanEntry.date || '').split('T')[0] || 'IMPORTED';
+  const segLean = ds.segmentalLean;
+  const segFat = ds.segmentalFat;
+
+  return `
+    <!-- ARBOLEAF DEEP SCAN METRICS -->
+    <div class="card" style="margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+        <span class="card-title">🔬 ARBOLEAF DEEP SCAN</span>
+        <span style="font-size: 10px; font-weight: 700; color: #a78bfa;">${scanDate}</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-bottom: 10px;">
+        <div style="background: rgba(15, 23, 42, 0.7); padding: 8px; border-radius: 8px; border-top: 2px solid ${ds.visceralFat >= 15 ? '#f43f5e' : '#4ade80'};">
+          <div style="font-size: 9px; color: #94a3b8; font-weight: 700;">VISCERAL FAT</div>
+          <div style="font-size: 16px; font-weight: 900; color: ${ds.visceralFat >= 15 ? '#f43f5e' : '#f8fafc'}; font-family: monospace;">${ds.visceralFat || '—'}</div>
+          <div style="font-size: 9px; color: #64748b;">Target &lt; 10</div>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.7); padding: 8px; border-radius: 8px; border-top: 2px solid #4ade80;">
+          <div style="font-size: 9px; color: #94a3b8; font-weight: 700;">SKEL. MUSCLE</div>
+          <div style="font-size: 16px; font-weight: 900; color: #4ade80; font-family: monospace;">${ds.skeletalMuscleLbs ? `${ds.skeletalMuscleLbs}` : '—'} <span style="font-size: 10px;">lb</span></div>
+          <div style="font-size: 9px; color: #94a3b8;">${ds.skeletalMusclePct ? `${ds.skeletalMusclePct}%` : ''}</div>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.7); padding: 8px; border-radius: 8px; border-top: 2px solid #38bdf8;">
+          <div style="font-size: 9px; color: #94a3b8; font-weight: 700;">BODY WATER</div>
+          <div style="font-size: 16px; font-weight: 900; color: #38bdf8; font-family: monospace;">${ds.bodyWaterPct ? `${ds.bodyWaterPct}%` : '—'}</div>
+          <div style="font-size: 9px; color: #94a3b8;">${ds.bodyWaterL ? `${ds.bodyWaterL} L` : ''}</div>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.7); padding: 8px; border-radius: 8px; border-top: 2px solid #e2e8f0;">
+          <div style="font-size: 9px; color: #94a3b8; font-weight: 700;">BONE MASS</div>
+          <div style="font-size: 15px; font-weight: 900; color: #f8fafc; font-family: monospace;">${ds.boneMassLbs ? `${ds.boneMassLbs}` : '—'} <span style="font-size: 10px;">lb</span></div>
+          <div style="font-size: 9px; color: #94a3b8;">${ds.boneMassPct ? `${ds.boneMassPct}%` : ''}</div>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.7); padding: 8px; border-radius: 8px; border-top: 2px solid #facc15;">
+          <div style="font-size: 9px; color: #94a3b8; font-weight: 700;">SUBQ. FAT</div>
+          <div style="font-size: 15px; font-weight: 900; color: #facc15; font-family: monospace;">${ds.subqFatLbs ? `${ds.subqFatLbs}` : '—'} <span style="font-size: 10px;">lb</span></div>
+          <div style="font-size: 9px; color: #94a3b8;">${ds.subqFatPct ? `${ds.subqFatPct}%` : ''}</div>
+        </div>
+        <div style="background: rgba(15, 23, 42, 0.7); padding: 8px; border-radius: 8px; border-top: 2px solid #a78bfa;">
+          <div style="font-size: 9px; color: #94a3b8; font-weight: 700;">WAIST-HIP</div>
+          <div style="font-size: 15px; font-weight: 900; color: #f8fafc; font-family: monospace;">${ds.waistHipRatio || '—'}</div>
+          <div style="font-size: 9px; color: #64748b;">Target ≤ 0.90</div>
+        </div>
+      </div>
+
+      ${(segLean || segFat) ? `
+        <div style="border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+            <span style="font-size: 10px; font-weight: 800; color: #cbd5e1; letter-spacing: 0.4px;">⚖️ SEGMENTAL MUSCLE & FAT MAP</span>
+            ${segLean ? `<span style="font-size: 9px; color: #4ade80; font-weight: 700;">SYM: U ${segLean.upperSymmetryPct}% • L ${segLean.lowerSymmetryPct}%</span>` : ''}
+          </div>
+          <table style="width: 100%; border-collapse: collapse; font-size: 11px; text-align: right;">
+            <thead>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.12); color: #94a3b8; font-size: 9px;">
+                <th style="text-align: left; padding: 5px 4px;">REGION</th>
+                <th style="padding: 5px 4px;">LEAN (L / R)</th>
+                <th style="padding: 5px 4px;">FAT (L / R)</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                <td style="text-align: left; padding: 6px 4px; font-weight: 700; color: #e2e8f0;">Upper Limbs</td>
+                <td style="padding: 6px 4px; color: #4ade80; font-family: monospace;">${segLean ? `${segLean.leftArmLbs} / ${segLean.rightArmLbs} lb` : '—'}</td>
+                <td style="padding: 6px 4px; color: #f43f5e; font-family: monospace;">${segFat ? `${segFat.leftArmLbs} / ${segFat.rightArmLbs} lb` : '—'}</td>
+              </tr>
+              <tr style="border-bottom: 1px solid rgba(255,255,255,0.06);">
+                <td style="text-align: left; padding: 6px 4px; font-weight: 700; color: #e2e8f0;">Trunk / Core</td>
+                <td style="padding: 6px 4px; color: #4ade80; font-family: monospace;">${segLean ? `${segLean.trunkLbs} lb (${segLean.trunkPct}%)` : '—'}</td>
+                <td style="padding: 6px 4px; color: #f43f5e; font-family: monospace;">${segFat ? `${segFat.trunkLbs} lb` : '—'}</td>
+              </tr>
+              <tr>
+                <td style="text-align: left; padding: 6px 4px; font-weight: 700; color: #e2e8f0;">Lower Limbs</td>
+                <td style="padding: 6px 4px; color: #4ade80; font-family: monospace;">${segLean ? `${segLean.leftLegLbs} / ${segLean.rightLegLbs} lb` : '—'}</td>
+                <td style="padding: 6px 4px; color: #f43f5e; font-family: monospace;">${segFat ? `${segFat.leftLegLbs} / ${segFat.rightLegLbs} lb` : '—'}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      ` : ''}
+    </div>
+  `;
+}
+
 export function renderBiometricsUI() {
   const mount = document.getElementById('biometricsTabMount');
   if (!mount) return;
 
-  const { allEntries, scaleScans } = parseBiometricScans();
+  const { allEntries, scaleScans, latestDeepScanEntry } = parseBiometricScans();
   const latestScale = scaleScans[0] || null;
-  const latestSync = allEntries[0] || null;
 
-  if (!latestScale && !latestSync) {
+  const sleepLatest = latestNonZero(allEntries, 'sleepHrs');
+  const spo2Latest = latestNonZero(allEntries, 'spo2Pct');
+  const hrLatest = latestNonZero(allEntries, 'avgHr');
+  const stepsLatest = latestNonZero(allEntries, 'steps');
+  const bpLatest = latestNonZero(allEntries, 'bp', true);
+  const cardioLatest = latestNonZero(allEntries, 'cardioMins');
+
+  const pdfDropInBarHTML = `
+    <div class="card" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 10px; padding: 10px 12px;">
+      <div>
+        <div style="font-size: 11px; font-weight: 800; color: #f8fafc;">📄 ARBOLEAF DEEP SCAN</div>
+        <div id="arboleafPdfStatus" style="font-size: 10px; color: #94a3b8;">Import PDF report for Visceral Fat &amp; Segmental Map</div>
+      </div>
+      <label for="arboleafPdfInput" style="
+        background: #38bdf8; color: #0f172a; padding: 7px 12px; border-radius: 6px;
+        font-size: 10px; font-weight: 900; cursor: pointer; white-space: nowrap;
+      ">IMPORT PDF</label>
+      <input type="file" id="arboleafPdfInput" accept="application/pdf,.pdf" style="display: none;" />
+    </div>
+  `;
+
+  if (!latestScale && allEntries.length === 0) {
     mount.innerHTML = `
+      ${pdfDropInBarHTML}
       <div class="card" style="text-align: center; padding: 24px 16px;">
         <div style="font-size: 13px; font-weight: 800; color: #38bdf8; margin-bottom: 6px;">🧬 BIOMETRIC TELEMETRY STANDBY</div>
         <div style="font-size: 12px; color: #94a3b8; line-height: 1.5;">
-          No scale or Galaxy Watch8 readings cached yet. Complete a scan in Arboleaf and run <b>Sync Now</b> in HC Webhook, then reload the HUD.
+          No scale or Galaxy Watch8 readings cached yet. Sync Health Connect or tap <b>IMPORT PDF</b> above to load an Arboleaf report.
         </div>
       </div>
     `;
+    bindPdfInputHandler();
     return;
   }
 
-  // Pull most recent valid reading per Watch8 / Health Connect vital
-  const latestSleep  = getLatestMetricReading(allEntries, 'sleepHrs', true);
-  const latestSteps  = getLatestMetricReading(allEntries, 'steps', true);
-  const latestHr     = getLatestMetricReading(allEntries, 'avgHr', true);
-  const latestSpo2   = getLatestMetricReading(allEntries, 'spo2Pct', true);
-  const latestBp     = getLatestMetricReading(allEntries, 'bp', false);
-  const latestCardio = getLatestMetricReading(allEntries, 'cardioMins', true);
-
-  // Timeframe anchors: 1W (7d), 1M (30d), 3M (90d), 6M (180d)
   const horizons = [
     { key: '1W', days: 7 },
     { key: '1M', days: 30 },
@@ -229,17 +364,17 @@ export function renderBiometricsUI() {
   });
 
   mount.innerHTML = `
+    ${pdfDropInBarHTML}
+
     <!-- 1. MOST RECENT OVERALL READING -->
     <div class="card" style="margin-bottom: 12px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
         <span class="card-title">🧬 LATEST BODY COMPOSITION</span>
-        <span style="font-size: 10px; font-weight: 700; color: #38bdf8;">
-          ${latestScale ? `SCALE: ${latestScale.dateLabel}` : 'AWAITING SCALE'}
-        </span>
+        <span style="font-size: 10px; font-weight: 700; color: #38bdf8;">${latestScale ? latestScale.dateLabel : 'WATCH ONLY'}</span>
       </div>
 
       ${latestScale ? `
-        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 12px;">
+        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; margin-bottom: 10px;">
           <div style="background: rgba(15, 23, 42, 0.7); padding: 10px; border-radius: 8px; border-left: 3px solid #38bdf8;">
             <div style="font-size: 10px; color: #94a3b8; font-weight: 700;">TOTAL WEIGHT</div>
             <div style="font-size: 18px; font-weight: 900; color: #f8fafc; font-family: monospace;">${latestScale.weight.toFixed(1)} <span style="font-size: 11px; color: #94a3b8;">LBS</span></div>
@@ -259,50 +394,21 @@ export function renderBiometricsUI() {
         </div>
       ` : ''}
 
-      <!-- Galaxy Watch8 Full Vitals Grid -->
-      ${latestSync ? `
-        <div style="padding-top: 10px; border-top: 1px solid rgba(255,255,255,0.08);">
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-            <span style="font-size: 10px; font-weight: 800; color: #94a3b8; letter-spacing: 0.4px;">⌚ WATCH8 / HEALTH CONNECT VITALS</span>
-            <span style="font-size: 10px; color: #64748b;">SYNC: ${String(latestSync.date || '').split('T')[0]}</span>
-          </div>
-          <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 6px; font-size: 11px;">
-            <div style="background: rgba(15,23,42,0.55); padding: 6px 8px; border-radius: 6px;">
-              <div style="font-size: 9px; color: #94a3b8;">SLEEP</div>
-              <div style="font-weight: 800; color: #f8fafc; font-family: monospace;">${latestSleep ? `${latestSleep.value}h` : '—'}</div>
-              ${latestSleep ? `<div style="font-size: 8px; color: #64748b;">${latestSleep.date.slice(5)}</div>` : ''}
-            </div>
-            <div style="background: rgba(15,23,42,0.55); padding: 6px 8px; border-radius: 6px;">
-              <div style="font-size: 9px; color: #94a3b8;">STEPS</div>
-              <div style="font-weight: 800; color: #f8fafc; font-family: monospace;">${latestSteps ? latestSteps.value.toLocaleString() : '—'}</div>
-              ${latestSteps ? `<div style="font-size: 8px; color: #64748b;">${latestSteps.date.slice(5)}</div>` : ''}
-            </div>
-            <div style="background: rgba(15,23,42,0.55); padding: 6px 8px; border-radius: 6px;">
-              <div style="font-size: 9px; color: #94a3b8;">AVG HR</div>
-              <div style="font-weight: 800; color: #f8fafc; font-family: monospace;">${latestHr ? `${latestHr.value} bpm` : '—'}</div>
-              ${latestHr ? `<div style="font-size: 8px; color: #64748b;">${latestHr.date.slice(5)}</div>` : ''}
-            </div>
-            <div style="background: rgba(15,23,42,0.55); padding: 6px 8px; border-radius: 6px;">
-              <div style="font-size: 9px; color: #94a3b8;">SPO2</div>
-              <div style="font-weight: 800; color: #f8fafc; font-family: monospace;">${latestSpo2 ? `${latestSpo2.value}%` : '—'}</div>
-              ${latestSpo2 ? `<div style="font-size: 8px; color: #64748b;">${latestSpo2.date.slice(5)}</div>` : ''}
-            </div>
-            <div style="background: rgba(15,23,42,0.55); padding: 6px 8px; border-radius: 6px;">
-              <div style="font-size: 9px; color: #94a3b8;">BLOOD PRESS.</div>
-              <div style="font-weight: 800; color: #f8fafc; font-family: monospace;">${latestBp ? latestBp.value : '—'}</div>
-              ${latestBp ? `<div style="font-size: 8px; color: #64748b;">${latestBp.date.slice(5)}</div>` : ''}
-            </div>
-            <div style="background: rgba(15,23,42,0.55); padding: 6px 8px; border-radius: 6px;">
-              <div style="font-size: 9px; color: #94a3b8;">CARDIO</div>
-              <div style="font-weight: 800; color: #4ade80; font-family: monospace;">${latestCardio ? `${latestCardio.value}m` : '0m'}</div>
-              ${latestCardio ? `<div style="font-size: 8px; color: #64748b;">${latestCardio.date.slice(5)}</div>` : ''}
-            </div>
-          </div>
-        </div>
-      ` : ''}
+      <!-- Galaxy Watch8 Vitals Strip (Latest Non-Zero Across Syncs) -->
+      <div style="display: flex; flex-wrap: wrap; gap: 6px; padding-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); font-size: 10px; color: #cbd5e1;">
+        ${sleepLatest ? `<span style="background: rgba(56,189,248,0.12); padding: 3px 7px; border-radius: 4px;">😴 Sleep: <b>${sleepLatest.value}h</b></span>` : ''}
+        ${spo2Latest ? `<span style="background: rgba(56,189,248,0.12); padding: 3px 7px; border-radius: 4px;">🫁 SpO2: <b>${spo2Latest.value}%</b></span>` : ''}
+        ${hrLatest ? `<span style="background: rgba(56,189,248,0.12); padding: 3px 7px; border-radius: 4px;">❤️ Avg HR: <b>${hrLatest.value} bpm</b></span>` : ''}
+        ${stepsLatest ? `<span style="background: rgba(56,189,248,0.12); padding: 3px 7px; border-radius: 4px;">👟 Steps: <b>${stepsLatest.value.toLocaleString()}</b></span>` : ''}
+        ${bpLatest ? `<span style="background: rgba(244,63,94,0.16); padding: 3px 7px; border-radius: 4px;">🩺 BP: <b>${bpLatest.value}</b></span>` : ''}
+        ${cardioLatest ? `<span style="background: rgba(74,222,128,0.12); padding: 3px 7px; border-radius: 4px;">🏃 Cardio: <b>${cardioLatest.value}m</b></span>` : ''}
+      </div>
     </div>
 
-    <!-- 2. MULTI-HORIZON DELTA MATRIX (1W / 1M / 3M / 6M) -->
+    <!-- 2. ARBOLEAF DEEP SCAN & SEGMENTAL MUSCLE/FAT CARD -->
+    ${renderDeepScanAndSegmentalHTML(latestDeepScanEntry)}
+
+    <!-- 3. MULTI-HORIZON DELTA MATRIX (1W / 1M / 3M / 6M) -->
     <div class="card" style="margin-bottom: 12px;">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <span class="card-title">📈 COMPOSITION TRAJECTORY (Δ)</span>
@@ -339,7 +445,7 @@ export function renderBiometricsUI() {
       </div>
     </div>
 
-    <!-- 3. INTERACTIVE TREND VISUALIZER -->
+    <!-- 4. INTERACTIVE TREND VISUALIZER -->
     <div class="card">
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
         <span class="card-title">📉 VISUAL TRENDLINE</span>
@@ -371,6 +477,43 @@ export function renderBiometricsUI() {
       renderBiometricsUI();
     };
   });
+
+  bindPdfInputHandler();
+}
+
+function bindPdfInputHandler() {
+  const input = document.getElementById('arboleafPdfInput');
+  const statusEl = document.getElementById('arboleafPdfStatus');
+  if (!input) return;
+
+  input.onchange = async (e) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      if (statusEl) {
+        statusEl.style.color = '#38bdf8';
+        statusEl.innerText = 'Parsing Arboleaf PDF...';
+      }
+
+      const parsed = await parseArboleafPdfFile(file);
+      mergeDeepScanIntoLocalHistory(parsed);
+      await syncArboleafDeepScan(parsed);
+
+      renderBiometricsUI();
+      const postStatus = document.getElementById('arboleafPdfStatus');
+      if (postStatus) {
+        postStatus.style.color = '#4ade80';
+        postStatus.innerText = `✓ Imported ${parsed.date} (Visceral: ${parsed.deepScan.visceralFat})`;
+      }
+    } catch (err) {
+      console.error('[Arboleaf PDF] Import failed:', err);
+      if (statusEl) {
+        statusEl.style.color = '#f43f5e';
+        statusEl.innerText = err.message || 'Failed to parse PDF.';
+      }
+    }
+  };
 }
 
 window.renderBiometricsUI = renderBiometricsUI;
