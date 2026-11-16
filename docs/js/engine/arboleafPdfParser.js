@@ -111,24 +111,36 @@ function normalizeOcrText(rawText) {
 /**
  * Extracts Visceral Fat (e.g. 20) while ignoring gauge tick marks (10)
  */
+/**
+ * Extracts Visceral Fat (e.g. 20) even when right-column Body Balance text
+ * interleaves between "Visceral Fat" and "20" during horizontal OCR.
+ */
 function extractVisceralFat(normText) {
-  const vfMatch = normText.match(/Visceral(?:\s*Fat)?([\s\S]{0,220})/i);
+  // Search up to 450 chars after "Visceral" so interleaved right-column text doesn't cut off "20"
+  const vfMatch = normText.match(/Visceral(?:\s*Fat)?([\s\S]{0,450})/i);
   if (!vfMatch) return null;
 
-  const snippet = vfMatch[1];
+  const snippet = vfMatch[1]
+    .replace(/\b2[oO]\b/g, '20')
+    .replace(/\b1[oO]\b/g, '10');
+
+  // 1. Direct pattern: "Under 10 Over 20" or "10 Over 20"
+  const gaugeMatch = snippet.match(/\b10\s+(?:Over\s+)?([1-5]\d)\b/i);
+  if (gaugeMatch) {
+    return parseInt(gaugeMatch[1], 10);
+  }
+
+  // 2. Collect standalone 1- or 2-digit integers in the Visceral Fat zone, ignoring gauge tick '10'
   const nums = [];
   const numRegex = /\b(\d{1,2})\b/g;
   let m;
   while ((m = numRegex.exec(snippet)) !== null) {
     const val = parseInt(m[1], 10);
-    if (!isNaN(val) && val >= 1 && val <= 59) {
+    if (!isNaN(val) && val >= 1 && val <= 59 && val !== 10) {
       nums.push(val);
     }
   }
-  if (nums.length === 0) return null;
-
-  const nonTick = nums.filter(n => n !== 10);
-  return nonTick.length > 0 ? nonTick[0] : nums[0];
+  return nums.length > 0 ? nums[0] : null;
 }
 
 /**
@@ -302,10 +314,20 @@ export function parseArboleafReportText(rawText) {
     /Subcutaneous Fat Percentage[\s\S]{0,60}?(\d{1,2}[.,]\d)(?!\s*[~-])/i
   ], 3, 70);
 
-  const waistHipRatio = matchNum(normText, [
-    /Waist[\s-]*Hip[\s\S]{0,140}?([012][.,]\d{1,2})/i,
-    /([012][.,]\d{2})\s*(?:<=|≤|<)\s*0[.,]9/i
+  // Tolerates "Waist-Hip", "Waist Hip", "Waist_Hip", merged "1.29<=0.9", or dropped decimal "129"
+  let waistHipRatio = matchNum(normText, [
+    /Waist[\s\-_—–]*Hip(?:\s*Ratio)?[\s\S]{0,180}?([012][.,]\d{1,2})/i,
+    /([012][.,]\d{2})\s*(?:<=|≤|<|=|s)\s*0[.,]9/i,
+    /SMI[\s\S]{0,120}?([012][.,]\d{2})/i
   ], 0.5, 2.2);
+
+  // Fallback if OCR dropped the decimal point (e.g., "Waist-Hip Ratio 129 <=0.9")
+  if (!waistHipRatio) {
+    const rawIntWhr = matchNum(normText, [
+      /Waist[\s\-_—–]*Hip(?:\s*Ratio)?[\s\S]{0,140}?\b(1\d{2})\b/i
+    ], 60, 220);
+    if (rawIntWhr) waistHipRatio = Number((rawIntWhr / 100).toFixed(2));
+  }
 
   const smi = matchNum(normText, [
     /\bSMI[\s\S]{0,70}?(\d{1,2}(?:[.,]\d)?)(?!\s*[~-])/i
