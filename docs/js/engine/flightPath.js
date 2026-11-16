@@ -1,5 +1,5 @@
 // -------------------------------------------------------------
-// 2-SESSION FLIGHT PATH, BIOMETRIC RECOVERY & BP ENGINE
+// 2-SESSION FLIGHT PATH, BIOMETRIC RECOVERY & DEEP SCAN ENGINE
 // Modular Engine: docs/js/engine/flightPath.js
 // -------------------------------------------------------------
 import { STAGES } from '../data/stages.js';
@@ -9,9 +9,6 @@ import { getExerciseMuscleTags } from './slotRotator.js';
 const DEDICATED_CARDIO_DAYS = ['DAY_G', 'DAY_H', 'DAY_I'];
 const LIFTING_STAGES = ['DAY_A', 'DAY_B', 'DAY_C', 'DAY_D', 'DAY_E', 'DAY_F'];
 
-/**
- * Helper: Extracts normalized muscle tags from a historical session record
- */
 function getSessionMuscleTags(sessionObj) {
   const tags = [];
   if (Array.isArray(sessionObj?.sets) && sessionObj.sets.length > 0) {
@@ -31,7 +28,7 @@ function getSessionMuscleTags(sessionObj) {
 }
 
 /**
- * Extracts the latest non-zero biometric signals (Sleep, SpO2, BP, Scale)
+ * Extracts latest Watch8 vitals (BP, Sleep, SpO2) AND Arboleaf Deep Scan signals
  */
 function getLatestBiometricSignals() {
   let bioHistory = [];
@@ -86,13 +83,37 @@ function getLatestBiometricSignals() {
     }
   }
 
-  return { latestBp, recentSleepHrs, recentSpo2Pct };
+  // 3. Arboleaf Deep Scan History (Column R JSON)
+  const deepScanEntries = sorted.filter(r => r.deepScan && typeof r.deepScan === 'object');
+  const latestDeepScan = deepScanEntries[0]?.deepScan || null;
+  const prevDeepScan = deepScanEntries.length > 1 ? deepScanEntries[1]?.deepScan : null;
+
+  let skeletalMuscleDropLbs = 0;
+  if (
+    latestDeepScan?.skeletalMuscleLbs > 0 &&
+    prevDeepScan?.skeletalMuscleLbs > 0
+  ) {
+    const waterStable =
+      !latestDeepScan.bodyWaterPct ||
+      !prevDeepScan.bodyWaterPct ||
+      (latestDeepScan.bodyWaterPct >= prevDeepScan.bodyWaterPct - 1.0);
+
+    if (waterStable) {
+      skeletalMuscleDropLbs = Number(
+        (prevDeepScan.skeletalMuscleLbs - latestDeepScan.skeletalMuscleLbs).toFixed(1)
+      );
+    }
+  }
+
+  return {
+    latestBp,
+    recentSleepHrs,
+    recentSpo2Pct,
+    latestDeepScan,
+    skeletalMuscleDropLbs
+  };
 }
 
-/**
- * Evaluates whether at least one cardio sortie (Days G/H/I or cardio finisher)
- * was completed within the rolling 7-day training window.
- */
 export function evaluateWeeklyCardioStatus(sessionHistory = []) {
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
@@ -115,8 +136,8 @@ export function evaluateWeeklyCardioStatus(sessionHistory = []) {
   });
 
   const cardioFulfilled = hasDedicatedCardio || hasCardioFinisher;
-  const daysSinceMonday = (now.getDay() + 6) % 7; // 0 = Mon, 6 = Sun
-  const isUrgent = !cardioFulfilled && daysSinceMonday >= 3; // Escalates starting Thursday
+  const daysSinceMonday = (now.getDay() + 6) % 7;
+  const isUrgent = !cardioFulfilled && daysSinceMonday >= 3;
 
   return {
     cardioFulfilled,
@@ -127,13 +148,10 @@ export function evaluateWeeklyCardioStatus(sessionHistory = []) {
   };
 }
 
-/**
- * Recommends the next sortie using Biometrics (BP, Sleep, SpO2),
- * Weekly Cardio Guarantee, Joint Strain, and 2-Session Muscle Freshness.
- */
 export function determineFlightPath(lastStages = [], sessionHistory = []) {
   const cardioStatus = evaluateWeeklyCardioStatus(sessionHistory);
   const bioSignals = getLatestBiometricSignals();
+  const ds = bioSignals?.latestDeepScan || null;
 
   const sortedHistory = [...sessionHistory].sort(
     (a, b) => new Date(b.timestamp || b.date || 0) - new Date(a.timestamp || a.date || 0)
@@ -150,6 +168,15 @@ export function determineFlightPath(lastStages = [], sessionHistory = []) {
     if (clean && !recentStageIds.includes(clean)) recentStageIds.push(clean);
   }
   const lastTwoStageIds = recentStageIds.slice(0, 2);
+
+  // Deep Scan Metabolic & Hydration Flags
+  const highVisceralOrWhr = Boolean(
+    ds && ((Number(ds.visceralFat) >= 15) || (Number(ds.waistHipRatio) > 0.90))
+  );
+  const lowHydration = Boolean(
+    ds && Number(ds.bodyWaterPct) > 0 && Number(ds.bodyWaterPct) < 34.0
+  );
+  const muscleLossAlert = (bioSignals?.skeletalMuscleDropLbs || 0) >= 1.5;
 
   // 1. HIGH BLOOD PRESSURE OVERRIDE (Tier 1: >= 160/100 within 48h)
   let bpElevatesZone2 = false;
@@ -171,24 +198,25 @@ export function determineFlightPath(lastStages = [], sessionHistory = []) {
     }
   }
 
-  // 2. SLEEP / SpO2 / JOINT STRAIN DELOAD OVERRIDE
+  // 2. SLEEP / SpO2 / SKELETAL MUSCLE DROP / JOINT STRAIN DELOAD OVERRIDE
   const lowSleep = bioSignals?.recentSleepHrs !== null && bioSignals?.recentSleepHrs < 5.5;
   const lowSpo2 = bioSignals?.recentSpo2Pct !== null && bioSignals?.recentSpo2Pct < 93;
   const hadRecentStrain =
     lastTwoSessions.some(s => s.jointPain === true || s.jointPain === 'true') ||
     localStorage.getItem('sonic_last_strain') === 'true';
 
-  if ((lowSleep || lowSpo2 || hadRecentStrain) && !lastTwoStageIds.includes('DAY_F') && STAGES.DAY_F) {
+  if ((lowSleep || lowSpo2 || muscleLossAlert || hadRecentStrain) && !lastTwoStageIds.includes('DAY_F') && STAGES.DAY_F) {
     let deloadReason = "Joint Shield Recovery — Active Deload after recent strain flag";
     if (lowSleep) deloadReason = `Recovery Deload — Low sleep logged (${bioSignals.recentSleepHrs} hrs)`;
     else if (lowSpo2) deloadReason = `Recovery Deload — Low SpO2 logged (${bioSignals.recentSpo2Pct}%)`;
+    else if (muscleLossAlert) deloadReason = `Recovery Deload — Skeletal muscle dip (-${bioSignals.skeletalMuscleDropLbs} lb); prioritize recovery & protein`;
 
     return {
       recommendedStage: 'DAY_F',
       reason: deloadReason,
       isCardioOverride: false,
-      isBiometricAlert: lowSleep || lowSpo2,
-      canPairFinisher: !cardioStatus.cardioFulfilled || bpElevatesZone2,
+      isBiometricAlert: lowSleep || lowSpo2 || muscleLossAlert,
+      canPairFinisher: !cardioStatus.cardioFulfilled || bpElevatesZone2 || highVisceralOrWhr,
       analyzedSessions: lastTwoSessions.length
     };
   }
@@ -266,23 +294,26 @@ export function determineFlightPath(lastStages = [], sessionHistory = []) {
       ? `2-Session Freshness Pick (Spares ${topFatiguedMuscles.join(' & ')})`
       : "2-Session Freshness Rotation";
 
-  if (bpElevatesZone2) {
-    reasonText += ` • Elevated BP (${bioSignals.latestBp.raw}) — Zone 2 Finisher Advised`;
+  // Append Deep Scan / BP conditioning advisories
+  const advisories = [];
+  if (bpElevatesZone2) advisories.push(`Elevated BP (${bioSignals.latestBp.raw})`);
+  if (highVisceralOrWhr) advisories.push(`Visceral/WHR Target`);
+  if (lowHydration) advisories.push(`Hydrate (${ds.bodyWaterPct}% Water)`);
+
+  if (advisories.length > 0) {
+    reasonText += ` • ${advisories.join(' + ')} — Zone 2 Finisher Advised`;
   }
 
   return {
     recommendedStage: bestStage,
     reason: reasonText,
     isCardioOverride: false,
-    isBiometricAlert: bpElevatesZone2,
-    canPairFinisher: !cardioStatus.cardioFulfilled || bpElevatesZone2,
+    isBiometricAlert: bpElevatesZone2 || highVisceralOrWhr,
+    canPairFinisher: !cardioStatus.cardioFulfilled || bpElevatesZone2 || highVisceralOrWhr,
     analyzedSessions: Math.max(lastTwoSessions.length, lastTwoStageIds.length)
   };
 }
 
-/**
- * Renders the compact briefing card directly into #flightPathMount above stage tabs
- */
 export function checkAndRenderFlightPathPrompt(activeSession, onSelectStage) {
   const mount = document.getElementById('flightPathMount');
   if (!mount) return;
