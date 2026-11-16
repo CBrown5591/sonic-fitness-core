@@ -496,7 +496,12 @@ function bindPdfInputHandler() {
         statusEl.innerText = 'Parsing Arboleaf PDF...';
       }
 
-      const parsed = await parseArboleafPdfFile(file);
+      const parsed = await parseArboleafPdfFile(file, (progressMsg) => {
+        if (statusEl) {
+          statusEl.style.color = '#38bdf8';
+          statusEl.innerText = progressMsg;
+        }
+      });
       mergeDeepScanIntoLocalHistory(parsed);
       await syncArboleafDeepScan(parsed);
 
