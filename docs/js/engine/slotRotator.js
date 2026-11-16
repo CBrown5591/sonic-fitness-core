@@ -1,6 +1,6 @@
 // -------------------------------------------------------------
-// AUTO-ROTATING STAGE PRESETS ENGINE (TSK-14)
-// Modes: 'FRESH' (Cross-Session Rotation) | 'FOCUS' (Cumulative Synergy)
+// AUTO-ROTATING STAGE PRESETS & SEGMENTAL BIAS ENGINE (TSK-14)
+// Modes: 'FRESH' (Cross-Session + Segmental Balance) | 'FOCUS' (Cumulative Synergy)
 // Modular Engine: docs/js/engine/slotRotator.js
 // -------------------------------------------------------------
 
@@ -68,9 +68,67 @@ export function getExerciseMuscleTags(exerciseName = '') {
     tags.add('core'); tags.add('obliques'); tags.add('forearms'); tags.add('traps'); tags.add('glutes');
   }
 
-  // Fallback if unmatched
   if (tags.size === 0) tags.add('general');
   return Array.from(tags);
+}
+
+/**
+ * Reads the latest Arboleaf Deep Scan (Column R) from localStorage to derive
+ * unilateral limb bias and trunk metabolic conditioning bias.
+ */
+function getDeepScanRotatorBiases() {
+  try {
+    const raw = localStorage.getItem('sonic_biometrics_history');
+    if (!raw) return null;
+    const list = JSON.parse(raw);
+    if (!Array.isArray(list) || list.length === 0) return null;
+
+    const sorted = [...list].sort(
+      (a, b) => new Date(b.timestamp || b.date || 0) - new Date(a.timestamp || a.date || 0)
+    );
+    const ds = sorted.find(r => r.deepScan && typeof r.deepScan === 'object')?.deepScan;
+    if (!ds) return null;
+
+    const segLean = ds.segmentalLean || null;
+    const segFat = ds.segmentalFat || null;
+
+    const needUnilateralUpper = Boolean(
+      segLean && Number(segLean.upperSymmetryPct) > 0 && Number(segLean.upperSymmetryPct) < 96.0
+    );
+    const needUnilateralLower = Boolean(
+      segLean && (
+        (Number(segLean.lowerSymmetryPct) > 0 && Number(segLean.lowerSymmetryPct) < 96.0) ||
+        (Number(segLean.leftLegPct) > 0 && Number(segLean.leftLegPct) < 90.0) ||
+        (Number(segLean.rightLegPct) > 0 && Number(segLean.rightLegPct) < 90.0)
+      )
+    );
+    const highTrunkOrVisceral = Boolean(
+      (Number(ds.visceralFat) >= 15) ||
+      (segFat && Number(segFat.trunkLbs) >= 50)
+    );
+
+    return { needUnilateralUpper, needUnilateralLower, highTrunkOrVisceral };
+  } catch (e) {
+    return null;
+  }
+}
+
+function isUnilateralMovement(exerciseName = '') {
+  const n = exerciseName.toLowerCase();
+  return (
+    n.includes('single-arm') ||
+    n.includes('single arm') ||
+    n.includes('single-leg') ||
+    n.includes('single leg') ||
+    n.includes('bulgarian') ||
+    n.includes('split squat') ||
+    n.includes('b-stance') ||
+    n.includes('suitcase') ||
+    n.includes('half-kneeling') ||
+    n.includes('iso-lateral') ||
+    n.includes('one-arm') ||
+    n.includes('lunge')
+  );
 }
 
 /**
@@ -83,7 +141,6 @@ export function recordSlotRotationHistory(stageKey, slotId, exerciseName) {
     const history = raw ? JSON.parse(raw) : {};
     const key = `${stageKey}_${slotId}`;
     const list = Array.isArray(history[key]) ? history[key] : [];
-    // Keep last 4 used movements for this slot
     const filtered = list.filter(item => item !== exerciseName);
     filtered.push(exerciseName);
     history[key] = filtered.slice(-4);
@@ -95,14 +152,8 @@ export function recordSlotRotationHistory(stageKey, slotId, exerciseName) {
 
 /**
  * Resolves the recommended exercise for the active slot based on mode:
- * - FRESH: Picks least-recently-used variation in slotDef.alts across sessions
- * - FOCUS: Scores each variation by cumulative muscle-tag overlap across ALL preceding slots in activeSession
- */
-/**
- * Resolves the recommended exercise for the active slot based on mode:
- * - FOCUS: Maximizes cumulative muscle-tag overlap across all preceding slots in activeSession
- * - FRESH: Minimizes cumulative muscle-tag overlap across all preceding slots (Full-Body Spread),
- *          using cross-session history as a tie-breaker so variations stay fresh week-to-week.
+ * - FRESH: Cross-session variety + Segmental Muscle Balance / Visceral Fat tie-breaker
+ * - FOCUS: Cumulative muscle-tag overlap across ALL preceding slots in activeSession
  */
 export function resolveSlotPreset(stageKey, slotDef, slotIndex, activeSessionSets = []) {
   if (!slotDef || !Array.isArray(slotDef.alts) || slotDef.alts.length === 0) {
@@ -112,7 +163,49 @@ export function resolveSlotPreset(stageKey, slotDef, slotIndex, activeSessionSet
   const mode = getRotatorMode();
   const candidates = slotDef.alts;
 
-  // Load cross-session history for tie-breaking / Slot 1 rotation
+  // 1. FOCUS MODE: Cumulative synergy across all preceding slots (A1 -> A2 -> A3 -> A4)
+  if (mode === 'FOCUS' && slotIndex > 0 && Array.isArray(activeSessionSets) && activeSessionSets.length > 0) {
+    const priorExercises = [];
+    const seenSlots = new Set();
+    for (const s of activeSessionSets) {
+      if (s.slot && s.slot !== slotDef.slot && !seenSlots.has(s.slot) && s.exercise) {
+        seenSlots.add(s.slot);
+        priorExercises.push(s.exercise);
+      }
+    }
+
+    if (priorExercises.length > 0) {
+      const targetMuscleWeights = {};
+      priorExercises.forEach((exName, idx) => {
+        const tags = getExerciseMuscleTags(exName);
+        const weight = idx === 0 ? 1.5 : 1.0;
+        tags.forEach(tag => {
+          targetMuscleWeights[tag] = (targetMuscleWeights[tag] || 0) + weight;
+        });
+      });
+
+      let bestAlt = slotDef.primary;
+      let bestScore = -1;
+
+      candidates.forEach((alt) => {
+        const altTags = getExerciseMuscleTags(alt);
+        let score = 0;
+        altTags.forEach(tag => {
+          if (targetMuscleWeights[tag]) {
+            score += targetMuscleWeights[tag];
+          }
+        });
+        if (score > bestScore) {
+          bestScore = score;
+          bestAlt = alt;
+        }
+      });
+
+      return bestAlt;
+    }
+  }
+
+  // 2. FRESH MODE: Cross-session variety + Arboleaf Deep Scan segmental bias
   let recentList = [];
   try {
     const raw = localStorage.getItem(ROTATOR_HISTORY_KEY);
@@ -122,80 +215,49 @@ export function resolveSlotPreset(stageKey, slotDef, slotIndex, activeSessionSet
     recentList = [];
   }
 
-  // Build cumulative muscle frequency map from ALL preceding slots in the current session
-  const priorExercises = [];
-  const seenSlots = new Set();
-  if (Array.isArray(activeSessionSets)) {
-    for (const s of activeSessionSets) {
-      if (s.slot && s.slot !== slotDef.slot && !seenSlots.has(s.slot) && s.exercise) {
-        seenSlots.add(s.slot);
-        priorExercises.push(s.exercise);
+  const biases = getDeepScanRotatorBiases();
+
+  let bestCandidate = slotDef.primary;
+  let bestScore = -Infinity;
+
+  candidates.forEach((alt, idx) => {
+    let score = 0;
+
+    // A. Cross-session freshness score (unplayed = +3.0, older = +1.0..+2.0, most recent = -2.0)
+    const histIdx = recentList.indexOf(alt);
+    if (histIdx === -1) {
+      score += 3.0;
+    } else if (histIdx === recentList.length - 1) {
+      score -= 2.0; // Avoid repeating the exact last-used movement
+    } else {
+      score += (recentList.length - 1 - histIdx) * 0.75;
+    }
+
+    // B. Segmental Muscle Balance & Visceral Fat Tie-Breaker
+    if (biases) {
+      const tags = getExerciseMuscleTags(alt);
+      const isLower = tags.includes('quads') || tags.includes('hamstrings') || tags.includes('glutes');
+      const isUpper = tags.includes('chest') || tags.includes('lats') || tags.includes('upper_back') || tags.includes('front_delts');
+      const isCoreOrCarry = tags.includes('core') || tags.includes('obliques') || tags.includes('abs');
+
+      if (isUnilateralMovement(alt)) {
+        if (biases.needUnilateralLower && isLower) score += 0.85;
+        if (biases.needUnilateralUpper && isUpper) score += 0.85;
+      }
+
+      if (biases.highTrunkOrVisceral && isCoreOrCarry) {
+        score += 0.45;
       }
     }
-  }
 
-  // Intra-session scoring when preceding slots have been logged (Slot 2, 3, 4...)
-  if (slotIndex > 0 && priorExercises.length > 0) {
-    const workedMuscleWeights = {};
-    priorExercises.forEach((exName, idx) => {
-      const tags = getExerciseMuscleTags(exName);
-      // Anchor slot (Slot 1) carries slightly higher weight; all prior slots accumulate
-      const weight = idx === 0 ? 1.5 : 1.0;
-      tags.forEach(tag => {
-        workedMuscleWeights[tag] = (workedMuscleWeights[tag] || 0) + weight;
-      });
-    });
+    // Slight deterministic preference for earlier primary/top-tier variations on ties
+    score -= idx * 0.02;
 
-    let bestAlt = candidates[0];
-    let bestScore = -Infinity;
+    if (score > bestScore) {
+      bestScore = score;
+      bestCandidate = alt;
+    }
+  });
 
-    candidates.forEach((alt) => {
-      const altTags = getExerciseMuscleTags(alt);
-      let overlapScore = 0;
-
-      altTags.forEach(tag => {
-        if (workedMuscleWeights[tag]) {
-          overlapScore += workedMuscleWeights[tag];
-        }
-      });
-
-      if (mode === 'FOCUS') {
-        // FOCUS: Reward high muscle overlap (+), slight tie-breaker toward primary/familiar moves
-        const totalScore = overlapScore;
-        if (totalScore > bestScore) {
-          bestScore = totalScore;
-          bestAlt = alt;
-        }
-      } else {
-        // FRESH: Penalize overlapping muscles (-), reward unplayed cross-session variations (+)
-        const historyPenalty = recentList.includes(alt) ? (recentList.indexOf(alt) + 1) * 0.25 : 0;
-        const totalScore = -overlapScore - historyPenalty;
-        if (totalScore > bestScore) {
-          bestScore = totalScore;
-          bestAlt = alt;
-        }
-      }
-    });
-
-    return bestAlt;
-  }
-
-  // Slot 1 (or empty session): Rotate least-recently-used in FRESH mode, or default primary in FOCUS
-  if (mode === 'FRESH' && recentList.length > 0) {
-    const unplayed = candidates.find(alt => !recentList.includes(alt));
-    if (unplayed) return unplayed;
-
-    let oldestAlt = candidates[0];
-    let oldestIdx = Infinity;
-    candidates.forEach(alt => {
-      const idx = recentList.indexOf(alt);
-      if (idx !== -1 && idx < oldestIdx) {
-        oldestIdx = idx;
-        oldestAlt = alt;
-      }
-    });
-    return oldestAlt;
-  }
-
-  return slotDef.primary;
+  return bestCandidate;
 }
