@@ -2,7 +2,7 @@
 // BIOMETRICS, ARBOLEAF DEEP SCAN & SEGMENTAL TELEMETRY HUD
 // Modular UI Renderer: docs/js/ui/renderBiometrics.js
 // -------------------------------------------------------------
-import { parseArboleafPdfFile } from '../engine/arboleafPdfParser.js';
+import { parseMultipleArboleafPdfs } from '../engine/arboleafPdfParser.js';
 import { syncArboleafDeepScan } from '../core/sync.js';
 
 let activeChartMetric = 'weight'; // 'weight' | 'leanMass' | 'fatMass' | 'bfPct'
@@ -191,14 +191,25 @@ function mergeDeepScanIntoLocalHistory(parsedReport) {
   }
 
   if (matchedIdx !== -1) {
+    const existingDs = history[matchedIdx].deepScan || {};
+    const incomingDs = parsedReport.deepScan || {};
+    const mergedDs = { ...existingDs };
+
+    Object.entries(incomingDs).forEach(([k, v]) => {
+      if (v !== null && v !== undefined && v !== 0) {
+        mergedDs[k] = v;
+      }
+    });
+
     history[matchedIdx] = {
       ...history[matchedIdx],
       weightLbs: history[matchedIdx].weightLbs > 0 ? history[matchedIdx].weightLbs : parsedReport.weightLbs,
       bodyFatPct: history[matchedIdx].bodyFatPct > 0 ? history[matchedIdx].bodyFatPct : parsedReport.bodyFatPct,
-      deepScan: parsedReport.deepScan
+      deepScan: mergedDs
     };
+    return history[matchedIdx];
   } else {
-    history.unshift({
+    const newEntry = {
       timestamp: parsedReport.timestamp,
       date: parsedReport.date,
       sleepHrs: 0,
@@ -211,10 +222,11 @@ function mergeDeepScanIntoLocalHistory(parsedReport) {
       bp: '',
       source: 'Arboleaf_PDF',
       deepScan: parsedReport.deepScan
-    });
+    };
+    history.unshift(newEntry);
+    localStorage.setItem('sonic_biometrics_history', JSON.stringify(history.slice(0, 200)));
+    return newEntry;
   }
-
-  localStorage.setItem('sonic_biometrics_history', JSON.stringify(history.slice(0, 200)));
 }
 
 function renderDeepScanAndSegmentalHTML(deepScanEntry) {
@@ -327,7 +339,7 @@ export function renderBiometricsUI() {
         background: #38bdf8; color: #0f172a; padding: 7px 12px; border-radius: 6px;
         font-size: 10px; font-weight: 900; cursor: pointer; white-space: nowrap;
       ">IMPORT PDF</label>
-      <input type="file" id="arboleafPdfInput" accept="application/pdf,.pdf" style="display: none;" />
+      <input type="file" id="arboleafPdfInput" accept="application/pdf,.pdf" multiple style="display: none;" />
     </div>
   `;
 
@@ -487,29 +499,42 @@ function bindPdfInputHandler() {
   if (!input) return;
 
   input.onchange = async (e) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
 
     try {
       if (statusEl) {
         statusEl.style.color = '#38bdf8';
-        statusEl.innerText = 'Parsing Arboleaf PDF...';
+        statusEl.innerText = `Scanning ${files.length} Arboleaf PDF${files.length > 1 ? 's' : ''}...`;
       }
 
-      const parsed = await parseArboleafPdfFile(file, (progressMsg) => {
+      const mergedReports = await parseMultipleArboleafPdfs(files, (progressMsg) => {
         if (statusEl) {
           statusEl.style.color = '#38bdf8';
           statusEl.innerText = progressMsg;
         }
       });
-      mergeDeepScanIntoLocalHistory(parsed);
-      await syncArboleafDeepScan(parsed);
+
+      for (const report of mergedReports) {
+        const mergedRecord = mergeDeepScanIntoLocalHistory(report);
+        // Save updated localStorage array before syncing full merged deepScan to Sheet
+        let hist = JSON.parse(localStorage.getItem('sonic_biometrics_history') || '[]');
+        const idx = hist.findIndex(r => String(r.date || '').split('T')[0] === report.date);
+        if (idx !== -1) hist[idx] = mergedRecord;
+        localStorage.setItem('sonic_biometrics_history', JSON.stringify(hist.slice(0, 200)));
+
+        await syncArboleafDeepScan({
+          ...report,
+          deepScan: mergedRecord.deepScan
+        });
+      }
 
       renderBiometricsUI();
       const postStatus = document.getElementById('arboleafPdfStatus');
-      if (postStatus) {
+      if (postStatus && mergedReports[0]) {
+        const latest = mergedReports[0];
         postStatus.style.color = '#4ade80';
-        postStatus.innerText = `✓ Imported ${parsed.date} (Visceral: ${parsed.deepScan.visceralFat})`;
+        postStatus.innerText = `✓ Merged ${files.length} PDF(s) for ${latest.date}`;
       }
     } catch (err) {
       console.error('[Arboleaf PDF] Import failed:', err);
