@@ -732,6 +732,7 @@ export function logActiveSet() {
     painBtn.innerText = "Joint Strain: No";
   }
 }
+}
 
 export function togglePrehab() {
   if (!window.activeSession) return;
