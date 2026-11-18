@@ -1255,6 +1255,30 @@ export const MOVEMENT_INTEL = {
     safety: "The pull comes 100% from hip extension—keep your arms straight like ropes and never pull with your lower back."
   },
 
+  "Single-Leg Balance & Foot-Tripod Hold (30s/side)": {
+    type: "Isolation",
+    muscles: "[STABILIZER // PROPRIOCEPTION 30s/side] Intrinsic Foot Muscles, Peroneals, Tibialis & Glute Medius",
+    setup: "Stand next to a wall or rack upright so your fingertips can tap it instantly if needed. Root your big toe, pinky toe, and heel firmly into the floor ('foot tripod') with a soft 5° knee bend.",
+    cue: "Lift your non-working foot 2 inches off the floor, fix your eyes on a stationary spot at eye level, and hold rock-steady for 30 seconds per side while keeping your pelvis level.",
+    safety: "Keep a fingertip touchpoint ready against the wall—focus on quiet ankle micro-adjustments rather than fighting through a loss of balance."
+  },
+
+  "Serratus Wall Slide with Mini-Band": {
+    type: "Isolation",
+    muscles: "[STABILIZER // SCAPULAR CONTROL] Serratus Anterior, Lower Trapezius & Rotator Cuff",
+    setup: "Loop a light mini-band around both wrists and stand facing a wall with forearms pressed vertically against the wall at shoulder width and elbows bent 90°.",
+    cue: "Press your forearms gently into the wall to protract your shoulder blades around your ribcage, pull wrists slightly apart against the mini-band, and slide forearms smoothly upward into a 'Y'. Pause 2s at top.",
+    safety: "Keep lower ribs tucked down and traps relaxed away from your ears—do not arch your lower back as your arms slide overhead."
+  },
+
+  "Copenhagen Side Plank Hold (Bent-Knee 20-30s)": {
+    type: "Isolation",
+    muscles: "[STABILIZER // PELVIC & ADDUCTOR TENDON 20–30s] Adductor Longus/Magnus, Gracilis & Obliques",
+    setup: "Lie on your side next to a flat bench with your bottom elbow stacked directly under your shoulder and your top knee/inner shin resting flat on the bench pad.",
+    cue: "Press your top knee down into the bench to lift your hips and bottom leg off the floor into a rigid straight side-plank line. Hold motionless for 20–30 seconds per side.",
+    safety: "Start with the bent-knee lever (knee on bench) rather than straight-leg ankle support to build groin tendon tolerance gradually without strain."
+  },
+  
   "Resisted Banded Bear Crawl": {
     type: "Compound",
     muscles: "Serratus Anterior, Quads, Core Wall & Glute Medius",
