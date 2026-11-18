@@ -92,6 +92,9 @@ export const BAND_EQUIVALENTS = {
   "Mountain Climbers (Hands on Bed - Low Shear)": "Mini-Band Mountain Climbers",
   "Fast Step-Jacks (30s on / 60s off)": "Mini-Band Step-Jacks (30s/60s)",
 
+  "Seated DB Wrist Curl & Reverse Wrist Curl Superset": "Low Door-Anchor Tube Bicep Curl",
+  "Bravo Low-Cable Reverse Curl (Pronated Forearms)": "Low Door-Anchor Tube Bicep Curl",
+  "4-Way Isometric Neck Stabilization": "4-Way Isometric Neck Stabilization",
   "Cybex Eagle Leg Curl Isometric Hold (30-45s)": "Low Door-Anchor Prone Band Hamstring Curl",
   "Cybex Eagle Leg Press Calf Isometric Hold (30-45s)": "41\" Loop Band Seated Calf Extension",
   "Cybex Eagle Leg Extension Hip Thrust": "Banded Glute Bridge / Bar-Loop Thrust",
