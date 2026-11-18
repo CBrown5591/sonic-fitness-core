@@ -67,6 +67,25 @@ export function autoRegulateNextSet(completedSet) {
   const { minReps, maxReps } = parseRepBracket(targetStr);
   const isDumbbell = isDumbbellMovement(exercise);
 
+  // 0. Unilateral Asymmetry Guardrail: hold weight if L/R e1RM or reps diverge
+  if (completedSet.left && completedSet.right) {
+    const { left, right } = completedSet;
+    const repGap = Math.abs(left.reps - right.reps);
+    const e1rmGapPct = Math.max(left.e1rm, right.e1rm) > 0
+      ? (Math.abs(left.e1rm - right.e1rm) / Math.max(left.e1rm, right.e1rm)) * 100
+      : 0;
+
+    if (repGap >= 2 || e1rmGapPct > 5) {
+      const weakerSide = left.e1rm < right.e1rm ? 'LEFT' : 'RIGHT';
+      const targetReps = Math.min(left.reps, right.reps);
+      return {
+        load: numLoad,
+        reps: targetReps,
+        message: `⚖️ ASYMMETRY DETECTED (${weakerSide} arm lagging): Hold ${numLoad} lbs and match ${targetReps} clean reps on both sides.`
+      };
+    }
+  }
+
   // 1. Safety Hold / Joint Strain / Severe Overshoot (RPE >= 9.5)
   if (jointPain || numRpe >= 9.5) {
     const deLoad = Math.max(5, numLoad - 5);
