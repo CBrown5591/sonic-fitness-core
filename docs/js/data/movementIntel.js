@@ -874,6 +874,45 @@ export const MOVEMENT_INTEL = {
     cue: "Hinge single hip backward in a strict straight plane. Keep spine locked in neutral.",
     safety: "Zero torso rotation. Movement is 100% pure hip translation."
   },
+  "Seated DB Wrist Curl & Reverse Wrist Curl Superset": {
+    type: "Isolation",
+    muscles: "[ISOLATION // TENDON & FOREARM 12–15r] Wrist Flexors, Extensors & Common Elbow Tendons",
+    setup: "Sit on a flat bench with forearms resting flat along your thighs and wrists hanging just past your kneecaps, holding light dumbbells (8–15 lbs).",
+    cue: "Perform 12–15 palm-up wrist curls with a strict 3-second lowering, then immediately flip palms face-down for 12–15 reverse wrist curls with the same 3-second eccentric.",
+    safety: "Keep forearms glued to your thighs—move strictly at the wrist joint without lifting your elbows."
+  },
+
+  "Bravo Low-Cable Reverse Curl (Pronated Forearms)": {
+    type: "Isolation",
+    muscles: "[ISOLATION // TENDON & BRACHIORADIALIS 12–15r] Brachioradialis, Wrist Extensors & Lateral Elbow Tendon",
+    setup: "Set a single Bravo pulley to its lowest notch with a straight bar or short handle. Stand facing the column with palms facing down (pronated) and elbows pinned to your ribs.",
+    cue: "Curl your knuckles upward toward your shoulders while keeping wrists flat and neutral, pause 1s at the top, and lower over a strict 3-second eccentric.",
+    safety: "Do not let your wrists bend backward under load or flare your elbows away from your sides."
+  },
+
+  "4-Way Isometric Neck Stabilization": {
+    type: "Isolation",
+    muscles: "[STABILIZER // CERVICAL ISOMETRIC 8–10s/dir] Deep Cervical Flexors, Extensors & Sternocleidomastoid",
+    setup: "Sit or stand tall with chin gently tucked and head stacked neutrally over your shoulders. Place one palm (or folded towel) against your forehead, back of head, or temple.",
+    cue: "Press your head gently into your resisting hand at ~30%–40% effort without letting your head move—hold 8–10 seconds each in flexion (front), extension (back), left lateral, and right lateral.",
+    safety: "Never crank or jerk the neck; keep resistance smooth, submaximal, and completely pain-free."
+  },
+
+  "41\" Loop Band Overhead Slam / Chop": {
+    type: "Compound",
+    muscles: "[POWER // EXPLOSIVE 6–8r] Lats, Anterior Core, Triceps & Hip Extensors",
+    setup: "Anchor a light-to-medium 41\" loop band high on a rack/door or stand on the center of the loop and grip the top overhead with both hands.",
+    cue: "Reach tall with ribs braced, then snap hips back and drive hands forcefully downward toward the floor in a fast, controlled chopping arc.",
+    safety: "Keep spine neutral and hinge from the hips rather than rounding your lower back at the bottom."
+  },
+
+  "Single-Leg Terminal Knee Extension (TKE)": {
+    type: "Isolation",
+    muscles: "[ISOLATION // VMO & PATELLAR TENDON 15–20r] Vastus Medialis Oblique (VMO) & Patellar Tendon",
+    setup: "Loop a 41\" band around a sturdy low post or door anchor. Step one leg inside the loop with the band seated directly behind the knee crease and step back to tension.",
+    cue: "With heel planted and knee bent ~20°, squeeze your inner quad hard to straighten the knee completely for a 1-second hold, then control the return.",
+    safety: "Avoid hyperextending the knee joint backward; focus on smooth quad contraction."
+  },x
   "Tall-Kneeling Pallof Hold": {
     type: "Isolation",
     muscles: "Transverse Abdominis, Internal/External Obliques & Glutes",
