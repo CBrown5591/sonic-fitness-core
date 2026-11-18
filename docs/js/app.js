@@ -322,6 +322,91 @@ function syncEquipmentInputs() {
   }
 }
 
+let isLRSplitActive = false;
+
+export function isUnilateralOrDBMovement(exerciseName = '') {
+  const n = String(exerciseName).toLowerCase();
+  return (
+    /\bdb\b/.test(n) ||
+    n.includes('dumbbell') ||
+    n.includes('single-arm') ||
+    n.includes('single arm') ||
+    n.includes('iso-lateral') ||
+    n.includes('unilateral') ||
+    n.includes('suitcase')
+  );
+}
+
+export function isIsometricOrTimedMovement(exerciseName = '') {
+  const n = String(exerciseName).toLowerCase();
+  return (
+    n.includes('isometric') ||
+    n.includes('hold') ||
+    n.includes('plank') ||
+    /\(\d+(-\d+)?s\)/.test(n)
+  );
+}
+
+export function syncLRSplitVisibility(exerciseName) {
+  const bar = document.getElementById('lrSplitToggleBar');
+  const container = document.getElementById('lrSplitInputContainer');
+  const standardRow = document.getElementById('standardInputRow'); // wrap your default Load/Reps/RPE row in this ID if not already
+
+  const eligible = isUnilateralOrDBMovement(exerciseName) && !isIsometricOrTimedMovement(exerciseName);
+  if (!eligible) {
+    isLRSplitActive = false;
+    if (bar) bar.style.display = 'none';
+    if (container) container.style.display = 'none';
+    if (standardRow) standardRow.style.display = '';
+    return;
+  }
+
+  if (bar) bar.style.display = 'flex';
+  updateLRSplitDOM();
+}
+
+function updateLRSplitDOM() {
+  const btn = document.getElementById('lrSplitToggleBtn');
+  const container = document.getElementById('lrSplitInputContainer');
+  const standardRow = document.getElementById('standardInputRow');
+
+  if (isLRSplitActive) {
+    // Pre-fill L and R rows from current standard inputs so you only tweak what differed
+    const baseLoad = document.getElementById('loadInput')?.value || '';
+    const baseReps = document.getElementById('repsInput')?.value || '';
+    const baseRpe = document.getElementById('rpeSelect')?.value || '7.5';
+
+    if (document.getElementById('leftLoadInput')) document.getElementById('leftLoadInput').value = baseLoad;
+    if (document.getElementById('rightLoadInput')) document.getElementById('rightLoadInput').value = baseLoad;
+    if (document.getElementById('leftRepsInput')) document.getElementById('leftRepsInput').value = baseReps;
+    if (document.getElementById('rightRepsInput')) document.getElementById('rightRepsInput').value = baseReps;
+    if (document.getElementById('leftRpeSelect')) document.getElementById('leftRpeSelect').value = baseRpe;
+    if (document.getElementById('rightRpeSelect')) document.getElementById('rightRpeSelect').value = baseRpe;
+
+    if (btn) {
+      btn.innerText = '⚖️ L/R SPLIT ON';
+      btn.style.background = '#a78bfa';
+      btn.style.color = '#0f172a';
+    }
+    if (container) container.style.display = 'flex';
+    if (standardRow) standardRow.style.display = 'none';
+  } else {
+    if (btn) {
+      btn.innerText = 'SYNCED (MATCHED)';
+      btn.style.background = 'rgba(56, 189, 248, 0.14)';
+      btn.style.color = '#38bdf8';
+    }
+    if (container) container.style.display = 'none';
+    if (standardRow) standardRow.style.display = '';
+  }
+}
+
+export function toggleLRSplitMode() {
+  isLRSplitActive = !isLRSplitActive;
+  updateLRSplitDOM();
+}
+window.toggleLRSplitMode = toggleLRSplitMode;
+
 function loadSlotData() {
   const stageDef = STAGES[activeStageKey];
   if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
@@ -477,25 +562,68 @@ export function logActiveSet() {
   if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
   const slotDef = stageDef.slots[activeSlotIndex];
   const exercise = document.getElementById('exerciseSelect') ? document.getElementById('exerciseSelect').value : slotDef.primary;
-  const load = parseFloat(document.getElementById('loadInput').value) || 0;
-  const reps = parseInt(document.getElementById('repsInput').value, 10) || 0;
-  const rpe = parseFloat(document.getElementById('rpeSelect').value) || 7.5;
 
   const setsInSlot = activeSession.sets.filter(s => s.slot === slotDef.slot).length + 1;
   const isCardio = !!CARDIO_CONFIGS[exercise];
-  const setE1RM = isCardio ? 0 : calculateE1RM(load, reps, rpe);
+  const isIsometric = isIsometricOrTimedMovement(exercise);
+  const isUnilateral = isUnilateralOrDBMovement(exercise) && !isIsometric;
+
+  let load = parseFloat(document.getElementById('loadInput')?.value) || 0;
+  let reps = parseInt(document.getElementById('repsInput')?.value, 10) || 0;
+  let rpe = parseFloat(document.getElementById('rpeSelect')?.value) || 7.5;
+
+  let leftTelemetry = null;
+  let rightTelemetry = null;
+  let setE1RM = 0;
+  let displayMetric = `${load}lbs × ${reps}r`;
+
+  if (isUnilateral && isLRSplitActive) {
+    const lLoad = parseFloat(document.getElementById('leftLoadInput')?.value) || 0;
+    const lReps = parseInt(document.getElementById('leftRepsInput')?.value, 10) || 0;
+    const lRpe  = parseFloat(document.getElementById('leftRpeSelect')?.value) || 7.5;
+
+    const rLoad = parseFloat(document.getElementById('rightLoadInput')?.value) || 0;
+    const rReps = parseInt(document.getElementById('rightRepsInput')?.value, 10) || 0;
+    const rRpe  = parseFloat(document.getElementById('rightRpeSelect')?.value) || 7.5;
+
+    const leftE1RM  = calculateE1RM(lLoad, lReps, lRpe);
+    const rightE1RM = calculateE1RM(rLoad, rReps, rRpe);
+
+    leftTelemetry  = { load: lLoad, reps: lReps, rpe: lRpe, e1rm: leftE1RM };
+    rightTelemetry = { load: rLoad, reps: rReps, rpe: rRpe, e1rm: rightE1RM };
+
+    // Use the conservative/limiting limb as the primary load, reps, rpe, and e1RM safeguard
+    const leftIsLimiting = leftE1RM <= rightE1RM;
+    load = leftIsLimiting ? lLoad : rLoad;
+    reps = leftIsLimiting ? lReps : rReps;
+    rpe  = Math.max(lRpe, rRpe);
+    setE1RM = Math.min(leftE1RM, rightE1RM);
+    displayMetric = `L: ${lLoad}×${lReps} @${lRpe} | R: ${rLoad}×${rReps} @${rRpe}`;
+  } else if (!isCardio && !isIsometric) {
+    setE1RM = calculateE1RM(load, reps, rpe);
+    if (isUnilateral) {
+      // Synced unilateral set stores identical L/R telemetry for symmetry tracking
+      leftTelemetry  = { load, reps, rpe, e1rm: setE1RM };
+      rightTelemetry = { load, reps, rpe, e1rm: setE1RM };
+    }
+  } else if (isIsometric) {
+    setE1RM = 0;
+    displayMetric = load > 0 ? `${load}lbs × ${reps}s hold` : `BW × ${reps}s hold`;
+  }
 
   // (#1) PR VAULT TRACKING — Isolated to exact `exercise` name
   const prVault = getPRVault();
   const currentPR = prVault[exercise] ? (prVault[exercise].e1rm || 0) : 0;
   let isNewPR = false;
 
-  if (setE1RM > currentPR && tempoClean && !currentSetPain && !isCardio) {
+  if (setE1RM > currentPR && tempoClean && !currentSetPain && !isCardio && !isIsometric) {
     prVault[exercise] = {
       e1rm: setE1RM,
       load,
       reps,
-      bestSet: `${load}lbs × ${reps}r @ RPE ${rpe}`,
+      bestSet: isUnilateral && isLRSplitActive ? displayMetric : `${load}lbs × ${reps}r @ RPE ${rpe}`,
+      leftE1RM: leftTelemetry ? leftTelemetry.e1rm : undefined,
+      rightE1RM: rightTelemetry ? rightTelemetry.e1rm : undefined,
       date: new Date().toISOString().split('T')[0]
     };
     savePRVault(prVault);
@@ -505,7 +633,6 @@ export function logActiveSet() {
 
   let equivReps = reps;
   let equivVolume = Math.round(load * reps);
-  let displayMetric = `${load}lbs × ${reps}r`;
 
   if (isCardio) {
     const cMetrics = CARDIO_CONFIGS[exercise].calcEquiv(load, reps);
@@ -527,7 +654,9 @@ export function logActiveSet() {
     e1rm: setE1RM,
     isNewPR,
     tempoClean,
-    jointPain: currentSetPain
+    jointPain: currentSetPain,
+    left: leftTelemetry,
+    right: rightTelemetry
   };
 
   activeSession.sets.push(completedSetObj);
@@ -557,7 +686,7 @@ export function logActiveSet() {
     const clk = document.getElementById('timerClock');
     if (clk) clk.innerText = `${String(mins).padStart(2,'0')}:${String(rem).padStart(2,'0')}`;
   });
-
+}
   if (setsInSlot >= 3 && activeSlotIndex < stageDef.slots.length - 1) {
     activeSlotIndex++;
     saveSessionState();
