@@ -92,6 +92,8 @@ export const BAND_EQUIVALENTS = {
   "Mountain Climbers (Hands on Bed - Low Shear)": "Mini-Band Mountain Climbers",
   "Fast Step-Jacks (30s on / 60s off)": "Mini-Band Step-Jacks (30s/60s)",
 
+  "Cybex Eagle Leg Curl Isometric Hold (30-45s)": "Low Door-Anchor Prone Band Hamstring Curl",
+  "Cybex Eagle Leg Press Calf Isometric Hold (30-45s)": "41\" Loop Band Seated Calf Extension",
   "Cybex Eagle Leg Extension Hip Thrust": "Banded Glute Bridge / Bar-Loop Thrust",
   "Cybex Eagle Leg Extension Glute Kickback": "Low Door-Anchor Standing Glute Kickback",
   "Cybex Eagle Single-Leg Extension": "Single-Leg Terminal Knee Extension (TKE)",
