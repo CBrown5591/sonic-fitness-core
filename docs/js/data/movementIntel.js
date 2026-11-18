@@ -323,6 +323,46 @@ export const MOVEMENT_INTEL = {
     safety: "Keep hips pressed firmly into the seat during the single-leg lowering phase; do not let the stack drop faster than a 4-second count."
   },
 
+  "DB Spellcaster (Rotational Swing)": {
+    type: "Compound",
+    muscles: "Internal/External Obliques, Anterior/Lateral Deltoids, Quadratus Lumborum & Glutes",
+    setup: "Stand with feet slightly wider than shoulder-width, knees softly bent, holding a single light-to-moderate dumbbell (10–25 lbs) by both ends in front of your hips.",
+    cue: "Pivot your back foot and drive through your hips to swing the dumbbell in a smooth diagonal arc from outside one hip up across your chest to just above the opposite shoulder, then reverse smoothly to the other side.",
+    safety: "Keep arms mostly straight with a soft elbow lock and pivot your rear heel on every swing so torque comes from your hips and thoracic spine rather than twisting planted knees or a rounded lower back."
+  },
+
+  "41\" Loop Band Spellcaster (Rotational Swing)": {
+    type: "Compound",
+    muscles: "Internal/External Obliques, Anterior/Lateral Deltoids & Core Stabilizers",
+    setup: "Stand with both feet slightly wider than shoulder-width on the bottom of a light-to-medium 41\" loop band. Grip both strands of the top loop together with both hands in front of your hips.",
+    cue: "Pivot your rear foot and sweep your hands diagonally upward from one hip across your torso to the opposite shoulder against the ascending band tension, controlling the return back to center before switching sides.",
+    safety: "Use a light band (Blue or Green) so you can maintain smooth, controlled shoulder arcs without shrugging your traps or hyperextending your lower back."
+  },
+
+  "Twisting Leg Raise (Floor / Bench)": {
+    type: "Isolation",
+    muscles: "Lower Rectus Abdominis, Internal/External Obliques & Hip Flexors",
+    setup: "Lie flat on your back on a mat or bench with hands braced firmly under your glutes (or gripping the bench edges behind your head) and legs extended straight.",
+    cue: "Press your lower back flat into the pad, raise both legs toward 90°, and rotate your pelvis slightly at the top to angle your feet toward one shoulder. Lower slowly to 6 inches off the floor, then repeat toward the opposite shoulder.",
+    safety: "Keep your lower back pressed into the floor/bench throughout—if your lumbar spine lifts or arches as your legs descend, bend your knees slightly to shorten the lever."
+  },
+
+  "Low Door-Anchor Twisting Leg Raise": {
+    type: "Isolation",
+    muscles: "Lower Rectus Abdominis, Internal/External Obliques & Hip Flexors",
+    setup: "Secure a door anchor at the BOTTOM of the door and fasten ankle straps around both ankles. Lie flat on your back facing away from the door with legs extended until tubes have light pre-stretch.",
+    cue: "Anchor your hands at your sides or under your hips, keep your lower back glued to the mat, and raise your legs upward while rotating your hips slightly to bring your toes toward the opposite shoulder. Alternate sides under a 3-second eccentric.",
+    safety: "Use light tube tension (20–40 lbs) so the band never pulls your lower back into an arch at the bottom of the rep."
+  },
+
+  "Weighted / Bodyweight Russian Twist": {
+    type: "Isolation",
+    muscles: "Internal/External Obliques, Rectus Abdominis & Hip Flexors",
+    setup: "Sit on a mat with knees bent, heels planted on the floor (or elevated 2 inches for advanced stability), and torso leaned back to a flat-backed ~45° V-sit angle.",
+    cue: "Holding a light dumbbell or medicine ball at your sternum (or hands clasped), rotate your ribcage and shoulders cleanly from side to side, tapping the weight lightly beside each hip.",
+    safety: "Keep your chest proud and spine long—rotate through your upper torso rather than rounding your lower back or simply swinging your arms side-to-side."
+  },
+
   "Bravo Standing Cable Straight-Arm Pullover": {
     type: "Isolation",
     muscles: "Latissimus Dorsi, Teres Major & Long Head of Triceps",
