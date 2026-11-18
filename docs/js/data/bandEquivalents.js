@@ -113,6 +113,9 @@ export const BAND_EQUIVALENTS = {
   "Bravo Behind-the-Back Cable Shrug": "41\" Loop Band Upright Row (Stand-on-Loop)",
   "Single-Leg Glute Bridge Isometric Hold (30s/side)": "Mini-Band Single-Leg Glute Bridge",
   "DB Bulgarian Split-Squat Bottom Isometric Hold (30s/side)": "Banded Bulgarian Split Squat",
+  "DB Spellcaster (Rotational Swing)": "41\" Loop Band Spellcaster (Rotational Swing)",
+  "Twisting Leg Raise (Floor / Bench)": "Low Door-Anchor Twisting Leg Raise",
+  "Weighted / Bodyweight Russian Twist": "Mid Door-Anchor Seated Russian Twist",
   "Single-Arm Iso-Lateral Pulldown": "High Door-Anchor Half-Kneeling Pulldown"
 };
 
@@ -201,6 +204,8 @@ export const SLOT_BAND_EXTRAS = {
   D1: [
     "Low Door-Anchor Reverse Woodchopper (Low-to-High)",
     "Mid Door-Anchor Seated Russian Twist",
+    "41\" Loop Band Spellcaster (Rotational Swing)",
+    "Low Door-Anchor Twisting Leg Raise",
     "Low Door-Anchor Standing Oblique Side Bend"
   ],
   D2: [
@@ -208,6 +213,8 @@ export const SLOT_BAND_EXTRAS = {
     "Low Door-Anchor Resisted Bicycle Crunch",
     "Low Door-Anchor Resisted Sit-Up",
     "Low Door-Anchor Supine Leg Lift",
+    "41\" Loop Band Spellcaster (Rotational Swing)",
+    "Low Door-Anchor Twisting Leg Raise",
     "Mini-Band Flutter Kicks",
     "Mini-Band Bicycle Crunch"
   ],
@@ -286,6 +293,8 @@ export const SLOT_BAND_EXTRAS = {
   G3: [
     "Low Door-Anchor Reverse Woodchopper (Low-to-High)",
     "Mid Door-Anchor Seated Russian Twist",
+    "41\" Loop Band Spellcaster (Rotational Swing)",
+    "Low Door-Anchor Twisting Leg Raise",
     "Low Door-Anchor Standing Oblique Side Bend"
   ],
   G4: [
@@ -316,6 +325,8 @@ export const SLOT_BAND_EXTRAS = {
     "Low Door-Anchor Standing Oblique Side Bend",
     "Low Door-Anchor Standing Band Abduction",
     "Hinged Isometric-Core Alternating Chest Press (41\" Loop)",
+    "41\" Loop Band Spellcaster (Rotational Swing)",
+    "Low Door-Anchor Twisting Leg Raise",
     "Mini-Band Standing Hip Abduction"
   ],
 
@@ -337,6 +348,8 @@ export const SLOT_BAND_EXTRAS = {
     "Low Door-Anchor Resisted Bicycle Crunch",
     "Mid Door-Anchor Seated Russian Twist",
     "Mini-Band Flutter Kicks",
+    "41\" Loop Band Spellcaster (Rotational Swing)",
+    "Low Door-Anchor Twisting Leg Raise",
     "Mini-Band Bicycle Crunch"
   ]
 };
