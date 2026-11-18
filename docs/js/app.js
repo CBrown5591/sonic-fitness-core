@@ -700,7 +700,7 @@ function renderSessionUI() {
   if (timeBrakeBtn) {
     const isDarkspineActive = (typeof devDarkspineOverride === 'boolean')
       ? devDarkspineOverride 
-      : (isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I'].includes(activeStageKey));
+      : (isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I', 'DAY_J'].includes(activeStageKey));
 
     if (isDarkspineActive) {
       timeBrakeBtn.style.setProperty('display', 'inline-block', 'important');
@@ -725,6 +725,7 @@ function ensureStageTabsExist() {
     { key: 'DAY_G', label: 'DAY G', className: 'stage-tab' },
     { key: 'DAY_H', label: 'DAY H', className: 'stage-tab' },
     { key: 'DAY_I', label: 'DAY I', className: 'stage-tab' },
+    { key: 'DAY_J', label: 'DAY J', className: 'stage-tab' },
     { key: 'CH_1RM', label: '⚡ 1RM TEST', className: 'stage-tab challenge-tab-gold' },
     { key: 'CH_AMRAP', label: '🔥 TO FAILURE', className: 'stage-tab challenge-tab-red' }
   ];
