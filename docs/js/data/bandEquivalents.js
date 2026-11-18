@@ -120,6 +120,9 @@ export const BAND_EQUIVALENTS = {
   "Weighted / Bodyweight Russian Twist": "Mid Door-Anchor Seated Russian Twist",
   "Med Ball Overhead Slam": "41\" Loop Band Overhead Slam / Chop",
   "Seated-to-Standing Box Jump (Dead-Stop)": "Broad Jump to Soft Stick",
+  "Single-Leg Balance & Foot-Tripod Hold (30s/side)": "Single-Leg Balance & Foot-Tripod Hold (30s/side)",
+  "Serratus Wall Slide with Mini-Band": "Serratus Wall Slide with Mini-Band",
+  "Copenhagen Side Plank Hold (Bent-Knee 20-30s)": "Low Door-Anchor Standing Band Adduction",
   "Single-Arm Iso-Lateral Pulldown": "High Door-Anchor Half-Kneeling Pulldown"
 };
 
