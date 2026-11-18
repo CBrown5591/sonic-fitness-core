@@ -712,6 +712,13 @@ export const MOVEMENT_INTEL = {
     cue: "Rotate forearm up toward ceiling, pause 1s at top contraction, and control 3s descent across abdomen.",
     safety: "Do not roll torso backward to assist the lift. Pure infraspinatus and teres minor isolation."
   },
+  "Hinged Isometric-Core Alternating Chest Press (41\" Loop)": {
+    type: "Compound",
+    muscles: "Pectorals, Anterior Deltoids, Serratus Anterior, Triceps & Isometric Posterior Chain",
+    setup: "Wrap a light-to-medium 41\" loop band flat across your upper back/shoulder blades and under your armpits, holding both loop ends in your hands. Take a wide athletic hip-hinge stance (~45° torso angle) with knees softly bent and core braced.",
+    cue: "Hold your hip hinge and spine completely motionless while alternating punching/pressing one hand forward to full lockout while retracting the opposite hand back to your ribcage in a crisp, rhythmic cadence.",
+    safety: "Keep the band seated flat across your shoulder blades (never up on your neck) and lock your hips and lower back stationary—do not twist your lumbar spine as your arms alternate."
+  },
   "Single-Arm DB Suitcase Carry": {
     type: "Compound",
     muscles: "Quadratus Lumborum (QL), External Obliques, Glute Medius & Grip",
@@ -732,6 +739,21 @@ export const MOVEMENT_INTEL = {
     setup: "Lock your thighs snugly under the knee pad. Grip one independent pulldown arm with a neutral or semi-supinated palm while bracing your non-working hand firmly against the seat frame or thigh pad.",
     cue: "Let the independent arm stretch your lat fully at the top without shrugging your shoulder to your ear, then drive your elbow straight down in front of your shoulder plane into your hip pocket. Hold 1s at the bottom.",
     safety: "Keep your torso dead vertical—do not lean sideways toward the working arm to pull heavier weight."
+  },
+  "Single-Leg Glute Bridge Isometric Hold (30s/side)": {
+    type: "Isolation",
+    muscles: "Gluteus Maximus, Hamstrings & Posterior Pelvic Stabilizers",
+    setup: "Lie flat on your back with one heel planted firmly on the floor close to your glutes and the opposite knee pulled gently toward your chest.",
+    cue: "Drive through your planted heel to lift your hips into full extension, squeeze your glute hard, and hold rock-solid at the top for 30 seconds per side without letting your pelvis tilt.",
+    safety: "Keep your ribs tucked down and push through your heel rather than hyperextending your lower back."
+  },
+
+  "DB Bulgarian Split-Squat Bottom Isometric Hold (30s/side)": {
+    type: "Compound",
+    muscles: "Quadriceps, Gluteus Maximus, Adductors & Ankle/Hip Balance Stabilizers",
+    setup: "Stand 2 feet in front of a bench with your rear shoelaces resting on the pad behind you (stand near a rack upright or wall for fingertip balance support). Hold light dumbbells at your sides or perform bodyweight.",
+    cue: "Lower slowly into a split squat until your rear knee hovers 2–3 inches above the floor and your front shin is vertical, then freeze completely at the bottom for 30 seconds per side.",
+    safety: "Keep a fingertip touchpoint on a rack or wall if your balance shifts, and keep your front knee tracking cleanly over your second and third toes."
   },
   "Single-Leg Box Squat (Strict 3s Pause)": {
     type: "Compound",
