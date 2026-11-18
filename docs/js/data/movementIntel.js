@@ -1735,6 +1735,118 @@ export const MOVEMENT_INTEL = {
     safety: "Keep hips level and spine flat as a tabletop—do not let your lower back sag or pike upward."
   },
 
+"Half-Kneeling Sprint Start (First 3 Steps)": {
+    type: "Compound",
+    muscles: "[POWER // EXPLOSIVE 3–5r] Glutes, Quads, Calves & Hip Flexors (First-Step Acceleration)",
+    setup: "Drop into a half-kneeling sprinter stance on open turf/floor with front shin angled forward (~45°) and opposite arm cocked forward at 90°.",
+    cue: "On a sharp exhale, drive violently through the front mid-foot to project your hips forward for 3 crisp, low-angled acceleration steps, then decelerate smoothly over 2–3 steps. Rest 60–90s between sets.",
+    safety: "Keep shin angle low on step 1 rather than popping straight upright; stop the set immediately if step crispness slows down."
+  },
+
+  "Med Ball Overhead Slam": {
+    type: "Compound",
+    muscles: "[POWER // EXPLOSIVE 5–6r] Lats, Anterior Core, Triceps, Glutes & Hamstrings",
+    setup: "Stand with feet shoulder-width apart holding a non-bouncing slam ball (10–20 lbs) at chest height.",
+    cue: "Reach tall onto the balls of your feet with the ball overhead without hyperextending your lower back, then snap your hips back and slam the ball straight down into the floor as hard as possible.",
+    safety: "Use a dead-bounce slam ball so it does not rebound into your face; hinge hips back to absorb the slam rather than rounding your lumbar spine."
+  },
+
+  "Broad Jump to Soft Stick": {
+    type: "Compound",
+    muscles: "[POWER // EXPLOSIVE 3–5r] Glutes, Quads, Hamstrings & Calves (Horizontal Projection)",
+    setup: "Stand with feet hip-width apart, arms cocked back behind hips, and a clear 6–8 feet of flat floor ahead.",
+    cue: "Swing arms forward aggressively and extend hips, knees, and ankles simultaneously to jump forward. Land softly on mid-foot with knees tracking over toes and freeze ('stick') the landing for 2 full seconds.",
+    safety: "Zero knee valgus (caving inward) on landing; step back to the start between every single rep rather than bounding continuously."
+  },
+
+  "Seated-to-Standing Box Jump (Dead-Stop)": {
+    type: "Compound",
+    muscles: "[POWER // EXPLOSIVE 3–5r] Quads, Glutes & Hip Extensors (Starting Strength)",
+    setup: "Sit upright on a sturdy plyo box or flat bench facing a low-to-moderate jump box (12–20 inches) with shins vertical and feet planted flat.",
+    cue: "Without rocking backward for momentum, lean torso forward over your toes and explode upward out of a dead stop onto the target box, landing softly in a quarter-squat.",
+    safety: "Step down one foot at a time after every jump—never jump backward off the box."
+  },
+
+  "Low-Impact Lateral Shuffle & Carioca (Zone 2)": {
+    type: "Compound",
+    muscles: "[AGILITY // ZONE 2 FLOW] Hip Abductors/Adductors, Calves, Obliques & Coordination",
+    setup: "Mark out 15–20 feet of clear floor space. Drop into a loose, athletic quarter-squat stance with chest up and hands ready.",
+    cue: "Shuffle laterally for 15 feet without crossing feet or bouncing vertically, then switch into smooth cross-over carioca steps (rotating hips front-to-back while keeping shoulders square) on the return.",
+    safety: "Stay light on the balls of your feet and keep nasal breathing steady; treat this as rhythmic footwork rather than a max-heart-rate sprint."
+  },
+
+  "Dynamic Banded Rotational Punch": {
+    type: "Compound",
+    muscles: "[POWER // EXPLOSIVE 6–8r] Obliques, Serratus Anterior, Pecs & Hip Rotators",
+    setup: "Anchor a light-to-medium handled tube at mid-chest height. Stand sideways to the anchor in an athletic split stance holding the handle at your rear shoulder.",
+    cue: "Pivot your back heel and snap your hips forward while punching the handle straight ahead at high speed, then control the return over 2 seconds.",
+    safety: "Drive the punch from hip and ribcage rotation—do not over-reach or hyperextend your elbow at lockout."
+  },
+
+  "90/90 Hip Switches (Active End-Range)": {
+    type: "Isolation",
+    muscles: "[MOBILITY // ACTIVE CONTROL] Hip Internal & External Rotators, Glute Medius & Capsule",
+    setup: "Sit on a mat with both knees bent at 90°—front shin parallel to your torso, trail shin angled back at 90°. Keep chest tall (use fingertips lightly behind hips if needed).",
+    cue: "Keeping heels anchored to the mat, lift your trail knee first to open into a wide straddle, then smoothly rotate both knees over to the opposite 90/90 position with zero momentum.",
+    safety: "Move slowly through tight spots without forcing range; keep torso upright rather than slumping backward."
+  },
+
+  "Cossack / Side Lunge Flow (Assisted)": {
+    type: "Compound",
+    muscles: "[MOBILITY // ACTIVE END-RANGE] Adductors, Hamstrings, Quads & Ankle Dorsiflexors",
+    setup: "Stand in a wide straddle (1.5× shoulder width) facing a rack, doorframe, or TRX straps for light balance assistance.",
+    cue: "Sit your hips straight back into one heel, descending into a deep lateral squat while keeping the opposite leg straight with toes pointed toward the ceiling. Pause 2s at bottom, then glide across to the other side.",
+    safety: "Keep the working heel flat on the floor and chest proud; only descend as deep as your hip and ankle mobility allow pain-free."
+  },
+
+  "Band Shoulder Dislocates": {
+    type: "Isolation",
+    muscles: "[MOBILITY // ACTIVE CONTROL] Anterior/Posterior Deltoids, Rotator Cuff, Pecs & Thoracic Spine",
+    setup: "Hold a light 41\" loop band (or PVC pipe/towel) with a wide overhand grip in front of your thighs.",
+    cue: "Keeping elbows completely straight and ribs pulled down, raise the band overhead in a slow, smooth arc all the way to your lower back, then reverse back to the front.",
+    safety: "Widen your grip immediately if you feel any pinching in the front of the shoulder or have to bend your elbows to clear overhead."
+  },
+
+  "Wall Slides / Thoracic Open-Book Rotations": {
+    type: "Isolation",
+    muscles: "[MOBILITY // ACTIVE CONTROL] Lower Traps, Serratus Anterior & Thoracic Rotators",
+    setup: "Stand with heels 4 inches from a wall and lower back, upper back, and back of wrists pressed lightly against the wall in a 'W' position (or lie side-lying with top knee pinned to a foam roller).",
+    cue: "Slide forearms smoothly upward along the wall into a 'Y' while keeping ribs tucked and wrists in contact, pause 2s at top, and return slowly.",
+    safety: "Do not let your lower back arch away from the wall as your arms travel overhead."
+  },
+
+  "Half-Kneeling Hip Flexor & Quad Stretch": {
+    type: "Isolation",
+    muscles: "[FLEXIBILITY // DOWNSHIFT 30–45s] Iliopsoas, Rectus Femoris & Anterior Hip Capsule",
+    setup: "Kneel on a padded mat in a half-kneeling lunge with rear knee directly under your hip and front shin vertical.",
+    cue: "Tuck your tailbone under (posterior pelvic tilt) and squeeze your rear glute hard until you feel a deep stretch down the front of the rear hip. Hold with slow 4-second nasal inhales and 6-second exhales.",
+    safety: "Never hyperextend your lower back to lean forward—the stretch comes from tucking the pelvis, not overarching the lumbar spine."
+  },
+
+  "90/90 Pigeon Glute Hold": {
+    type: "Isolation",
+    muscles: "[FLEXIBILITY // DOWNSHIFT 30–45s] Piriformis, Glute Max/Medius & Posterior Hip Capsule",
+    setup: "Sit on a mat with your front leg bent at 90° in front of you and your back leg bent comfortably behind you.",
+    cue: "Keep your spine long and hinge forward slightly from the hips over your front shin until you feel a deep, comfortable stretch in the outer glute. Breathe slowly through your nose for 30–45 seconds per side.",
+    safety: "Keep the front ankle flexed (toes pulled toward shin) to protect the knee joint from rotational torque."
+  },
+
+  "Lat & Thoracic Bench Prayer Stretch": {
+    type: "Isolation",
+    muscles: "[FLEXIBILITY // DOWNSHIFT 30–45s] Latissimus Dorsi, Teres Major & Thoracic Extensors",
+    setup: "Kneel on the floor facing a flat bench or stability ball, resting both elbows shoulder-width apart on the pad with palms together.",
+    cue: "Sit your hips back toward your heels and let your chest sink gently toward the floor while keeping ribs lightly braced. Hold for 30–45 seconds with slow diaphragmatic breaths.",
+    safety: "Avoid dumping into your lower back; keep the stretch focused under your armpits and upper back."
+  },
+
+  "Supine Hamstring Band/Strap Stretch": {
+    type: "Isolation",
+    muscles: "[FLEXIBILITY // DOWNSHIFT 30–45s] Biceps Femoris, Semitendinosus & Posterior Chain",
+    setup: "Lie flat on your back with one leg extended flat on the floor and a 41\" loop band or towel looped around the arch of the opposite foot.",
+    cue: "With a soft micro-bend in the raised knee, gently draw the leg toward your torso until a moderate 6/10 hamstring stretch is felt. Hold for 30–45 seconds per leg while relaxing your shoulders into the floor.",
+    safety: "Keep both hips level on the mat and avoid pulling aggressively past mild tension."
+  },
+  
   "Mini-Band Plank Kickback": {
     type: "Isolation",
     muscles: "Gluteus Maximus, Transverse Abdominis & Shoulder Stabilizers",
