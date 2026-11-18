@@ -153,6 +153,40 @@ export const BAND_CONFIG = {
   }
 };
 
+// docs/js/data/bandConfigs.js (Add below BAND_CONFIG)
+
+const PACKED_BANDS_STORAGE_KEY = 'sonic_packed_bands_v1';
+
+/**
+ * Returns a Set of band IDs currently marked as available in your travel bag.
+ * Defaults to ALL bands in BAND_CONFIG if no custom bag has been saved yet.
+ */
+export function getPackedBandIds() {
+  try {
+    const raw = localStorage.getItem(PACKED_BANDS_STORAGE_KEY);
+    if (!raw) return new Set(Object.keys(BAND_CONFIG));
+    const parsed = JSON.parse(raw);
+    return Array.isArray(parsed) ? new Set(parsed) : new Set(Object.keys(BAND_CONFIG));
+  } catch (e) {
+    return new Set(Object.keys(BAND_CONFIG));
+  }
+}
+
+/**
+ * Saves an array or Set of available band IDs to localStorage.
+ */
+export function setPackedBandIds(idCollection) {
+  const arr = Array.from(idCollection);
+  localStorage.setItem(PACKED_BANDS_STORAGE_KEY, JSON.stringify(arr));
+}
+
+/**
+ * Checks whether a specific movement can be performed with currently packed gear.
+ */
+export function canPerformBandMovement(exerciseName = '') {
+  return getBandsForMovement(exerciseName).length > 0;
+}
+
 /**
  * Filters appropriate bands based on movement biomechanics.
  * Mini movements get mini loops; all other band exercises expose 41" loops and tubes.
@@ -167,15 +201,19 @@ export const BAND_CONFIG = {
  */
 // docs/js/data/bandConfigs.js (At the very bottom)
 
+// docs/js/data/bandConfigs.js (Replace getBandsForMovement)
+
 export function getBandsForMovement(exerciseName = '') {
   const name = (exerciseName || '').toLowerCase();
+  const packedIds = getPackedBandIds();
+  const allPacked = Object.values(BAND_CONFIG).filter(b => packedIds.has(b.id));
 
-  // 1. Strict Mini-Band Movements (Checked FIRST so "mini...curl" or "mini...abduction" stays Mini-Only)
+  // 1. Strict Mini-Band Movements
   if (name.includes('mini')) {
-    return Object.values(BAND_CONFIG).filter(b => b.type === 'mini');
+    return allPacked.filter(b => b.type === 'mini');
   }
 
-  // 2. Locomotion, Marches & Deadbugs (Allow BOTH Mini Loops and 41" Continuous Loops)
+  // 2. Locomotion, Marches & Deadbugs (Allow Mini Loops OR 41" Loops)
   if (
     name.includes('walk') || 
     name.includes('march') || 
@@ -184,7 +222,7 @@ export function getBandsForMovement(exerciseName = '') {
     name.includes('climber') ||
     name.includes('step-jack')
   ) {
-    return Object.values(BAND_CONFIG).filter(b => b.type === 'mini' || b.type === '41_loop');
+    return allPacked.filter(b => b.type === 'mini' || b.type === '41_loop');
   }
 
   // 3. Handled Door-Anchor Tubes Only
@@ -200,9 +238,9 @@ export function getBandsForMovement(exerciseName = '') {
     name.includes('abduction') || 
     name.includes('fly')
   ) {
-    return Object.values(BAND_CONFIG).filter(b => b.type === 'tube');
+    return allPacked.filter(b => b.type === 'tube');
   }
 
   // 4. 41" Continuous Power Loops Only
-  return Object.values(BAND_CONFIG).filter(b => b.type === '41_loop');
+  return allPacked.filter(b => b.type === '41_loop');
 }
