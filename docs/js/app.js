@@ -141,7 +141,7 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
     name.includes('30s/60s') || 
     name.includes('30s on') || 
     name.includes('surge') || 
-    name.includes('sprint') && !name.includes('500m')
+    (name.includes('sprint') && !name.includes('500m'))
   ) {
     return { targetText: "6-8 Rounds (30s On / 60s Off)", defaultReps: 8 };
   }
@@ -187,6 +187,7 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
   if (name.includes('hold') || name.includes('plank') || slotLower.includes('hold')) {
     return { targetText: "3 × 20-30s hold", defaultReps: 30 };
   }
+
   // 7. Deadbugs (Controlled Reps per Side)
   if (name.includes('deadbug')) {
     return { targetText: "3 × 8-10 / side", defaultReps: 10 };
@@ -250,6 +251,7 @@ function renderBagInventoryChecklist() {
       if (currentSlotGearMode === 'BANDS') {
         hydrateExerciseDropdown();
         syncEquipmentInputs();
+        syncLRSplitVisibility(document.getElementById('exerciseSelect')?.value || '');
       }
     };
   });
@@ -350,7 +352,7 @@ export function isIsometricOrTimedMovement(exerciseName = '') {
 export function syncLRSplitVisibility(exerciseName) {
   const bar = document.getElementById('lrSplitToggleBar');
   const container = document.getElementById('lrSplitInputContainer');
-  const standardRow = document.getElementById('standardInputRow'); // wrap your default Load/Reps/RPE row in this ID if not already
+  const standardRow = document.getElementById('standardInputRow');
 
   const eligible = isUnilateralOrDBMovement(exerciseName) && !isIsometricOrTimedMovement(exerciseName);
   if (!eligible) {
@@ -371,7 +373,6 @@ function updateLRSplitDOM() {
   const standardRow = document.getElementById('standardInputRow');
 
   if (isLRSplitActive) {
-    // Pre-fill L and R rows from current standard inputs so you only tweak what differed
     const baseLoad = document.getElementById('loadInput')?.value || '';
     const baseReps = document.getElementById('repsInput')?.value || '';
     const baseRpe = document.getElementById('rpeSelect')?.value || '7.5';
@@ -456,7 +457,6 @@ function loadSlotData() {
 
   const loadInput = document.getElementById('loadInput');
   if (currentSlotGearMode === 'BANDS' || isBandMovement(activeExercise)) {
-    // Auto-solve optimal band pills for the rotated band exercise
     const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
       activeExercise,
       slotDef.primary,
@@ -489,7 +489,7 @@ export function selectStage(stageKey, resetIfNew = true) {
     if (activeSession.sets.length > 0 && !confirm("Switching stages will start a new session. Proceed?")) return;
     activeSession = { stage: stageKey, slotIndex: 0, prehabChecked: false, jointPain: false, sets: [] };
     activeSlotIndex = 0;
-    currentSlotGearMode = 'GYM'; // Reset to Gym only when starting a fresh stage
+    currentSlotGearMode = 'GYM';
     window.activeSession = activeSession;
   }
   activeStageKey = stageKey;
@@ -542,6 +542,7 @@ function renderSlotStepper() {
     stepper.appendChild(btn);
   });
 }
+
 export function syncFinisherButtonVisibility() {
   const bar = document.getElementById('finisherBar');
   if (!bar) return;
@@ -567,7 +568,7 @@ export function appendCardioFinisherSlot() {
     slot: `${slotPrefix}5`,
     target: "10-12 Mins @ Zone 2",
     primary: "Stationary Bike (Zone 2 Cadence)",
-    defaultLoad: 8, // Gear/Level 8 on Bike (or 10% Incline on Treadmill)
+    defaultLoad: 8,
     isModularFinisher: true,
     alts: [
       "Stationary Bike (Zone 2 Cadence)",
@@ -581,9 +582,10 @@ export function appendCardioFinisherSlot() {
   stageDef.slots.push(finisherSlot);
   syncFinisherButtonVisibility();
   renderSlotStepper();
-  if (typeof selectSlot === 'function') {
-    selectSlot(stageDef.slots.length - 1);
-  }
+  activeSlotIndex = stageDef.slots.length - 1;
+  saveSessionState();
+  renderSlotStepper();
+  loadSlotData();
   showToast(`⚡ SLOT ${slotPrefix}5: ZONE 2 FINISHER ATTACHED`);
 }
 
@@ -641,7 +643,6 @@ export function logActiveSet() {
     leftTelemetry  = { load: lLoad, reps: lReps, rpe: lRpe, e1rm: leftE1RM };
     rightTelemetry = { load: rLoad, reps: rReps, rpe: rRpe, e1rm: rightE1RM };
 
-    // Use the conservative/limiting limb as the primary load, reps, rpe, and e1RM safeguard
     const leftIsLimiting = leftE1RM <= rightE1RM;
     load = leftIsLimiting ? lLoad : rLoad;
     reps = leftIsLimiting ? lReps : rReps;
@@ -651,7 +652,6 @@ export function logActiveSet() {
   } else if (!isCardio && !isIsometric) {
     setE1RM = calculateE1RM(load, reps, rpe);
     if (isUnilateral) {
-      // Synced unilateral set stores identical L/R telemetry for symmetry tracking
       leftTelemetry  = { load, reps, rpe, e1rm: setE1RM };
       rightTelemetry = { load, reps, rpe, e1rm: setE1RM };
     }
@@ -660,7 +660,7 @@ export function logActiveSet() {
     displayMetric = load > 0 ? `${load}lbs × ${reps}s hold` : `BW × ${reps}s hold`;
   }
 
-  // (#1) PR VAULT TRACKING — Isolated to exact `exercise` name
+  // PR VAULT TRACKING — Isolated to exact `exercise` name
   const prVault = getPRVault();
   const currentPR = prVault[exercise] ? (prVault[exercise].e1rm || 0) : 0;
   let isNewPR = false;
@@ -748,7 +748,7 @@ export function logActiveSet() {
     const autoAdj = autoRegulateNextSet(completedSetObj);
     if (autoAdj) {
       const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(exercise);
-      const activeLoad = typeof finalLoad !== 'undefined' ? finalLoad : load;
+      const activeLoad = load;
 
       if (isBand && autoAdj.load && autoAdj.load > activeLoad) {
         const currentCombo = typeof getSelectedBandCombo === 'function'
@@ -825,7 +825,6 @@ export function togglePain() {
 }
 
 function renderSessionUI() {
-  // Update Pre-Flight Mission Badge & Button State
   const badge = document.getElementById('prehabStatusBadge');
   const clearBtn = document.getElementById('prehabClearBtn');
   if (badge) {
@@ -875,7 +874,6 @@ function renderSessionUI() {
     });
   }
 
-  // Toggle Time Brake visibility strictly when Darkspine Sonic is active
   const timeBrakeBtn = document.getElementById('timeBrakeBtn');
   if (timeBrakeBtn) {
     const isDarkspineActive = (typeof devDarkspineOverride === 'boolean')
@@ -894,7 +892,6 @@ function ensureStageTabsExist() {
   const stageNav = document.querySelector('.stage-nav') || document.querySelector('.stage-tabs');
   if (!stageNav) return;
 
-  // Exact canonical sequence for all stages and challenge sorties
   const canonicalOrder = [
     { key: 'DAY_A', label: 'DAY A', className: 'stage-tab' },
     { key: 'DAY_B', label: 'DAY B', className: 'stage-tab' },
@@ -913,8 +910,6 @@ function ensureStageTabsExist() {
 
   canonicalOrder.forEach(item => {
     let tab = document.getElementById(`tab-${item.key}`);
-    
-    // Create tab element if missing
     if (!tab) {
       tab = document.createElement('div');
       tab.id = `tab-${item.key}`;
@@ -922,13 +917,11 @@ function ensureStageTabsExist() {
       tab.onclick = () => selectStage(item.key);
     }
 
-    // Ensure styling classes match
     tab.className = item.className;
     if (item.key === activeStageKey) {
       tab.classList.add('active');
     }
 
-    // Re-append in strict canonical order
     stageNav.appendChild(tab);
   });
 }
@@ -945,18 +938,15 @@ export function finishSession() {
     const redRingBonus = ringsBanked * 10000;
     let totalScore = forceBonus + prehabBonus + 20000 + redRingBonus;
 
-    // Darkspine Conditioning Surge (+500 pts per interval on Days G, H, I)
     if (isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I', 'DAY_J', 'DAY_K'].includes(activeStageKey)) {
       totalScore += (activeSession.sets.length * 500);
     }
 
-    // Super Sonic / Super Sonic 2 Multiplier (Session Active)
     if (isSuperModeSessionActive()) {
       const mult = isSuperSonic2Unlocked() ? 1.50 : 1.25;
       totalScore = Math.round(totalScore * mult);
     }
 
-    // 1. Evaluate Perfect Day criteria (Prehab done + 0 joint pain + 100% clean sets at RPE <= 8.0)
     const totalSetsLogged = activeSession.sets.length;
     const hasJointStrain = Boolean(activeSession.jointPain || activeSession.sets.some(s => s.jointPain));
     const cleanRatio = totalSetsLogged > 0 ? (ringsBanked / totalSetsLogged) : 0;
@@ -967,7 +957,6 @@ export function finishSession() {
       ringsBanked >= totalSetsLogged
     );
 
-    // 2. Stage-scaled score floors (12-set standard vs 8-set Cardio vs 4-set Challenge)
     const isChallengeStage = ['CH_1RM', 'CH_AMRAP'].includes(activeStageKey);
     const isLowLoadStage = ['DAY_G', 'DAY_J', 'DAY_K'].includes(activeStageKey);
 
@@ -975,7 +964,6 @@ export function finishSession() {
     const aFloor = isChallengeStage ? 62000 : (isLowLoadStage ? 115000 : 125000);
     const bFloor = isChallengeStage ? 50000 : (isLowLoadStage ? 80000 : 85000);
 
-    // 3. Strict Rank Assignment
     let rank = "C";
     if (isPerfectDay && totalScore >= sFloor) {
       rank = "S";
@@ -985,16 +973,14 @@ export function finishSession() {
       rank = "B";
     }
 
-    // Award Standard Gold Rings (Total Score / 1000)
     const standardRingsEarned = Math.floor(totalScore / 1000);
     addStandardRings(standardRingsEarned);
 
-    // Check Perfect Day for Chaos Emerald Award
     const emeraldWon = evaluatePerfectDayEmerald(activeStageKey, rank === 'S', showToast);
 
     const recordRes = saveStageRecord(activeStageKey, totalScore, rank);
     localStorage.setItem('sonic_last_stage', activeStageKey);
-    localStorage.setItem('sonic_last_strain', (activeSession.jointPain || activeSession.sets.some(s => s.jointPain)) ? 'true' : 'false');
+    localStorage.setItem('sonic_last_strain', hasJointStrain ? 'true' : 'false');
 
     const oldExp = getLifetimeExp();
     const newExp = oldExp + totalScore;
@@ -1008,14 +994,13 @@ export function finishSession() {
     renderVault();
     renderArtifactsTray();
 
-    // TSK-13: Persist completed session sets into rolling 2-session Flight Path history
     try {
       const rawHist = localStorage.getItem('sonic_session_history');
       const hist = rawHist ? JSON.parse(rawHist) : [];
       hist.unshift({
         timestamp: new Date().toISOString(),
         stage: activeStageKey,
-        jointPain: activeSession.jointPain || activeSession.sets.some(s => s.jointPain),
+        jointPain: hasJointStrain,
         sets: [...activeSession.sets]
       });
       localStorage.setItem('sonic_session_history', JSON.stringify(hist.slice(0, 15)));
@@ -1118,6 +1103,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (currentSlotGearMode === 'BANDS') {
         hydrateExerciseDropdown();
         syncEquipmentInputs();
+        syncLRSplitVisibility(document.getElementById('exerciseSelect')?.value || '');
       }
     };
   }
@@ -1130,6 +1116,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (currentSlotGearMode === 'BANDS') {
         hydrateExerciseDropdown();
         syncEquipmentInputs();
+        syncLRSplitVisibility(document.getElementById('exerciseSelect')?.value || '');
       }
     };
   }
@@ -1156,17 +1143,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       gymBtn.style.background = 'transparent';
       gymBtn.style.color = '#94a3b8';
 
-      // 1. Populate dropdown with banded alternates filtered by bag inventory
       hydrateExerciseDropdown();
 
-      // 2. Fetch parameters
       const stageDef = STAGES[activeStageKey];
       const slotDef = stageDef?.slots?.[activeSlotIndex];
       const gymPrimary = slotDef ? slotDef.primary : '';
       const slotTarget = slotDef ? slotDef.target : "3x8-10";
       const currentBandExercise = document.getElementById('exerciseSelect')?.value || '';
 
-      // 3. Solve 3-step preset
       const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
         currentBandExercise,
         gymPrimary,
@@ -1174,20 +1158,15 @@ document.addEventListener('DOMContentLoaded', async () => {
         slotDef?.defaultLoad || 50
       );
 
-      // 4. Pre-set active keys in memory THEN mount selector DOM
       setActiveBandSelection(selectedKeys);
       syncEquipmentInputs();
 
-      // 5. Update tactical cues/intel for the newly selected banded exercise
       renderMovementIntel(currentBandExercise);
       updateInputLabelsForExercise(currentBandExercise);
-      syncLRSplitVisibility(val);
+      syncLRSplitVisibility(currentBandExercise);
 
-      // 6. Explicitly assign loadInput & sync L/R split bar
       const loadInput = document.getElementById('loadInput');
       if (loadInput) loadInput.value = nominalTotal;
-      syncLRSplitVisibility(currentBandExercise);
-    };
     };
   }
 
@@ -1261,7 +1240,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const slotDef = stageDef?.slots?.[activeSlotIndex];
       const defaultTarget = slotDef ? slotDef.target : "3x8-10";
 
-      // 1. Dynamic target bracket & rep preload
       const resolved = resolveExerciseTarget(val, defaultTarget);
       const targetTag = document.getElementById('currentTargetTag');
       if (targetTag) {
@@ -1273,7 +1251,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const repsInput = document.getElementById('repsInput');
       if (repsInput) repsInput.value = resolved.defaultReps;
 
-      // 2. Recalculate load & solve band presets if in BANDS mode
       const prVault = getPRVault();
       const pr = prVault[val];
       const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(val);
@@ -1303,9 +1280,9 @@ document.addEventListener('DOMContentLoaded', async () => {
         syncEquipmentInputs();
       }
 
-      // 3. Update tactical cues and input unit labels
       renderMovementIntel(val);
       updateInputLabelsForExercise(val);
+      syncLRSplitVisibility(val);
     };
   }
 
@@ -1319,7 +1296,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       if (data.goldRings !== undefined) {
         saveStandardRings(data.goldRings);
       }
-      // Hydrate Red Star Ring ground truth directly from COMMAND_HUB!G3
       if (data.totalRedRings !== undefined) {
         localStorage.setItem('sonic_total_red_rings', data.totalRedRings);
       }
@@ -1342,7 +1318,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         setRuntimeUnlockedPerks(data.unlockedPerks);
       }
 
-      // Re-evaluate Flight Path once Sheet stages, sessions, or Watch8 biometrics arrive
       if (data.stages || data.recentSessions || data.biometrics) {
         if (data.stages) {
           localStorage.setItem('sonic_stage_statuses', JSON.stringify(data.stages));
@@ -1362,7 +1337,6 @@ document.addEventListener('DOMContentLoaded', async () => {
         saveVaultData(data.vault);
       }
       
-      // Re-render UI views with fresh cloud state
       renderVault();
       renderArtifactsTray();
       renderBiometricsUI();
@@ -1371,7 +1345,6 @@ document.addEventListener('DOMContentLoaded', async () => {
     }
   });
 
-  // Attach clear stage listener to the advance button
   const clearBtn = document.getElementById('stageClearBtn') || document.querySelector('.btn-advance');
   if (clearBtn) {
     clearBtn.onclick = finishSession;
@@ -1473,8 +1446,8 @@ window.__sonicDev = {
   testTempoDamage: () => applySuperSonicDamagePenalty('tempo'),
   engageSuper: () => window.activateSuperModeSession(),
   revertSuper: () => window.deactivateSuperModeSession(),
-  getPerks: () => getUnlockedPerks(),
-  openSkills: () => toggleSkillTreeDrawer(),
+  getPerks: () => [],
+  openSkills: () => switchMainTab('skillsTab'),
 
   toggleDarkspine: (forceState) => {
     devDarkspineOverride = typeof forceState === 'boolean' ? forceState : !devDarkspineOverride;
@@ -1506,7 +1479,5 @@ window.__sonicDev = {
 };
 console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicDev');
 
-
-// Bind to window for HUD or prompt buttons
 window.appendCardioFinisherSlot = appendCardioFinisherSlot;
 window.renderCalculator = renderCalculator;
