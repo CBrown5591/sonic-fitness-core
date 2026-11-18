@@ -135,6 +135,7 @@ export const SLOT_BAND_EXTRAS = {
     "Low Door-Anchor Overhead Tricep Extension",
   "41\" Loop Band Seated Floor Z-Press",
   "Low Door-Anchor Seated Z-Press",
+    "Hinged Isometric-Core Alternating Chest Press (41\" Loop)",
     "Low Door-Anchor Tricep Kickback"
   ],
   A4: [
@@ -154,6 +155,7 @@ export const SLOT_BAND_EXTRAS = {
     "41\" Loop Band Upright Row (Stand-on-Loop)",
     "41\" Loop Band Seated Floor Z-Press",
   "Low Door-Anchor Seated Z-Press",
+    "Hinged Isometric-Core Alternating Chest Press (41\" Loop)",
     "Mini-Band Shoulder Tri-Set"
   ],
   B3: [
@@ -307,11 +309,13 @@ export const SLOT_BAND_EXTRAS = {
     "41\" Loop Band Bent-Over Row (Stand-on-Loop)",
     "Low Door-Anchor Tube Upright Row",
     "41\" Loop Band Upright Row (Stand-on-Loop)",
+    "Hinged Isometric-Core Alternating Chest Press (41\" Loop)",
     "Low Door-Anchor Bent-Over Rear Delt Raise"
   ],
   H4: [
     "Low Door-Anchor Standing Oblique Side Bend",
     "Low Door-Anchor Standing Band Abduction",
+    "Hinged Isometric-Core Alternating Chest Press (41\" Loop)",
     "Mini-Band Standing Hip Abduction"
   ],
 
