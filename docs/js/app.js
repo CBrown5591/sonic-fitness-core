@@ -831,7 +831,7 @@ function renderSessionUI() {
   if (timeBrakeBtn) {
     const isDarkspineActive = (typeof devDarkspineOverride === 'boolean')
       ? devDarkspineOverride 
-      : (isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I', 'DAY_J'].includes(activeStageKey));
+      : (isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I', 'DAY_J', 'DAY_K'].includes(activeStageKey));
 
     if (isDarkspineActive) {
       timeBrakeBtn.style.setProperty('display', 'inline-block', 'important');
@@ -857,6 +857,7 @@ function ensureStageTabsExist() {
     { key: 'DAY_H', label: 'DAY H', className: 'stage-tab' },
     { key: 'DAY_I', label: 'DAY I', className: 'stage-tab' },
     { key: 'DAY_J', label: 'DAY J', className: 'stage-tab' },
+    { key: 'DAY_K', label: 'DAY K', className: 'stage-tab' },
     { key: 'CH_1RM', label: '⚡ 1RM TEST', className: 'stage-tab challenge-tab-gold' },
     { key: 'CH_AMRAP', label: '🔥 TO FAILURE', className: 'stage-tab challenge-tab-red' }
   ];
@@ -896,7 +897,7 @@ export function finishSession() {
     let totalScore = forceBonus + prehabBonus + 20000 + redRingBonus;
 
     // Darkspine Conditioning Surge (+500 pts per interval on Days G, H, I)
-    if (isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I'].includes(activeStageKey)) {
+    if (isDarkspineModeUnlocked() && ['DAY_G', 'DAY_H', 'DAY_I', 'DAY_J', 'DAY_K'].includes(activeStageKey)) {
       totalScore += (activeSession.sets.length * 500);
     }
 
@@ -919,11 +920,11 @@ export function finishSession() {
 
     // 2. Stage-scaled score floors (12-set standard vs 8-set Cardio vs 4-set Challenge)
     const isChallengeStage = ['CH_1RM', 'CH_AMRAP'].includes(activeStageKey);
-    const isCardioStage = activeStageKey === 'DAY_G';
+    const isLowLoadStage = ['DAY_G', 'DAY_J', 'DAY_K'].includes(activeStageKey);
 
-    const sFloor = isChallengeStage ? 75000 : (isCardioStage ? 140000 : 155000);
-    const aFloor = isChallengeStage ? 62000 : (isCardioStage ? 115000 : 125000);
-    const bFloor = isChallengeStage ? 50000 : (isCardioStage ? 80000 : 85000);
+    const sFloor = isChallengeStage ? 75000 : (isLowLoadStage ? 140000 : 155000);
+    const aFloor = isChallengeStage ? 62000 : (isLowLoadStage ? 115000 : 125000);
+    const bFloor = isChallengeStage ? 50000 : (isLowLoadStage ? 80000 : 85000);
 
     // 3. Strict Rank Assignment
     let rank = "C";
