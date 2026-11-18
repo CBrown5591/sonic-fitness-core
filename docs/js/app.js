@@ -480,6 +480,7 @@ function loadSlotData() {
 
   renderMovementIntel(activeExercise);
   updateInputLabelsForExercise(activeExercise);
+  syncLRSplitVisibility(activeExercise);
   updateLogButtonText();
 }
 
@@ -1145,6 +1146,7 @@ document.addEventListener('DOMContentLoaded', async () => {
       bandBtn.style.color = '#94a3b8';
       hydrateExerciseDropdown();
       syncEquipmentInputs();
+      syncLRSplitVisibility(document.getElementById('exerciseSelect')?.value || '');
     };
 
     bandBtn.onclick = () => {
@@ -1179,10 +1181,13 @@ document.addEventListener('DOMContentLoaded', async () => {
       // 5. Update tactical cues/intel for the newly selected banded exercise
       renderMovementIntel(currentBandExercise);
       updateInputLabelsForExercise(currentBandExercise);
+      syncLRSplitVisibility(val);
 
-      // 6. Explicitly assign loadInput
+      // 6. Explicitly assign loadInput & sync L/R split bar
       const loadInput = document.getElementById('loadInput');
       if (loadInput) loadInput.value = nominalTotal;
+      syncLRSplitVisibility(currentBandExercise);
+    };
     };
   }
 
