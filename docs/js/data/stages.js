@@ -770,6 +770,8 @@ export const STAGES = {
           "Cybex Eagle Leg Extension Isometric Hold (30-45s)",
           "Heavy Banded Spanish Squat",
           "DB Bulgarian Split-Squat Bottom Isometric Hold (30s/side)",
+          "Bodyweight Single-Leg RDL (Wall Supported)",
+      "Single-Leg Box Squat (Strict 3s Pause)",
           "Banded Terminal Knee Extension (TKE)"
         ]
       },
@@ -777,11 +779,15 @@ export const STAGES = {
         slot: "K2",
         target: "3x30-45s Hold",
         primary: "Cybex Eagle Leg Curl Isometric Hold (30-45s)",
-        defaultLoad: 75,
+        defaultLoad: 75, "Single-Leg Balance & Foot-Tripod Hold (30s/side)",
+      "Single-Arm Banded Suitcase Isometric March",
         alts: [
           "Cybex Eagle Leg Curl Isometric Hold (30-45s)",
           "Single-Leg Glute Bridge Isometric Hold (30s/side)",
           "Cybex Eagle Leg Curl (2-Up / 1-Down Eccentric)",
+          "Cybex Eagle Hip Abduction (Lean-Forward Upper Glute)",
+      "Mini-Band Lateral Monster Walk",
+      "Copenhagen Side Plank Hold (Bent-Knee 20-30s)",
           "Bodyweight Single-Leg RDL (Strict 5s Eccentric)"
         ]
       },
@@ -794,6 +800,8 @@ export const STAGES = {
           "Cybex Eagle Leg Press Calf Isometric Hold (30-45s)",
           "Tibialis Wall Raises",
           "Cybex Eagle Leg Press Calf Raise",
+          "Single-Leg Balance & Foot-Tripod Hold (30s/side)",
+      "Single-Arm Banded Suitcase Isometric March",
           "41\" Loop Band Seated Calf Extension"
         ]
       },
@@ -806,6 +814,8 @@ export const STAGES = {
           "Cable External Rotations (Bravo)",
           "Prone Scapular Y-T-W Raises",
           "Seated DB Wrist Curl & Reverse Wrist Curl Superset",
+          "Serratus Wall Slide with Mini-Band",
+      "4-Way Isometric Neck Stabilization",
           "Bravo Low-Cable Reverse Curl (Pronated Forearms)"
         ]
       }
