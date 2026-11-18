@@ -43,6 +43,7 @@ import { renderSkillTree, switchSkillTreeBranch, unlockPerk } from './ui/renderS
 import { switchMainTab } from './ui/renderTabs.js';
 import { renderPRVaultUI } from './ui/renderPRVault.js';
 import { BAND_CONFIG, getPackedBandIds, setPackedBandIds, canPerformBandMovement } from './data/bandConfigs.js';
+import { getBandEquivalent, SLOT_BAND_EXTRAS } from './data/bandEquivalents.js';
 import { resolveInitialBandPreset, solveBestBandCombination, solveOverdriveBandBridge } from './engine/bandSolver.js';
 import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSelections, setActiveBandSelection } from './ui/renderBandSelector.js';
 import { getDefaultGymLoad } from './data/movementIntel.js';
@@ -218,6 +219,7 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
 
   return { targetText: defaultSlotTarget, defaultReps: 8 };
 }
+
 function renderBagInventoryChecklist() {
   const mount = document.getElementById('bagChecklistMount');
   if (!mount) return;
@@ -226,10 +228,11 @@ function renderBagInventoryChecklist() {
   mount.innerHTML = Object.values(BAND_CONFIG).map(band => {
     const checked = packed.has(band.id) ? 'checked' : '';
     const typeTag = band.type === '41_loop' ? '41"' : band.type === 'mini' ? 'Mini' : 'Tube';
+    const displayName = band.name || band.label || band.id;
     return `
       <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #e2e8f0; background: rgba(30, 41, 59, 0.7); padding: 5px 7px; border-radius: 5px; cursor: pointer;">
         <input type="checkbox" class="bag-band-checkbox" data-band-id="${band.id}" ${checked} style="accent-color: #38bdf8;" />
-        <span>${band.label} <span style="color: #94a3b8; font-size: 10px;">(${typeTag})</span></span>
+        <span>${displayName} <span style="color: #94a3b8; font-size: 10px;">(${typeTag})</span></span>
       </label>
     `;
   }).join('');
@@ -249,6 +252,7 @@ function renderBagInventoryChecklist() {
     };
   });
 }
+
 function hydrateExerciseDropdown() {
   const stageDef = STAGES[activeStageKey];
   if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
@@ -275,18 +279,24 @@ function hydrateExerciseDropdown() {
     });
     select.value = recommendedExercise;
   } else {
-    const bandedAlts = slotDef.alts.map(alt => getBandEquivalent(alt));
-    bandedAlts.forEach(bandAlt => {
+    // Mode is BANDS: Combine mapped equivalents + slot extras, then filter to packed bag
+    const mappedAlts = slotDef.alts.map(alt => getBandEquivalent(alt));
+    const extras = SLOT_BAND_EXTRAS[slotDef.slot] || [];
+    const uniqueAll = [...new Set([...mappedAlts, ...extras])];
+    const availableAlts = uniqueAll.filter(ex => canPerformBandMovement(ex));
+    const listToRender = availableAlts.length > 0 ? availableAlts : uniqueAll;
+
+    listToRender.forEach(bandAlt => {
       const opt = document.createElement('option');
       opt.value = bandAlt;
       opt.innerText = bandAlt;
       select.appendChild(opt);
     });
-    select.value = getBandEquivalent(recommendedExercise);
+
+    const preferred = getBandEquivalent(recommendedExercise);
+    select.value = listToRender.includes(preferred) ? preferred : listToRender[0];
   }
 }
-
-
 
 function syncEquipmentInputs() {
   const loadInputWrapper = document.getElementById('loadInput')?.closest('.input-group') || document.getElementById('loadInput')?.parentElement;
@@ -473,7 +483,7 @@ export function logActiveSet() {
   const isCardio = !!CARDIO_CONFIGS[exercise];
   const setE1RM = isCardio ? 0 : calculateE1RM(load, reps, rpe);
 
-  // (#1) PR VAULT TRACKING — Already isolated to exact `exercise` name!
+  // (#1) PR VAULT TRACKING — Isolated to exact `exercise` name
   const prVault = getPRVault();
   const currentPR = prVault[exercise] ? (prVault[exercise].e1rm || 0) : 0;
   let isNewPR = false;
@@ -546,7 +556,7 @@ export function logActiveSet() {
     if (clk) clk.innerText = `${String(mins).padStart(2,'0')}:${String(rem).padStart(2,'0')}`;
   });
 
- if (setsInSlot >= 3 && activeSlotIndex < stageDef.slots.length - 1) {
+  if (setsInSlot >= 3 && activeSlotIndex < stageDef.slots.length - 1) {
     activeSlotIndex++;
     saveSessionState();
     renderSlotStepper();
@@ -591,6 +601,7 @@ export function logActiveSet() {
     painBtn.innerText = "Joint Strain: No";
   }
 }
+
 export function togglePrehab() {
   if (!window.activeSession) return;
 
@@ -763,7 +774,7 @@ export function finishSession() {
       totalScore = Math.round(totalScore * mult);
     }
 
-// 1. Evaluate Perfect Day criteria (Prehab done + 0 joint pain + 100% clean sets at RPE <= 8.0)
+    // 1. Evaluate Perfect Day criteria (Prehab done + 0 joint pain + 100% clean sets at RPE <= 8.0)
     const totalSetsLogged = activeSession.sets.length;
     const hasJointStrain = Boolean(activeSession.jointPain || activeSession.sets.some(s => s.jointPain));
     const cleanRatio = totalSetsLogged > 0 ? (ringsBanked / totalSetsLogged) : 0;
@@ -854,16 +865,16 @@ export function finishSession() {
     });
 
     syncSessionToSheets({
-        stage: activeStageKey,
-        totalScore,
-        rank,
-        ringsBanked,
-        goldRingsEarned: standardRingsEarned, // <--- ADD THIS LINE
-        totalReps,
-        prehab: activeSession.prehabChecked,
-        jointPain: activeSession.jointPain,
-        sets: activeSession.sets
-      });
+      stage: activeStageKey,
+      totalScore,
+      rank,
+      ringsBanked,
+      goldRingsEarned: standardRingsEarned,
+      totalReps,
+      prehab: activeSession.prehabChecked,
+      jointPain: activeSession.jointPain,
+      sets: activeSession.sets
+    });
   });
 }
 
@@ -940,8 +951,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       }
     };
   }
-  
-  // File: docs/js/app.js (Inside DOMContentLoaded listener)
 
   const gymBtn = document.getElementById('gearModeGymBtn');
   const bandBtn = document.getElementById('gearModeBandBtn');
@@ -957,26 +966,14 @@ document.addEventListener('DOMContentLoaded', async () => {
       syncEquipmentInputs();
     };
 
-bandBtn.onclick = () => {
+    bandBtn.onclick = () => {
       currentSlotGearMode = 'BANDS';
       bandBtn.style.background = '#38bdf8';
       bandBtn.style.color = '#0f172a';
       gymBtn.style.background = 'transparent';
       gymBtn.style.color = '#94a3b8';
 
-  const allGearBtn = document.getElementById('bagPresetAllBtn');
-  if (allGearBtn) {
-    allGearBtn.onclick = () => {
-      setPackedBandIds(Object.keys(BAND_CONFIG));
-      renderBagInventoryChecklist();
-      if (currentSlotGearMode === 'BANDS') {
-        hydrateExerciseDropdown();
-        syncEquipmentInputs();
-      }
-    };
-  }
-  
-      // 1. Populate dropdown with banded alternates
+      // 1. Populate dropdown with banded alternates filtered by bag inventory
       hydrateExerciseDropdown();
 
       // 2. Fetch parameters
@@ -998,7 +995,7 @@ bandBtn.onclick = () => {
       setActiveBandSelection(selectedKeys);
       syncEquipmentInputs();
 
-      // 5. Update tactical cues/intel for the newly selected banded exercise!
+      // 5. Update tactical cues/intel for the newly selected banded exercise
       renderMovementIntel(currentBandExercise);
       updateInputLabelsForExercise(currentBandExercise);
 
@@ -1007,6 +1004,7 @@ bandBtn.onclick = () => {
       if (loadInput) loadInput.value = nominalTotal;
     };
   }
+
   checkAndRenderFlightPathPrompt(activeSession, (nextStage) => {
     selectStage(nextStage);
     showToast(`FLIGHT PATH ENGAGED: ${nextStage.replace('_', ' ')}!`);
@@ -1027,49 +1025,47 @@ bandBtn.onclick = () => {
   const timeBrakeBtn = document.getElementById('timeBrakeBtn');
   if (timeBrakeBtn) timeBrakeBtn.onclick = window.applyTimeBrake;
 
-// docs/js/app.js (inside DOMContentLoaded listener)
-
   function syncRotatorModeUI() {
-  const mode = getRotatorMode();
+    const mode = getRotatorMode();
+    const freshBtn = document.getElementById('rotatorFreshBtn');
+    const focusBtn = document.getElementById('rotatorFocusBtn');
+    if (!freshBtn || !focusBtn) return;
+
+    if (mode === 'FOCUS') {
+      focusBtn.style.background = '#f59e0b';
+      focusBtn.style.borderColor = '#f59e0b';
+      focusBtn.style.color = '#0f172a';
+      freshBtn.style.background = 'transparent';
+      freshBtn.style.borderColor = '#334155';
+      freshBtn.style.color = '#94a3b8';
+    } else {
+      freshBtn.style.background = '#38bdf8';
+      freshBtn.style.borderColor = '#38bdf8';
+      freshBtn.style.color = '#0f172a';
+      focusBtn.style.background = 'transparent';
+      focusBtn.style.borderColor = '#334155';
+      focusBtn.style.color = '#94a3b8';
+    }
+  }
+
+  syncRotatorModeUI();
+
   const freshBtn = document.getElementById('rotatorFreshBtn');
   const focusBtn = document.getElementById('rotatorFocusBtn');
-  if (!freshBtn || !focusBtn) return;
-
-  if (mode === 'FOCUS') {
-    focusBtn.style.background = '#f59e0b';
-    focusBtn.style.borderColor = '#f59e0b';
-    focusBtn.style.color = '#0f172a';
-    freshBtn.style.background = 'transparent';
-    freshBtn.style.borderColor = '#334155';
-    freshBtn.style.color = '#94a3b8';
-  } else {
-    freshBtn.style.background = '#38bdf8';
-    freshBtn.style.borderColor = '#38bdf8';
-    freshBtn.style.color = '#0f172a';
-    focusBtn.style.background = 'transparent';
-    focusBtn.style.borderColor = '#334155';
-    focusBtn.style.color = '#94a3b8';
+  if (freshBtn && focusBtn) {
+    freshBtn.onclick = () => {
+      setRotatorMode('FRESH');
+      syncRotatorModeUI();
+      loadSlotData();
+      showToast('⚡ ROTATOR: Fresh Variety Mode Active');
+    };
+    focusBtn.onclick = () => {
+      setRotatorMode('FOCUS');
+      syncRotatorModeUI();
+      loadSlotData();
+      showToast('🎯 ROTATOR: Cumulative Synergy Focus Active');
+    };
   }
-}
-
-syncRotatorModeUI();
-
-const freshBtn = document.getElementById('rotatorFreshBtn');
-const focusBtn = document.getElementById('rotatorFocusBtn');
-if (freshBtn && focusBtn) {
-  freshBtn.onclick = () => {
-    setRotatorMode('FRESH');
-    syncRotatorModeUI();
-    loadSlotData();
-    showToast('⚡ ROTATOR: Fresh Variety Mode Active');
-  };
-  focusBtn.onclick = () => {
-    setRotatorMode('FOCUS');
-    syncRotatorModeUI();
-    loadSlotData();
-    showToast('🎯 ROTATOR: Cumulative Synergy Focus Active');
-  };
-}
   
   const exSelect = document.getElementById('exerciseSelect');
   if (exSelect) {
@@ -1127,7 +1123,7 @@ if (freshBtn && focusBtn) {
     };
   }
 
-// Live Sheet Telemetry Sync on boot
+  // Live Sheet Telemetry Sync on boot
   fetchSheetTelemetry().then(data => {
     if (data && data.status === 'success') {
       if (data.lifetimeExp !== undefined) {
@@ -1150,8 +1146,6 @@ if (freshBtn && focusBtn) {
           renderAllStageRecords();
         }
       }
-      
-   
       if (data.emeralds || data.chaosEmeralds) {
         setRuntimeEmeralds(data.emeralds || data.chaosEmeralds);
       }
@@ -1161,7 +1155,6 @@ if (freshBtn && focusBtn) {
       if (data.unlockedPerks) {
         setRuntimeUnlockedPerks(data.unlockedPerks);
       }
-      // =========================================================
 
       // Re-evaluate Flight Path once Sheet stages, sessions, or Watch8 biometrics arrive
       if (data.stages || data.recentSessions || data.biometrics) {
