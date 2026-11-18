@@ -260,6 +260,8 @@ export const STAGES = {
           "Cable Pallof Press (Bravo)",
           "Bravo Cable Woodchoppers (High-to-Low)",
           "Single-Arm DB Suitcase Carry",
+          "DB Spellcaster (Rotational Swing)",
+          "Weighted / Bodyweight Russian Twist",
           "Tall-Kneeling Pallof Hold (20s)"
         ]
       },
@@ -272,6 +274,8 @@ export const STAGES = {
           "Cybex Eagle Seated Abdominal Crunch",
           "Bravo Kneeling Cable Crunch",
           "Med Ball Deadbug Compression (8-12 lbs)",
+          "DB Spellcaster (Rotational Swing)",
+  "Weighted / Bodyweight Russian Twist",
           "Hollow Body Isometric Hold (30s)"
         ]
       },
@@ -560,6 +564,7 @@ export const STAGES = {
           "Cybex Eagle Articulating Leg Press (Light Tempo 25r)",
           "Cybex Eagle Leg Extension (Paced 20r)",
           "Suitcase DB Squat",
+          "DB Spellcaster (Rotational Swing)",
           "Bodyweight Squat / TRX Squat"
         ]
       },
@@ -604,6 +609,7 @@ export const STAGES = {
           "Cable Pallof Press (Bravo)",
           "Kettlebell Suitcase March / Carry",
           "March in Place (Strict High Knees 45s)",
+          "DB Spellcaster (Rotational Swing)",
           "Bear Crawl (Forward & Reverse Paced)"
         ]
       }
@@ -651,6 +657,8 @@ export const STAGES = {
         alts: [
           "Bird-Dogs (Strict 5s Hold)",
           "Deadbugs (Wall Press)",
+          "Twisting Leg Raise (Floor / Bench)",
+  "Weighted / Bodyweight Russian Twist",
           "Prone Scapular Y-T-W Raises"
         ]
       },
@@ -662,6 +670,8 @@ export const STAGES = {
         alts: [
           "Tall-Kneeling Pallof Hold (20s)",
           "McGill Curl-Up (Strict Pause)",
+          "Twisting Leg Raise (Floor / Bench)",
+  "Weighted / Bodyweight Russian Twist",
           "Hollow Body Isometric Hold (30s)"
         ]
       }
