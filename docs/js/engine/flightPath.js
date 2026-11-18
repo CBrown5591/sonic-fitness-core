@@ -205,20 +205,30 @@ export function determineFlightPath(lastStages = [], sessionHistory = []) {
     lastTwoSessions.some(s => s.jointPain === true || s.jointPain === 'true') ||
     localStorage.getItem('sonic_last_strain') === 'true';
 
-  if ((lowSleep || lowSpo2 || muscleLossAlert || hadRecentStrain) && !lastTwoStageIds.includes('DAY_F') && STAGES.DAY_F) {
-    let deloadReason = "Joint Shield Recovery — Active Deload after recent strain flag";
-    if (lowSleep) deloadReason = `Recovery Deload — Low sleep logged (${bioSignals.recentSleepHrs} hrs)`;
-    else if (lowSpo2) deloadReason = `Recovery Deload — Low SpO2 logged (${bioSignals.recentSpo2Pct}%)`;
-    else if (muscleLossAlert) deloadReason = `Recovery Deload — Skeletal muscle dip (-${bioSignals.skeletalMuscleDropLbs} lb); prioritize recovery & protein`;
+  if ((lowSleep || lowSpo2 || muscleLossAlert || hadRecentStrain) && STAGES.DAY_F) {
+    // If joint strain occurred and DAY_F was already used recently, pivot to DAY_K Tendon Analgesia
+    const useTendonDay = hadRecentStrain && lastTwoStageIds.includes('DAY_F') && STAGES.DAY_K && !lastTwoStageIds.includes('DAY_K');
+    const recoveryStage = useTendonDay ? 'DAY_K' : (!lastTwoStageIds.includes('DAY_F') ? 'DAY_F' : null);
 
-    return {
-      recommendedStage: 'DAY_F',
-      reason: deloadReason,
-      isCardioOverride: false,
-      isBiometricAlert: lowSleep || lowSpo2 || muscleLossAlert,
-      canPairFinisher: !cardioStatus.cardioFulfilled || bpElevatesZone2 || highVisceralOrWhr,
-      analyzedSessions: lastTwoSessions.length
-    };
+    if (recoveryStage) {
+      let deloadReason = useTendonDay
+        ? "Tendon Analgesia Protocol — Isometric stiffness & joint relief"
+        : "Joint Shield Recovery — Active Deload after recent strain flag";
+      if (!useTendonDay) {
+        if (lowSleep) deloadReason = `Recovery Deload — Low sleep logged (${bioSignals.recentSleepHrs} hrs)`;
+        else if (lowSpo2) deloadReason = `Recovery Deload — Low SpO2 logged (${bioSignals.recentSpo2Pct}%)`;
+        else if (muscleLossAlert) deloadReason = `Recovery Deload — Skeletal muscle dip (-${bioSignals.skeletalMuscleDropLbs} lb); prioritize recovery & protein`;
+      }
+
+      return {
+        recommendedStage: recoveryStage,
+        reason: deloadReason,
+        isCardioOverride: false,
+        isBiometricAlert: lowSleep || lowSpo2 || muscleLossAlert,
+        canPairFinisher: !cardioStatus.cardioFulfilled || bpElevatesZone2 || highVisceralOrWhr,
+        analyzedSessions: lastTwoSessions.length
+      };
+    }
   }
 
   // 3. WEEKLY CARDIO GUARANTEE OVERRIDE (Mid-to-late week if unfulfilled)
