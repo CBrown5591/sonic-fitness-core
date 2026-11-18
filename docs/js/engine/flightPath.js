@@ -6,7 +6,7 @@ import { STAGES } from '../data/stages.js';
 import { CARDIO_CONFIGS } from '../data/cardioConfigs.js';
 import { getExerciseMuscleTags } from './slotRotator.js';
 
-const DEDICATED_CARDIO_DAYS = ['DAY_G', 'DAY_H', 'DAY_I'];
+const DEDICATED_CARDIO_DAYS = ['DAY_G', 'DAY_H', 'DAY_I', 'DAY_J'];
 const LIFTING_STAGES = ['DAY_A', 'DAY_B', 'DAY_C', 'DAY_D', 'DAY_E', 'DAY_F'];
 
 function getSessionMuscleTags(sessionObj) {
