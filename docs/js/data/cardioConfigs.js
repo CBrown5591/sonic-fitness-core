@@ -418,6 +418,11 @@ export const CARDIO_CONFIGS = {
       display: `500m in ${secs}s @ Damper ${damper}`
     })
   },
+  "Low-Impact Lateral Shuffle & Carioca (Zone 2)": {
+    metricLabel: "Flow Time (s)",
+    defaultDuration: 30,
+    zone: "Zone 2 Agility"
+  },
   "Rower / Incline Treadmill (90s Max Effort AMRAP)": {
     label1: "DAMPER / %",
     label2: "SECONDS",
