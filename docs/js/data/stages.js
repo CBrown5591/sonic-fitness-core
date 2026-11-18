@@ -779,8 +779,7 @@ export const STAGES = {
         slot: "K2",
         target: "3x30-45s Hold",
         primary: "Cybex Eagle Leg Curl Isometric Hold (30-45s)",
-        defaultLoad: 75, "Single-Leg Balance & Foot-Tripod Hold (30s/side)",
-      "Single-Arm Banded Suitcase Isometric March",
+        defaultLoad: 75,
         alts: [
           "Cybex Eagle Leg Curl Isometric Hold (30-45s)",
           "Single-Leg Glute Bridge Isometric Hold (30s/side)",
