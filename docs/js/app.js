@@ -180,11 +180,13 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
     return { targetText: "3 × 40-50 paces", defaultReps: 50 };
   }
 
-  // 6. Isometric Holds & Core Bracing (Seconds)
+  // 6. Static Flexibility, Isometric Holds & Core Bracing (Seconds)
+  if (name.includes('stretch') || name.includes('pigeon')) {
+    return { targetText: "2 × 30-45s hold", defaultReps: 35 };
+  }
   if (name.includes('hold') || name.includes('plank') || slotLower.includes('hold')) {
     return { targetText: "3 × 20-30s hold", defaultReps: 30 };
   }
-
   // 7. Deadbugs (Controlled Reps per Side)
   if (name.includes('deadbug')) {
     return { targetText: "3 × 8-10 / side", defaultReps: 10 };
