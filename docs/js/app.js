@@ -686,7 +686,7 @@ export function logActiveSet() {
     const clk = document.getElementById('timerClock');
     if (clk) clk.innerText = `${String(mins).padStart(2,'0')}:${String(rem).padStart(2,'0')}`;
   });
-}
+
   if (setsInSlot >= 3 && activeSlotIndex < stageDef.slots.length - 1) {
     activeSlotIndex++;
     saveSessionState();
@@ -731,6 +731,7 @@ export function logActiveSet() {
     painBtn.classList.remove('active-red');
     painBtn.innerText = "Joint Strain: No";
   }
+}
 
 export function togglePrehab() {
   if (!window.activeSession) return;
