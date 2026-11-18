@@ -4,6 +4,7 @@
 // -------------------------------------------------------------
 import { parseMultipleArboleafPdfs } from '../engine/arboleafPdfParser.js';
 import { syncArboleafDeepScan } from '../core/sync.js';
+import { getPRVault } from '../engine/record.js';
 
 let activeChartMetric = 'weight'; // 'weight' | 'leanMass' | 'fatMass' | 'bfPct'
 let isDeepScanEditorOpen = false;
@@ -763,6 +764,156 @@ function bindPdfAndEditorHandlers(latestDeepScanEntry) {
       }
     }
   };
+}
+
+/**
+ * Resolves the highest e1RM in PR_VAULT matching any keyword in `patterns`.
+ * Multiplies DB e1RMs by 2 when `scaleDBToBilateral` is true so single-hand DB logs
+ * compare apples-to-apples against bilateral machine stacks.
+ */
+function findBestVaultE1RM(prVault, patterns, scaleDBToBilateral = false) {
+  let best = 0;
+  for (const [name, data] of Object.entries(prVault || {})) {
+    const e1rm = Number(data?.e1rm) || 0;
+    if (e1rm <= 0) continue;
+    const lower = name.toLowerCase();
+    if (patterns.some(p => lower.includes(p))) {
+      const isDB = /\bdb\b/.test(lower) || lower.includes('dumbbell');
+      const normalized = (scaleDBToBilateral && isDB) ? e1rm * 2 : e1rm;
+      if (normalized > best) best = normalized;
+    }
+  }
+  return best;
+}
+
+function renderFunctionalBalanceCardHTML(deepScanEntry) {
+  const prVault = getPRVault() || {};
+
+  // 1. Horizontal Push vs. Pull (Target: 0.85 - 1.00)
+  const pushE1RM = findBestVaultE1RM(prVault, ['chest press', 'bench press', 'floor press'], true);
+  const pullE1RM = findBestVaultE1RM(prVault, ['high row', 'cable row', 'dumbbell row', 'pulldown'], true);
+  const pushPullRatio = (pushE1RM > 0 && pullE1RM > 0) ? Number((pushE1RM / pullE1RM).toFixed(2)) : null;
+
+  // 2. Quad vs. Hamstring Isolation (Target: 0.65 - 0.75)
+  const quadE1RM = findBestVaultE1RM(prVault, ['leg extension'], false);
+  const hamE1RM  = findBestVaultE1RM(prVault, ['leg curl'], false);
+  const quadHamRatio = (quadE1RM > 0 && hamE1RM > 0) ? Number((hamE1RM / quadE1RM).toFixed(2)) : null;
+
+  // 3. Hip Adduction vs. Abduction (Target: 0.85 - 1.00)
+  const addE1RM = findBestVaultE1RM(prVault, ['hip adduction', 'adductor'], false);
+  const abdE1RM = findBestVaultE1RM(prVault, ['hip abduction', 'abductor'], false);
+  const hipRatio = (addE1RM > 0 && abdE1RM > 0) ? Number((abdE1RM / addE1RM).toFixed(2)) : null;
+
+  // 4. Arm Balance (Biceps vs. Triceps) + Left vs. Right Unilateral Symmetry
+  const bicepE1RM  = findBestVaultE1RM(prVault, ['curl'], false);
+  const tricepE1RM = findBestVaultE1RM(prVault, ['tricep', 'pushdown', 'skullcrusher'], false);
+  const armRatio   = (bicepE1RM > 0 && tricepE1RM > 0) ? Number((tricepE1RM / bicepE1RM).toFixed(2)) : null;
+
+  let lrForceSymPct = null;
+  for (const data of Object.values(prVault)) {
+    if (Number(data?.leftE1RM) > 0 && Number(data?.rightE1RM) > 0) {
+      const minArm = Math.min(data.leftE1RM, data.rightE1RM);
+      const maxArm = Math.max(data.leftE1RM, data.rightE1RM);
+      lrForceSymPct = Number(((minArm / maxArm) * 100).toFixed(1));
+      break;
+    }
+  }
+
+  const segLean = deepScanEntry?.deepScan?.segmentalLean;
+  const leanSymText = (segLean?.leftArmLbs && segLean?.rightArmLbs)
+    ? `Mass: ${segLean.leftArmLbs} vs ${segLean.rightArmLbs} lb (${segLean.upperSymmetryPct}%)`
+    : '';
+
+  const buildRow = (label, ratio, minOk, maxOk, detailText, lowTag, highTag) => {
+    let badge = `<span style="color:#64748b; font-size:9px; font-weight:800;">PENDING DATA</span>`;
+    let valStr = '—';
+
+    if (ratio !== null) {
+      valStr = ratio.toFixed(2);
+      if (ratio >= minOk && ratio <= maxOk) {
+        badge = `<span style="background:rgba(74,222,128,0.15); color:#4ade80; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:800;">BALANCED</span>`;
+      } else if (ratio < minOk) {
+        badge = `<span style="background:rgba(250,204,21,0.15); color:#facc15; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:800;">${lowTag}</span>`;
+      } else {
+        badge = `<span style="background:rgba(56,189,248,0.15); color:#38bdf8; padding:2px 6px; border-radius:4px; font-size:9px; font-weight:800;">${highTag}</span>`;
+      }
+    }
+
+    return `
+      <div style="display:flex; justify-content:space-between; align-items:center; padding:8px 0; border-bottom:1px solid rgba(255,255,255,0.06);">
+        <div>
+          <div style="font-size:11px; font-weight:800; color:#e2e8f0;">${label}</div>
+          <div style="font-size:9px; color:#94a3b8; margin-top:2px;">${detailText} • Target ${minOk.toFixed(2)}–${maxOk.toFixed(2)}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:13px; font-weight:900; color:#f8fafc; font-family:monospace; margin-bottom:2px;">${valStr}</div>
+          ${badge}
+        </div>
+      </div>
+    `;
+  };
+
+  return `
+    <div class="card" style="margin-bottom: 12px;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+        <span class="card-title">⚖️ FUNCTIONAL STRUCTURAL BALANCE</span>
+        <span style="font-size: 9px; font-weight: 800; color: #38bdf8;">LIVE PR VAULT</span>
+      </div>
+
+      ${buildRow(
+        'Horizontal Push : Pull',
+        pushPullRatio,
+        0.85,
+        1.00,
+        pushE1RM && pullE1RM ? `${pushE1RM} vs ${pullE1RM} lbs` : 'Log Chest Press & Row',
+        'PULL-STRONG',
+        'PUSH-DOMINANT'
+      )}
+
+      ${buildRow(
+        'Hamstring : Quad Isolation',
+        quadHamRatio,
+        0.65,
+        1.40,
+        quadE1RM && hamE1RM ? `${hamE1RM} vs ${quadE1RM} lbs` : 'Log Leg Ext & Leg Curl',
+        'QUAD-DOMINANT',
+        'POSTERIOR-STRONG'
+      )}
+
+      ${buildRow(
+        'Hip Abduction : Adduction',
+        hipRatio,
+        0.85,
+        1.00,
+        addE1RM && abdE1RM ? `${abdE1RM} vs ${addE1RM} lbs` : 'Log Hip Add & Abd',
+        'ADDUCTOR-DOMINANT',
+        'ABDUCTOR-STRONG'
+      )}
+
+      ${buildRow(
+        'Triceps : Biceps Isolation',
+        armRatio,
+        1.15,
+        1.30,
+        bicepE1RM && tricepE1RM ? `${tricepE1RM} vs ${bicepE1RM} lbs` : 'Log Curl & Tricep Ext',
+        'BICEP-DOMINANT',
+        'TRICEP-DOMINANT'
+      )}
+
+      <!-- Unilateral Arm Force Symmetry Footer -->
+      <div style="display:flex; justify-content:space-between; align-items:center; padding-top:8px; margin-top:2px;">
+        <div>
+          <div style="font-size:11px; font-weight:800; color:#c4b5fd;">Unilateral Arm Force Symmetry</div>
+          <div style="font-size:9px; color:#94a3b8;">${leanSymText || 'Target ≥ 95.0% L/R output parity'}</div>
+        </div>
+        <div style="text-align:right;">
+          <div style="font-size:13px; font-weight:900; color:${lrForceSymPct !== null && lrForceSymPct >= 95 ? '#4ade80' : '#f8fafc'}; font-family:monospace;">
+            ${lrForceSymPct !== null ? `${lrForceSymPct}%` : 'PENDING'}
+          </div>
+        </div>
+      </div>
+    </div>
+  `;
 }
 
 window.renderBiometricsUI = renderBiometricsUI;
