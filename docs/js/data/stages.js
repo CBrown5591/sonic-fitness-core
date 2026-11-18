@@ -142,6 +142,7 @@ export const STAGES = {
           "Supported Romanian Deadlift (Heavy DBs)",
           "Bodyweight Single-Leg RDL (Wall Supported)",
           "Single-Leg Glute Bridge (12r/side)",
+          "Cybex Eagle Leg Curl Isometric Hold (30-45s)",
           "Single-Leg Glute Bridge Isometric Hold (30s/side)"
         ]
       },
@@ -182,6 +183,7 @@ export const STAGES = {
           "Cybex Eagle Articulating Leg Press",
           "Cybex Eagle Leg Extension",
           "Cybex Eagle Single-Leg Extension",
+          "Cybex Eagle Leg Press Calf Isometric Hold (30-45s)",
           "Cybex Eagle Single-Leg Curl",
           "Cybex Eagle Single-Leg Press",
           "Cybex Eagle Leg Press Calf Raise",
@@ -429,6 +431,7 @@ export const STAGES = {
           "Cybex Eagle Articulating Leg Press (Light Tempo)",
           "Cybex Eagle Leg Extension Isometric Hold (30-45s)",
           "Cybex Eagle Leg Press Calf Raise",
+          "Cybex Eagle Leg Press Calf Isometric Hold (30-45s)",
           "DB Bulgarian Split-Squat Bottom Isometric Hold (30s/side)",
           "Bodyweight Squat / TRX Squat",
           "90/90 Hip Switches (Active End-Range)",
@@ -446,6 +449,7 @@ export const STAGES = {
           "Cybex Eagle Hip Abduction (Outer Glute)",
           "Cybex Eagle Hip Abduction (Lean-Forward Upper Glute)",
           "Cybex Eagle Single-Leg Curl",
+          "Cybex Eagle Leg Curl Isometric Hold (30-45s)",
           "Cybex Eagle Leg Extension Hip Thrust",
           "Cybex Eagle Leg Extension Glute Kickback",
           "Tall-Kneeling Pallof Hold (20s)",
@@ -743,6 +747,66 @@ export const STAGES = {
           "90/90 Pigeon Glute Hold",
           "Lat & Thoracic Bench Prayer Stretch",
           "Supine Hamstring Band/Strap Stretch"
+        ]
+      }
+    ]
+  },
+  DAY_K: {
+    id: "DAY_K",
+    name: "Tendon Mechanics & Connective Armor",
+    prehab: "Prehab: Tibialis Wall Raises + 90/90 Hip Switches & Prone Y-T-W",
+    prehabDetails: [
+      { name: "Tibialis Wall Raises", dose: "2 sets × 20 reps", cue: "Drive toes to shins hard; preload anterior shin tendon and ankle capsule." },
+      { name: "90/90 Hip Switches", dose: "2 sets × 8 reps / side", cue: "Tall spine; smoothly lubricate hip joint capsules without lumbar torque." },
+      { name: "Prone Scapular Y-T-W Raises", dose: "1–2 sets × 6 reps / pos", cue: "Thumbs up to ceiling; prime lower traps and rotator cuff tendons." }
+    ],
+    slots: [
+      {
+        slot: "K1",
+        target: "3x30-45s Hold",
+        primary: "Cybex Eagle Leg Extension Isometric Hold (30-45s)",
+        defaultLoad: 80,
+        alts: [
+          "Cybex Eagle Leg Extension Isometric Hold (30-45s)",
+          "Heavy Banded Spanish Squat",
+          "DB Bulgarian Split-Squat Bottom Isometric Hold (30s/side)",
+          "Banded Terminal Knee Extension (TKE)"
+        ]
+      },
+      {
+        slot: "K2",
+        target: "3x30-45s Hold",
+        primary: "Cybex Eagle Leg Curl Isometric Hold (30-45s)",
+        defaultLoad: 75,
+        alts: [
+          "Cybex Eagle Leg Curl Isometric Hold (30-45s)",
+          "Single-Leg Glute Bridge Isometric Hold (30s/side)",
+          "Cybex Eagle Leg Curl (2-Up / 1-Down Eccentric)",
+          "Bodyweight Single-Leg RDL (Strict 5s Eccentric)"
+        ]
+      },
+      {
+        slot: "K3",
+        target: "3x30-45s Hold",
+        primary: "Cybex Eagle Leg Press Calf Isometric Hold (30-45s)",
+        defaultLoad: 140,
+        alts: [
+          "Cybex Eagle Leg Press Calf Isometric Hold (30-45s)",
+          "Tibialis Wall Raises",
+          "Cybex Eagle Leg Press Calf Raise",
+          "41\" Loop Band Seated Calf Extension"
+        ]
+      },
+      {
+        slot: "K4",
+        target: "3x12-15 (3s Eccentric)",
+        primary: "Cable External Rotations (Bravo)",
+        defaultLoad: 15,
+        alts: [
+          "Cable External Rotations (Bravo)",
+          "Prone Scapular Y-T-W Raises",
+          "Seated DB Wrist Curl & Reverse Wrist Curl Superset",
+          "Bravo Low-Cable Reverse Curl (Pronated Forearms)"
         ]
       }
     ]
