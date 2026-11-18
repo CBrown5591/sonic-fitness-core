@@ -116,6 +116,8 @@ export const BAND_EQUIVALENTS = {
   "DB Spellcaster (Rotational Swing)": "41\" Loop Band Spellcaster (Rotational Swing)",
   "Twisting Leg Raise (Floor / Bench)": "Low Door-Anchor Twisting Leg Raise",
   "Weighted / Bodyweight Russian Twist": "Mid Door-Anchor Seated Russian Twist",
+  "Med Ball Overhead Slam": "41\" Loop Band Overhead Slam / Chop",
+  "Seated-to-Standing Box Jump (Dead-Stop)": "Broad Jump to Soft Stick",
   "Single-Arm Iso-Lateral Pulldown": "High Door-Anchor Half-Kneeling Pulldown"
 };
 
