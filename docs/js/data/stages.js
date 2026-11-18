@@ -187,6 +187,7 @@ export const STAGES = {
           "Cybex Eagle Leg Press Calf Raise",
           "Supported Reverse Lunge (Rack/Wall)",
           "Goblet Squat (Tempo 3-0-1)",
+          "Half-Kneeling Sprint Start (First 3 Steps)",
           "Bodyweight Squat / TRX Squat"
         ]
       },
@@ -306,6 +307,7 @@ export const STAGES = {
           "Cybex Eagle Leg Extension Hip Thrust",
           "Cybex Eagle Leg Extension Glute Kickback",
           "Med Ball Rotational Wall Chest Pass",
+          "Med Ball Overhead Slam",
           "Cable Pull-Through (Bravo Low Pulley)",
           "McGill Curl-Up (Strict Pause)"
         ]
@@ -339,6 +341,8 @@ export const STAGES = {
           "DB Bulgarian Split Squat",
           "Goblet Squat (Tempo 3-0-1)",
           "Bodyweight Squat / TRX Squat",
+          "Broad Jump to Soft Stick",
+  "Med Ball Overhead Slam",
           "Supported Reverse Lunge (Rack/Wall)"
         ]
       },
@@ -427,6 +431,8 @@ export const STAGES = {
           "Cybex Eagle Leg Press Calf Raise",
           "DB Bulgarian Split-Squat Bottom Isometric Hold (30s/side)",
           "Bodyweight Squat / TRX Squat",
+          "90/90 Hip Switches (Active End-Range)",
+  "Cossack / Side Lunge Flow (Assisted)",
           "Tibialis Wall Raises"
         ]
       },
@@ -463,6 +469,8 @@ export const STAGES = {
           "Seated DB Rear Delt Raise (Bent-Over)",
           "DB Lateral Raise (Scapular Plane)",
           "DB Front-to-Lateral Raise Combo",
+          "Band Shoulder Dislocates",
+  "Wall Slides / Thoracic Open-Book Rotations",
           "Prone Scapular Y-T-W Raises"
         ]
       },
@@ -476,6 +484,8 @@ export const STAGES = {
           "Cybex Eagle Seated Abdominal Crunch",
           "Cable Pull-Through (Bravo Low Pulley)",
           "Bravo Anti-Extension Overhead Hold",
+          "Lat & Thoracic Bench Prayer Stretch",
+  "Half-Kneeling Hip Flexor & Quad Stretch",
           "Tall-Kneeling Pallof Hold (20s)",
           "Hollow Body Isometric Hold (30s)"
         ]
@@ -673,6 +683,66 @@ export const STAGES = {
           "Twisting Leg Raise (Floor / Bench)",
   "Weighted / Bodyweight Russian Twist",
           "Hollow Body Isometric Hold (30s)"
+        ]
+      }
+    ]
+  },
+  DAY_J: {
+    id: "DAY_J",
+    name: "Sonic Chaos // Athletic Agility, Mobility & Flexibility",
+    prehab: "Prehab: Tibialis Wall Raises + McGill Cat-Camel & Dynamic Hip Circles",
+    prehabDetails: [
+      { name: "Tibialis Wall Raises", dose: "2 sets × 20 reps", cue: "Prime ankle dorsiflexion and shin deceleration control before first-step work." },
+      { name: "McGill Cat-Camel", dose: "1 set × 8 slow cycles", cue: "Gentle segmental spinal wave to lubricate thoracolumbar fascia." },
+      { name: "Standing Hip Controlled Articular Rotations (CARs)", dose: "2 sets × 5 circles / side", cue: "Brace core; trace the largest pain-free circle with your knee without pelvis tilt." }
+    ],
+    slots: [
+      {
+        slot: "J1",
+        target: "3x3-5 / side (Full Rest)",
+        primary: "Half-Kneeling Sprint Start (First 3 Steps)",
+        defaultLoad: 0,
+        alts: [
+          "Half-Kneeling Sprint Start (First 3 Steps)",
+          "Med Ball Overhead Slam",
+          "Broad Jump to Soft Stick",
+          "Seated-to-Standing Box Jump (Dead-Stop)"
+        ]
+      },
+      {
+        slot: "J2",
+        target: "3x30s Flow / 45s Rest",
+        primary: "Low-Impact Lateral Shuffle & Carioca (Zone 2)",
+        defaultLoad: 0,
+        alts: [
+          "Low-Impact Lateral Shuffle & Carioca (Zone 2)",
+          "Med Ball Rotational Wall Chest Pass",
+          "Dynamic Banded Rotational Punch",
+          "Low-Impact Shadow Boxing Flow (Zone 2)"
+        ]
+      },
+      {
+        slot: "J3",
+        target: "2-3x6-8 / side (Slow Control)",
+        primary: "90/90 Hip Switches (Active End-Range)",
+        defaultLoad: 0,
+        alts: [
+          "90/90 Hip Switches (Active End-Range)",
+          "Bodyweight Rotational Windmills (Paced)",
+          "Cossack / Side Lunge Flow (Assisted)",
+          "Band Shoulder Dislocates"
+        ]
+      },
+      {
+        slot: "J4",
+        target: "2x30-45s Holds (Nasal Breathing)",
+        primary: "Half-Kneeling Hip Flexor & Quad Stretch",
+        defaultLoad: 0,
+        alts: [
+          "Half-Kneeling Hip Flexor & Quad Stretch",
+          "90/90 Pigeon Glute Hold",
+          "Lat & Thoracic Bench Prayer Stretch",
+          "Supine Hamstring Band/Strap Stretch"
         ]
       }
     ]
