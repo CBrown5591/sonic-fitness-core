@@ -912,7 +912,7 @@ export const MOVEMENT_INTEL = {
     setup: "Loop a 41\" band around a sturdy low post or door anchor. Step one leg inside the loop with the band seated directly behind the knee crease and step back to tension.",
     cue: "With heel planted and knee bent ~20°, squeeze your inner quad hard to straighten the knee completely for a 1-second hold, then control the return.",
     safety: "Avoid hyperextending the knee joint backward; focus on smooth quad contraction."
-  },x
+  },
   "Tall-Kneeling Pallof Hold": {
     type: "Isolation",
     muscles: "Transverse Abdominis, Internal/External Obliques & Glutes",
