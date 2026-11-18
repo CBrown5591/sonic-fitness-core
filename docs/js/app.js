@@ -42,7 +42,7 @@ import { renderVault, creditVaultRings, saveVaultData } from './ui/renderVault.j
 import { renderSkillTree, switchSkillTreeBranch, unlockPerk } from './ui/renderSkillTree.js';
 import { switchMainTab } from './ui/renderTabs.js';
 import { renderPRVaultUI } from './ui/renderPRVault.js';
-import { BAND_EQUIVALENTS, getBandEquivalent, SLOT_BAND_EXTRAS } from './data/bandEquivalents.js';
+import { BAND_CONFIG, getPackedBandIds, setPackedBandIds, canPerformBandMovement } from './data/bandConfigs.js';
 import { resolveInitialBandPreset, solveBestBandCombination, solveOverdriveBandBridge } from './engine/bandSolver.js';
 import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSelections, setActiveBandSelection } from './ui/renderBandSelector.js';
 import { getDefaultGymLoad } from './data/movementIntel.js';
@@ -217,6 +217,37 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
   }
 
   return { targetText: defaultSlotTarget, defaultReps: 8 };
+}
+function renderBagInventoryChecklist() {
+  const mount = document.getElementById('bagChecklistMount');
+  if (!mount) return;
+  const packed = getPackedBandIds();
+
+  mount.innerHTML = Object.values(BAND_CONFIG).map(band => {
+    const checked = packed.has(band.id) ? 'checked' : '';
+    const typeTag = band.type === '41_loop' ? '41"' : band.type === 'mini' ? 'Mini' : 'Tube';
+    return `
+      <label style="display: flex; align-items: center; gap: 6px; font-size: 11px; color: #e2e8f0; background: rgba(30, 41, 59, 0.7); padding: 5px 7px; border-radius: 5px; cursor: pointer;">
+        <input type="checkbox" class="bag-band-checkbox" data-band-id="${band.id}" ${checked} style="accent-color: #38bdf8;" />
+        <span>${band.label} <span style="color: #94a3b8; font-size: 10px;">(${typeTag})</span></span>
+      </label>
+    `;
+  }).join('');
+
+  mount.querySelectorAll('.bag-band-checkbox').forEach(cb => {
+    cb.onchange = () => {
+      const current = getPackedBandIds();
+      if (cb.checked) current.add(cb.dataset.bandId);
+      else current.delete(cb.dataset.bandId);
+      setPackedBandIds(current);
+
+      // Immediately refresh active dropdown and band pills if in BANDS mode
+      if (currentSlotGearMode === 'BANDS') {
+        hydrateExerciseDropdown();
+        syncEquipmentInputs();
+      }
+    };
+  });
 }
 function hydrateExerciseDropdown() {
   const stageDef = STAGES[activeStageKey];
@@ -896,6 +927,43 @@ bandBtn.onclick = () => {
       gymBtn.style.background = 'transparent';
       gymBtn.style.color = '#94a3b8';
 
+      const bagBtn = document.getElementById('toggleBagDrawerBtn');
+  const bagDrawer = document.getElementById('bagInventoryDrawer');
+  if (bagBtn && bagDrawer) {
+    renderBagInventoryChecklist();
+    bagBtn.onclick = () => {
+      const isOpen = bagDrawer.style.display === 'block';
+      bagDrawer.style.display = isOpen ? 'none' : 'block';
+    };
+  }
+
+  const loopsMinisBtn = document.getElementById('bagPresetLoopsMinisBtn');
+  if (loopsMinisBtn) {
+    loopsMinisBtn.onclick = () => {
+      const ids = Object.values(BAND_CONFIG)
+        .filter(b => b.type === '41_loop' || b.type === 'mini')
+        .map(b => b.id);
+      setPackedBandIds(ids);
+      renderBagInventoryChecklist();
+      if (currentSlotGearMode === 'BANDS') {
+        hydrateExerciseDropdown();
+        syncEquipmentInputs();
+      }
+    };
+  }
+
+  const allGearBtn = document.getElementById('bagPresetAllBtn');
+  if (allGearBtn) {
+    allGearBtn.onclick = () => {
+      setPackedBandIds(Object.keys(BAND_CONFIG));
+      renderBagInventoryChecklist();
+      if (currentSlotGearMode === 'BANDS') {
+        hydrateExerciseDropdown();
+        syncEquipmentInputs();
+      }
+    };
+  }
+  
       // 1. Populate dropdown with banded alternates
       hydrateExerciseDropdown();
 
