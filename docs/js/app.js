@@ -514,6 +514,7 @@ export function selectStage(stageKey, resetIfNew = true) {
   renderSlotStepper();
   loadSlotData();
   renderPrehabInstructions(stageKey);
+  syncFinisherButtonVisibility();
   saveSessionState();
   renderSessionUI();
 }
@@ -540,6 +541,53 @@ function renderSlotStepper() {
     stepper.appendChild(btn);
   });
 }
+export function syncFinisherButtonVisibility() {
+  const bar = document.getElementById('finisherBar');
+  if (!bar) return;
+
+  const stageDef = STAGES[activeStageKey];
+  const isLiftingDay = ['DAY_A', 'DAY_B', 'DAY_C', 'DAY_D', 'DAY_E'].includes(activeStageKey);
+  const alreadyAttached = stageDef?.slots?.some(s => s.isModularFinisher);
+
+  bar.style.display = (isLiftingDay && !alreadyAttached) ? 'flex' : 'none';
+}
+
+export function appendCardioFinisherSlot() {
+  const stageDef = STAGES[activeStageKey];
+  if (!stageDef) return;
+
+  if (stageDef.slots.some(s => s.isModularFinisher)) {
+    showToast('Zone 2 Finisher already attached to this sortie.');
+    return;
+  }
+
+  const slotPrefix = activeStageKey.replace('DAY_', '');
+  const finisherSlot = {
+    slot: `${slotPrefix}5`,
+    target: "10-12 Mins @ Zone 2",
+    primary: "Stationary Bike (Zone 2 Cadence)",
+    defaultLoad: 8, // Gear/Level 8 on Bike (or 10% Incline on Treadmill)
+    isModularFinisher: true,
+    alts: [
+      "Stationary Bike (Zone 2 Cadence)",
+      "Incline Treadmill Walk (Zone 2)",
+      "Rower (Zone 2 Steady State)",
+      "Low-Impact Shadow Boxing Flow (Zone 2)",
+      "March in Place (Paced Zone 2 Cadence)"
+    ]
+  };
+
+  stageDef.slots.push(finisherSlot);
+  syncFinisherButtonVisibility();
+  renderSlotStepper();
+  if (typeof selectSlot === 'function') {
+    selectSlot(stageDef.slots.length - 1);
+  }
+  showToast(`⚡ SLOT ${slotPrefix}5: ZONE 2 FINISHER ATTACHED`);
+}
+
+window.appendCardioFinisherSlot = appendCardioFinisherSlot;
+window.syncFinisherButtonVisibility = syncFinisherButtonVisibility;
 
 function updateLogButtonText() {
   const stageDef = STAGES[activeStageKey];
@@ -1453,34 +1501,6 @@ window.__sonicDev = {
 };
 console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicDev');
 
-export function appendCardioFinisherSlot() {
-  const stageDef = STAGES[activeStageKey];
-  if (!stageDef) return;
-
-  // Prevent duplicating the finisher slot if already added
-  const existingFinisher = stageDef.slots.find(s => s.isModularFinisher);
-  if (existingFinisher) {
-    showToast('Conditioning Finisher already attached to active sortie.');
-    return;
-  }
-
-  const finisherSlot = {
-    slot: `${activeStageKey.replace('DAY_', '')}5`,
-    target: "10-12 Mins @ Zone 2",
-    primary: "Incline Treadmill Walk (Zone 2)",
-    defaultLoad: 10, // 10% incline
-    isModularFinisher: true,
-    alts: [
-      "Incline Treadmill Walk (Zone 2)",
-      "Airdyne Bike (Interval Cadence)",
-      "Concept2 Rower (Zone 2 Pace)"
-    ]
-  };
-
-  stageDef.slots.push(finisherSlot);
-  renderSlotStepper();
-  showToast('⚡ MODULAR CARDIO FINISHER APPENDED TO SORTIE');
-}
 
 // Bind to window for HUD or prompt buttons
 window.appendCardioFinisherSlot = appendCardioFinisherSlot;
