@@ -904,30 +904,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderArtifactsTray();
   initTimerBackgroundSync();
 
-  // File: docs/js/app.js (Inside DOMContentLoaded listener)
-
-  const gymBtn = document.getElementById('gearModeGymBtn');
-  const bandBtn = document.getElementById('gearModeBandBtn');
-
-  if (gymBtn && bandBtn) {
-    gymBtn.onclick = () => {
-      currentSlotGearMode = 'GYM';
-      gymBtn.style.background = '#38bdf8';
-      gymBtn.style.color = '#0f172a';
-      bandBtn.style.background = 'transparent';
-      bandBtn.style.color = '#94a3b8';
-      hydrateExerciseDropdown();
-      syncEquipmentInputs();
-    };
-
-bandBtn.onclick = () => {
-      currentSlotGearMode = 'BANDS';
-      bandBtn.style.background = '#38bdf8';
-      bandBtn.style.color = '#0f172a';
-      gymBtn.style.background = 'transparent';
-      gymBtn.style.color = '#94a3b8';
-
-      const bagBtn = document.getElementById('toggleBagDrawerBtn');
+  const bagBtn = document.getElementById('toggleBagDrawerBtn');
   const bagDrawer = document.getElementById('bagInventoryDrawer');
   if (bagBtn && bagDrawer) {
     renderBagInventoryChecklist();
@@ -951,6 +928,41 @@ bandBtn.onclick = () => {
       }
     };
   }
+
+  const allGearBtn = document.getElementById('bagPresetAllBtn');
+  if (allGearBtn) {
+    allGearBtn.onclick = () => {
+      setPackedBandIds(Object.keys(BAND_CONFIG));
+      renderBagInventoryChecklist();
+      if (currentSlotGearMode === 'BANDS') {
+        hydrateExerciseDropdown();
+        syncEquipmentInputs();
+      }
+    };
+  }
+  
+  // File: docs/js/app.js (Inside DOMContentLoaded listener)
+
+  const gymBtn = document.getElementById('gearModeGymBtn');
+  const bandBtn = document.getElementById('gearModeBandBtn');
+
+  if (gymBtn && bandBtn) {
+    gymBtn.onclick = () => {
+      currentSlotGearMode = 'GYM';
+      gymBtn.style.background = '#38bdf8';
+      gymBtn.style.color = '#0f172a';
+      bandBtn.style.background = 'transparent';
+      bandBtn.style.color = '#94a3b8';
+      hydrateExerciseDropdown();
+      syncEquipmentInputs();
+    };
+
+bandBtn.onclick = () => {
+      currentSlotGearMode = 'BANDS';
+      bandBtn.style.background = '#38bdf8';
+      bandBtn.style.color = '#0f172a';
+      gymBtn.style.background = 'transparent';
+      gymBtn.style.color = '#94a3b8';
 
   const allGearBtn = document.getElementById('bagPresetAllBtn');
   if (allGearBtn) {
