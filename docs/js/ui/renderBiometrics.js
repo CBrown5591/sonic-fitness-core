@@ -4,7 +4,7 @@
 // -------------------------------------------------------------
 import { parseMultipleArboleafPdfs } from '../engine/arboleafPdfParser.js';
 import { syncArboleafDeepScan } from '../core/sync.js';
-import { getPRVault } from '../engine/record.js';
+import { getPRVault } from '../engine/records.js';
 
 let activeChartMetric = 'weight'; // 'weight' | 'leanMass' | 'fatMass' | 'bfPct'
 let isDeepScanEditorOpen = false;
