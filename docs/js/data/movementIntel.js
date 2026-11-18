@@ -323,6 +323,22 @@ export const MOVEMENT_INTEL = {
     safety: "Keep hips pressed firmly into the seat during the single-leg lowering phase; do not let the stack drop faster than a 4-second count."
   },
 
+  "Cybex Eagle Leg Curl Isometric Hold (30-45s)": {
+    type: "Isolation",
+    muscles: "[ISOMETRIC // TENDON STIFFNESS 30–45s] Hamstrings & Proximal/Distal Hamstring Tendons",
+    setup: "Align knees with the machine pivot dot, place ankle roller just above heels, and lock thigh pad snugly over quads (~70%–80% of 10RM).",
+    cue: "Curl pad to ~45°–60° knee flexion and freeze completely motionless for 30–45s while pulling toes toward shins and breathing steadily.",
+    safety: "Keep hips pressed flat into the seat pad; never hold your breath during the isometric hold."
+  },
+
+  "Cybex Eagle Leg Press Calf Isometric Hold (30-45s)": {
+    type: "Isolation",
+    muscles: "[ISOMETRIC // TENDON STIFFNESS 30–45s] Gastrocnemius, Soleus & Achilles Tendon",
+    setup: "Extend leg press to full length, engage the safety catch, and place balls of both feet on the bottom edge of the footplate with softly unlocked knees.",
+    cue: "Press onto the balls of your feet into mid-range plantarflexion (heels ~1–2 inches above neutral) and hold completely still for 30–45s.",
+    safety: "Keep the safety catch locked so the sled cannot drop past neutral dorsiflexion, and never lock knees backward."
+  },
+
   "DB Spellcaster (Rotational Swing)": {
     type: "Compound",
     muscles: "Internal/External Obliques, Anterior/Lateral Deltoids, Quadratus Lumborum & Glutes",
