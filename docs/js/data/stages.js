@@ -141,7 +141,8 @@ export const STAGES = {
           "B-Stance DB Hinge",
           "Supported Romanian Deadlift (Heavy DBs)",
           "Bodyweight Single-Leg RDL (Wall Supported)",
-          "Single-Leg Glute Bridge (12r/side)"
+          "Single-Leg Glute Bridge (12r/side)",
+          "Single-Leg Glute Bridge Isometric Hold (30s/side)"
         ]
       },
       {
@@ -420,6 +421,7 @@ export const STAGES = {
           "Cybex Eagle Articulating Leg Press (Light Tempo)",
           "Cybex Eagle Leg Extension Isometric Hold (30-45s)",
           "Cybex Eagle Leg Press Calf Raise",
+          "DB Bulgarian Split-Squat Bottom Isometric Hold (30s/side)",
           "Bodyweight Squat / TRX Squat",
           "Tibialis Wall Raises"
         ]
@@ -438,6 +440,7 @@ export const STAGES = {
           "Cybex Eagle Leg Extension Glute Kickback",
           "Tall-Kneeling Pallof Hold (20s)",
           "Single-Arm DB Suitcase Carry",
+          "Single-Leg Glute Bridge Isometric Hold (30s/side)",
           "Med Ball Deadbug Compression"
         ]
       },
@@ -625,6 +628,7 @@ export const STAGES = {
           "Bodyweight Squat / TRX Squat",
           "Supported Reverse Lunge (Rack/Wall)",
           "Single-Leg Glute Bridge (12r/side)",
+          "DB Bulgarian Split-Squat Bottom Isometric Hold (30s/side)",
           "Tibialis Wall Raises"
         ]
       },
