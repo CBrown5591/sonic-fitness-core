@@ -67,6 +67,59 @@ export function autoRegulateNextSet(completedSet) {
   const { minReps, maxReps } = parseRepBracket(targetStr);
   const isDumbbell = isDumbbellMovement(exercise);
 
+  const contraction = (completedSet.contraction || 'Balanced').toLowerCase();
+
+  // Isometric Hold Progression (+5s steps before adding load)
+  if (contraction === 'isometric') {
+    if (jointPain || numRpe >= 9.5) {
+      const deLoad = Math.max(0, numLoad - 5);
+      return {
+        load: deLoad,
+        reps: minReps,
+        message: `⚠️ JOINT SHIELD ENGAGED: Dial back to ${deLoad} lbs × ${minReps}s hold.`
+      };
+    }
+    if (numRpe <= 7.5 && tempoClean && numReps < maxReps) {
+      const nextSec = Math.min(maxReps, numReps + 5);
+      return {
+        load: numLoad,
+        reps: nextSec,
+        message: `⏱️ TENDON HOLD PROGRESSION: Keep ${numLoad} lbs and extend hold to ${nextSec}s.`
+      };
+    }
+    if (numRpe <= 7.5 && tempoClean && numReps >= maxReps) {
+      const nextLoad = isDumbbell ? Math.min(65, numLoad + 5) : numLoad + 5;
+      return {
+        load: nextLoad,
+        reps: minReps,
+        message: `★ HOLD CEILING CLEARED (${numReps}s @ RPE ${numRpe})! Bump to ${nextLoad} lbs × ${minReps}s.`
+      };
+    }
+    return {
+      load: numLoad,
+      reps: numReps,
+      message: `🎯 TENDON SWEET SPOT (RPE ${numRpe}): Repeat ${numLoad} lbs × ${numReps}s hold.`
+    };
+  }
+
+  // Eccentric-Emphasis Guardrail (stricter RPE 8.5 ceiling to prevent excess DOMS/breakdown)
+  if (contraction === 'eccentric' && (!tempoClean || numRpe >= 8.5) && !jointPain && numRpe < 9.5) {
+    return {
+      load: numLoad,
+      reps: Math.max(minReps, numReps - 1),
+      message: `🛑 ECCENTRIC FATIGUE CAP (RPE ${numRpe}): Hold ${numLoad} lbs; keep lowering strict (3–5s) without rushing.`
+    };
+  }
+
+  // Concentric-Dominant Guardrail (preserve speed/output rather than grinding)
+  if (contraction === 'concentric' && numRpe >= 8.5 && !jointPain && numRpe < 9.5) {
+    return {
+      load: numLoad,
+      reps: numReps,
+      message: `⚡ VELOCITY CAP (RPE ${numRpe}): Hold ${numLoad} lbs × ${numReps}r — prioritize crisp, explosive speed.`
+    };
+  }
+
   // 0. Unilateral Asymmetry Guardrail: hold weight if L/R e1RM or reps diverge
   if (completedSet.left && completedSet.right) {
     const { left, right } = completedSet;
