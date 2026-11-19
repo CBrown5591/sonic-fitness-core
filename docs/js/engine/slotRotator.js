@@ -155,6 +155,90 @@ export function recordSlotRotationHistory(stageKey, slotId, exerciseName) {
  * - FRESH: Cross-session variety + Segmental Muscle Balance / Visceral Fat tie-breaker
  * - FOCUS: Cumulative muscle-tag overlap across ALL preceding slots in activeSession
  */
+
+/**
+ * Evaluates ALL slots in the active stage (current, adjacent, and non-adjacent)
+ * to determine whether FOCUS mode should:
+ *  - Stay in the current slot and load a second synergistic variation, OR
+ *  - Jump directly to another slot (including non-adjacent slots) with higher goal synergy.
+ *
+ * Returns { slotIndex, exercise } or null if no synergistic move remains.
+ */
+export function resolveFocusNextStep(stageKey, stageDef, currentSlotIndex, activeSessionSets = []) {
+  if (!stageDef || !Array.isArray(stageDef.slots) || stageDef.slots.length === 0) {
+    return null;
+  }
+
+  // 1. Build cumulative muscle profile & per-exercise set counts from the active session
+  const priorExercises = [];
+  const seenExercises = new Set();
+  const exerciseSetCounts = {};
+
+  for (const s of activeSessionSets) {
+    if (!s.exercise) continue;
+    exerciseSetCounts[s.exercise] = (exerciseSetCounts[s.exercise] || 0) + 1;
+    if (!seenExercises.has(s.exercise)) {
+      seenExercises.add(s.exercise);
+      priorExercises.push(s.exercise);
+    }
+  }
+
+  // Require at least one logged movement to establish the session's focus profile
+  if (priorExercises.length === 0) return null;
+
+  const workedMuscleWeights = {};
+  priorExercises.forEach((exName, idx) => {
+    const tags = getExerciseMuscleTags(exName);
+    const weight = idx === 0 ? 1.5 : 1.0; // Anchor movement sets the primary theme
+    tags.forEach(tag => {
+      workedMuscleWeights[tag] = (workedMuscleWeights[tag] || 0) + weight;
+    });
+  });
+
+  // 2. Score the best uncompleted variation across EVERY slot (current, adjacent, or non-adjacent)
+  let bestChoice = null;
+  let bestOverallScore = 0; // Must have > 0 synergy overlap to justify a Focus pick
+
+  stageDef.slots.forEach((slotObj, idx) => {
+    const candidates = Array.isArray(slotObj.alts) ? slotObj.alts : [];
+    const setsLoggedInSlot = activeSessionSets.filter(s => s.slot === slotObj.slot).length;
+
+    // Filter out exercises already completed (3+ sets) in this session
+    const unplayedAlts = candidates.filter(alt => (exerciseSetCounts[alt] || 0) < 3);
+    if (unplayedAlts.length === 0) return;
+
+    unplayedAlts.forEach((alt) => {
+      const altTags = getExerciseMuscleTags(alt);
+      let overlapScore = 0;
+
+      altTags.forEach(tag => {
+        if (workedMuscleWeights[tag]) {
+          overlapScore += workedMuscleWeights[tag];
+        }
+      });
+
+      if (overlapScore <= 0) return;
+
+      // Slight preference (+0.4) to stack a 2nd synergistic move in the current slot before switching stations,
+      // provided fewer than 6 sets (2 exercises) have been logged in this slot already.
+      const sameSlotBonus = (idx === currentSlotIndex && setsLoggedInSlot < 6) ? 0.4 : 0;
+
+      // Slight penalty (-0.3) if another slot already has a completed 3-set block, encouraging fresh stations
+      // once a 2-exercise stack is done or when jumping across non-adjacent slots.
+      const visitedPenalty = (idx !== currentSlotIndex && setsLoggedInSlot >= 3) ? -0.3 : 0;
+
+      const totalScore = overlapScore + sameSlotBonus + visitedPenalty;
+
+      if (totalScore > bestOverallScore) {
+        bestOverallScore = totalScore;
+        bestChoice = { slotIndex: idx, exercise: alt, slotId: slotObj.slot };
+      }
+    });
+  });
+
+  return bestChoice;
+}
+
 export function resolveSlotPreset(stageKey, slotDef, slotIndex, activeSessionSets = []) {
   if (!slotDef || !Array.isArray(slotDef.alts) || slotDef.alts.length === 0) {
     return slotDef?.primary || '';
@@ -166,13 +250,88 @@ export function resolveSlotPreset(stageKey, slotDef, slotIndex, activeSessionSet
   // 1. FOCUS MODE: Cumulative synergy across all preceding slots (A1 -> A2 -> A3 -> A4)
   if (mode === 'FOCUS' && slotIndex > 0 && Array.isArray(activeSessionSets) && activeSessionSets.length > 0) {
     const priorExercises = [];
-    const seenSlots = new Set();
-    for (const s of activeSessionSets) {
-      if (s.slot && s.slot !== slotDef.slot && !seenSlots.has(s.slot) && s.exercise) {
-        seenSlots.add(s.slot);
-        priorExercises.push(s.exercise);
-      }
+    /**
+ * Evaluates ALL slots in the active stage (current, adjacent, and non-adjacent)
+ * to determine whether FOCUS mode should:
+ *  - Stay in the current slot and load a second synergistic variation, OR
+ *  - Jump directly to another slot (including non-adjacent slots) with higher goal synergy.
+ *
+ * Returns { slotIndex, exercise } or null if no synergistic move remains.
+ */
+export function resolveFocusNextStep(stageKey, stageDef, currentSlotIndex, activeSessionSets = []) {
+  if (!stageDef || !Array.isArray(stageDef.slots) || stageDef.slots.length === 0) {
+    return null;
+  }
+
+  // 1. Build cumulative muscle profile & per-exercise set counts from the active session
+  const priorExercises = [];
+  const seenExercises = new Set();
+  const exerciseSetCounts = {};
+
+  for (const s of activeSessionSets) {
+    if (!s.exercise) continue;
+    exerciseSetCounts[s.exercise] = (exerciseSetCounts[s.exercise] || 0) + 1;
+    if (!seenExercises.has(s.exercise)) {
+      seenExercises.add(s.exercise);
+      priorExercises.push(s.exercise);
     }
+  }
+
+  // Require at least one logged movement to establish the session's focus profile
+  if (priorExercises.length === 0) return null;
+
+  const workedMuscleWeights = {};
+  priorExercises.forEach((exName, idx) => {
+    const tags = getExerciseMuscleTags(exName);
+    const weight = idx === 0 ? 1.5 : 1.0; // Anchor movement sets the primary theme
+    tags.forEach(tag => {
+      workedMuscleWeights[tag] = (workedMuscleWeights[tag] || 0) + weight;
+    });
+  });
+
+  // 2. Score the best uncompleted variation across EVERY slot (current, adjacent, or non-adjacent)
+  let bestChoice = null;
+  let bestOverallScore = 0; // Must have > 0 synergy overlap to justify a Focus pick
+
+  stageDef.slots.forEach((slotObj, idx) => {
+    const candidates = Array.isArray(slotObj.alts) ? slotObj.alts : [];
+    const setsLoggedInSlot = activeSessionSets.filter(s => s.slot === slotObj.slot).length;
+
+    // Filter out exercises already completed (3+ sets) in this session
+    const unplayedAlts = candidates.filter(alt => (exerciseSetCounts[alt] || 0) < 3);
+    if (unplayedAlts.length === 0) return;
+
+    unplayedAlts.forEach((alt) => {
+      const altTags = getExerciseMuscleTags(alt);
+      let overlapScore = 0;
+
+      altTags.forEach(tag => {
+        if (workedMuscleWeights[tag]) {
+          overlapScore += workedMuscleWeights[tag];
+        }
+      });
+
+      if (overlapScore <= 0) return;
+
+      // Slight preference (+0.4) to stack a 2nd synergistic move in the current slot before switching stations,
+      // provided fewer than 6 sets (2 exercises) have been logged in this slot already.
+      const sameSlotBonus = (idx === currentSlotIndex && setsLoggedInSlot < 6) ? 0.4 : 0;
+
+      // Slight penalty (-0.3) if another slot already has a completed 3-set block, encouraging fresh stations
+      // once a 2-exercise stack is done or when jumping across non-adjacent slots.
+      const visitedPenalty = (idx !== currentSlotIndex && setsLoggedInSlot >= 3) ? -0.3 : 0;
+
+      const totalScore = overlapScore + sameSlotBonus + visitedPenalty;
+
+      if (totalScore > bestOverallScore) {
+        bestOverallScore = totalScore;
+        bestChoice = { slotIndex: idx, exercise: alt, slotId: slotObj.slot };
+      }
+    });
+  });
+
+  return bestChoice;
+}
 
     if (priorExercises.length > 0) {
       const targetMuscleWeights = {};
