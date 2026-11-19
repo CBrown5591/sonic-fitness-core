@@ -194,28 +194,56 @@ export function resolveSlotPreset(stageKey, slotDef, slotIndex, activeSessionSet
 
     if (priorExercises.length > 0) {
       const targetMuscleWeights = {};
+      const priorContractions = new Set();
+
       priorExercises.forEach((exName, idx) => {
         const tags = getExerciseMuscleTags(exName);
         const weight = idx === 0 ? 1.5 : 1.0;
         tags.forEach(tag => {
           targetMuscleWeights[tag] = (targetMuscleWeights[tag] || 0) + weight;
         });
+        priorContractions.add(getExerciseContraction(exName));
       });
 
       let bestAlt = pool[0];
-      let bestScore = -1;
+      let bestScore = -Infinity;
 
       pool.forEach((alt) => {
         const altTags = getExerciseMuscleTags(alt);
-        let score = 0;
+        const altContraction = getExerciseContraction(alt);
+        let overlapScore = 0;
+
         altTags.forEach(tag => {
           if (targetMuscleWeights[tag]) {
-            score += targetMuscleWeights[tag];
+            overlapScore += targetMuscleWeights[tag];
           }
         });
-        if (score > bestScore) {
-          bestScore = score;
-          bestAlt = alt;
+
+        if (mode === 'FOCUS') {
+          // FOCUS: Reward matching contraction theme (e.g. stacking Isometric tendon holds or Concentric power)
+          let contractionBonus = 0;
+          if (altContraction !== 'balanced' && priorContractions.has(altContraction)) {
+            contractionBonus = 0.65;
+          }
+          const totalScore = overlapScore + contractionBonus;
+          if (totalScore > bestScore) {
+            bestScore = totalScore;
+            bestAlt = alt;
+          }
+        } else {
+          // FRESH: Avoid stacking multiple Eccentric-heavy moves in one session; favor Concentric/Isometric flush
+          let contractionAdj = 0;
+          if (priorContractions.has('eccentric')) {
+            if (altContraction === 'eccentric') contractionAdj = -1.0;
+            else if (altContraction === 'concentric' || altContraction === 'isometric') contractionAdj = +0.5;
+          }
+
+          const historyPenalty = recentList.includes(alt) ? (recentList.indexOf(alt) + 1) * 0.25 : 0;
+          const totalScore = -overlapScore + contractionAdj - historyPenalty;
+          if (totalScore > bestScore) {
+            bestScore = totalScore;
+            bestAlt = alt;
+          }
         }
       });
 
@@ -306,13 +334,21 @@ export function resolveFocusNextStep(stageKey, stageDef, currentSlotIndex, activ
   if (priorExercises.length === 0) return null;
 
   const workedMuscleWeights = {};
+  const priorContractions = new Set();
+
   priorExercises.forEach((exName, idx) => {
     const tags = getExerciseMuscleTags(exName);
     const weight = idx === 0 ? 1.5 : 1.0;
     tags.forEach(tag => {
       workedMuscleWeights[tag] = (workedMuscleWeights[tag] || 0) + weight;
     });
+    priorContractions.add(getExerciseContraction(exName));
   });
+
+  // Inside unplayedAlts.forEach((alt) => { ... }):
+  const altContraction = getExerciseContraction(alt);
+  const contractionBonus = (altContraction !== 'balanced' && priorContractions.has(altContraction)) ? 0.65 : 0;
+  const totalScore = overlapScore + contractionBonus + sameSlotBonus + visitedPenalty;
 
   let bestChoice = null;
   let bestOverallScore = 0;
