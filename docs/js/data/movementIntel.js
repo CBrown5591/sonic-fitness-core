@@ -5,6 +5,7 @@
 export const MOVEMENT_INTEL = {
   "B-Stance DB Hinge": {
     type: "Compound",
+    contraction: "Eccentric",
     muscles: "Hamstrings & Glute Max (Lead Leg Primary) • Core & Spinal Erectors",
     setup: "80% weight on front flat foot. Rear toe placed 6 inches behind as a kickstand.",
     cue: "Drive front hip straight back. Push floor away through the front heel/mid-foot to stand.",
@@ -12,6 +13,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bear Crawl (Forward & Reverse Paced)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Serratus Anterior, Quads, Transverse Abdominis & Shoulder Stabilizers",
     setup: "Quadruped crawl stance. Hands under shoulders, knees hovering 1 inch off floor under hips.",
     cue: "Take slow, deliberate cross-lateral steps (opposite hand and foot move together). Paced rhythm across hotel room floor.",
@@ -19,6 +21,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bird-Dogs (Strict 5s Hold)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Multifidus, Erector Spinae, Glute Max & Posterior Deltoid",
     setup: "Quadruped position on hands and knees. Hands under shoulders, knees under hips.",
     cue: "Reach opposite arm and leg out horizontally. Hold rigid extension for a full 5-second count.",
@@ -26,6 +29,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bodyweight Rotational Windmills (Paced)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Internal/External Obliques, Glute Medius, Hamstrings & Thoracic Rotators",
     setup: "Feet slightly wider than shoulder-width, toes turned 45 degrees. One arm reached to ceiling.",
     cue: "Hinge hip back toward trailing foot while sliding lead hand down along inside of front shin. Gaze fixed on top hand.",
@@ -33,6 +37,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bodyweight Single-Leg RDL (Strict 5s Eccentric)": {
     type: "Compound",
+    contraction: "Eccentric",
     muscles: "Hamstrings, Glute Max & Glute Medius (Unilateral)",
     setup: "Wall or chair support for balance. Plant working foot firmly with slight soft knee bend.",
     cue: "Lower torso over a full 5-second eccentric count. Pause 1s at deep hamstring elongation, explode up in 1s.",
@@ -40,6 +45,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bodyweight Single-Leg RDL (Wall Supported)": {
     type: "Compound",
+    contraction: "Eccentric",
     muscles: "Hamstrings, Glute Max & Pelvic Stabilizers",
     setup: "Stand tall facing or alongside a wall. One hand lightly touches the wall for 100% balance support.",
     cue: "Hinge free leg straight back while reaching torso forward. Feel full stretch in working hamstring and glute. Squeeze glute to stand.",
@@ -47,6 +53,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bodyweight Squat / TRX Squat": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps, Glutes & Core Stabilizers",
     setup: "Feet shoulder-width, toes slightly out. Arms held in front or lightly holding TRX handles.",
     cue: "Descend smoothly to parallel, driving knees out over second toes. Stand and squeeze glutes.",
@@ -54,6 +61,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bodyweight Squat / TRX Squat (AMRAP to Failure)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps, Glute Max & Adductors",
     setup: "Feet shoulder-width, toes out 15 degrees. Arms in front or holding towel/doorframe.",
     cue: "Pump continuous unbroken reps to technical failure. Drive through heels and squeeze glutes at top.",
@@ -61,6 +69,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bravo Anti-Extension Overhead Hold": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Rectus Abdominis, Transverse Abdominis, Lats & Serratus",
     setup: "Set Bravo cable high. Kneel tall on both knees facing away from stack, arms locked overhead holding handles.",
     cue: "Brace anterior core hard, pull ribs down to pelvic bowl, and resist all lumbar extension for the full duration.",
@@ -68,6 +77,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bravo Cable Woodchoppers (High-to-Low)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Internal/External Obliques, Transverse Abdominis & Serratus Anterior",
     setup: "Pulley set above head height. Stand sideways in athletic stance holding handle with both hands.",
     cue: "Pivot rear foot and drive handle across body down toward opposite knee using core torque. Return controlled.",
@@ -75,6 +85,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bravo Dual-Cable Face Pulls": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Rear Deltoids, Infraspinatus, Teres Minor & Mid/Lower Traps",
     setup: "Set dual Bravo pulleys at eye level. Grasp handles with thumbs facing back. Step back to tension.",
     cue: "Pull handles toward temples, separating hands wide at the finish while driving elbows high and back. Squeeze scaps 1s.",
@@ -82,6 +93,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bravo Dual-Cable Pulldown": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Teres Major & Lower Traps • Biceps",
     setup: "Pulleys high and wide on Bravo columns. Kneel tall facing the machine holding dual handles.",
     cue: "Drive elbows down and back toward ribs in a converging arc. Squeeze lats hard at bottom contraction.",
@@ -89,6 +101,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bravo Dual-Cable Row (Mid-Height)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Mid-Traps, Rhomboids, Latissimus Dorsi & Rear Delts",
     setup: "Set cable pulleys at mid-rib height. Athletic quarter-squat stance, core braced.",
     cue: "Row handles to ribs, turning palms inward. Retract scapulae firmly.",
@@ -96,6 +109,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bravo Half-Kneeling Cable Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Pectorals, Anterior Deltoid, Serratus Anterior & Core Anti-Rotation",
     setup: "Half-kneeling stance (working arm matches the knee on the floor). Cable set at chest height.",
     cue: "Press handle straight forward, reaching long at the finish to engage serratus anterior. Return with 3s tempo.",
@@ -103,6 +117,7 @@ export const MOVEMENT_INTEL = {
   },
   "Bravo Kneeling Cable Crunch": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Rectus Abdominis & External Obliques",
     setup: "Kneel facing or away from high cable with rope attachment held at temple level. Hips locked.",
     cue: "Curl ribcage down toward pelvic bowl by flexing abdominals. Pause 1s at deep compression.",
@@ -110,6 +125,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cable External Rotations": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Infraspinatus & Teres Minor (Posterior Rotator Cuff)",
     setup: "Cable at elbow height. Tuck a rolled towel between working elbow and ribs.",
     cue: "Rotate forearm outward across body while keeping elbow pinned to side. Squeeze rear cuff 1s.",
@@ -117,6 +133,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cable External Rotations (Bravo)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Infraspinatus & Teres Minor (Posterior Rotator Cuff)",
     setup: "Cable at elbow height. Tuck a rolled towel between working elbow and ribs.",
     cue: "Rotate forearm outward across body while keeping elbow pinned to side. Squeeze rear cuff 1s.",
@@ -124,6 +141,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cable Pallof Press": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Transverse Abdominis, Internal/External Obliques & Glute Medius",
     setup: "Stand perpendicular to cable tower with handle at chest height. Athletic base, soft knees.",
     cue: "Press handle straight out in front of chest. Hold for 2s resisting the rotational pull, then return to sternum.",
@@ -131,6 +149,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cable Pallof Press (Bravo)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Transverse Abdominis, Internal/External Obliques & Glute Medius",
     setup: "Stand perpendicular to cable tower with handle at chest height. Athletic base, soft knees.",
     cue: "Press handle straight out in front of chest. Hold for 2s resisting the rotational pull, then return to sternum.",
@@ -138,6 +157,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cable Pull-Through (Bravo Low Pulley)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Gluteus Maximus & Hamstrings (Zero Axial Spinal Load)",
     setup: "Rope attachment on lowest pulley. Straddle cable facing away from stack. Walk out 3 feet.",
     cue: "Hinge hips backward between knees, feeling deep hamstring stretch. Snap hips forward and squeeze glutes hard.",
@@ -145,6 +165,7 @@ export const MOVEMENT_INTEL = {
   },
   "Chest-Supported Dumbbell Row": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Rhomboids, Mid-Traps & Rear Deltoids",
     setup: "Prone face-down on a 30° to 45° incline bench. Dumbbells hanging naturally.",
     cue: "Drive elbows straight back toward back pockets. Squeeze shoulder blades together for 1s pause.",
@@ -152,6 +173,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Articulating Leg Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps, Gluteus Maximus & Adductors",
     setup: "Seat positioned so knees are ~90° at bottom. Feet shoulder-width on carriage platform.",
     cue: "Release safety stops. Lower weight under control until knees reach 90°. Drive through mid-foot to extend legs.",
@@ -159,6 +181,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Articulating Leg Press (Light Tempo 25r)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps (VMO / Vastus Lateralis) & Glutes",
     setup: "Seat positioned comfortably. Light load (~40-50% e1RM). Feet shoulder-width.",
     cue: "Continuous rhythmic pump: 1s down, 1s up with zero rest at top or bottom. Flush quads with oxygenated blood.",
@@ -166,6 +189,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Articulating Leg Press (Light Tempo)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps (VMO / Vastus Lateralis) & Glutes",
     setup: "Seat positioned comfortably. Light load (~40-50% e1RM). Feet shoulder-width on platform.",
     cue: "Continuous rhythmic pump: 1s down, 1s up with zero rest at top or bottom. Flush quads with oxygenated blood.",
@@ -173,6 +197,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Converging Chest Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Sternal Pectorals, Anterior Deltoids & Triceps Brachii",
     setup: "Adjust seat height so handles align with mid-nipple line. Plant feet firmly.",
     cue: "Press forward smoothly as handles converge. Exhale at lockout, control return.",
@@ -180,6 +205,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle High Row (Chest Supported)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Teres Major, Rhomboids & Mid-Traps",
     setup: "Adjust chest pad so handles are reached with full lat stretch. Feet flat.",
     cue: "Pull handles down and back leading with elbows. Contract lats and rhomboids hard for 1s.",
@@ -187,6 +213,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Leg Curl": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Hamstrings (Biceps Femoris, Semitendinosus & Semimembranosus)",
     setup: "Align knee pivot with machine axis. Roller pad secured snugly against lower Achilles tendon.",
     cue: "Drive heels smoothly toward glutes, hold peak contraction for 1s, and control 3s eccentric return.",
@@ -194,6 +221,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Leg Extension": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Quadriceps (Rectus Femoris & Vastus Medialis / VMO)",
     setup: "Back pad adjusted so knees align with pivot. Roller pad resting above ankle joints.",
     cue: "Extend shins upward smoothly, pause 1s at top contraction, and control 3s eccentric descent.",
@@ -201,6 +229,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Leg Extension (Paced 20r)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Quadriceps & Patellar Tendon Capacity",
     setup: "Back pad adjusted so knees align with pivot. Roller pad resting comfortably above ankle joints.",
     cue: "Continuous rhythmic cadence: extend shins up, squeeze quads for 1s pause, 2s return for 20 unbroken reps.",
@@ -208,6 +237,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Overhead Shoulder Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Anterior & Lateral Deltoids, Upper Traps & Triceps",
     setup: "Seat height set so handles start at ear/chin level. Use neutral vertical grips.",
     cue: "Press straight overhead without locking elbows aggressively. Lower under control to ear level.",
@@ -215,6 +245,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Pec Fly (Machine)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Pectoralis Major (Sternal & Clavicular Fibers) & Anterior Delts",
     setup: "Adjust arm reach so handles align with chest plane. Slight bend in elbows.",
     cue: "Bring handles together across chest, squeezing pecs for 1s. Open arms slowly to a gentle stretch.",
@@ -222,6 +253,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Rear Delt Fly": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Posterior Deltoids, Rhomboids & Mid-Traps",
     setup: "Sit facing machine with chest on pad. Handles at shoulder height.",
     cue: "Pull arms wide and back in an arc, focusing on the back of the shoulders. Squeeze 1s.",
@@ -229,6 +261,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Seated Abdominal Crunch": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Rectus Abdominis & Internal/External Obliques",
     setup: "Seat adjusted so pivot axis aligns with lower ribs. Grasp handles overhead.",
     cue: "Curl ribcage down toward pelvis by flexing abdominals. Pause 1s, return under control.",
@@ -236,6 +269,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Hip Adduction (Inner Thigh)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Hip Adductors (Adductor Magnus, Longus, Brevis & Gracilis)",
     setup: "Adjust pads to the outer leg/knee. Set starting width to a comfortable groin stretch.",
     cue: "Squeeze knees inward toward the center line in a controlled 2-count. Squeeze adductors hard at full peak contraction, then resist over a 3-second eccentric return.",
@@ -243,6 +277,7 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Hip Abduction (Outer Glute)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Gluteus Medius, Gluteus Minimus & Tensor Fasciae Latae (TFL)",
     setup: "Flip pads to the outside of knees. Set lever arms so knees start together.",
     cue: "Drive knees outward against resistance using upper glutes (gluteus medius). Hold outer contraction for 1 full second, then control the eccentric back.",
@@ -250,209 +285,207 @@ export const MOVEMENT_INTEL = {
   },
   "Cybex Eagle Leg Extension Hip Thrust": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Gluteus Maximus & Hamstrings (Machine Hip Extension)",
-
     setup: "Set the ankle roller pad to its lowest/furthest forward notch and raise the thigh hold-down pad out of the way. Sit on the front edge of the seat (or brace upper back against the seat edge) with the roller pad positioned across your hip crease.",
     cue: "Plant both feet flat and hip-width apart on the floor. Drive through your heels to extend your hips upward against the roller pad, squeezing glutes hard for 1 second at top lockout without hyperextending your lower back.",
     safety: "Keep chin tucked and ribs down at lockout so the movement stays strictly in the glutes rather than the lumbar spine. Control the eccentric lowering so the weight stack doesn't slam."
   },
-
   "Cybex Eagle Leg Extension Glute Kickback": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Gluteus Maximus & Hamstrings (Unilateral Hip Extension)",
-
     setup: "Adjust the ankle roller pad to its highest/closest starting position. Stand facing the machine, gripping the seat frame or backrest handles for stability, and place the back of one ankle/heel against the roller pad.",
     cue: "Keep your torso braced with a slight forward lean (~15°). Drive your working heel straight back and slightly upward into hip extension, pausing 1 second at peak glute squeeze.",
     safety: "Avoid twisting your pelvis or arching your lower back to get extra height. Stop hip extension once the glute reaches full contraction."
   },
-
   "Cybex Eagle Single-Leg Extension": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Quadriceps (Rectus Femoris & Vastus Medialis / VMO)",
-
     setup: "Align your working knee joint directly with the machine's red pivot axis dot. Set the shin roller pad just above your ankle dorsiflexion crease and lock the thigh pad snugly.",
     cue: "Extend one leg smoothly to full knee lockout, holding the top quad squeeze for 1 full second, then lower over a strict 3-second eccentric. Complete all reps on one leg before switching.",
     safety: "Keep your hips pinned flat into the seat—do not lift your glute off the pad to heave the weight up."
   },
-
   "Cybex Eagle Single-Leg Curl": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Hamstrings (Biceps Femoris, Semitendinosus & Semimembranosus)",
-
     setup: "Align your working knee with the machine's pivot axis. Position the ankle roller pad just above the heel/Achilles and secure the thigh stabilization pad firmly over your quads.",
     cue: "Curl one heel smoothly toward your glutes while keeping your toes pulled up (dorsiflexed) to engage the hamstrings cleanly. Pause 1 second at peak flexion and resist for 3 seconds on the return.",
     safety: "Do not let your hips lift off the seat pad at the bottom of the curl. Keep the non-working leg relaxed and stationary."
   },
   "Cybex Eagle Single-Leg Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps, Gluteus Maximus & Hip Stabilizers (Unilateral)",
     setup: "Place one foot centered on the footplate at mid-height; rest your non-working foot flat on the floor or frame away from the linkage. Set seat stop so knee reaches 90° without pelvis lifting.",
     cue: "Drive evenly through the mid-foot and heel of the working leg to extend smoothly without locking the knee hard, then lower over a strict 3-second eccentric.",
     safety: "Keep your lower back and glute pinned flat against the seat pad—stop lowering before your tailbone tucks under."
   },
-
   "Cybex Eagle Leg Press (High-and-Wide Glute/Ham)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Gluteus Maximus, Hamstrings & Adductor Magnus",
     setup: "Place both feet near the top outer corners of the footplate with toes flared 30° outward. Adjust seat back to allow deep hip flexion without lumbar rounding.",
     cue: "Push through your heels while keeping knees aligned with your toes, driving the footplate forward and squeezing glutes at top extension.",
     safety: "Keep your lumbar spine flat against the backrest throughout the entire stroke; never allow your pelvis to curl upward at the bottom."
   },
-
   "Cybex Eagle Leg Press Calf Raise": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Gastrocnemius & Soleus (Calves)",
     setup: "Extend the leg press to full length and engage the safety catch/range limiter. Slide both feet down so only the balls of your feet rest on the bottom edge of the footplate.",
     cue: "Keep knees softly unlocked (never hyperextended). Let heels drop toward you for a full 2-second ankle stretch, then press forcefully onto your tiptoes for a 1-second peak hold.",
     safety: "Ensure the safety catch is locked in place so the carriage cannot crush your ankles if your foot slips, and never lock your knees backward."
   },
-
   "Cybex Eagle Leg Extension Isometric Hold (30-45s)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Quadriceps (Vastus Medialis / Patellar Tendon Analgesia)",
     setup: "Align working knee with the machine pivot dot and set the roller pad just above the ankle. Extend one leg to roughly 35°–45° short of full lockout.",
     cue: "Hold the leg completely motionless at that 45° knee angle for 30–45 seconds while maintaining steady breathing and continuous quad tension.",
     safety: "If you feel sharp joint pain rather than muscular burn, adjust the knee angle 10° higher or lower to find a pain-free isometric zone."
   },
-
   "Cybex Eagle Leg Curl (2-Up / 1-Down Eccentric)": {
     type: "Isolation",
+    contraction: "Eccentric",
     muscles: "Hamstrings (Eccentric Overload)",
     setup: "Align knees with the pivot axis and lock the thigh pad snugly over your quads. Select a weight roughly 60%–70% of your bilateral 10RM.",
     cue: "Curl the pad all the way to your glutes using BOTH legs, remove one leg from behind the roller, and resist the weight down over a slow 4–5 second eccentric with ONE leg.",
     safety: "Keep hips pressed firmly into the seat during the single-leg lowering phase; do not let the stack drop faster than a 4-second count."
   },
-
   "Cybex Eagle Leg Curl Isometric Hold (30-45s)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "[ISOMETRIC // TENDON STIFFNESS 30–45s] Hamstrings & Proximal/Distal Hamstring Tendons",
     setup: "Align knees with the machine pivot dot, place ankle roller just above heels, and lock thigh pad snugly over quads (~70%–80% of 10RM).",
     cue: "Curl pad to ~45°–60° knee flexion and freeze completely motionless for 30–45s while pulling toes toward shins and breathing steadily.",
     safety: "Keep hips pressed flat into the seat pad; never hold your breath during the isometric hold."
   },
-
   "Cybex Eagle Leg Press Calf Isometric Hold (30-45s)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "[ISOMETRIC // TENDON STIFFNESS 30–45s] Gastrocnemius, Soleus & Achilles Tendon",
     setup: "Extend leg press to full length, engage the safety catch, and place balls of both feet on the bottom edge of the footplate with softly unlocked knees.",
     cue: "Press onto the balls of your feet into mid-range plantarflexion (heels ~1–2 inches above neutral) and hold completely still for 30–45s.",
     safety: "Keep the safety catch locked so the sled cannot drop past neutral dorsiflexion, and never lock knees backward."
   },
-
   "DB Spellcaster (Rotational Swing)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Internal/External Obliques, Anterior/Lateral Deltoids, Quadratus Lumborum & Glutes",
     setup: "Stand with feet slightly wider than shoulder-width, knees softly bent, holding a single light-to-moderate dumbbell (10–25 lbs) by both ends in front of your hips.",
     cue: "Pivot your back foot and drive through your hips to swing the dumbbell in a smooth diagonal arc from outside one hip up across your chest to just above the opposite shoulder, then reverse smoothly to the other side.",
     safety: "Keep arms mostly straight with a soft elbow lock and pivot your rear heel on every swing so torque comes from your hips and thoracic spine rather than twisting planted knees or a rounded lower back."
   },
-
   "41\" Loop Band Spellcaster (Rotational Swing)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Internal/External Obliques, Anterior/Lateral Deltoids & Core Stabilizers",
     setup: "Stand with both feet slightly wider than shoulder-width on the bottom of a light-to-medium 41\" loop band. Grip both strands of the top loop together with both hands in front of your hips.",
     cue: "Pivot your rear foot and sweep your hands diagonally upward from one hip across your torso to the opposite shoulder against the ascending band tension, controlling the return back to center before switching sides.",
     safety: "Use a light band (Blue or Green) so you can maintain smooth, controlled shoulder arcs without shrugging your traps or hyperextending your lower back."
   },
-
   "Twisting Leg Raise (Floor / Bench)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Lower Rectus Abdominis, Internal/External Obliques & Hip Flexors",
     setup: "Lie flat on your back on a mat or bench with hands braced firmly under your glutes (or gripping the bench edges behind your head) and legs extended straight.",
     cue: "Press your lower back flat into the pad, raise both legs toward 90°, and rotate your pelvis slightly at the top to angle your feet toward one shoulder. Lower slowly to 6 inches off the floor, then repeat toward the opposite shoulder.",
     safety: "Keep your lower back pressed into the floor/bench throughout—if your lumbar spine lifts or arches as your legs descend, bend your knees slightly to shorten the lever."
   },
-
   "Low Door-Anchor Twisting Leg Raise": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Lower Rectus Abdominis, Internal/External Obliques & Hip Flexors",
     setup: "Secure a door anchor at the BOTTOM of the door and fasten ankle straps around both ankles. Lie flat on your back facing away from the door with legs extended until tubes have light pre-stretch.",
     cue: "Anchor your hands at your sides or under your hips, keep your lower back glued to the mat, and raise your legs upward while rotating your hips slightly to bring your toes toward the opposite shoulder. Alternate sides under a 3-second eccentric.",
     safety: "Use light tube tension (20–40 lbs) so the band never pulls your lower back into an arch at the bottom of the rep."
   },
-
   "Weighted / Bodyweight Russian Twist": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Internal/External Obliques, Rectus Abdominis & Hip Flexors",
     setup: "Sit on a mat with knees bent, heels planted on the floor (or elevated 2 inches for advanced stability), and torso leaned back to a flat-backed ~45° V-sit angle.",
     cue: "Holding a light dumbbell or medicine ball at your sternum (or hands clasped), rotate your ribcage and shoulders cleanly from side to side, tapping the weight lightly beside each hip.",
     safety: "Keep your chest proud and spine long—rotate through your upper torso rather than rounding your lower back or simply swinging your arms side-to-side."
   },
-
   "Bravo Standing Cable Straight-Arm Pullover": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Teres Major & Long Head of Triceps",
     setup: "Set a single top pulley (with straight bar or rope) or both top pulleys to highest notch. Step back, hinge hips 30° with a flat back, and hold handles overhead with straight arms.",
     cue: "Keeping elbows locked in a soft 10° bend, sweep your hands down to your thighs by driving your lats down into your back pockets. Pause 1s at thighs.",
     safety: "Do not bend your elbows into a tricep pushdown or round your upper back as arms return overhead."
   },
-
   "Bravo Cable Lateral Raise (Cross-Body)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Lateral (Medial) Deltoids & Supraspinatus",
     setup: "Set a single Bravo pulley to its lowest notch. Stand sideways to the column, hold the frame with your inside hand, and grip the single D-handle in your outside hand across the front of your thigh.",
     cue: "With a soft 10° elbow bend, sweep your outside arm up and out in the scapular plane (30° forward of torso) until your fist reaches shoulder height. Lower over 3 seconds.",
     safety: "Keep traps depressed away from ears; stop at shoulder height rather than shrugging the weight higher."
   },
-
   "Bravo Incline Cable Y-Raise": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Lower Trapezius, Rear Deltoids & Serratus Anterior",
     setup: "Set both Bravo pulleys to the lowest notch and step 2 feet forward so the cables cross slightly in front of your thighs.",
     cue: "With thumbs pointed upward and arms straight, raise both arms diagonally up and outward into a wide 45° 'Y' overhead, squeezing your lower traps for 1s at the top.",
     safety: "Keep ribcage clamped down so your lower back does not hyperextend as your arms reach overhead."
   },
-
   "Bravo Cable Overhead Tricep Extension": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Triceps Brachii (Long Head Emphasis)",
     setup: "Set a single Bravo pulley to the lowest notch with a rope attachment. Face away from the column in a staggered stance, holding the rope behind your head with elbows pointed high.",
     cue: "Keep upper arms stationary next to your ears and extend your forearms upward and slightly forward until elbows lock out. Control the 3s stretch behind your head.",
     safety: "Brace your abs and squeeze your rear glute so the backward cable pull does not arch your lumbar spine."
   },
-
   "Bravo Cable Hammer Curl (Rope)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Brachialis, Brachioradialis & Biceps Brachii",
     setup: "Set a single Bravo pulley to the lowest notch with a rope attachment. Stand facing the column with elbows pinned tightly against your ribs and palms facing each other.",
     cue: "Curl the rope ends upward toward your shoulders while keeping wrists neutral and elbows glued to your sides. Pause 1s at peak contraction.",
     safety: "Zero torso swinging or elbow drifting forward; keep shoulders packed down."
   },
-
   "Bravo Half-Kneeling Single-Arm Cable Row": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Rhomboids & Core Anti-Rotation",
     setup: "Set a single Bravo pulley to belly-button height. Take a half-kneeling stance facing the column (working-side knee down) and grip the D-handle with a neutral palm.",
     cue: "Pull your elbow straight back past your ribs while squeezing the glute of your down knee to prevent your torso from twisting. Hold 1s at your hip.",
     safety: "Keep shoulders and hips completely square to the pulley column throughout every rep."
   },
-
   "Cybex Eagle Hip Abduction (Lean-Forward Upper Glute)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Gluteus Medius & Upper Gluteus Maximus Shelf",
     setup: "Set the knee pads to the outside of your knees, sit on the front third of the seat, and hinge your torso forward 30°–45° while gripping the front handles.",
     cue: "Drive both knees outward against the pads using your upper glutes, hold the outer contraction for 1 full second, and resist the 3-second return.",
     safety: "Keep your spine flat during the forward hinge—do not round your lower back to reach the front handles."
   },
-
   "Cybex Eagle Single-Arm Iso-Lateral Chest Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Pectoralis Major, Anterior Deltoid & Core Anti-Rotation",
     setup: "Set seat height so handles align with mid-chest. Grip one handle with your working hand and brace your non-working hand firmly against the machine frame.",
     cue: "Press the single independent lever arm forward along its converging arc to full extension without letting your opposite shoulder lift off the backrest.",
     safety: "Keep both shoulder blades pinned flat to the backrest; stop if your torso twists toward the pressing arm."
   },
-
   "Cybex Eagle Single-Arm Iso-Lateral High Row": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Rhomboids & Core Anti-Rotation",
     setup: "Adjust seat and chest pad snugly against your sternum. Grip one independent lever handle and brace your opposite hand on the front frame.",
     cue: "Pull the single handle back into your hip pocket, driving your elbow past your ribs for a 1-second lat squeeze before controlling the 3-second stretch.",
     safety: "Keep chest pinned squarely against the support pad—do not rotate your ribcage to pull extra weight."
   },
-
   "Bravo Behind-the-Back Cable Shrug": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Upper & Mid Trapezius (Zero Spinal Compression)",
     setup: "Set both Bravo pulleys to the lowest notch. Stand centered between the columns with the cables running behind your glutes, gripping both D-handles at your sides.",
     cue: "With arms straight, shrug your shoulders straight up and slightly back toward your ears, holding the peak trap contraction for 2 full seconds before lowering.",
@@ -460,6 +493,7 @@ export const MOVEMENT_INTEL = {
   },
   "DB Bulgarian Split Squat": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps & Gluteus Maximus (Lead Leg) • Glute Medius (Stabilizer)",
     setup: "Rear foot laces resting on bench behind you. Front foot placed 3 feet forward.",
     cue: "Drop straight down by bending front knee until rear knee hovers 1 inch off floor. Torso slightly forward to load glute.",
@@ -467,6 +501,7 @@ export const MOVEMENT_INTEL = {
   },
   "Deadbugs (Wall Press)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Transverse Abdominis, Rectus Abdominis & Lats (Anti-Extension)",
     setup: "Lie supine on back, hands pressed firmly overhead against a sturdy wall. Knees and hips at 90 degrees.",
     cue: "Press wall hard to lock lats. Exhale fully through mouth as one leg extends straight out hovering 2 inches off floor.",
@@ -474,6 +509,7 @@ export const MOVEMENT_INTEL = {
   },
   "Doorframe Row (Single-Arm 3s Pause)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Rhomboids, Rear Delt & Biceps",
     setup: "Grasp doorframe with feet walked forward to increase leverage angle.",
     cue: "Row chest flush to the frame. Hold maximum peak contraction for 3 full seconds before smooth eccentric descent.",
@@ -481,6 +517,7 @@ export const MOVEMENT_INTEL = {
   },
   "Doorframe Row (Single-Arm AMRAP)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Rhomboids & Forearm Flexors",
     setup: "Firm grip on doorframe at mid-chest height. Moderate body lean angle.",
     cue: "Continuous rhythmic pumping rows to technical failure. Full reach at bottom, full lat squeeze at top.",
@@ -488,6 +525,7 @@ export const MOVEMENT_INTEL = {
   },
   "Doorframe Row (Single-Arm Strict Pause)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Rhomboids & Mid-Traps",
     setup: "Grasp a sturdy doorframe or vertical pillar at rib height with one hand. Feet close to base of frame.",
     cue: "Lean back with straight arm, then pull chest to doorframe driving elbow back. Squeeze lat & scapula for a full 2s pause.",
@@ -495,6 +533,7 @@ export const MOVEMENT_INTEL = {
   },
   "Farmer's Carries": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Upper Traps, Forearm Grip, Core Wall & Glute Medius",
     setup: "Hold heaviest safe DBs (up to 65 lbs) at sides. Pack shoulders down and back.",
     cue: "Walk with tall posture, short heel-to-toe paces. Keep weights from swinging against legs.",
@@ -502,6 +541,7 @@ export const MOVEMENT_INTEL = {
   },
   "Farmer's Carries (Dual DB/KB - Max Distance)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Upper Traps, Forearm Crush Grip, Core & Spinal Stabilizers",
     setup: "Stand tall holding heaviest safe dumbbells or kettlebells at sides. Shoulders packed down and back.",
     cue: "Walk with short, deliberate heel-to-toe paces. Maintain stacked posture until grip technical failure.",
@@ -509,6 +549,7 @@ export const MOVEMENT_INTEL = {
   },
   "Farmer's Carries (Dual DB/KB)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Upper Traps, Forearm Grip, Core Wall & Glute Medius",
     setup: "Hold heaviest safe DBs (up to 65 lbs) at sides. Pack shoulders down and back.",
     cue: "Walk with tall posture, short heel-to-toe paces. Keep weights from swinging against legs.",
@@ -516,6 +557,7 @@ export const MOVEMENT_INTEL = {
   },
   "Fast Step-Jacks (30s on / 60s off)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Glute Medius, Calves, Deltoids & Cardiovascular System",
     setup: "Athletic base, hands at sides.",
     cue: "Rapidly step one foot out laterally while swinging arms overhead, then return and alternate sides at maximum pace.",
@@ -523,6 +565,7 @@ export const MOVEMENT_INTEL = {
   },
   "Feet-Elevated Decline Push-Up (Strict 1s Pause)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Upper Pectorals (Clavicular Head), Anterior Delts & Triceps",
     setup: "Toes resting on hotel bed, chair, or bench. Hands firmly planted on floor shoulder-width.",
     cue: "Lower chest smoothly to floor, hold a strict 1s dead-stop pause, and drive forcefully to full lockout.",
@@ -530,6 +573,7 @@ export const MOVEMENT_INTEL = {
   },
   "Glute Bridge / DB RDL (to Bench)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Gluteus Maximus & Hamstrings",
     setup: "Upper back rested across bench or lie flat on mat. Dumbbell held safely across hips.",
     cue: "Drive through heels, contract glutes hard to full extension. Hold peak squeeze 1s.",
@@ -537,6 +581,7 @@ export const MOVEMENT_INTEL = {
   },
   "Goblet Squat (Tempo 3-0-1)": {
     type: "Compound",
+    contraction: "Eccentric",
     muscles: "Quadriceps, Gluteus Maximus & Thoracic Erectors (Anterior Core)",
     setup: "Hold single dumbbell vertically against sternum, cupping upper horn with palms.",
     cue: "Descend for a full 3-second count, keeping elbows tucked inside knees at bottom. Explode up in 1s.",
@@ -544,6 +589,7 @@ export const MOVEMENT_INTEL = {
   },
   "Half-Kneeling Landmine Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Upper Pectorals, Anterior Deltoid, Serratus Anterior & Obliques",
     setup: "Half-kneeling stance (working arm matches the knee on the floor). Collar at shoulder.",
     cue: "Press bar upward and forward at ~45° arc. Reach long at top to engage serratus anterior.",
@@ -551,6 +597,7 @@ export const MOVEMENT_INTEL = {
   },
   "Half-Kneeling Single-Arm Pulldown": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Teres Major & Lateral Core Stabilizers",
     setup: "High cable pulley, single handle. Half-kneeling stance (working arm matches down-knee).",
     cue: "Depress shoulder blade first, then drive elbow straight down to rib cage. Squeeze lat 1s.",
@@ -558,6 +605,7 @@ export const MOVEMENT_INTEL = {
   },
   "Hollow Body Isometric Hold (30s)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Transverse Abdominis, Rectus Abdominis & Hip Flexors",
     setup: "Lie supine on floor. Lower back pressed flat into floor.",
     cue: "Raise shoulder blades and legs 6 inches off floor. Reach arms overhead. Hold rigid banana shape for 30s.",
@@ -565,6 +613,7 @@ export const MOVEMENT_INTEL = {
   },
   "Hollow Body Isometric Hold (Max Seconds to Failure)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Transverse Abdominis, Rectus Abdominis & Deep Core Wall",
     setup: "Lie supine on floor or hotel mat. Lower back pressed flat into floor.",
     cue: "Raise shoulder blades and legs 6 inches off floor. Reach arms overhead. Hold rigid banana shape to failure.",
@@ -572,6 +621,7 @@ export const MOVEMENT_INTEL = {
   },
   "Incline DB Bench Press (30°)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Upper Pectorals (Clavicular Head), Anterior Delts & Triceps",
     setup: "Bench set to low 30° angle. Dumbbells held at outside edges of chest.",
     cue: "Press weights in an inward converging arc toward ceiling. Lower smoothly over 3s tempo.",
@@ -579,6 +629,7 @@ export const MOVEMENT_INTEL = {
   },
   "Incline Power Walk Surges": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Glutes, Hamstrings, Calves & Aerobic Conditioning",
     setup: "Treadmill set to 10-12% incline. Speed set to brisk walking pace (3.2-3.8 mph).",
     cue: "Power walk without holding handrails. Drive aggressively through heels and swing arms rhythmically.",
@@ -586,6 +637,7 @@ export const MOVEMENT_INTEL = {
   },
   "Incline Push-Up (Hands on Bench - AMRAP)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Mid/Lower Pectorals, Anterior Deltoids & Triceps",
     setup: "Hands on bed or desk edge. Rigid plank line from head to heels.",
     cue: "Continuous reps to muscular failure. Touch sternum to edge, pause momentarily, and lockout.",
@@ -593,6 +645,7 @@ export const MOVEMENT_INTEL = {
   },
   "Incline Push-Up (Hands on Bench)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Pectorals, Anterior Deltoids, Triceps & Serratus Anterior",
     setup: "Hands placed slightly wider than shoulder-width on bench, sturdy table, or wall.",
     cue: "Maintain a rigid plank from head to heels. Lower chest to bench edge, pause 1s, press away.",
@@ -600,6 +653,7 @@ export const MOVEMENT_INTEL = {
   },
   "Incline Treadmill Walk (Zone 2)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Glutes, Hamstrings, Calves & Zone 2 Aerobic Base",
     setup: "Treadmill incline set to 8–12%, speed set to 2.8–3.5 mph (conversational nasal-breathing pace).",
     cue: "Drive through heels, maintain tall upright spine without holding the handrails. Pure posterior aerobic flush.",
@@ -607,6 +661,7 @@ export const MOVEMENT_INTEL = {
   },
   "Kettlebell Suitcase March / Carry": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadratus Lumborum (QL), Obliques, Glute Medius & Grip",
     setup: "Hold single KB or DB on one side only. Opposite arm held in guard.",
     cue: "March or walk forward keeping shoulders and hips dead level despite the uneven load.",
@@ -614,22 +669,23 @@ export const MOVEMENT_INTEL = {
   },
   "DB Lateral Raise (Scapular Plane)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Lateral (Medial) Deltoids & Supraspinatus",
     setup: "Stand tall (or sit upright on a bench) holding light dumbbells at your sides with a soft 10° bend in your elbows and thumbs tilted slightly upward.",
     cue: "Raise both dumbbells out in the scapular plane (30° forward of your torso rather than dead straight to the sides) until elbows reach shoulder height. Pause 1s at top, then lower over 3 seconds.",
     safety: "Keep upper traps relaxed and depressed away from your ears—if you have to shrug or swing your torso to clear shoulder height, drop the dumbbell weight."
   },
-
   "DB Front-to-Lateral Raise Combo": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Anterior Deltoids & Lateral (Medial) Deltoids",
     setup: "Stand with feet shoulder-width apart and abs braced, holding light dumbbells in front of your thighs with a soft 10° elbow bend.",
     cue: "Perform 1 strict front raise to eye level (palms down/neutral), lower with control, then immediately perform 1 lateral raise in the scapular plane to shoulder height = 1 full rep.",
     safety: "Keep ribcage clamped down to your pelvis so your lower back does not hyperextend during the front-raise portion."
   },
-
   "Seated DB Rear Delt Raise (Bent-Over)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Posterior Deltoids, Rhomboids & Mid-Trapezius",
     setup: "Sit on the end of a flat bench with feet planted together, hinge your torso forward until your chest rests near your thighs, and hold light dumbbells hanging under your knees.",
     cue: "With elbows softly bent and palms facing each other (or slightly backward), sweep both dumbbells out wide to the sides until upper arms are parallel to the floor. Squeeze rear delts for 1s at top.",
@@ -637,6 +693,7 @@ export const MOVEMENT_INTEL = {
   },
   "Lat Pulldown (Neutral/Mag-Grip)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Teres Major, Lower Traps & Brachialis",
     setup: "Lock thighs firmly under roller pads. Grasp neutral or Mag-Grip attachment.",
     cue: "Depress shoulder blades first, then pull elbows straight down to ribs, touching upper chest.",
@@ -644,6 +701,7 @@ export const MOVEMENT_INTEL = {
   },
   "Low-Impact Shadow Boxing Flow (Zone 2)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Deltoids, Serratus Anterior, Core Rotators & Calves",
     setup: "Athletic boxer stance, knees soft, hands guarding chin.",
     cue: "Continuous 1-2 punch combos, slips, and body pivots. Stay light on balls of feet with steady nasal breathing.",
@@ -651,6 +709,7 @@ export const MOVEMENT_INTEL = {
   },
   "March in Place (Paced Zone 2 Cadence)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Hip Flexors, Lower Abdominals & Glute Medius",
     setup: "Upright athletic stance. Comfortable rhythmic marching cadence.",
     cue: "Sustained rhythmic high-knee marching maintaining conversational nasal-breathing aerobic flush.",
@@ -658,6 +717,7 @@ export const MOVEMENT_INTEL = {
   },
   "March in Place (Strict High Knees 45s)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Hip Flexors / Iliopsoas, Lower Abs & Stance-Leg Glutes",
     setup: "Stand tall, posture stacked, ribs pulled down over pelvis. Arms in 90-degree running guard.",
     cue: "Drive knee up to hip level (90 degrees) with toes dorsiflexed upward. Pump opposite arm with strict core tension.",
@@ -665,6 +725,7 @@ export const MOVEMENT_INTEL = {
   },
   "McGill Curl-Up (Strict Pause)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Rectus Abdominis & Transverse Abdominis (Zero Lumbar Flexion)",
     setup: "Lie on back with one leg straight and one leg bent. Hands placed under lumbar spine to support neutral curve.",
     cue: "Lift head and upper shoulders just 1-2 inches off floor as a rigid unit without bending neck. Hold 8s, breathe normally.",
@@ -672,6 +733,7 @@ export const MOVEMENT_INTEL = {
   },
   "Med Ball Deadbug Compression": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Transverse Abdominis, Obliques, Hip Flexors & Lats",
     setup: "Lie supine on back. Hold medicine ball squeezed firmly between opposite hand and opposite knee.",
     cue: "Crush med ball into knee with maximum core compression while extending free arm and free leg straight out.",
@@ -679,6 +741,7 @@ export const MOVEMENT_INTEL = {
   },
   "Med Ball Deadbug Compression (8-12 lbs)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Transverse Abdominis, Obliques, Hip Flexors & Lats",
     setup: "Lie supine holding 8-12 lb med ball pinned between left knee and right palm.",
     cue: "Compress ball forcefully creating rotational core tension while reaching opposite limbs long. Alternate sides.",
@@ -686,6 +749,7 @@ export const MOVEMENT_INTEL = {
   },
   "Med Ball Rotational Wall Chest Pass": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Internal/External Obliques, Pectorals & Hip Rotators",
     setup: "Stand perpendicular to sturdy concrete/brick wall 3-4 feet away in athletic stance holding med ball at hip.",
     cue: "Pivot rear hip, rotate through thoracic core, and chest-pass ball explosively into wall. Catch and reset.",
@@ -693,6 +757,7 @@ export const MOVEMENT_INTEL = {
   },
   "Mountain Climbers (Hands on Bed - Low Shear)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Hip Flexors, Rectus Abdominis & Serratus Anterior",
     setup: "Hands planted firmly on hotel bed or sturdy chair in elevated plank. Core rigid.",
     cue: "Drive knees alternately toward chest in rapid, controlled piston strokes. Elevated hands eliminate lower back shear.",
@@ -700,6 +765,7 @@ export const MOVEMENT_INTEL = {
   },
   "Neutral-Grip DB Floor Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Pectorals, Triceps Brachii & Anterior Deltoids (Shoulder-Sparing)",
     setup: "Lie supine on floor, dumbbells pressed vertically with palms facing each other.",
     cue: "Lower weights until triceps gently rest on rubber floor (elbows 45° from ribs). Pause 1s, press vertically.",
@@ -707,6 +773,7 @@ export const MOVEMENT_INTEL = {
   },
   "Overhead Waiter's Walk (Single DB)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Rotator Cuff, Lower Traps, Serratus & Lateral Core Wall (QL)",
     setup: "Press single dumbbell overhead to locked-arm lockout. Opposite arm held in lateral balance guard.",
     cue: "Walk with short deliberate paces. Keep wrist stacked over elbow, elbow over shoulder, ribcage locked down.",
@@ -714,6 +781,7 @@ export const MOVEMENT_INTEL = {
   },
   "Pike Push-Up (Hands or Feet Elevated)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Anterior/Lateral Deltoids, Upper Pecs & Triceps",
     setup: "Hands on floor, hips pushed high into an inverted V pike (or elevate feet on hotel bed).",
     cue: "Lower head forward of hands in a diagonal path loading anterior deltoids and triceps. Press back and up into pike.",
@@ -721,6 +789,7 @@ export const MOVEMENT_INTEL = {
   },
   "Prone Floor Lat Pull (Towel Slide)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Lower Traps & Rhomboids",
     setup: "Lie prone on a smooth floor or hotel tile holding a hand towel with both hands pulled taut.",
     cue: "Keep arms extended, engage lats, and pull elbows down toward ribs sliding hands across floor. Squeeze lower traps hard.",
@@ -728,6 +797,7 @@ export const MOVEMENT_INTEL = {
   },
   "Prone Scapular Y-T-W Raises": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Lower/Mid Traps, Rhomboids & Posterior Rotator Cuff",
     setup: "Lie face-down on mat or incline bench. Arms extended with thumbs pointing toward ceiling.",
     cue: "Raise arms in Y-pattern, then T-pattern, then W-pattern. Squeeze lower traps and posterior cuff for 2s.",
@@ -735,6 +805,7 @@ export const MOVEMENT_INTEL = {
   },
   "Rower (Zone 2 Steady State)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Quadriceps, Glutes, Latissimus Dorsi, Rhomboids & Aerobic Base",
     setup: "Damper set to 4-5. Straps across mid-foot. Upright posture at catch with shins vertical.",
     cue: "Smooth 60% legs, 20% hips, 20% arms stroke cadence at conversational 18-20 SPM pace. Focus on nasal breathing.",
@@ -742,6 +813,7 @@ export const MOVEMENT_INTEL = {
   },
   "Rower / Incline Treadmill (90s Max Effort AMRAP)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Full-Body Posterior & Anterior Chain + Peak Anaerobic Capacity",
     setup: "Rower damper set to 6 or treadmill set to 10% incline.",
     cue: "Explosive, sustained max-effort capacity for 90 continuous seconds. Drive through legs and finish strong.",
@@ -749,6 +821,7 @@ export const MOVEMENT_INTEL = {
   },
   "Rower 500m Apex Sprint (Sub-1:45 Pace)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Quads, Glutes, Hamstrings, Lats & Anaerobic Power",
     setup: "Damper set to 5-6. Straps snug. Display set to 500m countdown.",
     cue: "Explosive leg drive, sharp hip swing, high stroke power (28-32 SPM). Hold target sub-1:45 split to completion.",
@@ -756,6 +829,7 @@ export const MOVEMENT_INTEL = {
   },
   "Rower Sprints (30s on / 60s off)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Quads, Glutes, Lats, Rhomboids & VO2 Max Conditioning",
     setup: "Damper set to 4–6. Straps secured across widest part of foot. Shins vertical at the catch.",
     cue: "Drive legs first (60%), swing hips (20%), pull arms to lower ribs (20%). Explode for 30s, glide for 60s.",
@@ -763,6 +837,7 @@ export const MOVEMENT_INTEL = {
   },
   "Side-Lying DB External Rotation": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Infraspinatus & Teres Minor (Posterior Rotator Cuff)",
     setup: "Lie on side on mat or bench holding light dumbbell (5-10 lbs). Upper arm pinned to side with rolled towel.",
     cue: "Rotate forearm up toward ceiling, pause 1s at top contraction, and control 3s descent across abdomen.",
@@ -770,6 +845,7 @@ export const MOVEMENT_INTEL = {
   },
   "Hinged Isometric-Core Alternating Chest Press (41\" Loop)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Pectorals, Anterior Deltoids, Serratus Anterior, Triceps & Isometric Posterior Chain",
     setup: "Wrap a light-to-medium 41\" loop band flat across your upper back/shoulder blades and under your armpits, holding both loop ends in your hands. Take a wide athletic hip-hinge stance (~45° torso angle) with knees softly bent and core braced.",
     cue: "Hold your hip hinge and spine completely motionless while alternating punching/pressing one hand forward to full lockout while retracting the opposite hand back to your ribcage in a crisp, rhythmic cadence.",
@@ -777,6 +853,7 @@ export const MOVEMENT_INTEL = {
   },
   "Single-Arm DB Suitcase Carry": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadratus Lumborum (QL), External Obliques, Glute Medius & Grip",
     setup: "Hold single dumbbell (up to 50-65 lbs) in one hand. Opposite hand in fist or guard.",
     cue: "Walk with tall, upright posture. Keep shoulders and hips dead level resisting all lateral flexion pull.",
@@ -784,6 +861,7 @@ export const MOVEMENT_INTEL = {
   },
   "Single-Arm DB Suitcase Carry (AMRAP Laps to Failure)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadratus Lumborum (QL), Obliques, Forearm Grip & Traps",
     setup: "Hold heavy DB in one hand. Stand tall with neutral spine and core braced.",
     cue: "Walk paced laps with zero lateral lean until grip or lateral oblique stability reaches failure. Switch sides.",
@@ -791,6 +869,7 @@ export const MOVEMENT_INTEL = {
   },
   "Single-Arm Iso-Lateral Pulldown": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Teres Major, Lower Trapezius & Core Anti-Lateral Flexion",
     setup: "Lock your thighs snugly under the knee pad. Grip one independent pulldown arm with a neutral or semi-supinated palm while bracing your non-working hand firmly against the seat frame or thigh pad.",
     cue: "Let the independent arm stretch your lat fully at the top without shrugging your shoulder to your ear, then drive your elbow straight down in front of your shoulder plane into your hip pocket. Hold 1s at the bottom.",
@@ -798,14 +877,15 @@ export const MOVEMENT_INTEL = {
   },
   "Single-Leg Glute Bridge Isometric Hold (30s/side)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Gluteus Maximus, Hamstrings & Posterior Pelvic Stabilizers",
     setup: "Lie flat on your back with one heel planted firmly on the floor close to your glutes and the opposite knee pulled gently toward your chest.",
     cue: "Drive through your planted heel to lift your hips into full extension, squeeze your glute hard, and hold rock-solid at the top for 30 seconds per side without letting your pelvis tilt.",
     safety: "Keep your ribs tucked down and push through your heel rather than hyperextending your lower back."
   },
-
   "DB Bulgarian Split-Squat Bottom Isometric Hold (30s/side)": {
     type: "Compound",
+    contraction: "Isometric",
     muscles: "Quadriceps, Gluteus Maximus, Adductors & Ankle/Hip Balance Stabilizers",
     setup: "Stand 2 feet in front of a bench with your rear shoelaces resting on the pad behind you (stand near a rack upright or wall for fingertip balance support). Hold light dumbbells at your sides or perform bodyweight.",
     cue: "Lower slowly into a split squat until your rear knee hovers 2–3 inches above the floor and your front shin is vertical, then freeze completely at the bottom for 30 seconds per side.",
@@ -813,6 +893,7 @@ export const MOVEMENT_INTEL = {
   },
   "Single-Leg Box Squat (Strict 3s Pause)": {
     type: "Compound",
+    contraction: "Eccentric",
     muscles: "Quadriceps, Glute Max & Glute Medius (Knee Tracking)",
     setup: "Stand on one leg facing away from hotel bed or sturdy chair. Opposite leg extended forward.",
     cue: "Descend under strict control to sit on bed/chair. Pause 3 full seconds with zero momentum, then drive through mid-foot to stand.",
@@ -820,6 +901,7 @@ export const MOVEMENT_INTEL = {
   },
   "Single-Leg Glute Bridge (12r/side)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Gluteus Maximus & Hamstrings (Unilateral)",
     setup: "Lie supine on back, one knee bent with foot flat on floor, opposite leg extended straight or tucked to chest.",
     cue: "Drive through grounded heel and contract working glute hard to bridge hips into alignment. Hold 1s peak squeeze.",
@@ -827,6 +909,7 @@ export const MOVEMENT_INTEL = {
   },
   "Stationary Bike (Zone 2 Cadence)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Quadriceps, Hamstrings & Low-Impact Aerobic Base",
     setup: "Seat height adjusted so knee has a slight 10–15° bend at the bottom of pedal stroke.",
     cue: "Maintain smooth cadence of 80–90 RPM at moderate resistance. Nasal breathing focus.",
@@ -834,6 +917,7 @@ export const MOVEMENT_INTEL = {
   },
   "Stationary Bike Surge Intervals": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Quadriceps, Glutes, Calves & Anaerobic Threshold",
     setup: "Bike seat set so knee has slight 10-15 degree bend at pedal stroke bottom. Gear/resistance set to 8-10.",
     cue: "Pedal at high cadence (100+ RPM) during 30s surge interval, then cruise at 60 RPM during 60s recovery.",
@@ -841,6 +925,7 @@ export const MOVEMENT_INTEL = {
   },
   "Suitcase Carry (Single-Arm)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadratus Lumborum (QL), Obliques, Traps & Forearm Grip",
     setup: "Hold single DB at side. Shoulders pulled back and level.",
     cue: "Take crisp, controlled paces with zero torso tilt. Pure lateral trunk stability.",
@@ -848,6 +933,7 @@ export const MOVEMENT_INTEL = {
   },
   "Suitcase DB Squat": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps, Glutes, Traps & Core Stabilizers",
     setup: "Hold dumbbells at your sides like suitcases. Feet shoulder-width, toes slightly out.",
     cue: "Break at knees and hips simultaneously. Stay upright, tracking knees over second toes.",
@@ -855,6 +941,7 @@ export const MOVEMENT_INTEL = {
   },
   "Supported Reverse Lunge (Rack/Wall)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps & Gluteus Maximus (Lead Leg)",
     setup: "Stand tall, one hand lightly touching rack or wall for balance support. Working foot planted firmly.",
     cue: "Step opposite leg back, drop knee to 1 inch off floor keeping front shin vertical. Drive through front heel to stand.",
@@ -862,6 +949,7 @@ export const MOVEMENT_INTEL = {
   },
   "Supported Romanian Deadlift (Heavy DBs)": {
     type: "Compound",
+    contraction: "Eccentric",
     muscles: "Hamstrings & Gluteus Maximus (Primary) • Lats & Spinal Erectors (Brace)",
     setup: "Stand tall, feet hip-width, holding dumbbells at sides/thighs. Soft knees, lats packed tight.",
     cue: "Hinge hips backward toward the wall like closing a car door with your glutes. Shave dumbbells down along your shins.",
@@ -869,6 +957,7 @@ export const MOVEMENT_INTEL = {
   },
   "Supported Romanian Deadlift (RDL)": {
     type: "Compound",
+    contraction: "Eccentric",
     muscles: "Hamstrings & Gluteus Maximus (Unilateral Hinge)",
     setup: "Light hand on rack or bench for balance, opposite hand holding dumbbell.",
     cue: "Hinge single hip backward in a strict straight plane. Keep spine locked in neutral.",
@@ -876,38 +965,39 @@ export const MOVEMENT_INTEL = {
   },
   "Seated DB Wrist Curl & Reverse Wrist Curl Superset": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "[ISOLATION // TENDON & FOREARM 12–15r] Wrist Flexors, Extensors & Common Elbow Tendons",
     setup: "Sit on a flat bench with forearms resting flat along your thighs and wrists hanging just past your kneecaps, holding light dumbbells (8–15 lbs).",
     cue: "Perform 12–15 palm-up wrist curls with a strict 3-second lowering, then immediately flip palms face-down for 12–15 reverse wrist curls with the same 3-second eccentric.",
     safety: "Keep forearms glued to your thighs—move strictly at the wrist joint without lifting your elbows."
   },
-
   "Bravo Low-Cable Reverse Curl (Pronated Forearms)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "[ISOLATION // TENDON & BRACHIORADIALIS 12–15r] Brachioradialis, Wrist Extensors & Lateral Elbow Tendon",
     setup: "Set a single Bravo pulley to its lowest notch with a straight bar or short handle. Stand facing the column with palms facing down (pronated) and elbows pinned to your ribs.",
     cue: "Curl your knuckles upward toward your shoulders while keeping wrists flat and neutral, pause 1s at the top, and lower over a strict 3-second eccentric.",
     safety: "Do not let your wrists bend backward under load or flare your elbows away from your sides."
   },
-
   "4-Way Isometric Neck Stabilization": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "[STABILIZER // CERVICAL ISOMETRIC 8–10s/dir] Deep Cervical Flexors, Extensors & Sternocleidomastoid",
     setup: "Sit or stand tall with chin gently tucked and head stacked neutrally over your shoulders. Place one palm (or folded towel) against your forehead, back of head, or temple.",
     cue: "Press your head gently into your resisting hand at ~30%–40% effort without letting your head move—hold 8–10 seconds each in flexion (front), extension (back), left lateral, and right lateral.",
     safety: "Never crank or jerk the neck; keep resistance smooth, submaximal, and completely pain-free."
   },
-
   "41\" Loop Band Overhead Slam / Chop": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "[POWER // EXPLOSIVE 6–8r] Lats, Anterior Core, Triceps & Hip Extensors",
     setup: "Anchor a light-to-medium 41\" loop band high on a rack/door or stand on the center of the loop and grip the top overhead with both hands.",
     cue: "Reach tall with ribs braced, then snap hips back and drive hands forcefully downward toward the floor in a fast, controlled chopping arc.",
     safety: "Keep spine neutral and hinge from the hips rather than rounding your lower back at the bottom."
   },
-
   "Single-Leg Terminal Knee Extension (TKE)": {
     type: "Isolation",
+    contraction: "Concentric",
     muscles: "[ISOLATION // VMO & PATELLAR TENDON 15–20r] Vastus Medialis Oblique (VMO) & Patellar Tendon",
     setup: "Loop a 41\" band around a sturdy low post or door anchor. Step one leg inside the loop with the band seated directly behind the knee crease and step back to tension.",
     cue: "With heel planted and knee bent ~20°, squeeze your inner quad hard to straighten the knee completely for a 1-second hold, then control the return.",
@@ -915,6 +1005,7 @@ export const MOVEMENT_INTEL = {
   },
   "Tall-Kneeling Pallof Hold": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Transverse Abdominis, Internal/External Obliques & Glutes",
     setup: "Kneel tall on both knees perpendicular to cable or band. Lock glutes hard.",
     cue: "Press handle straight out in front of chest and hold statically resisting all rotational torque.",
@@ -922,6 +1013,7 @@ export const MOVEMENT_INTEL = {
   },
   "Tall-Kneeling Pallof Hold (20s)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Transverse Abdominis, Internal/External Obliques & Glutes",
     setup: "Kneel tall on both knees perpendicular to cable or band. Lock glutes hard.",
     cue: "Press handle straight out in front of chest and hold statically for 20 seconds resisting all rotation.",
@@ -929,6 +1021,7 @@ export const MOVEMENT_INTEL = {
   },
   "Tempo Push-Up (3-0-1 Pause)": {
     type: "Compound",
+    contraction: "Eccentric",
     muscles: "Pectorals, Anterior Deltoids, Triceps & Core Plank",
     setup: "Hands placed slightly outside shoulder-width on floor or hotel desk/bed edge. Rigid core plank.",
     cue: "Descend smoothly over 3 full seconds. Pause 1 second with chest 1 inch off surface. Explode up to lockout in 1s.",
@@ -936,6 +1029,7 @@ export const MOVEMENT_INTEL = {
   },
   "Tibialis Wall Raises": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Tibialis Anterior (Front Shin) & Ankle Dorsiflexors",
     setup: "Stand with back and butt against a smooth wall, heels placed 12-14 inches out in front.",
     cue: "Pull toes and forefeet hard toward shins, flex anterior tibialis for 1s pause at peak, then lower controlled.",
@@ -949,110 +1043,111 @@ export const MOVEMENT_INTEL = {
   // --- SQUATS & LOWER BODY COMPOUND ---
   "Mini-Band Tension Squat": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps, Gluteus Medius (Lateral Torque) & Glute Max",
     setup: "MINI-BAND: Loop 2 inches ABOVE the knee joints (around distal quads, never on kneecap). 41\" LOOP: Step both feet onto the bottom loop and bring the top loop across your front shoulders/clavicles.",
     cue: "Screw heels into the floor and actively drive knees outward against the band throughout descent and ascent. Maintain constant lateral torque on the gluteus medius.",
     safety: "Do not let the band cave your knees inward (valgus collapse). If knees buckle at bottom, drop down to a lighter band."
   },
-
   "41\" Loop Band Romanian Deadlift": {
     type: "Compound",
+    contraction: "Eccentric",
     muscles: "Hamstrings & Gluteus Maximus (Primary) • Lats & Core Brace (Zero Lumbar Flexion)",
     setup: "Stand with mid-foot of both feet on the bottom of a heavy 41\" loop band (choke up by grabbing lower on the side strands to increase starting tension). Hinge down with a flat spine and grip both strands at shin height.",
     cue: "Drive hips straight back into the wall behind you until hamstrings are fully loaded. Push the floor away through your heels and snap hips forward with glutes—never pull with your lower back.",
     safety: "Do not round the lumbar spine to reach lower. Stop descending the instant your hips stop moving backward (usually just below the knee)."
   },
-
   "Banded B-Stance Deadlift": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Hamstrings & Glute Max (Lead Leg) • Core & Lats",
     setup: "Loop a 41\" band under the arch of your working front foot. Kickstand your non-working rear foot 6 inches behind with heel elevated. Grip both band loops at knee level.",
     cue: "Place 85% of bodyweight on front heel. Push front hip straight back while keeping spine locked, driving through front heel to stand.",
     safety: "Do not transfer load to the kickstand rear foot. Keep lower back flat and ribs braced."
   },
-
   "Heavy Banded Spanish Squat": {
     type: "Compound",
+    contraction: "Isometric",
     muscles: "Quadriceps / VMO (Primary, 100% Patellar-Sparing)",
     setup: "Loop a heavy 41\" loop band around a sturdy low post or door hinge anchor. Step both legs inside the loop so the band sits directly in the crease BEHIND your knees (popliteal crease). Step back until taut.",
     cue: "Keep torso upright and shins vertical. Squat down to parallel as if sitting back into a chair, then drive knees backward against the band at the top to lock out the quads.",
     safety: "Do not lean torso forward. Maintain upright chest posture so the horizontal band vector relieves the patellar tendon."
   },
-
   "Banded Dual-Loop Suitcase Squat": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps, Glutes, Upper Traps & Core Wall",
     setup: "Stand on the center of a 41\" loop band with feet hip-width apart. Grip the left and right loop ends down at your sides like two heavy suitcases.",
     cue: "Chest tall, brace core tight. Squat straight down between hips while holding band ends at sides; drive floor away to lockout.",
     safety: "Do not let the band pull shoulders into a forward hunch. Retract shoulder blades and keep traps engaged."
   },
-
   "Banded Goblet Squat (Tempo 3-0-1)": {
     type: "Compound",
+    contraction: "Eccentric",
     muscles: "Quadriceps, Gluteus Maximus & Thoracic/Core Stabilizers",
     setup: "Stand inside a 41\" loop band with feet shoulder-width. Pull the top of the loop up and rest it across your collarbones/front shoulders, holding it at chest height like a goblet.",
     cue: "Control descent for a strict 3-second count, keeping elbows inside knees. Explode up to standing lockout in 1 second.",
     safety: "Never loop the band behind your neck/cervical spine—always hold it in front across the clavicles and front delts."
   },
-
   "Banded Bulgarian Split Squat": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps & Gluteus Maximus (Lead Leg) • Glute Medius",
     setup: "Step your lead front foot onto the bottom of a 41\" loop band. Elevate your rear foot on a bench, chair, or bed behind you. Hold the top loop at your sides or front-racked across your shoulders.",
     cue: "Descend into front hip and quad, keeping front knee tracking over second toe. Drive through front mid-foot and heel to return to top.",
     safety: "Keep torso slightly forward-hinged to load the glute and spare the lumbar. Do not let lead knee collapse inward."
   },
-
   "Double-Band Front Squat (Tempo)": {
     type: "Compound",
+    contraction: "Eccentric",
     muscles: "Quadriceps, Glutes & Upper Back / Thoracic Erectors",
     setup: "Stand with both feet on one or two 41\" loop bands. Pull the top loops up over your front deltoids into a front-rack position, crossing arms or holding bands at collarbone level.",
     cue: "Lower over a controlled 3s tempo, keeping elbows pointed forward. Drive out of the hole smoothly against the ascending elastic tension.",
     safety: "If elbows drop, the upper back will round. Keep chest proud and elbows up throughout all reps."
   },
-
   "Banded Glute Bridge / Thrust": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Gluteus Maximus (Primary) & Gluteus Medius (Abduction)",
     setup: "MINI-BAND: Loop 2 inches above knees. 41\" LOOP: Lie on your back with knees bent, drape the center of the 41\" band across your hip crease, and pin both loop ends under the soles/heels of your shoes.",
     cue: "Drive through heels to bridge hips to full extension against the band tension across your lap while keeping knees pushed slightly outward. Hold 2s at top.",
     safety: "Chin tucked, ribs down—finish with glute squeeze, not lower back hyperextension."
   },
-
   "Single-Leg Banded RDL (Wall Supported)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Hamstrings & Glute Max/Medius (Unilateral)",
     setup: "Step your working front foot onto one end of a 41\" loop band. Place your inside hand lightly on a wall for balance, and grip the top loop in your opposite hand at thigh level.",
     cue: "Hinge your free leg straight back in line with your torso until you feel a deep hamstring stretch on the standing leg, then drive through the heel to stand.",
     safety: "Keep hips square to the floor and spine flat—never round your lower back to reach lower."
   },
-
   "Mini-Band Single-Leg Glute Bridge": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Gluteus Maximus & Gluteus Medius (Unilateral)",
     setup: "MINI-BAND: Loop 2 inches ABOVE both knees. 41\" LOOP: Drape across hip crease and pin both ends under your planted working foot. Lie flat on back with opposite knee held at 90°.",
     cue: "Keep the raised knee pulled back against the band while driving the planted heel into the floor to bridge hips up. Hold 1s at lockout.",
     safety: "Keep pelvis level; do not let the unweighted hip drop toward the floor."
   },
-
   "Banded Reverse Lunge": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps & Gluteus Maximus (Lead Leg)",
     setup: "Stand on one end of a 41\" loop band with your LEAD front foot only. Loop the other end over your front shoulders (front-rack) or hold the loop ends at your sides.",
     cue: "Step your free leg straight back into a lunge, lowering over 3 seconds until the front thigh is parallel. Drive through the front heel to stand.",
     safety: "Keep front shin nearly vertical and knee tracking over the second toe."
   },
-
   "Banded Terminal Knee Extension (TKE)": {
     type: "Isolation",
+    contraction: "Concentric",
     muscles: "Vastus Medialis Oblique (VMO / Inner Quad)",
     setup: "Loop a 41\" band around a sturdy low post or door bottom anchor. Step working leg inside loop with band resting directly behind the knee crease (never on kneecap). Step back to tension.",
     cue: "Start with heel down and knee softly bent. Contract vastus medialis (VMO) to drive knee back into a locked-out extension against band resistance.",
     safety: "Do not hyperextend the knee past neutral alignment. Focus on active muscular squeeze rather than slamming the joint."
   },
-
   "Banded Terminal Knee Extension (TKE) (High-Rep)": {
     type: "Isolation",
+    contraction: "Concentric",
     muscles: "Vastus Medialis Oblique (VMO / Inner Quad) & Patellar Tendon",
     setup: "Loop a 41\" band around a sturdy low post or door bottom. Step working leg inside the loop so the band sits directly in the crease behind your knee. Step back until taut.",
     cue: "With heel planted and knee slightly bent (20°), squeeze the quad hard for 1s to straighten the knee for 20 rhythmic reps.",
@@ -1062,86 +1157,87 @@ export const MOVEMENT_INTEL = {
   // --- PRESSES & UPPER BODY PUSH ---
   "Banded Floor Press (Back-Looped)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Pectorals, Triceps Brachii & Anterior Deltoids",
     setup: "Lie flat on floor. Thread a 41\" loop band flat across your upper back/shoulder blades (under your armpits). Hook thumbs/palms inside both loop ends.",
     cue: "Lower triceps until elbows lightly touch the floor at 45° to torso. Press explosively to full elbow lockout against peak band resistance.",
     safety: "Do not let elbows flare 90° out to sides. Keep scaps retracted and pinched together against the floor throughout."
   },
-
   "Banded Push-Up (Tempo 3-0-1)": {
     type: "Compound",
+    contraction: "Eccentric",
     muscles: "Pectorals, Anterior Deltoids, Triceps & Serratus Anterior",
     setup: "Wrap a 41\" loop band flat across your upper back/shoulder blades. Loop thumbs through both ends and plant palms flat on floor in a standard push-up plank.",
     cue: "Lower chest to 1 inch off floor over 3 full seconds. Explode up to full lockout in 1 second, punching shoulder blades forward at top.",
     safety: "Ensure band lies flat across shoulder blades so it doesn't slide up toward the neck during reps."
   },
-
   "Incline Push-Up with Light Band Resistance": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Mid/Lower Pectorals, Anterior Deltoids & Triceps",
     setup: "Wrap a light 41\" loop band across your upper back/shoulder blades, loop ends over thumbs, and place hands on an elevated bench, bed, or desk.",
     cue: "Lower chest to the edge of the bench over 3 seconds with elbows at 45°, then press to full lockout.",
     safety: "Maintain a straight plank line from ears to ankles; do not let hips sag."
   },
-
   "Low-Anchor Incline Band Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Upper Pectorals (Clavicular Head), Anterior Delts & Triceps",
     setup: "Secure door anchor at the VERY BOTTOM of the door. Clip handles to tubes. Face away from door, step forward into a staggered stance, and bring handles to clavicles.",
     cue: "Press hands forward and UPWARD at a 30°–45° incline angle. Squeeze upper clavicular pecs hard at extension, then control handles back over 3 seconds.",
     safety: "Keep core braced and hips square. Do not arch lower back to compensate for the upward pressing vector."
   },
-
   "Low Door-Anchor Half-Kneeling Band Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Upper Pectorals, Anterior Deltoid, Serratus & Core Anti-Rotation",
     setup: "Anchor tube at BOTTOM of door. Kneel on one knee facing AWAY from the door (working-arm side knee down on floor) holding the handle at your collarbone.",
     cue: "Press the handle forward and upward at a 45° landmine angle to full lockout while keeping ribs braced.",
     safety: "Squeeze the glute of the down knee so your lower back never hyperextends."
   },
-
   "Mid-Anchor Standing Converging Band Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Sternal Pectorals, Anterior Deltoids & Triceps",
     setup: "Anchor handled tube set at MID-CHEST height. Face away from door, step into a staggered stance until tubes are pre-stretched.",
     cue: "Press horizontally forward, allowing hands to converge inward until knuckles touch at peak contraction. Squeeze inner pecs hard for 1 full second.",
     safety: "Do not step too far forward where band snapback yanks shoulders backward at bottom. Maintain active control."
   },
-
   "Mid-Anchor Half-Kneeling Single-Arm Band Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Pectorals, Anterior Deltoid, Serratus & Obliques (Anti-Rotation)",
     setup: "Anchor tube at MID-CHEST height. Kneel on one knee facing AWAY from the door (working-side knee down) holding handle at front shoulder.",
     cue: "Press horizontally straight out from sternum while resisting the band's pull to twist your shoulders backward.",
     safety: "Keep both shoulders square to the front wall throughout."
   },
-
   "Door-Anchor Banded Chest Fly": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Pectoralis Major (Sternal & Inner Fibers) & Anterior Deltoids",
     setup: "Anchor handled tubes at chest height. Face away from door in a staggered stance, arms outstretched to sides with slight soft elbow bend.",
     cue: "Hug a giant tree trunk: bring handles together in front of sternum in a wide sweeping arc. Squeeze pecs for 1 second at center.",
     safety: "Never let elbows hyperextend or travel behind the plane of your shoulders during the backward stretch."
   },
-
   "41\" Loop Band Upright Row (Stand-on-Loop)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Lateral Deltoids, Upper Trapezius & Brachialis",
     setup: "Stand tall with both feet hip-width on the center of a 41\" loop band (Blue, Green, or Purple). Grip the top loop with hands shoulder-width apart in front of your thighs.",
     cue: "Lead with your elbows, pulling them high and wide toward shoulder height while keeping the band close to your torso. Pause 1s at the collarbone, then lower over 3 seconds.",
     safety: "Stop elbows at shoulder height and keep hands at least shoulder-width apart—narrow grips or pulling above the clavicles can impinge the rotator cuff."
   },
-  
   "Banded Overhead Press (Stand-on-Loop)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Anterior & Lateral Deltoids, Triceps & Upper Traps",
     setup: "Stand on bottom of 41\" loop band with both feet (or drop to one knee in half-kneeling if band tension is too heavy standing). Bring top loop to collarbones with palms facing in or forward.",
     cue: "Press vertically overhead in the natural scapular plane (slightly in front of ears). Lock arms out overhead while bracing glutes and abs.",
     safety: "Do not hyper-extend lumbar spine to push the weight up. Keep ribcage clamped down to pelvis."
   },
-
   "Banded Pike Push-Up": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Anterior Deltoids, Upper Pecs, Triceps & Posterior Cuff",
     setup: "MINI-BAND: Loop around BOTH WRISTS. 41\" LOOP: Wrap over upper back/shoulders and pin ends under palms. Assume an inverted-V downward-dog pike with hips high.",
     cue: "Lower top of head toward the floor slightly in front of your hands on a diagonal vector. Push through shoulders back into high hip pike.",
@@ -1151,102 +1247,103 @@ export const MOVEMENT_INTEL = {
   // --- PULLS & UPPER BODY ROW ---
   "High Door-Anchor Band High Row": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Rhomboids, Mid-Traps & Rear Deltoids",
     setup: "Anchor handled tubes at the TOP of the door frame. Sit on floor or kneel tall facing the door, grabbing handles with palms facing down or neutral.",
     cue: "Pull elbows high and wide (flared 45°–60°) toward collarbones/upper ribs. Squeeze rear delts, traps, and upper lats hard at peak contraction.",
     safety: "Do not thrust head forward to meet handles. Keep chin tucked and neck neutral."
   },
-
   "High Door-Anchor Dual-Handle Lat Pulldown": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Teres Major, Lower Traps & Biceps",
     setup: "Anchor handled tubes at the TOP of the door frame. Kneel tall on both knees facing the door (3–4 feet back) with arms extended overhead holding handles.",
     cue: "Drive elbows straight down toward your hip pockets, leading with the elbows. Hold a 1s contraction at ribcage, then control the 3s eccentric stretch overhead.",
     safety: "Do not swing backward using momentum. Maintain a tall upright torso with braced abs."
   },
-
   "High-Anchor Kneeling Lat Pulldown": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Teres Major & Lower Traps",
     setup: "Anchor handled tubes at the TOP of the door frame. Kneel on both knees facing the door, arms extended overhead at a 45° angle.",
     cue: "Depress shoulder blades first, then drive elbows down and back into your front hip pockets, pausing 1s at the bottom.",
     safety: "Keep ribcage clamped down so your lower back doesn't arch as your arms extend overhead."
   },
-
   "High Door-Anchor Half-Kneeling Pulldown": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi (Unilateral), Lower Traps & Core Anti-Lateral Flexion",
     setup: "Anchor tube at TOP of door. Take a half-kneeling stance facing the door (right knee down, left foot forward) and grab the handle with your right hand.",
     cue: "Pull elbow straight down toward your right ribcage while keeping torso tall and square.",
     safety: "Do not twist or lean sideways toward the door during the pull."
   },
-
   "Door-Anchor Seated/Incline Band Row": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Rhomboids & Mid-Traps",
     setup: "Anchor tubes at mid-chest or belly-button height. Sit tall on floor (legs braced) or kneel facing the door, holding handles with neutral palms-facing grip.",
     cue: "Retract shoulder blades first, then drive elbows back tight against the ribcage. Pause 1 full second at peak retraction.",
     safety: "Do not let shoulders roll forward at peak pull. Keep chest proud and scaps depressed."
   },
-
   "Mid Door-Anchor Dual-Handle Band Row": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Mid-Traps, Rhomboids, Latissimus Dorsi & Rear Delts",
     setup: "Anchor handled tubes at MID-CHEST height in the door. Stand in an athletic quarter-squat stance facing the door with core braced.",
     cue: "Initiate by pinching shoulder blades together, then pull handles to lower ribs. Hold 1s squeeze before a 3s controlled return.",
     safety: "Keep shoulders down away from ears and torso stationary—zero lower back swinging."
   },
-
   "Single-Arm Resisted Doorframe Row": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Rhomboids, Rear Delts & Biceps",
     setup: "Anchor a single tube at waist/rib height in the door. Stand in a staggered athletic stance facing the door and grip the handle with one hand.",
     cue: "Row handle to hip pocket while driving shoulder blade back, holding a strict 2-second isometric pause at the ribs.",
     safety: "Keep hips and shoulders square to the door; resist all torso rotation."
   },
-
   "Prone Banded Straight-Arm Lat Pull": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Teres Major & Long Head of Triceps",
     setup: "Anchor a tube at MID or TOP door height. Stand hinged forward at 45° (or lie prone facing door) with arms extended straight overhead holding handles.",
     cue: "Keeping elbows locked straight, sweep hands down toward your thighs in a wide arc using purely your lats. Hold 1s at hips.",
     safety: "Keep neck neutral and core braced so your lower back never arches."
   },
-
   "Door-Anchor Band Face Pulls": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Rear Deltoids, Infraspinatus, Teres Minor & Mid/Lower Traps",
     setup: "Anchor handled tubes at EYE LEVEL. Step back to pre-tension band, holding handles with thumbs pointing backward.",
     cue: "Pull hands toward ears/temples while flaring elbows high and wide. Rotate forearms back into a 'double-bicep' pose at the finish.",
     safety: "Keep neck relaxed and traps down. Do not shrug upper traps up to ears."
   },
-
   "Banded Rear Delt Fly / Pull-Apart": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Posterior Deltoids, Rhomboids & Mid-Traps",
     setup: "Hold a light 41\" loop band (Single strand of Blue or Green) or anchored tubes at shoulder height with arms straight out in front of chest.",
     cue: "Pull hands horizontally apart until the band touches your sternum. Squeeze rear delts and mid-traps hard for 2 seconds before returning.",
     safety: "Do not bend elbows to turn it into a row. Keep arms straight with a soft elbow lock."
   },
-
   "Banded External Rotations (Elbow-Pinned)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Infraspinatus & Teres Minor (Posterior Rotator Cuff)",
     setup: "Anchor light tube at elbow height. Stand perpendicular to door. Tuck a small rolled towel between your working (outside) elbow and ribcage.",
     cue: "Keep elbow pinned at 90° against the towel. Rotate forearm outward away from your body using the posterior rotator cuff.",
     safety: "Zero shoulder shrugging or torso rotation. The movement is isolated purely to the humeral rotator cuff."
   },
-
   "Side-Lying Banded External Rotation": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Infraspinatus & Teres Minor (Posterior Rotator Cuff)",
     setup: "MINI-BAND: Loop around both wrists. 41\" LOOP: Pin one end under your bottom hand on the floor. Lie on your side with top elbow pinned to your ribs at 90°.",
     cue: "Rotate the top forearm upward toward the ceiling against the band resistance, keeping your elbow glued to your ribs. Pause 1s at top.",
     safety: "Do not roll your torso backward to fake extra range of motion."
   },
-
   "Mini-Band Scapular Y-T-W Raises": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Lower/Mid Traps, Rhomboids & Posterior Rotator Cuff",
     setup: "MINI-BAND: Loop around BOTH WRISTS. 41\" LOOP: Stand on one end and hold the top strand in both hands hinged at 45°. Lie face down on floor with thumbs up.",
     cue: "Maintain gentle outward wrist tension on the band while lifting arms into a Y, T, and W pattern, holding each top squeeze for 1 second.",
@@ -1256,70 +1353,71 @@ export const MOVEMENT_INTEL = {
   // --- HIPS, LOCOMOTION & POSTERIOR CHAIN ---
   "Mini-Band Lateral Monster Walk": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Gluteus Medius, Gluteus Minimus & Tensor Fasciae Latae (TFL)",
     setup: "MINI-BAND: Loop around BOTH ANKLES (or 2 inches above knees). 41\" LOOP: Step both feet onto the bottom loop, cross the band in an 'X' in front of your shins, and hold the top loop pulled taut at your hips.",
     cue: "Assume a quarter-squat stance. Take slow lateral steps, pushing outward from the glute of the trailing leg while keeping constant tension on the band.",
     safety: "Never let feet come all the way together. Keep knees stacked over ankles; do not let knees cave inward."
   },
-
   "Banded Resisted March in Place (Mini-Band on Shoes)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Hip Flexors / Iliopsoas, Lower Abdominals & Stance-Leg Glute Medius",
     setup: "MINI-BAND: Loop around the balls/arches of BOTH SHOES (over the laces). 41\" LOOP: Loop under the arches of both shoes and hold the top loop taut at waist height (or loop over one shoulder).",
     cue: "Stand tall and march in place, driving the lead knee up to 90° hip height while the planted foot pins the other side of the band to the floor. Hold 1s at top.",
     safety: "Keep torso tall and spine rigid. Do not lean backward or tuck pelvis as the knee drives upward."
   },
-
   "Low Door-Anchor Standing Band Adduction": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Inner Thigh / Hip Adductors (Adductor Magnus, Longus & Gracilis)",
     setup: "Secure door anchor at BOTTOM of door. Fasten ankle cuff (or loop band) around your INNER ankle (leg closest to door). Step out to create tension and hold a wall/chair for balance.",
     cue: "Sweep working leg across the centerline of your body in front of your standing leg. Squeeze inner thigh hard for 1s, then control the 3s return.",
     safety: "Keep pelvis level and square. Do not tilt torso sideways to cheat the range of motion."
   },
-
   "Low Door-Anchor Prone Band Hamstring Curl": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Hamstrings (Biceps Femoris & Semitendinosus)",
     setup: "Secure anchor at BOTTOM of door. Fasten ankle straps (or loop band) around both ankles. Lie face down on floor with head away from door, legs extended until band is taut.",
     cue: "Curl heels up toward glutes against band resistance. Squeeze hamstrings hard at 90°+, then lower slowly over 3 seconds.",
     safety: "Keep hips and pelvis pressed firmly into floor. Do not arch lower back to pull heels up."
   },
-
   "Low Door-Anchor Band Pull-Through": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Gluteus Maximus & Hamstrings (Spine-Sparing Hip Hinge)",
     setup: "Anchor tube or 41\" loop at VERY BOTTOM of door. Face away from door, straddle the band with feet wider than shoulders, and reach between legs to grip handles/loop.",
     cue: "Walk forward until taut. Hinge hips straight back toward the door with a flat spine, then snap hips forward to standing lockout, clenching glutes at top.",
     safety: "The pull comes 100% from hip extension—keep your arms straight like ropes and never pull with your lower back."
   },
-
   "Single-Leg Balance & Foot-Tripod Hold (30s/side)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "[STABILIZER // PROPRIOCEPTION 30s/side] Intrinsic Foot Muscles, Peroneals, Tibialis & Glute Medius",
     setup: "Stand next to a wall or rack upright so your fingertips can tap it instantly if needed. Root your big toe, pinky toe, and heel firmly into the floor ('foot tripod') with a soft 5° knee bend.",
     cue: "Lift your non-working foot 2 inches off the floor, fix your eyes on a stationary spot at eye level, and hold rock-steady for 30 seconds per side while keeping your pelvis level.",
     safety: "Keep a fingertip touchpoint ready against the wall—focus on quiet ankle micro-adjustments rather than fighting through a loss of balance."
   },
-
   "Serratus Wall Slide with Mini-Band": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "[STABILIZER // SCAPULAR CONTROL] Serratus Anterior, Lower Trapezius & Rotator Cuff",
     setup: "Loop a light mini-band around both wrists and stand facing a wall with forearms pressed vertically against the wall at shoulder width and elbows bent 90°.",
     cue: "Press your forearms gently into the wall to protract your shoulder blades around your ribcage, pull wrists slightly apart against the mini-band, and slide forearms smoothly upward into a 'Y'. Pause 2s at top.",
     safety: "Keep lower ribs tucked down and traps relaxed away from your ears—do not arch your lower back as your arms slide overhead."
   },
-
   "Copenhagen Side Plank Hold (Bent-Knee 20-30s)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "[STABILIZER // PELVIC & ADDUCTOR TENDON 20–30s] Adductor Longus/Magnus, Gracilis & Obliques",
     setup: "Lie on your side next to a flat bench with your bottom elbow stacked directly under your shoulder and your top knee/inner shin resting flat on the bench pad.",
     cue: "Press your top knee down into the bench to lift your hips and bottom leg off the floor into a rigid straight side-plank line. Hold motionless for 20–30 seconds per side.",
     safety: "Start with the bent-knee lever (knee on bench) rather than straight-leg ankle support to build groin tendon tolerance gradually without strain."
   },
-  
   "Resisted Banded Bear Crawl": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Serratus Anterior, Quads, Core Wall & Glute Medius",
     setup: "MINI-BAND: Loop around BOTH WRISTS (or 2 inches above knees). 41\" LOOP: Wrap across upper back/shoulders and pin both ends under palms. Hover knees 1 inch off floor.",
     cue: "Take slow, small cross-lateral steps forward and backward while pressing outward against the band.",
@@ -1329,110 +1427,111 @@ export const MOVEMENT_INTEL = {
   // --- CORE & TRUNK ARMOR ---
   "Banded Pallof Press": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Transverse Abdominis, Internal/External Obliques & Glute Medius",
     setup: "Anchor handled tube or 41\" loop at MID-CHEST height. Stand perpendicular to anchor with feet shoulder-width. Hold handle with both hands at sternum.",
     cue: "Press hands straight out in front of chest. Hold locked extension for 2 full seconds while fighting all rotational pull, then return to chest.",
     safety: "Zero hip twisting or lumbar rotation. Glutes and obliques stay locked as a solid pillar."
   },
-
   "Tall-Kneeling Banded Pallof Hold": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Internal/External Obliques, Transverse Abdominis & Glutes",
     setup: "Anchor tube or 41\" loop at CHEST height. Kneel tall on both knees perpendicular to the door, holding the handle with both hands at the center of your sternum.",
     cue: "Press hands straight out in front of chest and hold motionless against the sideways pull of the band.",
     safety: "Squeeze glutes and keep hips locked straight ahead—zero torso twisting."
   },
-
   "Tall-Kneeling Banded Pallof Hold (20s)": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Internal/External Obliques, Transverse Abdominis & Glutes",
     setup: "Anchor tube or 41\" loop at CHEST height. Kneel tall on both knees perpendicular to the door, holding the band at your sternum.",
     cue: "Press arms straight out and hold a rigid 20-second isometric anti-rotation brace on each side.",
     safety: "Do not lean into the band; stay stacked vertically over your knees."
   },
-
   "High Door-Anchor Kneeling Band Crunch": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Rectus Abdominis & External Obliques",
     setup: "Anchor handled tubes at the TOP of door frame. Kneel facing door (or facing away), holding handles pinned directly to collarbones/temples.",
     cue: "Curl ribcage down toward pelvis by flexing the abs. Keep hips motionless and squeeze abdominal wall hard at bottom.",
     safety: "Do not sit hips back onto heels to pull the handles down. Hips stay high so work is done purely by the rectus abdominis."
   },
-
   "High Door-Anchor Band Woodchoppers": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Internal/External Obliques, Transverse Abdominis & Serratus",
     setup: "Anchor handled tube at the TOP of door frame. Stand perpendicular to door with athletic stance. Grip handle with both hands overhead.",
     cue: "Chop handle diagonally across body down toward opposite knee/hip, pivoting rear foot and firing through obliques.",
     safety: "Initiate rotation from hips and thoracic spine, not by torquing the lower back."
   },
-
   "Banded Anti-Extension Deadbug": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Transverse Abdominis, Rectus Abdominis, Hip Flexors & Lats",
     setup: "MINI-BAND: Loop around the balls/arches of BOTH SHOES while lying on back with knees at 90°. 41\" LOOP: Anchor LOW behind your head and hold overhead with straight arms to lock lats.",
     cue: "Keep lower back glued flat to the mat while slowly extending one leg straight out against the band (while the other knee holds 90° to anchor the loop). Alternate sides.",
     safety: "If lower back arches off the mat at all, aim heel higher toward ceiling. Zero daylight under lumbar spine."
   },
-
   "Banded Hollow Body Hold": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Transverse Abdominis, Rectus Abdominis & Hip Flexors",
     setup: "MINI-BAND: Loop around arches of both feet (or ankles) to pull legs outward. 41\" LOOP: Anchor LOW behind head and grip overhead with straight arms.",
     cue: "Press lower back completely flat into the floor, lift shoulder blades and legs 6 inches off mat, and hold rigid tension for 30 seconds.",
     safety: "If your lower back loses contact with the floor, bend your knees slightly to shorten the lever."
   },
-
   "Single-Arm Banded Suitcase Isometric March": {
     type: "Compound",
+    contraction: "Isometric",
     muscles: "Quadratus Lumborum (QL), External Obliques & Glute Medius",
     setup: "Stand on the bottom of a heavy 41\" loop band with BOTH feet hip-width apart. Grip both strands of the top loop in ONE hand only down at your side like a heavy suitcase.",
     cue: "Stand dead vertical and perform slow marches in place (or hold single-leg balance) without letting the band pull your shoulders sideways.",
     safety: "Keep shoulders completely level. Resist all lateral bending toward the loaded hand."
   },
-
   "Single-Arm Banded Suitcase Hold / March": {
     type: "Compound",
+    contraction: "Isometric",
     muscles: "Quadratus Lumborum (QL), Obliques, Traps & Grip",
     setup: "Stand on the bottom of a heavy 41\" loop band with both feet hip-width. Grab the top loop with ONE hand only at thigh height.",
     cue: "Lock lats down, keep shoulders level, and hold a rigid anti-lateral-flexion brace (or slow march in place) for the prescribed duration.",
     safety: "Do not lean away to counterbalance the band—stand dead vertical."
   },
-
   "Banded Suitcase March": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadratus Lumborum (QL), Obliques & Hip Flexors",
     setup: "MINI-BAND: Loop around arches of both shoes. 41\" LOOP: Stand on bottom of band with both feet and hold top loop in ONE hand at your side like a suitcase.",
     cue: "March slowly in place, lifting knees against the band while keeping shoulders and pelvis completely level.",
     safety: "Keep spine tall and zero lateral torso sway on every step."
   },
-
   "Banded Overhead Waiter's Isometric March": {
     type: "Compound",
+    contraction: "Isometric",
     muscles: "Rotator Cuff, Lower Traps, Serratus & Deep Lateral Core (QL)",
     setup: "Stand on the bottom of a light 41\" loop band (Blue or Green) with both feet. Press the top loop straight overhead with ONE hand until your elbow is locked by your ear.",
     cue: "Keep bicep by your ear and ribs clamped down while performing slow controlled marches in place for 20–30s per side.",
     safety: "Do not flare ribs or arch the lower back to keep the arm overhead."
   },
-
   "High Door-Anchor Band Overhead Anti-Extension Hold": {
     type: "Compound",
+    contraction: "Isometric",
     muscles: "Rectus Abdominis, Transverse Abdominis, Lats & Serratus",
     setup: "Anchor tube or 41\" loop at TOP of door. Kneel tall on both knees facing AWAY from the door, holding the band with both hands locked overhead.",
     cue: "Pull ribs down toward belt buckle, clench glutes, and resist the band trying to pull your arms and spine backward into extension.",
     safety: "Zero lumbar arching. If your lower back arches, move closer to the door to reduce tension."
   },
-
   "Dynamic Banded Rotational Punch": {
     type: "Compound",
-    muscles: "Internal/External Obliques, Pectorals, Anterior Delt & Hip Rotators",
-    setup: "Anchor a tube or 41\" loop at MID-CHEST height. Stand perpendicular to the door in a wide athletic stance, holding the handle in the rear (outside) hand at shoulder height.",
-    cue: "Pivot the rear foot and hip forcefully to punch the handle across your body at shoulder height, then control the 3-second eccentric return.",
-    safety: "Generate rotation from the rear hip and thoracic spine—keep the lumbar spine braced and locked."
+    contraction: "Concentric",
+    muscles: "[POWER // EXPLOSIVE 6–8r] Obliques, Serratus Anterior, Pecs & Hip Rotators",
+    setup: "Anchor a light-to-medium handled tube at mid-chest height. Stand sideways to the anchor in an athletic split stance holding the handle at your rear shoulder.",
+    cue: "Pivot your back heel and snap your hips forward while punching the handle straight ahead at high speed, then control the return over 2 seconds.",
+    safety: "Drive the punch from hip and ribcage rotation—do not over-reach or hyperextend your elbow at lockout."
   },
-
   "Resisted McGill Curl-Up": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "Rectus Abdominis & Deep Trunk Stabilizers (Zero Lumbar Flexion)",
     setup: "Lie on your back with one knee bent and one leg straight, hands tucked under your lower back arch. Optional: hold a band anchored behind you across your collarbones.",
     cue: "Lift head and shoulders just 1–2 inches off the floor as a single rigid block (hinging at the thoracic sternum), hold 5–8 seconds, and lower.",
@@ -1442,81 +1541,80 @@ export const MOVEMENT_INTEL = {
   // --- CARDIO, CONDITIONING & METCON BAND PLACEMENT ---
   "Banded High-Knee March (Zone 2 Cadence)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Hip Flexors / Iliopsoas, Lower Abs & Stance-Leg Glute Medius",
     setup: "MINI-BAND: Loop around the balls/arches of BOTH SHOES (over the laces). 41\" LOOP: Anchor the band at ankle/bottom door height behind you, step inside the loop, and place the band around your waist/hips.",
     cue: "March at a steady Zone 2 cadence, driving alternating knees up to hip height (90°) against the band resistance with upright posture.",
     safety: "Keep torso tall and ribs stacked over pelvis. Do not lean backward as the knee drives up."
   },
-
   "Mini-Band Resisted High Knees (45s)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Hip Flexors, Lower Abdominals & Quadriceps",
     setup: "MINI-BAND: Loop around the arches/laces of BOTH SHOES (or 2 inches above knees). 41\" LOOP: Anchor low behind you and loop around your waist.",
     cue: "Drive knees up to 90° hip height in a crisp, continuous 45-second rhythm while keeping the planted foot firmly grounded to anchor the band.",
     safety: "Land softly on the mid-foot; do not let the downward band tension yank your foot into the floor."
   },
-
   "Banded Resisted Sprint Marches (30s/60s)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Hip Flexors, Glutes, Core & Anaerobic Conditioning",
     setup: "MINI-BAND: Loop around the arches/laces of both shoes (or 2 inches above knees). 41\" LOOP: Anchor at bottom of door behind you and loop around your waist/belt line.",
     cue: "Drive knees rapidly to 90° with aggressive arm swing for a 30s high-output surge, followed by 60s slow recovery walk.",
     safety: "Maintain slight forward athletic lean from the ankles—never round at the lumbar spine."
   },
-
   "Banded Power Marches (30s/60s)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Glute Medius, Hip Flexors & Anterior Core",
     setup: "MINI-BAND: Loop around the balls/laces of both shoes. 41\" LOOP: Stand inside loop and cross in an 'X' holding top ends at your hips (or loop around waist from low anchor).",
     cue: "Drive knees high and wide with deliberate 1-second isometric squeezes at the top of each step for 30s on, 60s off.",
     safety: "Keep standing leg locked through the glute so the pelvis never dips sideways."
   },
-
   "Mini-Band Mountain Climbers": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Hip Flexors, Rectus Abdominis & Serratus Anterior (Anti-Extension)",
     setup: "MINI-BAND: Loop around the arches/laces of BOTH SHOES. 41\" LOOP: Loop around waist anchored behind your feet. Place hands elevated on bed/bench or floor in a high plank.",
     cue: "Drive one knee toward chest against the band while keeping rear toe planted to anchor the loop. Control the return and alternate.",
     safety: "Do not let hips pike up or sag toward the floor. Keep spine flat as a tabletop."
   },
-
   "Mini-Band Mountain Climber Sprints (30s/60s)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Hip Flexors, Core Wall, Deltoids & Anaerobic Capacity",
     setup: "MINI-BAND: Loop around mid-foot/laces of both shoes. Set hands firmly on floor or elevated bench/bed edge.",
     cue: "Drive alternating knees toward chest at brisk interval pace for 30s, keeping dorsiflexed toes (toes pulled toward shins) so the band stays locked on your shoes.",
     safety: "Keep shoulders stacked directly over wrists; pause if lower back begins to sag."
   },
-
   "Mini-Band Step-Jacks (30s/60s)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Gluteus Medius, Lateral Hip Stabilizers, Calves & Deltoids",
     setup: "MINI-BAND: Loop around BOTH ANKLES (or 2 inches above knees). 41\" LOOP: Step both feet onto bottom loop and hold top loop at waist.",
     cue: "From a quarter-squat stance, step right foot out wide laterally against the band while sweeping arms overhead, return to hip-width, and alternate sides for 30s.",
     safety: "Zero jumping impact. Keep at least 6 inches between ankles on the return so the band never goes slack."
   },
-
   "Continuous Band Pull-Throughs & Rows (Zone 2)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Full Posterior Chain (Glutes, Hamstrings, Lats & Rhomboids)",
     setup: "Anchor a 41\" loop or handled tube at the BOTTOM/MID door height. Stand facing away for pull-throughs, then turn to face the door for rows.",
     cue: "Alternate 10 smooth hip-hinge pull-throughs and 10 standing rows at a continuous, unbroken Zone 2 nasal-breathing rhythm.",
     safety: "Hinge strictly from the hips with a neutral flat back; never round the lower spine."
   },
-
-"Elevated DB/KB Gorilla Row": {
+  "Elevated DB/KB Gorilla Row": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Rhomboids, Mid-Traps & Anti-Rotation Obliques",
-
     setup: "Place two heavy DBs or KBs on a low riser, step, or aerobic box (4–8 inches off floor). Take a wide sumo stance straddling the weights and hinge hips back to ~75° with a flat back.",
     cue: "Push your non-working hand hard DOWN into the resting handle to create a rigid tripod brace while rowing the working arm up into your hip pocket. Alternate or complete all reps per side.",
     safety: "Elevating the bells prevents lumbar flexion at the bottom. Maintain downward pressure through the support hand to spare the lower back from unsupported shear."
   },
-
   "Banded Gorilla Row (41\" Loop Under Feet)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Rhomboids, Mid-Traps & Core Anti-Rotation",
-
     setup: "Stand in a wide sumo stance with both feet anchoring a 41\" loop band. Hinge at the hips with a neutral spine, resting your non-working forearm firmly across your thigh (or hand on a low bench) to brace the trunk.",
     cue: "Grab the center/opposite side of the loop band and drive your elbow straight back past your ribs, pausing 1 full second at peak lat contraction.",
     safety: "Do not let the band pull your torso into rotation. Keep the support forearm pressed hard into your quad to offload the lumbar spine."
@@ -1525,14 +1623,15 @@ export const MOVEMENT_INTEL = {
   // --- BROOMSTICK / DOWEL BARBELL DEADLIFTS (41" LOOPS) ---
   "41\" Loop Band Broomstick Standard Deadlift": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Gluteus Maximus, Hamstrings, Quadriceps & Erector Spinae",
     setup: "Step both feet hip-width onto the center of a 41\" loop band. Thread both loop ends over a sturdy hardwood dowel/broomstick, placing your hands right next to the bands to minimize bending torque on the center of the stick.",
     cue: "Drop hips into a conventional deadlift start (shins touching the stick, chest proud, lats packed). Drive the floor away with your legs and hips simultaneously to stand tall to lockout.",
     safety: "Grip the stick directly beside the band loops so the shaft does not bow or snap in the middle. Keep the stick grazing your shins and thighs throughout the pull."
   },
-
   "41\" Loop Band Broomstick Stiff-Leg Deadlift": {
     type: "Compound",
+    contraction: "Eccentric",
     muscles: "Hamstrings (Biceps Femoris / Semitendinosus), Glutes & Lumbar Erectors",
     setup: "Stand on a 41\" loop band with feet hip-width and thread the top loops over the ends of your broomstick/dowel. Start from the top standing lockout with knees unlocked in a fixed 10°–15° soft bend.",
     cue: "Keeping your knee angle frozen, push your hips straight back as far as possible while lowering the stick down your shins until your hamstrings reach peak stretch, then snap hips forward.",
@@ -1542,214 +1641,217 @@ export const MOVEMENT_INTEL = {
   // --- USER GUIDE ADDITIONS (41" LOOPS & DOOR-ANCHOR TUBES) ---
   "41\" Loop Band Squat-to-Press Thruster": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps, Glutes, Anterior/Lateral Deltoids & Triceps (Total Body)",
     setup: "Stand on the bottom of a 41\" loop band with feet shoulder-width. Bring the top of the loop up to collarbones in a front-rack grip with elbows pointed forward.",
     cue: "Descend into a full parallel squat, then explode upward out of the hole and use that momentum to press the band straight overhead in one fluid motion.",
     safety: "Keep core braced at the top overhead lockout so your lower back does not hyperextend."
   },
-
   "Low Door-Anchor Tube Bicep Curl": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Biceps Brachii (Long & Short Head) & Brachioradialis",
     setup: "Secure door anchor at the BOTTOM of the door (or stand on the middle of the tube). Stand tall facing the door holding both handles with palms facing up (supinated).",
     cue: "Pin elbows tightly against your ribs and curl the handles toward your shoulders. Squeeze biceps hard for 1s at peak contraction before a 3s lowering.",
     safety: "Do not swing your torso backward or let your elbows drift forward to cheat the weight up."
   },
-
   "High Door-Anchor Tricep Pushdown": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Triceps Brachii (Lateral & Medial Heads)",
     setup: "Secure door anchor at the TOP of the door frame. Stand facing the door in a slight athletic hinge, holding handles with elbows tucked firmly against your sides at 90°.",
     cue: "Press the handles straight down toward your thighs until your elbows are completely locked out. Hold the tricep squeeze for 1s, then return to 90°.",
     safety: "Keep upper arms glued to your ribcage; only your forearms should move around the elbow hinge."
   },
-
   "Low Door-Anchor Tricep Kickback": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Triceps Brachii (Long & Lateral Heads) & Rear Deltoid Stabilizers",
     setup: "Secure door anchor at the BOTTOM of the door. Hinge forward 45°–60° in a staggered stance facing the door, pulling your elbows up past your ribs.",
     cue: "Keeping your upper arms parallel to the floor, extend your forearms straight back until your elbows lock out. Pause 1s at the top.",
     safety: "Do not let your elbows drop during the set; keep spine flat and neck neutral."
   },
-
   "Low Door-Anchor Overhead Tricep Extension": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Triceps Brachii (Long Head Emphasis)",
     setup: "Secure door anchor at the BOTTOM of the door. Stand facing AWAY from the door in a staggered stance, holding the handles behind your head with elbows pointed high toward the ceiling.",
     cue: "Extend your forearms overhead and slightly forward until elbows lock out, stretching the long head of the triceps on the 3-second eccentric return.",
     safety: "Clamp your ribs down to your pelvis so the band tension behind you doesn't pull your lower back into an arch."
   },
-
   "Low Door-Anchor Tube Upright Row": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Lateral Deltoids, Upper Trapezius & Biceps",
     setup: "Secure door anchor at the BOTTOM of the door (or stand on the band). Stand tall holding the handles in front of your thighs with an overhand grip.",
     cue: "Lead with your elbows, pulling them high and wide up to shoulder height (stopping at the collarbone). Lower slowly over 3 seconds.",
     safety: "Stop elbows at shoulder level—pulling higher with internally rotated shoulders can impinge the rotator cuff."
   },
-
   "Low Door-Anchor Front / Side Delt Raise": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Anterior Deltoids & Lateral (Medial) Deltoids",
     setup: "Secure door anchor at the BOTTOM of the door (or stand on the band). Hold handles at your sides with a soft 10° bend in the elbows.",
     cue: "Raise arms straight out in front to eye level (Front Raise) or out to the sides in the scapular plane (30° forward of torso for Side Raise), pausing 1s at shoulder height.",
     safety: "Do not shrug your traps toward your ears; lead with your knuckles/elbows and keep torso stationary."
   },
-
   "Low Door-Anchor Reverse Woodchopper (Low-to-High)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Internal/External Obliques, Anterior Deltoids & Transverse Abdominis",
     setup: "Secure door anchor at the BOTTOM of the door. Stand perpendicular to the door in a wide athletic stance, gripping the handle with both hands down by your inside hip.",
     cue: "Pivot your inside foot and hips to sweep the handle diagonally UPWARD across your body to above your opposite shoulder. Control the return.",
     safety: "Rotate through your hips and thoracic spine simultaneously—never twist from a locked lower back."
   },
-
   "Mid Door-Anchor Seated Russian Twist": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Internal/External Obliques & Rectus Abdominis",
     setup: "Anchor tube at MID-LOWER door height. Sit on the floor perpendicular to the door with knees bent and heels dug into the mat, holding the handle at your sternum.",
     cue: "Brace your abs and rotate your entire ribcage and shoulders away from the door against the band's pull, then control the return.",
     safety: "Keep your spine long and tall—do not slouch into lumbar flexion while rotating."
   },
-
   "Low Door-Anchor Resisted Bicycle Crunch": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Rectus Abdominis, Obliques & Hip Flexors",
     setup: "Secure door anchor at the BOTTOM of the door and strap ankle cuffs to both ankles (or loop around feet). Lie on your back facing away from the door with hands lightly behind ears.",
     cue: "Press lower back flat into the floor and alternate driving one knee toward the opposite elbow against the band tension while extending the other leg.",
     safety: "Never yank on the back of your neck; rotate your shoulder blade toward the knee while keeping lumbar glued to the floor."
   },
-
   "Low Door-Anchor Supine Reverse Crunch": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Lower Rectus Abdominis & Transverse Abdominis",
     setup: "Secure door anchor at the BOTTOM of the door and strap ankle cuffs around both ankles. Lie flat on your back facing the door with knees bent at 90°.",
     cue: "Contract your lower abs to curl your pelvis and tailbone slightly off the floor, pulling your knees toward your chest, then lower slowly over 3 seconds.",
     safety: "Use pure abdominal curling rather than swinging your legs with momentum."
   },
-
   "Low Door-Anchor Resisted Sit-Up": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Rectus Abdominis & Hip Flexors",
     setup: "Secure door anchor at the BOTTOM of the door behind your head. Lie on your back with knees bent, holding both handles tight against your collarbones.",
     cue: "Exhale and curl your torso up to a seated position against the band tension, then lower vertebra-by-vertebra over 3 seconds.",
     safety: "If you feel any lower back strain (especially after RDL sessions), substitute with Resisted McGill Curl-Ups or High-Anchor Kneeling Crunches."
   },
-
   "Low Door-Anchor Standing Oblique Side Bend": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "External/Internal Obliques & Quadratus Lumborum (QL)",
     setup: "Secure door anchor at the BOTTOM of the door (or stand on a 41\" loop band with one foot). Stand perpendicular to the anchor holding the handle in your inside hand.",
     cue: "Keeping your hips locked and shoulders square in a flat plane, flex your torso laterally away from the band to return to dead vertical, then squeeze the side obliques.",
     safety: "Do not twist or lean forward—move strictly side-to-side as if standing between two panes of glass."
   },
-
   "Low Door-Anchor Bent-Over Rear Delt Raise": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Posterior Deltoids, Rhomboids & Mid-Traps",
     setup: "Secure door anchor at the BOTTOM of the door (or stand on the band, crossing the handles). Hinge forward at the hips to 45°–60° with a flat back and soft knees.",
     cue: "Sweep both handles out wide to the sides with slightly bent elbows until arms are level with your back, squeezing the rear delts for 1s at the top.",
     safety: "Keep your spine neutral and chest supported by your hip hinge—do not round the lower back."
   },
-
   "Seated Floor DB Z-Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Anterior & Lateral Deltoids, Triceps, Thoracic Extensors & Anterior Core",
     setup: "Sit flat on the floor with legs extended straight out in a comfortable 'V' (use a folded pad/abmat under glutes if hamstrings are tight). Hold dumbbells at shoulder height with palms semi-neutral.",
     cue: "Sit tall like a pillar with ribs clamped down over pelvis. Press dumbbells straight overhead in the scapular plane to full lockout without leaning backward, then lower over 3 seconds.",
     safety: "Zero backrest support—if your lower back arches or you lean backward to press the weight, drop the dumbbell load immediately."
   },
-
   "41\" Loop Band Seated Floor Z-Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Anterior & Lateral Deltoids, Triceps & Anti-Extension Trunk",
     setup: "Sit flat on the floor with legs extended straight in front. Anchor one end of a 41\" loop band flat under your glutes/upper hamstrings (or hooked around the arches of your feet) and hold the top loop at shoulder height.",
     cue: "Brace your abs hard to keep your torso dead vertical. Press the band straight overhead against ascending elastic tension, pausing 1 second at full extension.",
     safety: "Keep heels firmly planted if anchoring under your feet so the band cannot slip off your shoes."
   },
-
   "Low Door-Anchor Seated Z-Press": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Anterior & Lateral Deltoids, Triceps & Core Stability",
     setup: "Anchor handled tubes at the VERY BOTTOM of the door frame. Sit on the floor facing away from the door with legs extended straight out in front, holding handles at shoulder height.",
     cue: "Keep your torso upright and ribs tucked down. Press handles upward and slightly forward to full overhead lockout, resisting the backward cable pull.",
     safety: "Do not let the low door anchor pull your shoulders backward or hyperextend your lumbar spine."
   },
-
   "41\" Loop Band Bent-Over Row (Stand-on-Loop)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Rhomboids, Mid-Traps & Posterior Deltoids",
     setup: "Stand with both feet hip-width on the center of a 41\" loop band. Hinge hips back to a 45° torso angle with a flat back, gripping the left and right loop ends.",
     cue: "Drive elbows straight back past your ribs toward your hip pockets, squeezing your shoulder blades together for 1 full second at the top.",
     safety: "Brace your core hard and keep knees softly bent; if your lower back is fatigued from RDLs, use Door-Anchor Seated Row instead."
   },
-
   "Low Door-Anchor Supine Leg Lift": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Lower Abdominis, Iliopsoas (Hip Flexors) & Rectus Femoris",
     setup: "Secure door anchor at the BOTTOM of the door and attach ankle straps to one or both ankles. Lie flat on your back with your feet closest to the door and hands tucked under your glutes.",
     cue: "Keeping legs straight (or softly bent), lift your heels toward the ceiling to 90° against the downward pull of the band, then lower slowly.",
     safety: "Keep your lower back pressed firmly into the floor; stop lowering the legs the instant you feel your lumbar spine start to arch."
   },
-
   "Low Door-Anchor Standing Band Abduction": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Gluteus Medius, Gluteus Minimus & Tensor Fasciae Latae (TFL)",
     setup: "Secure door anchor at the BOTTOM of the door and fasten the ankle strap around your OUTER ankle (leg farthest from the door). Stand tall holding the wall or a chair.",
     cue: "Keeping toes pointed straight ahead (not flared out), sweep your outer leg laterally away from the door to 45°, hold 1s, and resist the pull back.",
     safety: "Stand completely upright—do not lean your torso toward the door to fake a higher leg raise."
   },
-
   "Low Door-Anchor Standing Glute Kickback": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Gluteus Maximus (Primary) & Hamstrings",
     setup: "Secure door anchor at the BOTTOM of the door and strap the cuff to one ankle. Stand facing the door with a slight 15° forward torso lean, bracing both hands against the door frame.",
     cue: "Keeping your working knee straight or softly locked, drive your heel straight back by clenching your glute for 1 full second at peak extension.",
     safety: "Keep the range of motion compact (15°–25° hip extension)—kicking too high forces your lower back to hyperextend."
   },
-
   "41\" Loop Band Seated Calf Extension": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Gastrocnemius & Soleus (Calves)",
     setup: "Sit tall on the floor with legs extended straight in front of you. Loop a 41\" loop band around the balls of your feet (forefeet) and pull the other end taut to your waist/chest.",
     cue: "Point your toes forcefully away from your shins (plantarflexion) against the band, hold the peak calf cramp for 2 seconds, then flex toes back toward shins for a full stretch.",
     safety: "Place the band firmly across the ball of the foot so it cannot slip off the toes under tension."
   },
-  
   "Banded Shadow Boxing Flow (Zone 2)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "Anterior Deltoids, Serratus Anterior, Core Obliques & Calves",
     setup: "Thread a light 41\" loop band (Blue or Green) across your upper back/shoulder blades (under armpits) and loop the ends over both thumbs/palms.",
     cue: "Stay light on balls of feet and throw continuous crisp 1-2 jabs, crosses, and slips against the forward band resistance at a steady Zone 2 pace.",
     safety: "Snap punches out and retract hands straight back to chin guard; do not let the band yank elbows behind your torso."
   },
+
   // --- MINI-BAND GUIDE: UPPER BODY & SHOULDERS ---
   "Mini-Band Lateral Arm Extension": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Posterior Deltoids, Rhomboids & Mid-Trapezius",
     setup: "Stand tall with feet hip-width apart and abs braced. Loop a light-to-medium mini-band around both WRISTS, extending arms straight out in front of chest at shoulder height with fists clenched.",
     cue: "Open both arms outward horizontally against the band until shoulder blades pinch together, hold 1s at peak extension, then return slowly to center.",
     safety: "Keep shoulders depressed away from your ears and avoid arching your lower back as you pull apart."
   },
-
   "Mini-Band Overhead Lat Pull": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Latissimus Dorsi, Rear Deltoids & Lower/Mid Traps",
     setup: "Stand tall with chest proud and shoulders relaxed. Place a mini-band around both WRISTS and press arms straight overhead toward the ceiling.",
     cue: "Pull elbows down and wide while pulling outward on the band until your forearms/band pass just behind your head/upper back, squeezing your lats. Slowly return overhead.",
     safety: "Keep ribcage clamped down to pelvis—do not crane your neck forward or hyperextend your lower back to clear your head."
   },
-
   "Mini-Band Seated Knee-Anchor Bicep Curl": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Biceps Brachii & Brachioradialis",
     setup: "Sit upright on a chair or bench with feet hip-width apart. Hook one end of a mini-band securely behind your right knee/thigh and grip the other end with your right hand.",
     cue: "Pin your working elbow tight against your ribcage and curl your fist upward toward your shoulder against the band tension. Lower over 3 seconds, then switch sides.",
     safety: "Do not lean back or swing your shoulder forward to lift the band; keep the movement isolated strictly to the elbow joint."
   },
-
   "Mini-Band Shoulder Tri-Set": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Anterior, Lateral & Posterior Deltoids, Rotator Cuff & Upper Back",
     setup: "Stand with feet hip-width apart and chest up. Loop a light mini-band around both WRISTS with forearms held straight in front of your torso at 90°.",
     cue: "Keeping elbows tucked tight to your sides, press forearms outward against the band's resistance (external rotation/abduction) through the tri-set sequence with minimal rest.",
@@ -1759,30 +1861,31 @@ export const MOVEMENT_INTEL = {
   // --- MINI-BAND GUIDE: LOWER BODY & HIPS ---
   "Mini-Band Standing Hip Abduction": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Gluteus Medius, Gluteus Minimus & Lateral Hip Stabilizers",
     setup: "Loop a mini-band around BOTH ANKLES. Stand tall with feet hip-width apart, abs tight, and place one hand lightly on a wall or post for balance.",
     cue: "Standing firmly on your support leg, raise your working leg straight out to the side against the band without rotating your toes outward. Lower slowly without letting the band go slack.",
     safety: "Keep your torso dead vertical—do not lean sideways away from the working leg to fake extra height."
   },
-
   "Mini-Band Standing Hip Extension": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Gluteus Maximus & Hamstrings",
     setup: "Loop a mini-band around BOTH ANKLES. Stand tall facing a wall with both hands braced against it and feet hip-width apart.",
     cue: "Keeping your working leg straight (soft knee lock), extend your heel straight backward behind your hip by squeezing your glute for 1s, then control the return.",
     safety: "Keep the kick compact (15°–25°); kicking too high forces your lumbar spine to hyperextend."
   },
-
   "Mini-Band Seated Hip Abduction": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Gluteus Medius & Outer Thigh Abductors",
     setup: "Sit upright on a chair or bench with feet hip-width apart, back straight, and abs braced. Loop a medium-to-heavy mini-band 2 inches ABOVE both knees.",
     cue: "Drive both knees outward laterally against the band as wide as comfortably possible, hold the outer glute squeeze for 1s, then resist on the return.",
     safety: "Keep feet planted flat on the floor and pelvis neutral—do not slouch or round your lower back."
   },
-
   "Mini-Band Side Lunge": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "Quadriceps, Gluteus Maximus, Gluteus Medius & Adductors",
     setup: "Loop a mini-band around BOTH ANKLES. Stand tall with feet hip-width apart, abs braced, and hands clasped under your chin.",
     cue: "Take a wide lateral step to the right against the band and sit your hips back into a single-leg side squat while keeping the trailing left leg straight. Push off the right heel to return to start.",
@@ -1792,148 +1895,148 @@ export const MOVEMENT_INTEL = {
   // --- MINI-BAND GUIDE: CORE & PLANK WORK ---
   "Mini-Band Flutter Kicks": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Lower Rectus Abdominis, Transverse Abdominis & Hip Flexors",
     setup: "Loop a mini-band around BOTH LOWER LEGS / ANKLES. Lie flat on your back with legs extended and hands placed at your sides (or tucked slightly under glutes for pelvic support).",
     cue: "Lift both heels 5–6 inches off the floor and alternate raising one leg higher while pressing the other downward against constant band tension for 8–12 controlled cycles.",
     safety: "Keep your lower back pressed flush into the floor; raise your leg height slightly if you feel your lumbar spine start to arch."
   },
-
   "Mini-Band Bicycle Crunch": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Rectus Abdominis, Internal/External Obliques & Hip Flexors",
     setup: "Loop a mini-band around the ARCHES / FOREFEET of both feet. Lie flat on your back with hands lightly behind your ears and knees/hips bent at 90°.",
     cue: "Curl your left shoulder toward your right knee while pressing your right foot straight out against the mini-band loop. Return smoothly and alternate sides.",
     safety: "Do not yank on your neck with your hands; keep your lower back glued to the floor throughout every extension."
   },
-
   "Mini-Band Plank Knee Drive": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Transverse Abdominis, Rectus Abdominis, Hip Flexors & Anterior Deltoids",
     setup: "Loop a mini-band around the FOREFEET / ARCHES of both shoes. Assume a sturdy high push-up plank with hands stacked directly under shoulders.",
     cue: "Keeping your left leg locked straight to anchor the band, drive your right knee forward toward your chest against the resistance, return slowly, and switch legs.",
     safety: "Keep hips level and spine flat as a tabletop—do not let your lower back sag or pike upward."
   },
 
-"Half-Kneeling Sprint Start (First 3 Steps)": {
+  // --- POWER, EXPLOSIVE & MOBILITY ---
+  "Half-Kneeling Sprint Start (First 3 Steps)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "[POWER // EXPLOSIVE 3–5r] Glutes, Quads, Calves & Hip Flexors (First-Step Acceleration)",
     setup: "Drop into a half-kneeling sprinter stance on open turf/floor with front shin angled forward (~45°) and opposite arm cocked forward at 90°.",
     cue: "On a sharp exhale, drive violently through the front mid-foot to project your hips forward for 3 crisp, low-angled acceleration steps, then decelerate smoothly over 2–3 steps. Rest 60–90s between sets.",
     safety: "Keep shin angle low on step 1 rather than popping straight upright; stop the set immediately if step crispness slows down."
   },
-
   "Med Ball Overhead Slam": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "[POWER // EXPLOSIVE 5–6r] Lats, Anterior Core, Triceps, Glutes & Hamstrings",
     setup: "Stand with feet shoulder-width apart holding a non-bouncing slam ball (10–20 lbs) at chest height.",
     cue: "Reach tall onto the balls of your feet with the ball overhead without hyperextending your lower back, then snap your hips back and slam the ball straight down into the floor as hard as possible.",
     safety: "Use a dead-bounce slam ball so it does not rebound into your face; hinge hips back to absorb the slam rather than rounding your lumbar spine."
   },
-
   "Broad Jump to Soft Stick": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "[POWER // EXPLOSIVE 3–5r] Glutes, Quads, Hamstrings & Calves (Horizontal Projection)",
     setup: "Stand with feet hip-width apart, arms cocked back behind hips, and a clear 6–8 feet of flat floor ahead.",
     cue: "Swing arms forward aggressively and extend hips, knees, and ankles simultaneously to jump forward. Land softly on mid-foot with knees tracking over toes and freeze ('stick') the landing for 2 full seconds.",
     safety: "Zero knee valgus (caving inward) on landing; step back to the start between every single rep rather than bounding continuously."
   },
-
   "Seated-to-Standing Box Jump (Dead-Stop)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "[POWER // EXPLOSIVE 3–5r] Quads, Glutes & Hip Extensors (Starting Strength)",
     setup: "Sit upright on a sturdy plyo box or flat bench facing a low-to-moderate jump box (12–20 inches) with shins vertical and feet planted flat.",
     cue: "Without rocking backward for momentum, lean torso forward over your toes and explode upward out of a dead stop onto the target box, landing softly in a quarter-squat.",
     safety: "Step down one foot at a time after every jump—never jump backward off the box."
   },
-
   "Low-Impact Lateral Shuffle & Carioca (Zone 2)": {
     type: "Compound",
+    contraction: "Concentric",
     muscles: "[AGILITY // ZONE 2 FLOW] Hip Abductors/Adductors, Calves, Obliques & Coordination",
     setup: "Mark out 15–20 feet of clear floor space. Drop into a loose, athletic quarter-squat stance with chest up and hands ready.",
     cue: "Shuffle laterally for 15 feet without crossing feet or bouncing vertically, then switch into smooth cross-over carioca steps (rotating hips front-to-back while keeping shoulders square) on the return.",
     safety: "Stay light on the balls of your feet and keep nasal breathing steady; treat this as rhythmic footwork rather than a max-heart-rate sprint."
   },
-
-  "Dynamic Banded Rotational Punch": {
-    type: "Compound",
-    muscles: "[POWER // EXPLOSIVE 6–8r] Obliques, Serratus Anterior, Pecs & Hip Rotators",
-    setup: "Anchor a light-to-medium handled tube at mid-chest height. Stand sideways to the anchor in an athletic split stance holding the handle at your rear shoulder.",
-    cue: "Pivot your back heel and snap your hips forward while punching the handle straight ahead at high speed, then control the return over 2 seconds.",
-    safety: "Drive the punch from hip and ribcage rotation—do not over-reach or hyperextend your elbow at lockout."
-  },
-
   "90/90 Hip Switches (Active End-Range)": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "[MOBILITY // ACTIVE CONTROL] Hip Internal & External Rotators, Glute Medius & Capsule",
     setup: "Sit on a mat with both knees bent at 90°—front shin parallel to your torso, trail shin angled back at 90°. Keep chest tall (use fingertips lightly behind hips if needed).",
     cue: "Keeping heels anchored to the mat, lift your trail knee first to open into a wide straddle, then smoothly rotate both knees over to the opposite 90/90 position with zero momentum.",
     safety: "Move slowly through tight spots without forcing range; keep torso upright rather than slumping backward."
   },
-
   "Cossack / Side Lunge Flow (Assisted)": {
     type: "Compound",
+    contraction: "Balanced",
     muscles: "[MOBILITY // ACTIVE END-RANGE] Adductors, Hamstrings, Quads & Ankle Dorsiflexors",
     setup: "Stand in a wide straddle (1.5× shoulder width) facing a rack, doorframe, or TRX straps for light balance assistance.",
     cue: "Sit your hips straight back into one heel, descending into a deep lateral squat while keeping the opposite leg straight with toes pointed toward the ceiling. Pause 2s at bottom, then glide across to the other side.",
     safety: "Keep the working heel flat on the floor and chest proud; only descend as deep as your hip and ankle mobility allow pain-free."
   },
-
   "Band Shoulder Dislocates": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "[MOBILITY // ACTIVE CONTROL] Anterior/Posterior Deltoids, Rotator Cuff, Pecs & Thoracic Spine",
     setup: "Hold a light 41\" loop band (or PVC pipe/towel) with a wide overhand grip in front of your thighs.",
     cue: "Keeping elbows completely straight and ribs pulled down, raise the band overhead in a slow, smooth arc all the way to your lower back, then reverse back to the front.",
     safety: "Widen your grip immediately if you feel any pinching in the front of the shoulder or have to bend your elbows to clear overhead."
   },
-
   "Wall Slides / Thoracic Open-Book Rotations": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "[MOBILITY // ACTIVE CONTROL] Lower Traps, Serratus Anterior & Thoracic Rotators",
     setup: "Stand with heels 4 inches from a wall and lower back, upper back, and back of wrists pressed lightly against the wall in a 'W' position (or lie side-lying with top knee pinned to a foam roller).",
     cue: "Slide forearms smoothly upward along the wall into a 'Y' while keeping ribs tucked and wrists in contact, pause 2s at top, and return slowly.",
     safety: "Do not let your lower back arch away from the wall as your arms travel overhead."
   },
-
   "Half-Kneeling Hip Flexor & Quad Stretch": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "[FLEXIBILITY // DOWNSHIFT 30–45s] Iliopsoas, Rectus Femoris & Anterior Hip Capsule",
     setup: "Kneel on a padded mat in a half-kneeling lunge with rear knee directly under your hip and front shin vertical.",
     cue: "Tuck your tailbone under (posterior pelvic tilt) and squeeze your rear glute hard until you feel a deep stretch down the front of the rear hip. Hold with slow 4-second nasal inhales and 6-second exhales.",
     safety: "Never hyperextend your lower back to lean forward—the stretch comes from tucking the pelvis, not overarching the lumbar spine."
   },
-
   "90/90 Pigeon Glute Hold": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "[FLEXIBILITY // DOWNSHIFT 30–45s] Piriformis, Glute Max/Medius & Posterior Hip Capsule",
     setup: "Sit on a mat with your front leg bent at 90° in front of you and your back leg bent comfortably behind you.",
     cue: "Keep your spine long and hinge forward slightly from the hips over your front shin until you feel a deep, comfortable stretch in the outer glute. Breathe slowly through your nose for 30–45 seconds per side.",
     safety: "Keep the front ankle flexed (toes pulled toward shin) to protect the knee joint from rotational torque."
   },
-
   "Lat & Thoracic Bench Prayer Stretch": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "[FLEXIBILITY // DOWNSHIFT 30–45s] Latissimus Dorsi, Teres Major & Thoracic Extensors",
     setup: "Kneel on the floor facing a flat bench or stability ball, resting both elbows shoulder-width apart on the pad with palms together.",
     cue: "Sit your hips back toward your heels and let your chest sink gently toward the floor while keeping ribs lightly braced. Hold for 30–45 seconds with slow diaphragmatic breaths.",
     safety: "Avoid dumping into your lower back; keep the stretch focused under your armpits and upper back."
   },
-
   "Supine Hamstring Band/Strap Stretch": {
     type: "Isolation",
+    contraction: "Isometric",
     muscles: "[FLEXIBILITY // DOWNSHIFT 30–45s] Biceps Femoris, Semitendinosus & Posterior Chain",
     setup: "Lie flat on your back with one leg extended flat on the floor and a 41\" loop band or towel looped around the arch of the opposite foot.",
     cue: "With a soft micro-bend in the raised knee, gently draw the leg toward your torso until a moderate 6/10 hamstring stretch is felt. Hold for 30–45 seconds per leg while relaxing your shoulders into the floor.",
     safety: "Keep both hips level on the mat and avoid pulling aggressively past mild tension."
   },
-  
   "Mini-Band Plank Kickback": {
     type: "Isolation",
+    contraction: "Balanced",
     muscles: "Gluteus Maximus, Transverse Abdominis & Shoulder Stabilizers",
     setup: "Loop a mini-band around BOTH LOWER LEGS / ANKLES. Assume a high push-up plank with hands shoulder-width apart and core braced.",
     cue: "Maintaining a rigid plank, squeeze your glute to lift and kick your right leg straight back 5–6 inches against the band, hold 1s, lower, and switch sides.",
     safety: "Avoid twisting your hips or arching your lower back as the leg lifts; keep pelvis parallel to the floor."
   }
 };
+
+// Helper to resolve contraction bias ('Concentric' | 'Eccentric' | 'Isometric' | 'Balanced')
+export function getMovementContraction(exerciseName) {
+  return MOVEMENT_INTEL[exerciseName]?.contraction || 'Balanced';
+}
 
 // Helper to determine starting baseline for unlogged gym alternates
 export function getDefaultGymLoad(exerciseName, slotDefaultLoad) {
