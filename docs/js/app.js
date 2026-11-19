@@ -48,7 +48,7 @@ import { resolveInitialBandPreset, solveBestBandCombination, solveOverdriveBandB
 import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSelections, setActiveBandSelection } from './ui/renderBandSelector.js';
 import { getDefaultGymLoad } from './data/movementIntel.js';
 import { renderCalculator } from './ui/renderCalculator.js';
-import { getRotatorMode, setRotatorMode, resolveSlotPreset, recordSlotRotationHistory } from './engine/slotRotator.js';
+import { getRotatorMode, setRotatorMode, resolveSlotPreset, resolveFocusNextStep, recordSlotRotationHistory } from './engine/slotRotator.js';
 import { renderBiometricsUI } from './ui/renderBiometrics.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
@@ -736,52 +736,56 @@ export function logActiveSet() {
     if (clk) clk.innerText = `${String(mins).padStart(2,'0')}:${String(rem).padStart(2,'0')}`;
   });
 
-  if (setsInSlot >= 3 && activeSlotIndex < stageDef.slots.length - 1) {
-    activeSlotIndex++;
-    saveSessionState();
-    renderSlotStepper();
-    loadSlotData();
+  // Count sets logged for the CURRENT EXERCISE in this slot (so stacking a 2nd exercise in the same slot gets its own 3-set block)
+  const setsOfCurrentExercise = activeSession.sets.filter(
+    s => s.slot === slotDef.slot && s.exercise === completedSetObj.exercise
+  ).length;
+
+  if (setsOfCurrentExercise >= 3) {
+    const mode = getRotatorMode();
+
+    if (mode === 'FOCUS') {
+      const nextStep = resolveFocusNextStep(activeStageKey, stageDef, activeSlotIndex, activeSession.sets);
+      if (nextStep) {
+        const stayedInSlot = nextStep.slotIndex === activeSlotIndex;
+        activeSlotIndex = nextStep.slotIndex;
+        saveSessionState();
+        renderSlotStepper();
+        loadSlotData();
+        showToast(
+          stayedInSlot
+            ? `🎯 FOCUS STACK: Next movement in ${nextStep.slotId}`
+            : `🎯 FOCUS JUMP: Routing to Slot ${nextStep.slotId}`
+        );
+      } else {
+        // Fallback if no further synergistic options remain in this stage
+        saveSessionState();
+        renderSlotStepper();
+        updateLogButtonText();
+        showToast('🎯 FOCUS: All synergistic targets hit for this stage!');
+      }
+    } else if (activeSlotIndex < stageDef.slots.length - 1) {
+      // FRESH MODE: Standard sequential progression across slots
+      activeSlotIndex++;
+      saveSessionState();
+      renderSlotStepper();
+      loadSlotData();
+    } else {
+      saveSessionState();
+      renderSlotStepper();
+      updateLogButtonText();
+    }
   } else {
     saveSessionState();
     renderSlotStepper();
     updateLogButtonText();
     const autoAdj = autoRegulateNextSet(completedSetObj);
     if (autoAdj) {
-      const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(exercise);
-      const activeLoad = load;
-
-      if (isBand && autoAdj.load && autoAdj.load > activeLoad) {
-        const currentCombo = typeof getSelectedBandCombo === 'function'
-          ? getSelectedBandCombo()
-          : { selectedKeys: [] };
-        const bridge = solveOverdriveBandBridge(activeLoad, exercise, currentCombo.selectedKeys);
-
-        if (bridge && bridge.nominalTotal > activeLoad) {
-          setActiveBandSelection(bridge.selectedKeys);
-          syncEquipmentInputs();
-          if (document.getElementById('loadInput')) document.getElementById('loadInput').value = bridge.nominalTotal;
-          if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
-          showToast(`⚡ OVERDRIVE BRIDGE: Stacked to ${bridge.nominalTotal} lbs × ${autoAdj.reps} reps!`);
-        } else {
-          if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
-          showToast(`★ MAX BAND TIER REACHED (${activeLoad} lbs) — Hold ${autoAdj.reps} reps!`);
-        }
-      } else {
-        if (autoAdj.load && document.getElementById('loadInput')) document.getElementById('loadInput').value = autoAdj.load;
-        if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
-        showToast(autoAdj.message);
-      }
+      if (autoAdj.load && document.getElementById('loadInput')) document.getElementById('loadInput').value = autoAdj.load;
+      if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
+      showToast(autoAdj.message);
     }
   }
-
-  currentSetPain = false;
-  const painBtn = document.getElementById('painBtn');
-  if (painBtn) {
-    painBtn.classList.remove('active-red');
-    painBtn.innerText = "Joint Strain: No";
-  }
-}
-
 export function togglePrehab() {
   if (!window.activeSession) return;
 
