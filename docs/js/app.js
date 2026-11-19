@@ -690,12 +690,17 @@ export function logActiveSet() {
     displayMetric = cMetrics.display;
   }
 
+  const resolved = resolveExerciseTarget(exercise, slotDef.target);
+  const intel = MOVEMENT_INTEL[exercise] || {};
+
   const completedSetObj = {
     slot: slotDef.slot,
     exercise,
     setNum: setsInSlot,
     load,
     reps,
+    target: resolved.targetText,
+    contraction: intel.contraction || 'Balanced', // <-- Passes contraction bias to autoReg
     equivReps,
     equivVolume,
     displayMetric,
@@ -703,9 +708,7 @@ export function logActiveSet() {
     e1rm: setE1RM,
     isNewPR,
     tempoClean,
-    jointPain: currentSetPain,
-    left: leftTelemetry,
-    right: rightTelemetry
+    jointPain: currentSetPain
   };
 
   activeSession.sets.push(completedSetObj);
