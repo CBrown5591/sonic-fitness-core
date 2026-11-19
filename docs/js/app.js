@@ -1321,10 +1321,6 @@ document.addEventListener('DOMContentLoaded', async () => {
       const repsInput = document.getElementById('repsInput');
       if (repsInput) repsInput.value = resolved.defaultReps;
 
-      const prVault = getPRVault();
-      const pr = prVault[val];
-      const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(val);
-
       const focusMultiplier = getFocusFatigueMultiplier(val);
       const prVault = getPRVault();
       const pr = prVault[val];
