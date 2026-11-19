@@ -48,7 +48,7 @@ import { resolveInitialBandPreset, solveBestBandCombination, solveOverdriveBandB
 import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSelections, setActiveBandSelection } from './ui/renderBandSelector.js';
 import { getDefaultGymLoad } from './data/movementIntel.js';
 import { renderCalculator } from './ui/renderCalculator.js';
-import { getRotatorMode, setRotatorMode, resolveSlotPreset, resolveFocusNextStep, recordSlotRotationHistory } from './engine/slotRotator.js';
+import { getRotatorMode, setRotatorMode, resolveSlotPreset, resolveFocusNextStep, recordSlotRotationHistory, getExerciseMuscleTags } from './engine/slotRotator.js';
 import { renderBiometricsUI } from './ui/renderBiometrics.js';
 
 let activeStageKey = localStorage.getItem('sonic_active_stage') || "DAY_A";
@@ -408,6 +408,30 @@ export function toggleLRSplitMode() {
 }
 window.toggleLRSplitMode = toggleLRSplitMode;
 
+function getFocusFatigueMultiplier(exerciseName) {
+  if (getRotatorMode() !== 'FOCUS' || !Array.isArray(activeSession?.sets) || activeSession.sets.length === 0) {
+    return 1.0;
+  }
+
+  const targetTags = new Set(getExerciseMuscleTags(exerciseName).filter(t => t !== 'general'));
+  if (targetTags.size === 0) return 1.0;
+
+  // Count how many prior sets in this session worked overlapping muscles
+  let overlappingSets = 0;
+  for (const s of activeSession.sets) {
+    if (!s.exercise || s.exercise === exerciseName) continue;
+    const priorTags = getExerciseMuscleTags(s.exercise);
+    if (priorTags.some(tag => targetTags.has(tag))) {
+      overlappingSets++;
+    }
+  }
+
+  const overlapBlocks = Math.floor(overlappingSets / 3);
+  if (overlapBlocks <= 0) return 1.0;
+  if (overlapBlocks === 1) return 0.90;  // -10% load taper for 2nd synergistic movement
+  return 0.825;                          // -17.5% load taper for 3rd+ synergistic movement
+}
+
 function loadSlotData() {
   const stageDef = STAGES[activeStageKey];
   if (!stageDef || !stageDef.slots[activeSlotIndex]) return;
@@ -455,13 +479,16 @@ function loadSlotData() {
   const repsInput = document.getElementById('repsInput');
   if (repsInput) repsInput.value = resolved.defaultReps;
 
+ const focusMultiplier = getFocusFatigueMultiplier(activeExercise);
   const loadInput = document.getElementById('loadInput');
+
   if (currentSlotGearMode === 'BANDS' || isBandMovement(activeExercise)) {
+    const taperedDefault = Math.max(10, Math.round(((slotDef.defaultLoad || 50) * focusMultiplier) / 5) * 5);
     const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
       activeExercise,
       slotDef.primary,
       slotDef.target,
-      slotDef.defaultLoad || 50
+      taperedDefault
     );
     if (selectedKeys && selectedKeys.length > 0 && typeof setActiveBandSelection === 'function') {
       setActiveBandSelection(selectedKeys);
@@ -472,10 +499,16 @@ function loadSlotData() {
   } else {
     const prVault = getPRVault();
     const pr = prVault[activeExercise];
-    const dynamicLoad = pr && pr.e1rm > 0
+    const baseTargetLoad = pr && pr.e1rm > 0
       ? calculateTargetLoad(pr.e1rm, slotDef.target, slotDef.defaultLoad, activeExercise)
       : slotDef.defaultLoad;
-    if (loadInput) loadInput.value = dynamicLoad;
+    const taperedLoad = Math.max(5, Math.round((baseTargetLoad * focusMultiplier) / 5) * 5);
+    if (loadInput) loadInput.value = taperedLoad;
+  }
+
+  if (focusMultiplier < 1.0) {
+    const pctOff = Math.round((1 - focusMultiplier) * 100);
+    showToast(`🎯 FOCUS TAPER: Load scaled -${pctOff}% for pre-fatigued muscles`);
   }
 
   renderMovementIntel(activeExercise);
@@ -1292,13 +1325,19 @@ document.addEventListener('DOMContentLoaded', async () => {
       const pr = prVault[val];
       const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(val);
 
+      const focusMultiplier = getFocusFatigueMultiplier(val);
+      const prVault = getPRVault();
+      const pr = prVault[val];
+      const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(val);
+
       if (isBand) {
         const gymPrimary = slotDef ? slotDef.primary : '';
+        const taperedDefault = Math.max(10, Math.round(((slotDef?.defaultLoad || 50) * focusMultiplier) / 5) * 5);
         const { selectedKeys, nominalTotal } = resolveInitialBandPreset(
           val, 
           gymPrimary, 
           defaultTarget, 
-          slotDef?.defaultLoad || 50
+          taperedDefault
         );
 
         setActiveBandSelection(selectedKeys);
@@ -1308,12 +1347,13 @@ document.addEventListener('DOMContentLoaded', async () => {
         if (loadInput) loadInput.value = nominalTotal;
       } else {
         const baseLoad = slotDef ? slotDef.defaultLoad : 50;
-        const dynamicLoad = pr && pr.e1rm > 0 
+        const baseTargetLoad = pr && pr.e1rm > 0 
           ? calculateTargetLoad(pr.e1rm, defaultTarget, baseLoad, val) 
           : baseLoad;
+        const taperedLoad = Math.max(5, Math.round((baseTargetLoad * focusMultiplier) / 5) * 5);
 
         const loadInput = document.getElementById('loadInput');
-        if (loadInput) loadInput.value = dynamicLoad;
+        if (loadInput) loadInput.value = taperedLoad;
         syncEquipmentInputs();
       }
 
