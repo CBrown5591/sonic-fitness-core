@@ -3,6 +3,11 @@
 // Modes: 'FRESH' (Cross-Session + Segmental Balance) | 'FOCUS' (Intra- & Cross-Slot Synergy)
 // Modular Engine: docs/js/engine/slotRotator.js
 // -------------------------------------------------------------
+import { MOVEMENT_INTEL } from '../data/movementIntel.js';
+
+function getExerciseContraction(exerciseName = '') {
+  return (MOVEMENT_INTEL[exerciseName]?.contraction || 'Balanced').toLowerCase();
+}
 
 const ROTATOR_MODE_KEY = 'sonic_rotator_mode';
 const ROTATOR_HISTORY_KEY = 'sonic_rotator_history';
