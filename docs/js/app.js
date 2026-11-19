@@ -736,7 +736,7 @@ export function logActiveSet() {
     if (clk) clk.innerText = `${String(mins).padStart(2,'0')}:${String(rem).padStart(2,'0')}`;
   });
 
-  // Count sets logged for the CURRENT EXERCISE in this slot (so stacking a 2nd exercise in the same slot gets its own 3-set block)
+  // Count sets logged for the CURRENT EXERCISE in this slot (so stacking a 2nd exercise gets its own 3-set block)
   const setsOfCurrentExercise = activeSession.sets.filter(
     s => s.slot === slotDef.slot && s.exercise === completedSetObj.exercise
   ).length;
@@ -781,11 +781,41 @@ export function logActiveSet() {
     updateLogButtonText();
     const autoAdj = autoRegulateNextSet(completedSetObj);
     if (autoAdj) {
-      if (autoAdj.load && document.getElementById('loadInput')) document.getElementById('loadInput').value = autoAdj.load;
-      if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
-      showToast(autoAdj.message);
+      const isBand = (currentSlotGearMode === 'BANDS') || isBandMovement(exercise);
+      const activeLoad = typeof finalLoad !== 'undefined' ? finalLoad : load;
+
+      if (isBand && autoAdj.load && autoAdj.load > activeLoad) {
+        const currentCombo = typeof getSelectedBandCombo === 'function'
+          ? getSelectedBandCombo()
+          : { selectedKeys: [] };
+        const bridge = solveOverdriveBandBridge(activeLoad, exercise, currentCombo.selectedKeys);
+
+        if (bridge && bridge.nominalTotal > activeLoad) {
+          setActiveBandSelection(bridge.selectedKeys);
+          syncEquipmentInputs();
+          if (document.getElementById('loadInput')) document.getElementById('loadInput').value = bridge.nominalTotal;
+          if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
+          showToast(`⚡ OVERDRIVE BRIDGE: Stacked to ${bridge.nominalTotal} lbs × ${autoAdj.reps} reps!`);
+        } else {
+          if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
+          showToast(`★ MAX BAND TIER REACHED (${activeLoad} lbs) — Hold ${autoAdj.reps} reps!`);
+        }
+      } else {
+        if (autoAdj.load && document.getElementById('loadInput')) document.getElementById('loadInput').value = autoAdj.load;
+        if (autoAdj.reps && document.getElementById('repsInput')) document.getElementById('repsInput').value = autoAdj.reps;
+        showToast(autoAdj.message);
+      }
     }
   }
+
+  currentSetPain = false;
+  const painBtn = document.getElementById('painBtn');
+  if (painBtn) {
+    painBtn.classList.remove('active-red');
+    painBtn.innerText = "Joint Strain: No";
+  }
+}
+
 export function togglePrehab() {
   if (!window.activeSession) return;
 
