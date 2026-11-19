@@ -10,10 +10,10 @@ import { playStageClearFanfare } from '../core/audio.js';
 export const CHAOS_EMERALDS = [
   { id: 'green',  name: 'Green Chaos Emerald',  color: '#4ade80', symbol: '💎', day: 'DAY_A' },
   { id: 'yellow', name: 'Yellow Chaos Emerald', color: '#facc15', symbol: '💎', day: 'DAY_B' },
-  { id: 'purple', name: 'Purple Chaos Emerald', color: '#c084fc', symbol: '💎', day: 'DAY_C' },
-  { id: 'blue',   name: 'Blue Chaos Emerald',   color: '#38bdf8', symbol: '💎', day: 'DAY_D' },
+  { id: 'purple', name: 'Purple Chaos Emerald', color: '#c084fc', symbol: '💎', day: 'DAY_F' },
+  { id: 'blue',   name: 'Blue Chaos Emerald',   color: '#38bdf8', symbol: '💎', day: 'DAY_C' },
   { id: 'cyan',   name: 'Cyan Chaos Emerald',   color: '#22d3ee', symbol: '💎', day: 'DAY_E' },
-  { id: 'red',    name: 'Red Chaos Emerald',    color: '#f87171', symbol: '💎', day: 'DAY_F' },
+  { id: 'red',    name: 'Red Chaos Emerald',    color: '#f87171', symbol: '💎', day: 'DAY_D' },
   { id: 'white',  name: 'White Chaos Emerald',  color: '#f8fafc', symbol: '💎', day: 'DAY_G' }
 ];
 
