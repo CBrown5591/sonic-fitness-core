@@ -20,6 +20,22 @@ export function setWebhookUrl(url) {
 }
 
 /**
+ * Prompts the user to view or update the active Google Apps Script Webhook URL
+ */
+export function promptWebhookUrl() {
+  const current = getActiveWebhookUrl();
+  const next = prompt(
+    'Enter Google Apps Script Web App URL (leave blank to reset to default):',
+    current
+  );
+  if (next === null) return current;
+  const saved = setWebhookUrl(next);
+  alert(saved ? 'Custom Webhook URL saved! Reloading...' : 'Reset to default Webhook URL! Reloading...');
+  window.location.reload();
+  return saved;
+}
+
+/**
  * GET: Fetches live Lifetime EXP, PR Vault, Relics, Biometrics, and Session History on boot
  */
 export async function fetchSheetTelemetry() {
@@ -56,7 +72,7 @@ export async function fetchSheetTelemetry() {
         }
       }
 
-      // 2. Sync Galaxy Watch8 / Health Connect BIOMETRICS rows from Sheet (up to 200 rows for 6M trends)
+      // 2. Sync Galaxy Watch8 / Health Connect BIOMETRICS rows from Sheet (up to 200 rows)
       if (Array.isArray(data.biometrics)) {
         try {
           const sortedBio = [...data.biometrics].sort(
@@ -100,14 +116,14 @@ export async function syncSessionToSheets(sessionPayload) {
 }
 
 /**
- * POST: Transmits parsed Arboleaf PDF Deep Scan data to BIOMETRICS Column R
+ * POST: Transmits parsed Arboleaf PDF Deep Scan data to BIOMETRICS
  */
 export async function syncArboleafDeepScan(parsedReport) {
   const url = getActiveWebhookUrl();
   if (!url) return false;
 
   try {
-    console.log('[Webhook] Transmitting Arboleaf Deep Scan PDF to BIOMETRICS Column R...');
+    console.log('[Webhook] Transmitting Arboleaf Deep Scan PDF to BIOMETRICS...');
     await fetch(url, {
       method: 'POST',
       mode: 'no-cors',
