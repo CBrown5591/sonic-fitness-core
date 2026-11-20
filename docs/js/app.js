@@ -16,7 +16,7 @@ import {
 } from './engine/records.js';
 import { playRingChime, toggleAudioTheme, getAudioTheme, stopAllFanfare } from './core/audio.js';
 import { setTimerDuration, startRestTimer, applyTimeBrake, initTimerBackgroundSync } from './core/timer.js';
-import { fetchSheetTelemetry, syncSessionToSheets } from './core/sync.js';
+import { fetchSheetTelemetry, syncSessionToSheets, promptWebhookUrl } from './core/sync.js';
 import { showToast, renderStageRecordBanner, renderMovementIntel, updateInputLabelsForExercise, togglePrehabDrawer, renderPrehabInstructions } from './ui/renderHud.js';
 import { openAuditModal } from './ui/auditModal.js';
 import { renderResultsOverlay } from './ui/resultsOverlay.js';
@@ -1130,6 +1130,7 @@ window.renderVault = renderVault;
 window.renderSkillTree = renderSkillTree;
 window.switchSkillTreeBranch = switchSkillTreeBranch;
 window.unlockPerk = unlockPerk;
+window.promptWebhookUrl = promptWebhookUrl;
 
 window.applyTimeBrake = () => applyTimeBrake((secs) => {
   const mins = Math.floor(secs / 60);
@@ -1554,3 +1555,4 @@ console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicD
 
 window.appendCardioFinisherSlot = appendCardioFinisherSlot;
 window.renderCalculator = renderCalculator;
+window.promptWebhookUrl = promptWebhookUrl;
