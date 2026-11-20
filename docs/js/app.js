@@ -46,7 +46,7 @@ import { BAND_CONFIG, getPackedBandIds, setPackedBandIds, canPerformBandMovement
 import { getBandEquivalent, SLOT_BAND_EXTRAS } from './data/bandEquivalents.js';
 import { resolveInitialBandPreset, solveBestBandCombination, solveOverdriveBandBridge } from './engine/bandSolver.js';
 import { renderBandSelector, isBandMovement, getSelectedBandCombo, clearBandSelections, setActiveBandSelection } from './ui/renderBandSelector.js';
-import { getDefaultGymLoad } from './data/movementIntel.js';
+import { MOVEMENT_INTEL, getDefaultGymLoad } from './data/movementIntel.js';
 import { renderCalculator } from './ui/renderCalculator.js';
 import { getRotatorMode, setRotatorMode, resolveSlotPreset, resolveFocusNextStep, recordSlotRotationHistory, getExerciseMuscleTags } from './engine/slotRotator.js';
 import { renderBiometricsUI } from './ui/renderBiometrics.js';
@@ -724,7 +724,7 @@ export function logActiveSet() {
   }
 
   const resolved = resolveExerciseTarget(exercise, slotDef.target);
-  const intel = MOVEMENT_INTEL[exercise] || {};
+  const intel = (typeof MOVEMENT_INTEL !== 'undefined' && MOVEMENT_INTEL[exercise]) ? MOVEMENT_INTEL[exercise] : {};
 
   const completedSetObj = {
     slot: slotDef.slot,
