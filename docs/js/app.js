@@ -224,7 +224,9 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
     const maxR = parseInt(slotMatch[2], 10);
     return { targetText: `3 × ${minR}-${maxR}`, defaultReps: maxR };
   }
-
+if (lower.includes('z-press') || lower.includes('z press')) {
+    return { targetText: '3x8-10', defaultReps: 10 };
+  }
   return { targetText: defaultSlotTarget, defaultReps: 8 };
 }
 
