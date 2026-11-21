@@ -43,6 +43,32 @@ export const MOVEMENT_INTEL = {
     cue: "Lower torso over a full 5-second eccentric count. Pause 1s at deep hamstring elongation, explode up in 1s.",
     safety: "Strict hamstring tension; discontinue descent if lower back rounds."
   },
+  "Jefferson Curl (Bodyweight / Light DB)": {
+    type: "Isolation",
+    contraction: "Eccentric",
+    muscles: "[MOBILITY // SEGMENTAL SPINE 5–8r] Spinal Erectors, Multifidus, Thoracolumbar Fascia & Hamstrings",
+    setup: "Stand tall on a low step or flat floor with feet hip-width apart and knees locked straight (or softly unlocked), holding a very light dumbbell (5–15 lbs) or bodyweight with arms hanging in front of thighs.",
+    cue: "Tuck your chin tightly to your chest and peel your spine downward ONE vertebra at a time (neck, upper back, mid-back, lower back) over a slow 5-second count. Pause 2s at the bottom stretch, then tuck your tailbone under and stack each vertebra back up in reverse order.",
+    safety: "Keep weight ultra-light (never exceed 15–20 lbs)—this is a slow connective-tissue mobility drill, not a heavy deadlift. Stop immediately if you feel sharp pinching rather than a smooth muscular stretch."
+  },
+
+  "41\" Loop Band Jefferson Curl": {
+    type: "Isolation",
+    contraction: "Eccentric",
+    muscles: "[MOBILITY // SEGMENTAL SPINE 6–8r] Spinal Erectors, Multifidus & Posterior Chain",
+    setup: "Stand hip-width on the bottom of a light 41\" loop band (Blue or Green) and hold the top loop with both hands at thigh height.",
+    cue: "Tuck chin to chest and roll down one spinal segment at a time over 5 seconds as band tension decreases, then tuck your pelvis and unroll vertebra by vertebra against ascending band resistance.",
+    safety: "Use only a light band (Blue or Green) so top-end tension never yanks your shoulders or compresses your lumbar spine."
+  },
+
+  "DB / Low-Anchor Oblique Side Bend (Controlled)": {
+    type: "Isolation",
+    contraction: "Balanced",
+    muscles: "[ISOLATION // LATERAL SPINE 10–12r/side] Quadratus Lumborum (QL), Internal/External Obliques & Spinal Stabilizers",
+    setup: "Stand tall with feet shoulder-width apart holding a moderate dumbbell in one hand at your side (or a low door-anchor tube handle at thigh height), free hand behind your head.",
+    cue: "Slide your weighted hand straight down the outside of your thigh in a pure lateral bend (no twisting or leaning forward), pause 1s at end-range, and pull smoothly back to dead vertical.",
+    safety: "Move strictly in the frontal plane as if pressed between two panes of glass; do not hyperextend your lower back."
+  },
   "Bodyweight Single-Leg RDL (Wall Supported)": {
     type: "Compound",
     contraction: "Eccentric",
