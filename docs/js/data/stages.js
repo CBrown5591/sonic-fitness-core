@@ -437,11 +437,24 @@ export const STAGES = {
   DAY_F: {
     id: "DAY_F",
     name: "Joint Sparing & Deload Recon",
-    prehab: "Prehab: Deadbugs + Prone Y-T-W Raises & Hip Openers",
+    // --- Inside DAY_F (Joint Sparing & Deload Recon) ---
+    prehab: "Prehab: Posterior Chain & Spine Unlock (Elephant Walks → Jefferson Curls → Hip Flexor Stretch)",
     prehabDetails: [
-      { name: "Deadbugs (Wall Press)", dose: "2 sets × 6 reps / side", cue: "Glued lumbar spine; deep diaphragmatic exhale on each reach." },
-      { name: "Prone Scapular Y-T-W Raises", dose: "1–2 sets × 6 reps / pos", cue: "Thumbs to ceiling; isolate lower traps and posterior rotator cuff." },
-      { name: "Bird-Dogs (McGill)", dose: "2 sets × 6 reps / side", cue: "5s hold at peak extension; zero lumbar hyperextension." }
+      {
+        name: "Elephant Walks (Alternating Knee-Bend Forward Fold)",
+        dose: "1–2 sets × 10 reps / side",
+        cue: "Hands planted on a low bench or shins; straighten one knee at a time to glide the sciatic nerve without forcing past the 80% pull."
+      },
+      {
+        name: "Jefferson Curl (Bodyweight / Light DB)",
+        dose: "1–2 sets × 6 slow reps (5s descent)",
+        cue: "Tuck chin to chest and peel your spine down ONE vertebra at a time with bodyweight or 5–15 lbs. Stop at smooth muscular tension."
+      },
+      {
+        name: "Half-Kneeling Hip Flexor & Quad Stretch",
+        dose: "1–2 sets × 30s hold / side",
+        cue: "Tuck tailbone under (posterior pelvic tilt) and squeeze rear glute firmly to release anterior pelvic pull on your hamstrings."
+      }
     ],
     slots: [
       {
@@ -750,11 +763,24 @@ export const STAGES = {
   DAY_J: {
     id: "DAY_J",
     name: "Sonic Chaos // Athletic Agility, Mobility & Flexibility",
-    prehab: "Prehab: Tibialis Wall Raises + McGill Cat-Camel & Dynamic Hip Circles",
+    // --- Inside DAY_J (Sonic Chaos // Athletic Agility, Mobility & Flexibility) ---
+    prehab: "Prehab: Posterior Chain & Spine Unlock (Elephant Walks → Jefferson Curls → Hip Flexor Stretch)",
     prehabDetails: [
-      { name: "Tibialis Wall Raises", dose: "2 sets × 20 reps", cue: "Prime ankle dorsiflexion and shin deceleration control before first-step work." },
-      { name: "McGill Cat-Camel", dose: "1 set × 8 slow cycles", cue: "Gentle segmental spinal wave to lubricate thoracolumbar fascia." },
-      { name: "Standing Hip Controlled Articular Rotations (CARs)", dose: "2 sets × 5 circles / side", cue: "Brace core; trace the largest pain-free circle with your knee without pelvis tilt." }
+      {
+        name: "Elephant Walks (Alternating Knee-Bend Forward Fold)",
+        dose: "1–2 sets × 10 reps / side",
+        cue: "Hands planted on a low bench or shins; straighten one knee at a time to glide the sciatic nerve without forcing past the 80% pull."
+      },
+      {
+        name: "Jefferson Curl (Bodyweight / Light DB)",
+        dose: "1–2 sets × 6 slow reps (5s descent)",
+        cue: "Tuck chin to chest and peel your spine down ONE vertebra at a time with bodyweight or 5–15 lbs. Stop at smooth muscular tension."
+      },
+      {
+        name: "Half-Kneeling Hip Flexor & Quad Stretch",
+        dose: "1–2 sets × 30s hold / side",
+        cue: "Tuck tailbone under (posterior pelvic tilt) and squeeze rear glute firmly to release anterior pelvic pull on your hamstrings."
+      }
     ],
     slots: [
       {
