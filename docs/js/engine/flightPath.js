@@ -30,6 +30,10 @@ function getSessionMuscleTags(sessionObj) {
 /**
  * Extracts latest Watch8 vitals (BP, Sleep, SpO2) AND Arboleaf Deep Scan signals
  */
+/**
+ * Extracts latest Watch8 / Helio Strap vitals (BP, Sleep, SpO2, HRV, RHR, Skin Temp)
+ * AND Arboleaf Deep Scan signals
+ */
 function getLatestBiometricSignals() {
   let bioHistory = [];
   try {
@@ -63,9 +67,12 @@ function getLatestBiometricSignals() {
     }
   }
 
-  // 2. Latest Sleep & SpO2 within last 48 hours
+  // 2. Latest Sleep, SpO2, HRV, Resting HR & Skin Temp within last 48 hours
   const latestSleepRow = sorted.find(r => Number(r.sleepHrs) > 0);
   const latestSpo2Row = sorted.find(r => Number(r.spo2Pct) > 0);
+  const latestHrvRow = sorted.find(r => Number(r.hrvMs) > 0);
+  const latestRhrRow = sorted.find(r => Number(r.restingHr) > 0);
+  const latestSkinTempRow = sorted.find(r => Number(r.skinTempC) > 0);
 
   let recentSleepHrs = null;
   if (latestSleepRow) {
@@ -80,6 +87,30 @@ function getLatestBiometricSignals() {
     const ts = new Date(latestSpo2Row.timestamp || latestSpo2Row.date || 0).getTime();
     if (!isNaN(ts) && (nowMs - ts) <= fortyEightHoursMs) {
       recentSpo2Pct = Number(latestSpo2Row.spo2Pct);
+    }
+  }
+
+  let recentHrvMs = null;
+  if (latestHrvRow) {
+    const ts = new Date(latestHrvRow.timestamp || latestHrvRow.date || 0).getTime();
+    if (!isNaN(ts) && (nowMs - ts) <= fortyEightHoursMs) {
+      recentHrvMs = Number(latestHrvRow.hrvMs);
+    }
+  }
+
+  let recentRestingHr = null;
+  if (latestRhrRow) {
+    const ts = new Date(latestRhrRow.timestamp || latestRhrRow.date || 0).getTime();
+    if (!isNaN(ts) && (nowMs - ts) <= fortyEightHoursMs) {
+      recentRestingHr = Number(latestRhrRow.restingHr);
+    }
+  }
+
+  let recentSkinTempC = null;
+  if (latestSkinTempRow) {
+    const ts = new Date(latestSkinTempRow.timestamp || latestSkinTempRow.date || 0).getTime();
+    if (!isNaN(ts) && (nowMs - ts) <= fortyEightHoursMs) {
+      recentSkinTempC = Number(latestSkinTempRow.skinTempC);
     }
   }
 
@@ -109,11 +140,13 @@ function getLatestBiometricSignals() {
     latestBp,
     recentSleepHrs,
     recentSpo2Pct,
+    recentHrvMs,
+    recentRestingHr,
+    recentSkinTempC,
     latestDeepScan,
     skeletalMuscleDropLbs
   };
 }
-
 export function evaluateWeeklyCardioStatus(sessionHistory = []) {
   const now = new Date();
   const sevenDaysAgo = new Date(now.getTime() - (7 * 24 * 60 * 60 * 1000));
@@ -198,15 +231,19 @@ export function determineFlightPath(lastStages = [], sessionHistory = []) {
     }
   }
 
-  // 2. SLEEP / SpO2 / SKELETAL MUSCLE DROP / JOINT STRAIN DELOAD OVERRIDE
+  // =========================================================================
+  // ---> PASTE SECTION 2 RIGHT HERE (Replaces your old Section 2 block)
+  // =========================================================================
+  // 2. SLEEP / SpO2 / HRV / RESTING HR / SKELETAL MUSCLE DROP / JOINT STRAIN DELOAD OVERRIDE
   const lowSleep = bioSignals?.recentSleepHrs !== null && bioSignals?.recentSleepHrs < 5.5;
   const lowSpo2 = bioSignals?.recentSpo2Pct !== null && bioSignals?.recentSpo2Pct < 93;
+  const lowHrv = bioSignals?.recentHrvMs !== null && bioSignals?.recentHrvMs < 25;
+  const highRhr = bioSignals?.recentRestingHr !== null && bioSignals?.recentRestingHr > 85;
   const hadRecentStrain =
     lastTwoSessions.some(s => s.jointPain === true || s.jointPain === 'true') ||
     localStorage.getItem('sonic_last_strain') === 'true';
 
-  if ((lowSleep || lowSpo2 || muscleLossAlert || hadRecentStrain) && STAGES.DAY_F) {
-    // If joint strain occurred and DAY_F was already used recently, pivot to DAY_K Tendon Analgesia
+  if ((lowSleep || lowSpo2 || lowHrv || highRhr || muscleLossAlert || hadRecentStrain) && STAGES.DAY_F) {
     const useTendonDay = hadRecentStrain && lastTwoStageIds.includes('DAY_F') && STAGES.DAY_K && !lastTwoStageIds.includes('DAY_K');
     const recoveryStage = useTendonDay ? 'DAY_K' : (!lastTwoStageIds.includes('DAY_F') ? 'DAY_F' : null);
 
@@ -214,9 +251,12 @@ export function determineFlightPath(lastStages = [], sessionHistory = []) {
       let deloadReason = useTendonDay
         ? "Tendon Analgesia Protocol — Isometric stiffness & joint relief"
         : "Joint Shield Recovery — Active Deload after recent strain flag";
+
       if (!useTendonDay) {
         if (lowSleep) deloadReason = `Recovery Deload — Low sleep logged (${bioSignals.recentSleepHrs} hrs)`;
         else if (lowSpo2) deloadReason = `Recovery Deload — Low SpO2 logged (${bioSignals.recentSpo2Pct}%)`;
+        else if (lowHrv) deloadReason = `Recovery Deload — Low Overnight HRV (${bioSignals.recentHrvMs} ms)`;
+        else if (highRhr) deloadReason = `Recovery Deload — Elevated Resting HR (${bioSignals.recentRestingHr} bpm)`;
         else if (muscleLossAlert) deloadReason = `Recovery Deload — Skeletal muscle dip (-${bioSignals.skeletalMuscleDropLbs} lb); prioritize recovery & protein`;
       }
 
@@ -224,14 +264,15 @@ export function determineFlightPath(lastStages = [], sessionHistory = []) {
         recommendedStage: recoveryStage,
         reason: deloadReason,
         isCardioOverride: false,
-        isBiometricAlert: lowSleep || lowSpo2 || muscleLossAlert,
+        isBiometricAlert: lowSleep || lowSpo2 || lowHrv || highRhr || muscleLossAlert,
         canPairFinisher: !cardioStatus.cardioFulfilled || bpElevatesZone2 || highVisceralOrWhr,
         analyzedSessions: lastTwoSessions.length
       };
     }
   }
+  // =========================================================================
 
-  // 3. WEEKLY CARDIO GUARANTEE OVERRIDE (Mid-to-late week if unfulfilled)
+ // 3. WEEKLY CARDIO GUARANTEE OVERRIDE (Mid-to-late week if unfulfilled)
   if (!cardioStatus.cardioFulfilled && cardioStatus.isUrgent) {
     const nextCardio = DEDICATED_CARDIO_DAYS.find(c => !lastTwoStageIds.includes(c)) || 'DAY_G';
     return {
