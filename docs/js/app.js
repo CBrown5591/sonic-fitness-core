@@ -40,6 +40,7 @@ import {
 import { getTotalRedRings } from './ui/renderVault.js';
 import { renderVault, creditVaultRings, saveVaultData } from './ui/renderVault.js';
 import { renderSkillTree, switchSkillTreeBranch, unlockPerk } from './ui/renderSkillTree.js';
+import { initMusicDrawer } from './ui/renderMusicDrawer.js';
 import { switchMainTab } from './ui/renderTabs.js';
 import { renderPRVaultUI } from './ui/renderPRVault.js';
 import { BAND_CONFIG, getPackedBandIds, setPackedBandIds, canPerformBandMovement } from './data/bandConfigs.js';
@@ -224,10 +225,12 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
     const maxR = parseInt(slotMatch[2], 10);
     return { targetText: `3 × ${minR}-${maxR}`, defaultReps: maxR };
   }
-if (name.includes('z-press') || name.includes('z press')) {
+
+  if (name.includes('z-press') || name.includes('z press')) {
     return { targetText: '3x8-10', defaultReps: 10 };
   }
   return { targetText: defaultSlotTarget, defaultReps: 8 };
+}
 
 function renderBagInventoryChecklist() {
   const mount = document.getElementById('bagChecklistMount');
@@ -485,7 +488,7 @@ function loadSlotData() {
   const repsInput = document.getElementById('repsInput');
   if (repsInput) repsInput.value = resolved.defaultReps;
 
- const focusMultiplier = getFocusFatigueMultiplier(activeExercise);
+  const focusMultiplier = getFocusFatigueMultiplier(activeExercise);
   const loadInput = document.getElementById('loadInput');
 
   if (currentSlotGearMode === 'BANDS' || isBandMovement(activeExercise)) {
@@ -1138,6 +1141,24 @@ window.switchSkillTreeBranch = switchSkillTreeBranch;
 window.unlockPerk = unlockPerk;
 window.promptWebhookUrl = promptWebhookUrl;
 
+window.toggleMediaShelf = () => {
+  const shelf = document.getElementById('mediaShelf');
+  const chev = document.getElementById('dockMusicChevron');
+  if (!shelf) return;
+  const isOpen = shelf.style.display !== 'none';
+  shelf.style.display = isOpen ? 'none' : 'block';
+  if (chev) chev.innerText = isOpen ? '▲' : '▼';
+};
+
+window.requestNotificationPermission = async () => {
+  if (!('Notification' in window)) {
+    showToast('Notifications not supported on this device.');
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  showToast(`Notifications: ${perm.toUpperCase()}`);
+};
+
 window.applyTimeBrake = () => applyTimeBrake((secs) => {
   const mins = Math.floor(secs / 60);
   const rem = secs % 60;
@@ -1158,6 +1179,7 @@ document.addEventListener('DOMContentLoaded', async () => {
   renderVault();
   renderArtifactsTray();
   initTimerBackgroundSync();
+  initMusicDrawer();
 
   const bagBtn = document.getElementById('toggleBagDrawerBtn');
   const bagDrawer = document.getElementById('bagInventoryDrawer');
@@ -1562,20 +1584,3 @@ console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicD
 window.appendCardioFinisherSlot = appendCardioFinisherSlot;
 window.renderCalculator = renderCalculator;
 window.promptWebhookUrl = promptWebhookUrl;
-  window.toggleMediaShelf = () => {
-  const shelf = document.getElementById('mediaShelf');
-  const chev = document.getElementById('dockMusicChevron');
-  if (!shelf) return;
-  const isOpen = shelf.style.display !== 'none';
-  shelf.style.display = isOpen ? 'none' : 'block';
-  if (chev) chev.innerText = isOpen ? '▲' : '▼';
-};
-
-window.requestNotificationPermission = async () => {
-  if (!('Notification' in window)) {
-    showToast('Notifications not supported on this device.');
-    return;
-  }
-  const perm = await Notification.requestPermission();
-  showToast(`Notifications: ${perm.toUpperCase()}`);
-};
