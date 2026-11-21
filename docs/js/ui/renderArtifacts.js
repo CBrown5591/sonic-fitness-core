@@ -125,6 +125,14 @@ export function getSecretRings() {
   return runtimeWorldRings;
 }
 
+export function saveChaosEmeralds(emeralds) {
+  runtimeChaosEmeralds = emeralds || {};
+}
+
+export function saveSecretRings(rings) {
+  runtimeWorldRings = rings || {};
+}
+
 export function setRuntimeUnlockedPerks(perks) {
   runtimeUnlockedPerks = Array.isArray(perks) ? perks : [];
 }
@@ -206,20 +214,24 @@ export function deactivateSuperModeSession() {
   updateHudRingBar();
 }
 
-export function applySuperSonicDamagePenalty(showToast) {
+export function applySuperSonicDamagePenalty(reasonOrToast, toastFn) {
   if (!isSuperModeSessionActive()) return;
+  const toast = typeof reasonOrToast === 'function'
+    ? reasonOrToast
+    : (typeof toastFn === 'function' ? toastFn : window.showToast);
+
   const currentRings = getStandardRings();
   const penalty = 15;
   const updated = Math.max(0, currentRings - penalty);
   saveStandardRings(updated);
 
-  if (showToast) {
-    showToast(`💥 HULL STRAIN! Super Sonic lost ${penalty} Gold Rings!`);
+  if (typeof toast === 'function') {
+    toast(`💥 HULL STRAIN! Super Sonic lost ${penalty} Gold Rings!`);
   }
 
   if (updated === 0) {
     deactivateSuperModeSession();
-    if (showToast) showToast('⚠️ RING DEPLETION: Super Sonic Reverted!');
+    if (typeof toast === 'function') toast('⚠️ RING DEPLETION: Super Sonic Reverted!');
   }
 }
 
@@ -489,14 +501,14 @@ export function renderArtifactsTray() {
     };
   }
 
-  const perksBtn = document.getElementById('openSkillTreeHudBtn');
+ const perksBtn = document.getElementById('openSkillTreeHudBtn');
   if (perksBtn) {
-    perksBtn.onclick = () => toggleSkillTreeDrawer();
+    perksBtn.onclick = () => window.switchMainTab?.('skillsTab');
   }
 
   const redBlock = document.getElementById('hudRedRingsBlock');
   if (redBlock) {
-    redBlock.onclick = () => toggleSkillTreeDrawer();
+    redBlock.onclick = () => window.switchMainTab?.('skillsTab');
   }
 
   updateHudRingBar();
