@@ -194,6 +194,7 @@ export const STAGES = {
   "Snap-Downs (Athletic Braking)",
           "Split-Squat with Thoracic Rotation (No Bench)",
           "Half-Kneeling Sprint Start (First 3 Steps)",
+          "DDP Twisting Lunge to Warrior Flow",
           "Bodyweight Squat / TRX Squat"
         ]
       },
@@ -293,6 +294,7 @@ export const STAGES = {
           "Med Ball Deadbug Compression (8-12 lbs)",
           "DB Spellcaster (Rotational Swing)",
   "Weighted / Bodyweight Russian Twist",
+          "DDP Broken Table (Crunch & Isometric Extension)",
           "Hollow Body Isometric Hold (30s)"
         ]
       },
@@ -330,6 +332,7 @@ export const STAGES = {
           "Med Ball Rotational Wall Chest Pass",
           "Med Ball Overhead Slam",
           "Cable Pull-Through (Bravo Low Pulley)",
+          "DDP Broken Table (Crunch & Isometric Extension)",
           "McGill Curl-Up (Strict Pause)"
         ]
       }
@@ -384,6 +387,7 @@ export const STAGES = {
           "DB Lateral Raise (Scapular Plane)",
           "DB Front-to-Lateral Raise Combo",
           "Incline Push-Up (Hands on Bench)",
+          "DDP Slow-Burn Push-Up (3–5s Eccentric Count)",
           "Tempo Push-Up (3-0-1 Pause)"
         ]
       },
@@ -456,6 +460,7 @@ export const STAGES = {
           "Bodyweight Squat / TRX Squat",
           "90/90 Hip Switches (Active End-Range)",
   "Cossack / Side Lunge Flow (Assisted)",
+          "DDP Twisting Lunge to Warrior Flow",
           "Tibialis Wall Raises"
         ]
       },
@@ -495,6 +500,7 @@ export const STAGES = {
           "DB Front-to-Lateral Raise Combo",
           "Band Shoulder Dislocates",
   "Wall Slides / Thoracic Open-Book Rotations",
+          "DDP Diamond Cutter to Touchdown",
           "Prone Scapular Y-T-W Raises"
         ]
       },
@@ -512,6 +518,8 @@ export const STAGES = {
   "Half-Kneeling Hip Flexor & Quad Stretch",
           "Jefferson Curl (Bodyweight / Light DB)",
   "DB / Low-Anchor Oblique Side Bend (Controlled)",
+          "DDP Cobra / Upward Dog to Safety Zone",
+  "DDP Can Opener / Pinfall Stretch",
           "Tall-Kneeling Pallof Hold (20s)",
           "Hollow Body Isometric Hold (30s)"
         ]
@@ -695,6 +703,7 @@ export const STAGES = {
         alts: [
           "Incline Push-Up (Hands on Bench)",
           "Hollow Body Isometric Hold (30s)",
+          "DDP Slow-Burn Push-Up (3–5s Eccentric Count)",
           "Prone Scapular Y-T-W Raises"
         ]
       },
@@ -710,6 +719,7 @@ export const STAGES = {
   "Weighted / Bodyweight Russian Twist",
           "Lateral Bear Crawl (Side-to-Side)",
           "Crab Walk / Reverse Table-Top Reach",
+          "DDP Broken Table (Crunch & Isometric Extension)",
           "Prone Scapular Y-T-W Raises"
         ]
       },
@@ -786,6 +796,8 @@ export const STAGES = {
 "Single-Leg Cable Pallof Press (Perturbation)",
           "Jefferson Curl (Bodyweight / Light DB)",
   "DB / Low-Anchor Oblique Side Bend (Controlled)",
+          "DDP Diamond Cutter to Touchdown",
+  "DDP Twisting Lunge to Warrior Flow",
           "Band Shoulder Dislocates"
         ]
       },
@@ -798,6 +810,8 @@ export const STAGES = {
           "Half-Kneeling Hip Flexor & Quad Stretch",
           "90/90 Pigeon Glute Hold",
           "Lat & Thoracic Bench Prayer Stretch",
+          "DDP Cobra / Upward Dog to Safety Zone",
+  "DDP Can Opener / Pinfall Stretch",
           "Supine Hamstring Band/Strap Stretch"
         ]
       }
@@ -839,6 +853,7 @@ export const STAGES = {
           "Cybex Eagle Hip Abduction (Lean-Forward Upper Glute)",
       "Mini-Band Lateral Monster Walk",
       "Copenhagen Side Plank Hold (Bent-Knee 20-30s)",
+          "DDP Broken Table (Crunch & Isometric Extension)",
           "Bodyweight Single-Leg RDL (Strict 5s Eccentric)"
         ]
       },
