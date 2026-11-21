@@ -2,6 +2,8 @@
 import { renderVault } from './renderVault.js';
 import { refreshRecordsTab } from './renderRecordsTab.js';
 import { renderCalculator } from './renderCalculator.js';
+import { renderBiometricsUI } from './renderBiometrics.js';
+import { renderSkillTree } from './renderSkillTree.js';
 
 export function switchMainTab(targetTabId) {
   // 1. Hide all views
@@ -32,8 +34,12 @@ export function switchMainTab(targetTabId) {
   // 5. Trigger live renders for target tab
   if (targetTabId === 'recordsTab') {
     refreshRecordsTab();
+  } else if (targetTabId === 'biometricsTab') {
+    renderBiometricsUI();
   } else if (targetTabId === 'vaultTab') {
     renderVault();
+  } else if (targetTabId === 'skillsTab') {
+    renderSkillTree();
   } else if (targetTabId === 'calcTab') {
     const mount = document.getElementById('calculatorMount');
     if (mount) renderCalculator(mount);
