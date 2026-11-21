@@ -189,6 +189,10 @@ export const STAGES = {
           "Cybex Eagle Leg Press Calf Raise",
           "Supported Reverse Lunge (Rack/Wall)",
           "Goblet Squat (Tempo 3-0-1)",
+          "Goblet Cossack Squat (Lateral Squat)",
+          "Bodyweight / Goblet Tactical Get-Up",
+  "Snap-Downs (Athletic Braking)",
+          "Split-Squat with Thoracic Rotation (No Bench)",
           "Half-Kneeling Sprint Start (First 3 Steps)",
           "Bodyweight Squat / TRX Squat"
         ]
@@ -239,6 +243,10 @@ export const STAGES = {
           "Cybex Eagle Hip Abduction (Lean-Forward Upper Glute)",
           "Cable Pallof Press",
           "Bear Crawl (Forward & Reverse Paced)",
+          "Front-Rack DB/KB Carry (Single or Double)",
+  "Mixed Carry (Overhead + Suitcase)",
+  "Lateral Bear Crawl (Side-to-Side)",
+  "Crab Walk / Reverse Table-Top Reach",
           "March in Place (Strict High Knees 45s)"
         ]
       }
@@ -265,6 +273,12 @@ export const STAGES = {
           "Single-Arm DB Suitcase Carry",
           "DB Spellcaster (Rotational Swing)",
           "Weighted / Bodyweight Russian Twist",
+          "Split-Squat with Thoracic Rotation (No Bench)",
+          "Half Turkish Get-Up (DB/KB)",
+  "Front-Rack DB/KB Carry (Single or Double)",
+  "Mixed Carry (Overhead + Suitcase)",
+  "Single-Leg Cable Pallof Press (Perturbation)",
+  "Cable Pallof Press with Figure-8 Trace",
           "Tall-Kneeling Pallof Hold (20s)"
         ]
       },
@@ -294,6 +308,11 @@ export const STAGES = {
           "Bravo Anti-Extension Overhead Hold",
           "Seated Floor DB Z-Press",
           "March in Place (Strict High Knees 45s)",
+          "Half Turkish Get-Up (DB/KB)",
+  "Front-Rack DB/KB Carry (Single or Double)",
+  "Mixed Carry (Overhead + Suitcase)",
+  "Single-Leg Cable Pallof Press (Perturbation)",
+  "Cable Pallof Press with Figure-8 Trace",
           "Bear Crawl (Forward & Reverse Paced)"
         ]
       },
@@ -342,6 +361,7 @@ export const STAGES = {
           "Suitcase DB Squat",
           "DB Bulgarian Split Squat",
           "Goblet Squat (Tempo 3-0-1)",
+          "Goblet Cossack Squat (Lateral Squat)",
           "Bodyweight Squat / TRX Squat",
           "Broad Jump to Soft Stick",
   "Med Ball Overhead Slam",
@@ -541,6 +561,8 @@ export const STAGES = {
           "Bravo Cable Woodchoppers (High-to-Low)",
           "Med Ball Rotational Wall Chest Pass",
           "Cable Pallof Press (Bravo)",
+          "Lateral Bear Crawl (Side-to-Side)",
+          "Crab Walk / Reverse Table-Top Reach",
           "Tall-Kneeling Pallof Hold (20s)"
         ]
       },
@@ -554,6 +576,8 @@ export const STAGES = {
           "Kettlebell Suitcase March / Carry",
           "Overhead Waiter's Walk (Single DB)",
           "Bear Crawl (Forward & Reverse Paced)",
+          "Front-Rack DB/KB Carry (Single or Double)",
+          "Mixed Carry (Overhead + Suitcase)",
           "March in Place (Strict High Knees 45s)"
         ]
       }
@@ -579,6 +603,7 @@ export const STAGES = {
           "Cybex Eagle Leg Extension (Paced 20r)",
           "Suitcase DB Squat",
           "DB Spellcaster (Rotational Swing)",
+          "Bodyweight / Goblet Tactical Get-Up",
           "Bodyweight Squat / TRX Squat"
         ]
       },
@@ -593,6 +618,7 @@ export const STAGES = {
           "B-Stance DB Hinge",
           "Glute Bridge / DB RDL (to Bench)",
           "Single-Leg Glute Bridge (12r/side)",
+          "Snap-Downs (Athletic Braking)",
           "Bodyweight Single-Leg RDL (Wall Supported)"
         ]
       },
@@ -609,6 +635,8 @@ export const STAGES = {
           "Elevated DB/KB Gorilla Row",
           "Cybex Eagle High Row (Chest Supported)",
           "Doorframe Row (Single-Arm Strict Pause)",
+          "Lateral Bear Crawl (Side-to-Side)",
+          "Crab Walk / Reverse Table-Top Reach",
           "Prone Floor Lat Pull (Towel Slide)"
         ]
       },
@@ -623,6 +651,8 @@ export const STAGES = {
           "Cable Pallof Press (Bravo)",
           "Kettlebell Suitcase March / Carry",
           "March in Place (Strict High Knees 45s)",
+          "Front-Rack DB/KB Carry (Single or Double)",
+          "Mixed Carry (Overhead + Suitcase)",
           "DB Spellcaster (Rotational Swing)",
           "Bear Crawl (Forward & Reverse Paced)"
         ]
@@ -649,6 +679,9 @@ export const STAGES = {
           "Supported Reverse Lunge (Rack/Wall)",
           "Single-Leg Glute Bridge (12r/side)",
           "DB Bulgarian Split-Squat Bottom Isometric Hold (30s/side)",
+          "Split-Squat with Thoracic Rotation (No Bench)",
+          "Goblet Cossack Squat (Lateral Squat)",
+          "Bodyweight / Goblet Tactical Get-Up",
           "Tibialis Wall Raises"
         ]
       },
@@ -673,6 +706,8 @@ export const STAGES = {
           "Deadbugs (Wall Press)",
           "Twisting Leg Raise (Floor / Bench)",
   "Weighted / Bodyweight Russian Twist",
+          "Lateral Bear Crawl (Side-to-Side)",
+          "Crab Walk / Reverse Table-Top Reach",
           "Prone Scapular Y-T-W Raises"
         ]
       },
@@ -686,6 +721,8 @@ export const STAGES = {
           "McGill Curl-Up (Strict Pause)",
           "Twisting Leg Raise (Floor / Bench)",
   "Weighted / Bodyweight Russian Twist",
+          "Single-Leg Cable Pallof Press (Perturbation)",
+          "Cable Pallof Press with Figure-8 Trace",
           "Hollow Body Isometric Hold (30s)"
         ]
       }
@@ -710,6 +747,10 @@ export const STAGES = {
           "Half-Kneeling Sprint Start (First 3 Steps)",
           "Med Ball Overhead Slam",
           "Broad Jump to Soft Stick",
+          "Goblet Cossack Squat (Lateral Squat)",
+  "Split-Squat with Thoracic Rotation (No Bench)",
+          "Snap-Downs (Athletic Braking)",
+          "Lateral Bound to Single-Leg Stick (Low-Amplitude)",
           "Seated-to-Standing Box Jump (Dead-Stop)"
         ]
       },
@@ -722,6 +763,8 @@ export const STAGES = {
           "Low-Impact Lateral Shuffle & Carioca (Zone 2)",
           "Med Ball Rotational Wall Chest Pass",
           "Dynamic Banded Rotational Punch",
+          "Lateral Bear Crawl (Side-to-Side)",
+"Crab Walk / Reverse Table-Top Reach",
           "Low-Impact Shadow Boxing Flow (Zone 2)"
         ]
       },
@@ -734,6 +777,11 @@ export const STAGES = {
           "90/90 Hip Switches (Active End-Range)",
           "Bodyweight Rotational Windmills (Paced)",
           "Cossack / Side Lunge Flow (Assisted)",
+          "Goblet Cossack Squat (Lateral Squat)",
+  "Split-Squat with Thoracic Rotation (No Bench)",
+          "Half Turkish Get-Up (DB/KB)",
+"Bodyweight / Goblet Tactical Get-Up",
+"Single-Leg Cable Pallof Press (Perturbation)",
           "Band Shoulder Dislocates"
         ]
       },
