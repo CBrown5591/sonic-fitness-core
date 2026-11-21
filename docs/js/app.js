@@ -224,11 +224,10 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
     const maxR = parseInt(slotMatch[2], 10);
     return { targetText: `3 × ${minR}-${maxR}`, defaultReps: maxR };
   }
-if (lower.includes('z-press') || lower.includes('z press')) {
+if (name.includes('z-press') || name.includes('z press')) {
     return { targetText: '3x8-10', defaultReps: 10 };
   }
   return { targetText: defaultSlotTarget, defaultReps: 8 };
-}
 
 function renderBagInventoryChecklist() {
   const mount = document.getElementById('bagChecklistMount');
@@ -1096,7 +1095,7 @@ export function finishSession() {
       didLevelUp: newProg.level > oldProg.level,
       newLevel: newProg.level,
       expProgressPct: newProg.progressPct,
-      isNewRecord: recordRes.isNew,
+      isNewRecord: recordRes.isNewRecord,
       goldRingsEarned: standardRingsEarned,
       awardedEmerald: emeraldWon,
       isSuperActive: isSuperModeSessionActive(),
@@ -1563,3 +1562,20 @@ console.log('⚡ [SONIC HUD] DevTools Testing Suite available at window.__sonicD
 window.appendCardioFinisherSlot = appendCardioFinisherSlot;
 window.renderCalculator = renderCalculator;
 window.promptWebhookUrl = promptWebhookUrl;
+  window.toggleMediaShelf = () => {
+  const shelf = document.getElementById('mediaShelf');
+  const chev = document.getElementById('dockMusicChevron');
+  if (!shelf) return;
+  const isOpen = shelf.style.display !== 'none';
+  shelf.style.display = isOpen ? 'none' : 'block';
+  if (chev) chev.innerText = isOpen ? '▲' : '▼';
+};
+
+window.requestNotificationPermission = async () => {
+  if (!('Notification' in window)) {
+    showToast('Notifications not supported on this device.');
+    return;
+  }
+  const perm = await Notification.requestPermission();
+  showToast(`Notifications: ${perm.toUpperCase()}`);
+};
