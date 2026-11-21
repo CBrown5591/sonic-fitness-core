@@ -140,6 +140,12 @@ export const BAND_EQUIVALENTS = {
   "Lateral Bear Crawl (Side-to-Side)": "Mini-Band Lateral Bear Crawl",
   "Crab Walk / Reverse Table-Top Reach": "Mini-Band Crab Walk & Reach",
   "Single-Leg Cable Pallof Press (Perturbation)": "Single-Leg Mid-Anchor Band Pallof Press",
+  "DDP Diamond Cutter to Touchdown": "DDP Diamond Cutter to Touchdown",
+  "DDP Broken Table (Crunch & Isometric Extension)": "DDP Broken Table (Crunch & Isometric Extension)",
+  "DDP Twisting Lunge to Warrior Flow": "DDP Twisting Lunge to Warrior Flow",
+  "DDP Cobra / Upward Dog to Safety Zone": "DDP Cobra / Upward Dog to Safety Zone",
+  "DDP Slow-Burn Push-Up (3–5s Eccentric Count)": "DDP Slow-Burn Push-Up (3–5s Eccentric Count)",
+  "DDP Can Opener / Pinfall Stretch": "DDP Can Opener / Pinfall Stretch",
   "Cable Pallof Press with Figure-8 Trace": "Mid-Anchor Band Pallof Figure-8 Trace"
 };
 
