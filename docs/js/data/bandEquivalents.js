@@ -94,6 +94,13 @@ export const BAND_EQUIVALENTS = {
   "Jefferson Curl (Bodyweight / Light DB)": "41\" Loop Band Jefferson Curl",
   "DB / Low-Anchor Oblique Side Bend (Controlled)": "Low Door-Anchor Standing Oblique Side Bend",
 
+  "Elephant Walks (Alternating Knee-Bend Forward Fold)": "Elephant Walks (Alternating Knee-Bend Forward Fold)",
+  "Bent-Knee Standing Ragdoll Decompression": "Bent-Knee Standing Ragdoll Decompression",
+  "Jefferson Curl (Bodyweight / Light DB)": "41\" Loop Band Jefferson Curl",
+  "41\" Loop Band Jefferson Curl": "41\" Loop Band Jefferson Curl",
+  "Supine Hamstring Band/Strap Stretch": "Supine Hamstring Band/Strap Stretch",
+  "Half-Kneeling Hip Flexor & Quad Stretch": "Half-Kneeling Hip Flexor & Quad Stretch",
+  "90/90 Pigeon Glute Hold": "90/90 Pigeon Glute Hold",
   "Seated DB Wrist Curl & Reverse Wrist Curl Superset": "Low Door-Anchor Tube Bicep Curl",
   "Bravo Low-Cable Reverse Curl (Pronated Forearms)": "Low Door-Anchor Tube Bicep Curl",
   "4-Way Isometric Neck Stabilization": "4-Way Isometric Neck Stabilization",
