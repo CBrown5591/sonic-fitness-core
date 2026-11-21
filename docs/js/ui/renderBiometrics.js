@@ -595,6 +595,9 @@ export function renderBiometricsUI() {
   const stepsLatest = latestNonZero(allEntries, 'steps');
   const bpLatest = latestNonZero(allEntries, 'bp', true);
   const cardioLatest = latestNonZero(allEntries, 'cardioMins');
+  const hrvLatest = latestNonZero(allEntries, 'hrvMs');
+  const rhrLatest = latestNonZero(allEntries, 'restingHr');
+  const tempLatest = latestNonZero(allEntries, 'skinTempC');
 
   const pdfDropInBarHTML = `
     <div class="card" style="margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; gap: 8px; padding: 10px 12px;">
@@ -690,6 +693,9 @@ export function renderBiometricsUI() {
         ${stepsLatest ? `<span style="background: rgba(56,189,248,0.12); padding: 3px 7px; border-radius: 4px;">👟 Steps: <b>${stepsLatest.value.toLocaleString()}</b></span>` : ''}
         ${bpLatest ? `<span style="background: rgba(244,63,94,0.16); padding: 3px 7px; border-radius: 4px;">🩺 BP: <b>${bpLatest.value}</b></span>` : ''}
         ${cardioLatest ? `<span style="background: rgba(74,222,128,0.12); padding: 3px 7px; border-radius: 4px;">🏃 Cardio: <b>${cardioLatest.value}m</b></span>` : ''}
+        ${hrvLatest ? `<span style="background: rgba(167,139,250,0.16); padding: 3px 7px; border-radius: 4px;">📈 HRV: <b>${hrvLatest.value} ms</b></span>` : ''}
+        ${rhrLatest ? `<span style="background: rgba(244,63,94,0.14); padding: 3px 7px; border-radius: 4px;">🫀 RHR: <b>${rhrLatest.value} bpm</b></span>` : ''}
+        ${tempLatest ? `<span style="background: rgba(250,204,21,0.14); padding: 3px 7px; border-radius: 4px;">🌡️ Skin: <b>${tempLatest.value}°C</b></span>` : ''}
       </div>
     </div>
 
