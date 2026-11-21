@@ -126,7 +126,19 @@ export const BAND_EQUIVALENTS = {
   "Single-Leg Balance & Foot-Tripod Hold (30s/side)": "Single-Leg Balance & Foot-Tripod Hold (30s/side)",
   "Serratus Wall Slide with Mini-Band": "Serratus Wall Slide with Mini-Band",
   "Copenhagen Side Plank Hold (Bent-Knee 20-30s)": "Low Door-Anchor Standing Band Adduction",
-  "Single-Arm Iso-Lateral Pulldown": "High Door-Anchor Half-Kneeling Pulldown"
+  "Split-Squat with Thoracic Rotation (No Bench)": "Mid Door-Anchor Split-Squat Pallof Rotation",
+  "Goblet Cossack Squat (Lateral Squat)": "41\" Loop Band Goblet Cossack Squat",
+  "Single-Arm Iso-Lateral Pulldown": "High Door-Anchor Half-Kneeling Pulldown",
+  "Half Turkish Get-Up (DB/KB)": "Bodyweight / Light-DB Half Turkish Get-Up",
+  "Bodyweight / Goblet Tactical Get-Up": "41\" Loop Band Goblet Tactical Get-Up",
+  "Front-Rack DB/KB Carry (Single or Double)": "41\" Loop Band Front-Rack Isometric March",
+  "Mixed Carry (Overhead + Suitcase)": "Banded Mixed Carry March (Overhead + Suitcase)",
+  "Snap-Downs (Athletic Braking)": "Mini-Band Athletic Snap-Downs",
+  "Lateral Bound to Single-Leg Stick (Low-Amplitude)": "Mini-Band Lateral Bound to Stick",
+  "Lateral Bear Crawl (Side-to-Side)": "Mini-Band Lateral Bear Crawl",
+  "Crab Walk / Reverse Table-Top Reach": "Mini-Band Crab Walk & Reach",
+  "Single-Leg Cable Pallof Press (Perturbation)": "Single-Leg Mid-Anchor Band Pallof Press",
+  "Cable Pallof Press with Figure-8 Trace": "Mid-Anchor Band Pallof Figure-8 Trace"
 };
 
 // Extra standalone band movements from User Guide, Broomstick Barbell & Mini-Band Manual
@@ -188,6 +200,18 @@ export const SLOT_BAND_EXTRAS = {
     "41\" Loop Band Squat-to-Press Thruster",
     "Low Door-Anchor Standing Glute Kickback",
     "41\" Loop Band Seated Calf Extension",
+    "Mid Door-Anchor Split-Squat Pallof Rotation",
+  "41\" Loop Band Goblet Cossack Squat",
+    "Bodyweight / Light-DB Half Turkish Get-Up",
+  "41\" Loop Band Goblet Tactical Get-Up",
+  "41\" Loop Band Front-Rack Isometric March",
+  "Banded Mixed Carry March (Overhead + Suitcase)",
+  "Mini-Band Athletic Snap-Downs",
+  "Mini-Band Lateral Bound to Stick",
+  "Mini-Band Lateral Bear Crawl",
+  "Mini-Band Crab Walk & Reach",
+  "Single-Leg Mid-Anchor Band Pallof Press",
+  "Mid-Anchor Band Pallof Figure-8 Trace",
     "Mini-Band Side Lunge"
   ],
   C2: [
@@ -207,6 +231,16 @@ export const SLOT_BAND_EXTRAS = {
     "Low Door-Anchor Standing Band Abduction",
     "Low Door-Anchor Supine Leg Lift",
     "Mini-Band Standing Hip Abduction",
+    "Bodyweight / Light-DB Half Turkish Get-Up",
+  "41\" Loop Band Goblet Tactical Get-Up",
+  "41\" Loop Band Front-Rack Isometric March",
+  "Banded Mixed Carry March (Overhead + Suitcase)",
+  "Mini-Band Athletic Snap-Downs",
+  "Mini-Band Lateral Bound to Stick",
+  "Mini-Band Lateral Bear Crawl",
+  "Mini-Band Crab Walk & Reach",
+  "Single-Leg Mid-Anchor Band Pallof Press",
+  "Mid-Anchor Band Pallof Figure-8 Trace",
     "Mini-Band Seated Hip Abduction"
   ],
 
@@ -216,6 +250,18 @@ export const SLOT_BAND_EXTRAS = {
     "Mid Door-Anchor Seated Russian Twist",
     "41\" Loop Band Spellcaster (Rotational Swing)",
     "Low Door-Anchor Twisting Leg Raise",
+    "Mid Door-Anchor Split-Squat Pallof Rotation",
+  "41\" Loop Band Goblet Cossack Squat",
+    "Bodyweight / Light-DB Half Turkish Get-Up",
+  "41\" Loop Band Goblet Tactical Get-Up",
+  "41\" Loop Band Front-Rack Isometric March",
+  "Banded Mixed Carry March (Overhead + Suitcase)",
+  "Mini-Band Athletic Snap-Downs",
+  "Mini-Band Lateral Bound to Stick",
+  "Mini-Band Lateral Bear Crawl",
+  "Mini-Band Crab Walk & Reach",
+  "Single-Leg Mid-Anchor Band Pallof Press",
+  "Mid-Anchor Band Pallof Figure-8 Trace",
     "Low Door-Anchor Standing Oblique Side Bend"
   ],
   D2: [
@@ -232,6 +278,16 @@ export const SLOT_BAND_EXTRAS = {
     "Low Door-Anchor Standing Oblique Side Bend",
     "41\" Loop Band Seated Floor Z-Press",
     "Low Door-Anchor Seated Z-Press",
+    "Bodyweight / Light-DB Half Turkish Get-Up",
+  "41\" Loop Band Goblet Tactical Get-Up",
+  "41\" Loop Band Front-Rack Isometric March",
+  "Banded Mixed Carry March (Overhead + Suitcase)",
+  "Mini-Band Athletic Snap-Downs",
+  "Mini-Band Lateral Bound to Stick",
+  "Mini-Band Lateral Bear Crawl",
+  "Mini-Band Crab Walk & Reach",
+  "Single-Leg Mid-Anchor Band Pallof Press",
+  "Mid-Anchor Band Pallof Figure-8 Trace",
     "Mini-Band Plank Knee Drive"
   ],
   D4: [
@@ -346,6 +402,18 @@ export const SLOT_BAND_EXTRAS = {
     "Low Door-Anchor Standing Glute Kickback",
     "41\" Loop Band Seated Calf Extension",
     "Mini-Band Side Lunge",
+    "Mid Door-Anchor Split-Squat Pallof Rotation",
+  "41\" Loop Band Goblet Cossack Squat",
+    "Bodyweight / Light-DB Half Turkish Get-Up",
+  "41\" Loop Band Goblet Tactical Get-Up",
+  "41\" Loop Band Front-Rack Isometric March",
+  "Banded Mixed Carry March (Overhead + Suitcase)",
+  "Mini-Band Athletic Snap-Downs",
+  "Mini-Band Lateral Bound to Stick",
+  "Mini-Band Lateral Bear Crawl",
+  "Mini-Band Crab Walk & Reach",
+  "Single-Leg Mid-Anchor Band Pallof Press",
+  "Mid-Anchor Band Pallof Figure-8 Trace",
     "Mini-Band Seated Hip Abduction"
   ],
   I3: [
@@ -361,7 +429,21 @@ export const SLOT_BAND_EXTRAS = {
     "41\" Loop Band Spellcaster (Rotational Swing)",
     "Low Door-Anchor Twisting Leg Raise",
     "Mini-Band Bicycle Crunch"
-  ]
+  ],
+  J1: [
+    "Mid Door-Anchor Split-Squat Pallof Rotation",
+  "41\" Loop Band Goblet Cossack Squat",
+    "Bodyweight / Light-DB Half Turkish Get-Up",
+  "41\" Loop Band Goblet Tactical Get-Up",
+  "41\" Loop Band Front-Rack Isometric March",
+  "Banded Mixed Carry March (Overhead + Suitcase)",
+  "Mini-Band Athletic Snap-Downs",
+  "Mini-Band Lateral Bound to Stick",
+  "Mini-Band Lateral Bear Crawl",
+  "Mini-Band Crab Walk & Reach",
+  "Single-Leg Mid-Anchor Band Pallof Press",
+  "Mid-Anchor Band Pallof Figure-8 Trace"
+    ]
 };
 
 export function getBandEquivalent(gymExercise) {
