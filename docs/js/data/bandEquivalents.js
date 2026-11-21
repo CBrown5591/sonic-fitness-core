@@ -91,6 +91,8 @@ export const BAND_EQUIVALENTS = {
   "Incline Power Walk Surges": "Banded Power Marches (30s/60s)",
   "Mountain Climbers (Hands on Bed - Low Shear)": "Mini-Band Mountain Climbers",
   "Fast Step-Jacks (30s on / 60s off)": "Mini-Band Step-Jacks (30s/60s)",
+  "Jefferson Curl (Bodyweight / Light DB)": "41\" Loop Band Jefferson Curl",
+  "DB / Low-Anchor Oblique Side Bend (Controlled)": "Low Door-Anchor Standing Oblique Side Bend",
 
   "Seated DB Wrist Curl & Reverse Wrist Curl Superset": "Low Door-Anchor Tube Bicep Curl",
   "Bravo Low-Cable Reverse Curl (Pronated Forearms)": "Low Door-Anchor Tube Bicep Curl",
@@ -346,6 +348,8 @@ export const SLOT_BAND_EXTRAS = {
     "Low Door-Anchor Supine Leg Lift",
     "Mini-Band Flutter Kicks",
     "Mini-Band Bicycle Crunch",
+    "41\" Loop Band Jefferson Curl",
+  "Low Door-Anchor Standing Oblique Side Bend",
     "Mini-Band Plank Knee Drive"
   ],
 
@@ -443,6 +447,10 @@ export const SLOT_BAND_EXTRAS = {
   "Mini-Band Crab Walk & Reach",
   "Single-Leg Mid-Anchor Band Pallof Press",
   "Mid-Anchor Band Pallof Figure-8 Trace"
+    ],
+  J3: [
+    "41\" Loop Band Jefferson Curl",
+  "Low Door-Anchor Standing Oblique Side Bend"
     ]
 };
 
