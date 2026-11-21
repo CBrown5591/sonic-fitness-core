@@ -499,6 +499,38 @@ export const MOVEMENT_INTEL = {
     cue: "Drop straight down by bending front knee until rear knee hovers 1 inch off floor. Torso slightly forward to load glute.",
     safety: "Front knee must not collapse inward. Drive through front heel/mid-foot."
   },
+  "Split-Squat with Thoracic Rotation (No Bench)": {
+    type: "Compound",
+    contraction: "Eccentric",
+    muscles: "[COMPOUND // MULTI-PLANAR 8–10r/side] Quads, Glutes, Obliques & Thoracic Rotators",
+    setup: "Take a long split stance with your front foot flat and the ball of your rear foot planted firmly on the floor (no bench). Hold a light dumbbell, plate, or med ball at chest height (or perform bodyweight).",
+    cue: "Lower smoothly until your rear knee hovers 2 inches above the mat with a vertical front shin. Pause at the bottom and rotate your ribcage and shoulders cleanly toward your lead leg, return to center, and drive up.",
+    safety: "Keep your pelvis locked squarely forward and front knee aligned over your second toe—rotate strictly through your upper back rather than twisting your lower back or letting your front knee cave inward."
+  },
+  "Mid Door-Anchor Split-Squat Pallof Rotation": {
+    type: "Compound",
+    contraction: "Eccentric",
+    muscles: "[COMPOUND // MULTI-PLANAR 8–10r/side] Quads, Glutes, Obliques & Core Stability",
+    setup: "Anchor a handled tube or 41\" loop at MID-CHEST height. Stand perpendicular to the door in a split stance with your INSIDE leg forward, holding the handle with both hands at your sternum.",
+    cue: "Drop into a controlled split squat until your rear knee hovers 2 inches off the mat, press the handle straight out, and rotate your torso away from the door over your lead hip. Return to center before standing.",
+    safety: "Keep hips square and front knee stable over your ankle; use moderate band tension so the lateral pull never twists your lumbar spine."
+  },
+  "Goblet Cossack Squat (Lateral Squat)": {
+    type: "Compound",
+    contraction: "Eccentric",
+    muscles: "[COMPOUND // MULTI-PLANAR 8–10r/side] Quads, Glutes, Adductors & Ankle Mobility",
+    setup: "Stand in a wide straddle (1.5×–2× shoulder width) holding a light-to-moderate dumbbell or kettlebell tight against your sternum with elbows tucked.",
+    cue: "Sit your hips back and down into one heel while keeping the opposite leg extended straight out to the side (heel down, toes pointed up toward the ceiling). Pause 1s at the bottom, then drive through the working heel to stand.",
+    safety: "Keep your working heel glued flat to the floor and chest proud—only descend as deep as your hip and ankle mobility allow without your lower back rounding."
+  },
+  "41\" Loop Band Goblet Cossack Squat": {
+    type: "Compound",
+    contraction: "Eccentric",
+    muscles: "[COMPOUND // MULTI-PLANAR 8–10r/side] Quads, Glutes, Adductors & Ankle Mobility",
+    setup: "Take a wide straddle stance standing on the bottom of a light-to-medium 41\" loop band with both feet, and tuck the top loop under your chin/collarbones in a goblet hold.",
+    cue: "Shift your weight laterally and sit deep into one hip while keeping the opposite leg straight with toes pointed up. Drive through the working heel to return to center against ascending band tension.",
+    safety: "Use a light band (Blue or Green) so lateral tension doesn't pull your working knee inward (valgus collapse)."
+  },
   "Deadbugs (Wall Press)": {
     type: "Isolation",
     contraction: "Isometric",
@@ -1109,9 +1141,9 @@ export const MOVEMENT_INTEL = {
     type: "Compound",
     contraction: "Balanced",
     muscles: "Gluteus Maximus (Primary) & Gluteus Medius (Abduction)",
-    setup: "MINI-BAND: Loop 2 inches above knees. 41\" LOOP: Lie on your back with knees bent, drape the center of the 41\" band across your hip crease, and pin both loop ends under the soles/heels of your shoes.",
-    cue: "Drive through heels to bridge hips to full extension against the band tension across your lap while keeping knees pushed slightly outward. Hold 2s at top.",
-    safety: "Chin tucked, ribs down—finish with glute squeeze, not lower back hyperextension."
+    setup: "Loop a medium-to-heavy Mini-Band 2 inches ABOVE both knees. Lie flat on your back with knees bent, heels planted hip-width apart, and toes straight ahead.",
+    cue: "Press knees outward against the mini-band while driving through your heels to bridge hips to full extension. Hold a hard 2-second glute squeeze at the top.",
+    safety: "Keep chin tucked and ribs down—finish with pure glute contraction rather than hyperextending your lower back."
   },
   "Single-Leg Banded RDL (Wall Supported)": {
     type: "Compound",
@@ -1193,7 +1225,7 @@ export const MOVEMENT_INTEL = {
     muscles: "Upper Pectorals, Anterior Deltoid, Serratus & Core Anti-Rotation",
     setup: "Anchor tube at BOTTOM of door. Kneel on one knee facing AWAY from the door (working-arm side knee down on floor) holding the handle at your collarbone.",
     cue: "Press the handle forward and upward at a 45° landmine angle to full lockout while keeping ribs braced.",
-    safety: "Squeeze the glute of the down knee so your lower back never hyperextends."
+    safety: "Squeeze the glute on the down-knee side so your lower back never hyperextends."
   },
   "Mid-Anchor Standing Converging Band Press": {
     type: "Compound",
@@ -1265,9 +1297,9 @@ export const MOVEMENT_INTEL = {
     type: "Compound",
     contraction: "Balanced",
     muscles: "Latissimus Dorsi, Teres Major & Lower Traps",
-    setup: "Anchor handled tubes at the TOP of the door frame. Kneel on both knees facing the door, arms extended overhead at a 45° angle.",
-    cue: "Depress shoulder blades first, then drive elbows down and back into your front hip pockets, pausing 1s at the bottom.",
-    safety: "Keep ribcage clamped down so your lower back doesn't arch as your arms extend overhead."
+    setup: "Anchor handled tubes at the TOP of the door. Kneel on one or both knees facing the door, arms extended overhead at a 45° angle.",
+    cue: "Drive elbows down and back into your front hip pockets, pausing 1s at the bottom of the pull.",
+    safety: "Keep ribcage down so your lower back doesn't arch as your arms extend overhead."
   },
   "High Door-Anchor Half-Kneeling Pulldown": {
     type: "Compound",
@@ -1289,17 +1321,17 @@ export const MOVEMENT_INTEL = {
     type: "Compound",
     contraction: "Balanced",
     muscles: "Mid-Traps, Rhomboids, Latissimus Dorsi & Rear Delts",
-    setup: "Anchor handled tubes at MID-CHEST height in the door. Stand in an athletic quarter-squat stance facing the door with core braced.",
+    setup: "Anchor handled tubes at MID-CHEST / STERNUM height in the door. Stand or sit facing the door with knees softly bent and torso upright.",
     cue: "Initiate by pinching shoulder blades together, then pull handles to lower ribs. Hold 1s squeeze before a 3s controlled return.",
     safety: "Keep shoulders down away from ears and torso stationary—zero lower back swinging."
   },
   "Single-Arm Resisted Doorframe Row": {
     type: "Compound",
     contraction: "Balanced",
-    muscles: "Latissimus Dorsi, Rhomboids, Rear Delts & Biceps",
-    setup: "Anchor a single tube at waist/rib height in the door. Stand in a staggered athletic stance facing the door and grip the handle with one hand.",
-    cue: "Row handle to hip pocket while driving shoulder blade back, holding a strict 2-second isometric pause at the ribs.",
-    safety: "Keep hips and shoulders square to the door; resist all torso rotation."
+    muscles: "Latissimus Dorsi, Rhomboids & Biceps",
+    setup: "Anchor a single handled tube at waist height. Stand in an athletic staggered stance facing the anchor and grip with one hand.",
+    cue: "Row handle to hip pocket while driving shoulder blade back, holding a strict 1-second isometric pause at the ribs.",
+    safety: "Keep hips and shoulders square to the door; resist torso rotation."
   },
   "Prone Banded Straight-Arm Lat Pull": {
     type: "Isolation",
@@ -1337,8 +1369,8 @@ export const MOVEMENT_INTEL = {
     type: "Isolation",
     contraction: "Balanced",
     muscles: "Infraspinatus & Teres Minor (Posterior Rotator Cuff)",
-    setup: "MINI-BAND: Loop around both wrists. 41\" LOOP: Pin one end under your bottom hand on the floor. Lie on your side with top elbow pinned to your ribs at 90°.",
-    cue: "Rotate the top forearm upward toward the ceiling against the band resistance, keeping your elbow glued to your ribs. Pause 1s at top.",
+    setup: "Loop a light Mini-Band around both WRISTS (or pin one end under your bottom hand on the floor). Lie on your side with top elbow pinned tight to your ribs at 90°.",
+    cue: "Rotate the top forearm upward toward the ceiling against the mini-band, keeping your elbow glued to your ribcage. Control the 3-second return.",
     safety: "Do not roll your torso backward to fake extra range of motion."
   },
   "Mini-Band Scapular Y-T-W Raises": {
@@ -1428,8 +1460,8 @@ export const MOVEMENT_INTEL = {
   "Banded Pallof Press": {
     type: "Isolation",
     contraction: "Balanced",
-    muscles: "Transverse Abdominis, Internal/External Obliques & Glute Medius",
-    setup: "Anchor handled tube or 41\" loop at MID-CHEST height. Stand perpendicular to anchor with feet shoulder-width. Hold handle with both hands at sternum.",
+    muscles: "Internal/External Obliques, Transverse Abdominis & Glutes",
+    setup: "Anchor a handled tube at MID-CHEST height. Stand perpendicular to the door in an athletic stance, holding the handle with both hands at your sternum.",
     cue: "Press hands straight out in front of chest. Hold locked extension for 2 full seconds while fighting all rotational pull, then return to chest.",
     safety: "Zero hip twisting or lumbar rotation. Glutes and obliques stay locked as a solid pillar."
   },
@@ -1500,10 +1532,10 @@ export const MOVEMENT_INTEL = {
   "Banded Suitcase March": {
     type: "Compound",
     contraction: "Balanced",
-    muscles: "Quadratus Lumborum (QL), Obliques & Hip Flexors",
-    setup: "MINI-BAND: Loop around arches of both shoes. 41\" LOOP: Stand on bottom of band with both feet and hold top loop in ONE hand at your side like a suitcase.",
-    cue: "March slowly in place, lifting knees against the band while keeping shoulders and pelvis completely level.",
-    safety: "Keep spine tall and zero lateral torso sway on every step."
+    muscles: "Lateral Core Stabilizers (QL/Obliques), Hip Flexors & Glute Medius",
+    setup: "Loop a Mini-Band around the arches/laces of both shoes while holding a single dumbbell, kettlebell, or loaded bag at one side (or hands clasped overhead for bodyweight trunk challenge).",
+    cue: "March slowly in place, lifting knees to 60°–90° against mini-band tension while keeping enough foot separation to keep the band taut.",
+    safety: "Keep spine dead vertical and pelvis level on every step—resist leaning toward or away from the loaded side."
   },
   "Banded Overhead Waiter's Isometric March": {
     type: "Compound",
@@ -1516,18 +1548,18 @@ export const MOVEMENT_INTEL = {
   "High Door-Anchor Band Overhead Anti-Extension Hold": {
     type: "Compound",
     contraction: "Isometric",
-    muscles: "Rectus Abdominis, Transverse Abdominis, Lats & Serratus",
-    setup: "Anchor tube or 41\" loop at TOP of door. Kneel tall on both knees facing AWAY from the door, holding the band with both hands locked overhead.",
-    cue: "Pull ribs down toward belt buckle, clench glutes, and resist the band trying to pull your arms and spine backward into extension.",
-    safety: "Zero lumbar arching. If your lower back arches, move closer to the door to reduce tension."
+    muscles: "Rectus Abdominis, Transverse Abdominis & Lats",
+    setup: "Anchor handled tubes at the TOP of the door. Kneel tall facing away from the door, holding the handles locked overhead directly above your crown.",
+    cue: "Pull ribs down toward belt buckle, clench glutes, and resist the tubes trying to pull your arms and spine backward into extension.",
+    safety: "Zero lumbar arching. If your lower back arches, step closer to the door to reduce tension."
   },
   "Dynamic Banded Rotational Punch": {
     type: "Compound",
     contraction: "Concentric",
-    muscles: "[POWER // EXPLOSIVE 6–8r] Obliques, Serratus Anterior, Pecs & Hip Rotators",
-    setup: "Anchor a light-to-medium handled tube at mid-chest height. Stand sideways to the anchor in an athletic split stance holding the handle at your rear shoulder.",
-    cue: "Pivot your back heel and snap your hips forward while punching the handle straight ahead at high speed, then control the return over 2 seconds.",
-    safety: "Drive the punch from hip and ribcage rotation—do not over-reach or hyperextend your elbow at lockout."
+    muscles: "Internal/External Obliques, Pectorals & Serratus Anterior",
+    setup: "Anchor a handled tube at MID-CHEST height. Stand perpendicular to the door in a wide athletic stance, holding the handle in your rear (outside) hand at shoulder height.",
+    cue: "Pivot your rear foot and hips forcefully to punch the handle across your body at shoulder height, then control the 3-second eccentric return.",
+    safety: "Generate rotation from the rear hip and thoracic spine—keep the lumbar spine braced and locked."
   },
   "Resisted McGill Curl-Up": {
     type: "Isolation",
@@ -1543,9 +1575,9 @@ export const MOVEMENT_INTEL = {
     type: "Compound",
     contraction: "Concentric",
     muscles: "Hip Flexors / Iliopsoas, Lower Abs & Stance-Leg Glute Medius",
-    setup: "MINI-BAND: Loop around the balls/arches of BOTH SHOES (over the laces). 41\" LOOP: Anchor the band at ankle/bottom door height behind you, step inside the loop, and place the band around your waist/hips.",
-    cue: "March at a steady Zone 2 cadence, driving alternating knees up to hip height (90°) against the band resistance with upright posture.",
-    safety: "Keep torso tall and ribs stacked over pelvis. Do not lean backward as the knee drives up."
+    setup: "Loop a Mini-Band around the balls of both feet (over shoe laces/arches). Stand tall with ribs stacked over pelvis and hands in an athletic guard.",
+    cue: "Drive knee up to waist height (90° hip flexion) against mini-band tension at a steady Zone 2 rhythmic cadence. Pause 0.5s at top of each march.",
+    safety: "Keep torso tall and ribs clamped down. Do not lean backward or round your lower back as the knee drives up."
   },
   "Mini-Band Resisted High Knees (45s)": {
     type: "Compound",
@@ -1558,10 +1590,10 @@ export const MOVEMENT_INTEL = {
   "Banded Resisted Sprint Marches (30s/60s)": {
     type: "Compound",
     contraction: "Concentric",
-    muscles: "Hip Flexors, Glutes, Core & Anaerobic Conditioning",
-    setup: "MINI-BAND: Loop around the arches/laces of both shoes (or 2 inches above knees). 41\" LOOP: Anchor at bottom of door behind you and loop around your waist/belt line.",
+    muscles: "Hip Flexors, Glutes & Anterior Core",
+    setup: "Loop a light-to-medium Mini-Band around the arches/laces of both shoes (or 2 inches above the knees if foot-looping shifts during fast sprints).",
     cue: "Drive knees rapidly to 90° with aggressive arm swing for a 30s high-output surge, followed by 60s slow recovery walk.",
-    safety: "Maintain slight forward athletic lean from the ankles—never round at the lumbar spine."
+    safety: "Maintain a slight forward athletic lean from the ankles—never hinge or round at the lumbar spine."
   },
   "Banded Power Marches (30s/60s)": {
     type: "Compound",
@@ -1598,9 +1630,9 @@ export const MOVEMENT_INTEL = {
   "Continuous Band Pull-Throughs & Rows (Zone 2)": {
     type: "Compound",
     contraction: "Concentric",
-    muscles: "Full Posterior Chain (Glutes, Hamstrings, Lats & Rhomboids)",
-    setup: "Anchor a 41\" loop or handled tube at the BOTTOM/MID door height. Stand facing away for pull-throughs, then turn to face the door for rows.",
-    cue: "Alternate 10 smooth hip-hinge pull-throughs and 10 standing rows at a continuous, unbroken Zone 2 nasal-breathing rhythm.",
+    muscles: "Posterior Chain (Glutes, Hamstrings, Lats & Rhomboids)",
+    setup: "Anchor handled tubes at the BOTTOM of the door. Stand facing away (for pull-throughs) or facing the door (for standing rows).",
+    cue: "Alternate 10 smooth hip-hinge pull-throughs and 10 standing rows at a continuous, unbroken Zone 2 breathing rhythm.",
     safety: "Hinge strictly from the hips with a neutral flat back; never round the lower spine."
   },
   "Elevated DB/KB Gorilla Row": {
@@ -1819,9 +1851,9 @@ export const MOVEMENT_INTEL = {
     type: "Compound",
     contraction: "Concentric",
     muscles: "Anterior Deltoids, Serratus Anterior, Core Obliques & Calves",
-    setup: "Thread a light 41\" loop band (Blue or Green) across your upper back/shoulder blades (under armpits) and loop the ends over both thumbs/palms.",
-    cue: "Stay light on balls of feet and throw continuous crisp 1-2 jabs, crosses, and slips against the forward band resistance at a steady Zone 2 pace.",
-    safety: "Snap punches out and retract hands straight back to chin guard; do not let the band yank elbows behind your torso."
+    setup: "Loop a light Mini-Band around both WRISTS (or hold light tube handles anchored behind you at shoulder height).",
+    cue: "Stay light on the balls of your feet and throw continuous crisp jabs and crosses against outward/forward band tension at a steady Zone 2 pace.",
+    safety: "Keep shoulders down away from your ears and snap punches straight back to guard."
   },
 
   // --- MINI-BAND GUIDE: UPPER BODY & SHOULDERS ---
@@ -2030,6 +2062,180 @@ export const MOVEMENT_INTEL = {
     setup: "Loop a mini-band around BOTH LOWER LEGS / ANKLES. Assume a high push-up plank with hands shoulder-width apart and core braced.",
     cue: "Maintaining a rigid plank, squeeze your glute to lift and kick your right leg straight back 5–6 inches against the band, hold 1s, lower, and switch sides.",
     safety: "Avoid twisting your hips or arching your lower back as the leg lifts; keep pelvis parallel to the floor."
+  },
+
+  // -------------------------------------------------------------
+  // EXPANDED FUNCTIONAL MOVEMENT PATTERNS (5 CATEGORIES)
+  // -------------------------------------------------------------
+
+  // --- 1. GROUND-TO-STANDING TRANSITIONS ---
+  "Half Turkish Get-Up (DB/KB)": {
+    type: "Compound",
+    contraction: "Balanced",
+    muscles: "[COMPOUND // MULTI-PLANAR 3–5r/side] Rotator Cuff, Serratus, Obliques, Glutes & Hip Mobility",
+    setup: "Lie flat on your back with your right knee bent (foot flat), left leg angled out 45°, and a light-to-moderate dumbbell or kettlebell pressed straight up toward the ceiling in your right hand.",
+    cue: "Keep your eyes locked on the bell and elbow straight. Roll onto your left forearm, press up to a tall left palm, bridge your hips high, sweep your left leg back into a half-kneeling lunge, and stand tall—then reverse every step smoothly back to the floor.",
+    safety: "Keep your wrist neutral (knuckles to ceiling) and shoulder packed down away from your ear throughout every transition; never rush the descent."
+  },
+  "Bodyweight / Light-DB Half Turkish Get-Up": {
+    type: "Compound",
+    contraction: "Balanced",
+    muscles: "[COMPOUND // MULTI-PLANAR 4–6r/side] Shoulder Stability, Thoracic Mobility, Obliques & Glutes",
+    setup: "Lie on your back with right knee bent and right arm locked straight toward the ceiling (unweighted or holding a light 5–15 lb dumbbell/water bottle).",
+    cue: "Drive through your right heel to roll onto your left elbow, press to a tall hand, lift hips into a high bridge, and sweep your left knee underneath into a tall half-kneeling posture before reversing back down.",
+    safety: "Keep eyes fixed on your top fist and move through each checkpoint with a 1-second pause rather than using momentum."
+  },
+  "Bodyweight / Goblet Tactical Get-Up": {
+    type: "Compound",
+    contraction: "Balanced",
+    muscles: "[COMPOUND // MULTI-PLANAR 5–6r/side] Quads, Glutes, Hip Flexors, Adductors & Balance",
+    setup: "Sit flat on the mat with knees bent and feet planted in front of you (hands clasped at chest or holding a light goblet dumbbell/kettlebell—zero hands allowed on the floor).",
+    cue: "Shift your weight forward onto one foot while tucking the opposite shin underneath you into a half-kneeling lunge, then drive through your front heel to stand upright. Reverse smoothly back to seated without dropping onto your tailbone.",
+    safety: "Control the lowering phase onto the mat—if your hips plop down at the bottom, perform bodyweight-only until hip mobility improves."
+  },
+  "41\" Loop Band Goblet Tactical Get-Up": {
+    type: "Compound",
+    contraction: "Balanced",
+    muscles: "[COMPOUND // MULTI-PLANAR 5–6r/side] Quads, Glutes, Core & Hip Mobility",
+    setup: "Sit on the mat with a light 41\" loop band anchored under your lead foot and the top loop held tight against your sternum in a goblet hold.",
+    cue: "Rock forward onto your lead foot, tuck your rear shin under into a lunge without touching hands to the floor, and drive up against the ascending band tension. Lower with strict control.",
+    safety: "Use a light band (Blue or Green) so lateral tension never pulls your lead knee inward."
+  },
+
+  // --- 2. OFFSET & RACKED CARRIES ---
+  "Front-Rack DB/KB Carry (Single or Double)": {
+    type: "Compound",
+    contraction: "Isometric",
+    muscles: "[COMPOUND // ISOMETRIC 40–50 Paces] Anterior Core, Thoracic Extensors, Upper Back & Forearms",
+    setup: "Clean one or two moderate-heavy dumbbells or kettlebells to your collarbones with elbows tucked forward, wrists neutral, and bells resting securely in the front-rack groove.",
+    cue: "Clamp your ribs down over your pelvis, stand dead tall, and walk with crisp, deliberate steps while breathing steadily behind a braced abdominal wall.",
+    safety: "Do not lean backward or let your lower back arch as fatigue sets in—keep elbows high and chest proud."
+  },
+  "41\" Loop Band Front-Rack Isometric March": {
+    type: "Compound",
+    contraction: "Isometric",
+    muscles: "[COMPOUND // ISOMETRIC 30–40s] Anterior Core, Thoracic Extensors, Quads & Hip Flexors",
+    setup: "Stand hip-width on the bottom of a medium-heavy 41\" loop band and hook the top loop across your front deltoids/collarbones in a front-rack hold.",
+    cue: "Keep elbows high and ribcage braced down against the downward pull of the band while performing slow, controlled high-knee marches in place.",
+    safety: "Keep spine completely vertical—do not let the band round your upper back forward."
+  },
+  "Mixed Carry (Overhead + Suitcase)": {
+    type: "Compound",
+    contraction: "Isometric",
+    muscles: "[COMPOUND // ISOMETRIC 30–40 Paces/side] Obliques, QL, Rotator Cuff, Serratus & Grip",
+    setup: "Press one light-to-moderate dumbbell/kettlebell locked straight overhead (bicep by ear) while holding a heavier bell down at your opposite side in a suitcase grip.",
+    cue: "Stack your ribs squarely over your pelvis and walk with slow, controlled steps—resisting both side-bending toward the heavy suitcase and rib flare under the overhead bell. Switch arms halfway.",
+    safety: "Keep the overhead shoulder packed down away from your ear and maintain a locked elbow throughout the entire walk."
+  },
+  "Banded Mixed Carry March (Overhead + Suitcase)": {
+    type: "Compound",
+    contraction: "Isometric",
+    muscles: "[COMPOUND // ISOMETRIC 25–30s/side] Obliques, QL, Serratus & Deep Core",
+    setup: "Stand on a light 41\" loop with one foot and press it locked overhead with that hand, while gripping a heavier 41\" loop anchored under your opposite foot at thigh height.",
+    cue: "Hold both ends taut with dead-level shoulders and braced ribs while marching slowly in place for 25–30 seconds, then switch sides.",
+    safety: "Zero leaning toward either side and zero lumbar arching under the overhead arm."
+  },
+
+  // --- 3. DECELERATION & ECCENTRIC BRAKING ---
+  "Snap-Downs (Athletic Braking)": {
+    type: "Compound",
+    contraction: "Eccentric",
+    muscles: "[POWER // DECELERATION 5–6r] Hamstrings, Glutes, Quads, Calves & Achilles Tendon",
+    setup: "Stand tall with feet hip-width apart, rise up onto the balls of your feet, and reach both arms straight overhead.",
+    cue: "Snap your arms down forcefully past your hips while dropping rapidly into an athletic quarter-squat. Land dead-silent on your mid-foot with knees aligned over toes and freeze motionless for 2 full seconds.",
+    safety: "Prioritize a whisper-quiet, rigid stop with zero knee valgus (caving inward); reset to tall standing between every single rep."
+  },
+  "Mini-Band Athletic Snap-Downs": {
+    type: "Compound",
+    contraction: "Eccentric",
+    muscles: "[POWER // DECELERATION 6–8r] Glute Medius, Hamstrings, Quads & Calves",
+    setup: "Loop a light-to-medium Mini-Band 2 inches ABOVE both knees. Rise onto the balls of your feet with arms extended overhead.",
+    cue: "Drop rapidly into an athletic quarter-squat while actively driving both knees outward against the mini-band to stick a rock-solid, silent 2-second landing.",
+    safety: "Do not let the mini-band pull your knees inward upon landing; keep chest proud and hips hinged back."
+  },
+  "Lateral Bound to Single-Leg Stick (Low-Amplitude)": {
+    type: "Compound",
+    contraction: "Eccentric",
+    muscles: "[POWER // DECELERATION 4–5r/side] Glute Medius, Quads, Hamstrings & Ankle Stabilizers",
+    setup: "Stand on your outside leg in a shallow athletic quarter-squat with 3–4 feet of clear lateral floor space beside you.",
+    cue: "Push off laterally to bound 2–3 feet sideways onto the opposite foot, absorbing the landing silently through your hip and ankle and freezing completely motionless for 2 full seconds before bounding back.",
+    safety: "Keep bound distance modest (2–3 feet) so you can stick every landing cleanly without hopping or letting your knee cave inward."
+  },
+  "Mini-Band Lateral Bound to Stick": {
+    type: "Compound",
+    contraction: "Eccentric",
+    muscles: "[POWER // DECELERATION 5–6r/side] Glute Medius, Peroneals & Lateral Hip Stabilizers",
+    setup: "Loop a light Mini-Band around both ankles (or 2 inches above knees) and drop into an athletic single-leg quarter-squat.",
+    cue: "Bound 1.5–2 feet laterally against the band tension onto your opposite foot and freeze in a balanced single-leg athletic stance for 2 full seconds.",
+    safety: "Use a light mini-band so elastic snapback never yanks your landing knee inward."
+  },
+
+  // --- 4. MULTI-PLANAR CRAWLING & QUADRUPED LOCOMOTION ---
+  "Lateral Bear Crawl (Side-to-Side)": {
+    type: "Compound",
+    contraction: "Balanced",
+    muscles: "[COMPOUND // LOCOMOTION 20–30s] Serratus Anterior, Anterior Core, Quads & Hip Abductors",
+    setup: "Set up in a quadruped bear stance with hands stacked under shoulders, knees hovering 1 inch off the mat, and spine flat like a tabletop.",
+    cue: "Step your right hand and left foot laterally to the right simultaneously, followed by your left hand and right foot—gliding sideways without letting your hips sway or pike upward.",
+    safety: "Keep knees 1 inch above the floor and shoulders packed away from your ears throughout."
+  },
+  "Mini-Band Lateral Bear Crawl": {
+    type: "Compound",
+    contraction: "Balanced",
+    muscles: "[COMPOUND // LOCOMOTION 20–30s] Serratus Anterior, Glute Medius & Core Stabilizers",
+    setup: "Loop a light Mini-Band around both WRISTS (or 2 inches above knees) and assume a hovering bear-crawl tabletop stance.",
+    cue: "Step laterally side-to-side with opposite hand and foot while maintaining constant outward tension on the mini-band.",
+    safety: "Never let your hands or knees come so close together that the band goes slack."
+  },
+  "Crab Walk / Reverse Table-Top Reach": {
+    type: "Compound",
+    contraction: "Balanced",
+    muscles: "[COMPOUND // LOCOMOTION 20–30s] Posterior Deltoids, Triceps, Glutes, Hamstrings & Thoracic Extensors",
+    setup: "Sit on the mat with knees bent, feet planted flat, and hands placed behind your hips with fingers pointed outward/backward. Lift your hips into a reverse tabletop.",
+    cue: "Take small, controlled opposite-hand/opposite-foot steps forward or backward (or pause every 2 steps to reach one arm overhead into a thoracic bridge).",
+    safety: "Keep shoulders rolled back and chest open—do not shrug shoulders toward your ears or let hips sag."
+  },
+  "Mini-Band Crab Walk & Reach": {
+    type: "Compound",
+    contraction: "Balanced",
+    muscles: "[COMPOUND // LOCOMOTION 20–30s] Glutes, Hamstrings, Posterior Delts & Triceps",
+    setup: "Loop a Mini-Band 2 inches ABOVE both knees and lift into a reverse tabletop crab stance with hips level.",
+    cue: "Keep knees pressed outward against the mini-band while taking deliberate crab steps forward and backward with glutes engaged.",
+    safety: "Keep elbows softly unlocked and chest lifted so the front of your shoulders never rounds forward."
+  },
+
+  // --- 5. REACTIVE BALANCE & PERTURBATION CONTROL ---
+  "Single-Leg Cable Pallof Press (Perturbation)": {
+    type: "Isolation",
+    contraction: "Isometric",
+    muscles: "[ISOLATION // BALANCE & CORE 8–10r/side] Obliques, Transverse Abdominis, Glute Medius & Foot Tripod",
+    setup: "Set a Bravo pulley to mid-chest height with light-to-moderate weight. Stand perpendicular to the column balanced on ONE foot (inside leg or outside leg) with hands holding the handle at your sternum.",
+    cue: "Root your big toe, pinky toe, and heel into the floor, press the handle straight out in front of your chest, hold for 2 full seconds while fighting all rotational pull, and return smoothly.",
+    safety: "Keep hips square and stance knee softly bent—if your ankle wobbles uncontrollably, lighten the weight stack."
+  },
+  "Single-Leg Mid-Anchor Band Pallof Press": {
+    type: "Isolation",
+    contraction: "Isometric",
+    muscles: "[ISOLATION // BALANCE & CORE 8–10r/side] Obliques, Glute Medius & Ankle Proprioceptors",
+    setup: "Anchor a light-to-medium handled tube at MID-CHEST height. Stand perpendicular to the door balanced on ONE leg, holding the handle at your chest.",
+    cue: "Press straight out to full arm extension without letting your hips or shoulders twist toward the door, pause 2 seconds, and return to sternum.",
+    safety: "Keep stance knee aligned over your second toe and pelvis dead level."
+  },
+  "Cable Pallof Press with Figure-8 Trace": {
+    type: "Isolation",
+    contraction: "Isometric",
+    muscles: "[ISOLATION // PERTURBATION 6–8 Cycles/side] Deep Transverse Abdominis, Obliques & Serratus",
+    setup: "Set a Bravo pulley to chest height with a light load. Stand perpendicular in an athletic quarter-squat and press the handle straight out to locked arms.",
+    cue: "With arms locked straight and torso frozen like a statue, slowly draw small, crisp figure-8s (or capital letters A–F) in the air against the lateral cable tension.",
+    safety: "Keep ribcage clamped down and hips motionless—all movement comes strictly from the shoulders while the core resists perturbation."
+  },
+  "Mid-Anchor Band Pallof Figure-8 Trace": {
+    type: "Isolation",
+    contraction: "Isometric",
+    muscles: "[ISOLATION // PERTURBATION 6–8 Cycles/side] Deep Core Stabilizers, Obliques & Rotator Cuff",
+    setup: "Anchor a light handled tube at MID-CHEST height. Step sideways into a braced athletic stance and extend both hands straight out in front of your sternum.",
+    cue: "Trace slow, controlled figure-8s in front of your chest while keeping your torso, ribs, and hips completely locked against the shifting band vector.",
+    safety: "Use a light tube (20–30 lbs) so you can maintain crisp control without shrugging your traps."
   }
 };
 
