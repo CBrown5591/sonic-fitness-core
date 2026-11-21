@@ -2308,6 +2308,68 @@ export const MOVEMENT_INTEL = {
     cue: "First extend the hugged leg straight toward the ceiling (holding behind the hamstring/calf) for 20 seconds, then bend the knee and guide it across your midline toward the opposite shoulder for 20 seconds while keeping both shoulders flat.",
     safety: "Move slowly into mild, comfortable tension with deep nasal exhales—never force your knee to the floor if your opposite shoulder lifts."
   },
+  "Elephant Walks (Alternating Knee-Bend Forward Fold)": {
+    type: "Isolation",
+    contraction: "Balanced",
+    muscles: "[MOBILITY // SCIATIC NERVE GLIDE 10–12r/side] Hamstrings, Calves & Posterior Fascia",
+    setup: "Stand with feet hip-width apart in front of a low bench, chair, or plyo box. Hinge at the hips with knees softly bent and rest both palms flat on the bench (or on your shins) so your lower back stays flat and relaxed.",
+    cue: "Keep both hands planted on the support, straighten one leg fully while bending the opposite knee forward, pause 1 second in the gentle hamstring stretch, then smoothly switch legs in an alternating pedaling rhythm.",
+    safety: "Keep knee bend soft enough that your palms stay firmly planted without rounding your lower back or forcing past the ~80% pull threshold."
+  },
+
+  "Bent-Knee Standing Ragdoll Decompression": {
+    type: "Isolation",
+    contraction: "Isometric",
+    muscles: "[FLEXIBILITY // LUMBAR TRACTION 30–45s] Lumbar Erectors, Thoracolumbar Fascia & Proximal Hamstrings",
+    setup: "Stand with feet hip-width apart and knees bent generously (20°–30°). Hinge forward at the hips until your lower ribs and belly rest lightly on top of your thighs.",
+    cue: "Let your head, neck, and arms hang completely heavy toward the floor (or hold opposite elbows). Breathe deeply into your lower back ribs for 30–45 seconds, letting gravity decompress your spine.",
+    safety: "Keep knees bent enough that there is zero sharp pull behind the knees—rise slowly by walking your hands up your thighs so you don't get lightheaded."
+  },
+
+  "Jefferson Curl (Bodyweight / Light DB)": {
+    type: "Isolation",
+    contraction: "Eccentric",
+    muscles: "[MOBILITY // SEGMENTAL SPINE 5–8r] Spinal Erectors, Multifidus, Thoracolumbar Fascia & Hamstrings",
+    setup: "Stand tall on flat floor (or a low step once flexible) with feet hip-width apart and knees softly unlocked or straight, holding bodyweight or a very light dumbbell (5–15 lbs) in front of your thighs.",
+    cue: "Tuck your chin tightly to your chest and peel your spine downward ONE vertebra at a time (neck, upper back, mid-back, lower back) over 5 seconds. Pause 2s at your comfortable end-range, then tuck your tailbone under and stack each vertebra back up.",
+    safety: "Keep load ultra-light (never exceed 15–20 lbs) and stop at smooth muscular tension—never force into sharp lower-back pinching or behind-the-knee nerve zing."
+  },
+
+  "41\" Loop Band Jefferson Curl": {
+    type: "Isolation",
+    contraction: "Eccentric",
+    muscles: "[MOBILITY // SEGMENTAL SPINE 6–8r] Spinal Erectors, Multifidus & Posterior Chain",
+    setup: "Stand hip-width on the bottom of a light 41\" loop band (Blue or Green) and hold the top loop with both hands at thigh height.",
+    cue: "Tuck chin to chest and roll down one spinal segment at a time over 5 seconds as band tension decreases, then tuck your pelvis and unroll vertebra by vertebra against light ascending band resistance.",
+    safety: "Use only a light band (Blue or Green) so top-end tension never yanks your shoulders or compresses your lumbar spine."
+  },
+
+  "Supine Hamstring Band/Strap Stretch": {
+    type: "Isolation",
+    contraction: "Isometric",
+    muscles: "[FLEXIBILITY // PNF HAMSTRING RELEASE 30–45s/side] Hamstrings (Biceps Femoris, Semitendinosus) & Calves",
+    setup: "Lie flat on your back with one leg extended straight on the floor and loop a 41\" band (or strap/towel) around the arch of your working foot, holding both ends with relaxed shoulders.",
+    cue: "Raise the banded leg toward the ceiling until you hit mild ~7/10 tension (keeping knee softly unlocked if tight behind the knee). Press your heel gently into the band for 5 seconds (~30% effort), exhale completely, and let the leg drift closer for 25–30 seconds.",
+    safety: "Keep both hips and your lower back flat on the mat—never yank the band aggressively or lock the knee into nerve tension."
+  },
+
+  "Half-Kneeling Hip Flexor & Quad Stretch": {
+    type: "Isolation",
+    contraction: "Isometric",
+    muscles: "[FLEXIBILITY // ANTERIOR PELVIC UNLOCK 30–45s/side] Iliopsoas, Rectus Femoris & Anterior Hip Capsule",
+    setup: "Take a half-kneeling lunge stance on a folded mat with your front knee stacked over your ankle and rear knee cushioned on the floor.",
+    cue: "Tuck your tailbone under (posterior pelvic tilt) and squeeze your rear glute firmly before shifting forward just 1–2 inches until you feel a clean stretch across the front of your rear hip.",
+    safety: "Do not arch your lower back to lean forward—the pelvic tuck and glute squeeze create the stretch without lumbar compression."
+  },
+
+  "90/90 Pigeon Glute Hold": {
+    type: "Isolation",
+    contraction: "Isometric",
+    muscles: "[FLEXIBILITY // POSTERIOR HIP RELEASE 30–45s/side] Piriformis, Gluteus Medius/Maximus & External Rotators",
+    setup: "Sit on the floor with your front shin bent at 90° directly in front of your torso and your back leg bent at 90° out to the side (or elevate your front shin onto a low bench/couch if hips are tight).",
+    cue: "Keep your chest tall and spine long, hinge forward from your hip crease over your front shin until you feel a deep stretch in your outer glute, and hold with slow nasal breathing.",
+    safety: "Keep your front foot flexed to protect the knee joint and hinge with a flat back rather than rounding your shoulders."
+  },
   "Mid-Anchor Band Pallof Figure-8 Trace": {
     type: "Isolation",
     contraction: "Isometric",
