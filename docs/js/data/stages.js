@@ -461,6 +461,7 @@ export const STAGES = {
           "90/90 Hip Switches (Active End-Range)",
   "Cossack / Side Lunge Flow (Assisted)",
           "DDP Twisting Lunge to Warrior Flow",
+          "Elephant Walks (Alternating Knee-Bend Forward Fold)",
           "Tibialis Wall Raises"
         ]
       },
@@ -520,6 +521,10 @@ export const STAGES = {
   "DB / Low-Anchor Oblique Side Bend (Controlled)",
           "DDP Cobra / Upward Dog to Safety Zone",
   "DDP Can Opener / Pinfall Stretch",
+          "Jefferson Curl (Bodyweight / Light DB)",
+  "Supine Hamstring Band/Strap Stretch",
+  "90/90 Pigeon Glute Hold",
+  "Bent-Knee Standing Ragdoll Decompression",
           "Tall-Kneeling Pallof Hold (20s)",
           "Hollow Body Isometric Hold (30s)"
         ]
@@ -720,6 +725,8 @@ export const STAGES = {
           "Lateral Bear Crawl (Side-to-Side)",
           "Crab Walk / Reverse Table-Top Reach",
           "DDP Broken Table (Crunch & Isometric Extension)",
+          "Elephant Walks (Alternating Knee-Bend Forward Fold)",
+  "Bent-Knee Standing Ragdoll Decompression",
           "Prone Scapular Y-T-W Raises"
         ]
       },
@@ -798,6 +805,8 @@ export const STAGES = {
   "DB / Low-Anchor Oblique Side Bend (Controlled)",
           "DDP Diamond Cutter to Touchdown",
   "DDP Twisting Lunge to Warrior Flow",
+          "Elephant Walks (Alternating Knee-Bend Forward Fold)",
+  "Jefferson Curl (Bodyweight / Light DB)",
           "Band Shoulder Dislocates"
         ]
       },
@@ -812,6 +821,7 @@ export const STAGES = {
           "Lat & Thoracic Bench Prayer Stretch",
           "DDP Cobra / Upward Dog to Safety Zone",
   "DDP Can Opener / Pinfall Stretch",
+          "Bent-Knee Standing Ragdoll Decompression",
           "Supine Hamstring Band/Strap Stretch"
         ]
       }
