@@ -193,15 +193,20 @@ function resolveExerciseTarget(exerciseName, defaultSlotTarget) {
     return { targetText: "3 × 8-10 / side", defaultReps: 10 };
   }
 
+  // 7.5. Segmental Spine Mobility Exception (Jefferson Curls stay in slow 6–8 rep mobility range)
+  if (name.includes('jefferson')) {
+    return { targetText: "3 × 6-8", defaultReps: 8 };
+  }
+
   // 8. Isolation, Hip Armor & Accessories (Adduction, Abduction, Flyes, Raises, Curls, Extensions)
   if (
-    name.includes('adduct') || 
-    name.includes('abduct') || 
-    name.includes('fly') || 
-    name.includes('lateral') || 
-    name.includes('curl') || 
-    name.includes('extension') || 
-    name.includes('raise') || 
+    name.includes('adduct') ||
+    name.includes('abduct') ||
+    name.includes('fly') ||
+    name.includes('lateral') ||
+    name.includes('curl') ||
+    name.includes('extension') ||
+    name.includes('raise') ||
     name.includes('rotation')
   ) {
     return { targetText: "3 × 12-15", defaultReps: 15 };
