@@ -345,11 +345,6 @@ export function resolveFocusNextStep(stageKey, stageDef, currentSlotIndex, activ
     priorContractions.add(getExerciseContraction(exName));
   });
 
-  // Inside unplayedAlts.forEach((alt) => { ... }):
-  const altContraction = getExerciseContraction(alt);
-  const contractionBonus = (altContraction !== 'balanced' && priorContractions.has(altContraction)) ? 0.65 : 0;
-  const totalScore = overlapScore + contractionBonus + sameSlotBonus + visitedPenalty;
-
   let bestChoice = null;
   let bestOverallScore = 0;
 
@@ -372,9 +367,11 @@ export function resolveFocusNextStep(stageKey, stageDef, currentSlotIndex, activ
 
       if (overlapScore <= 0) return;
 
+      const altContraction = getExerciseContraction(alt);
+      const contractionBonus = (altContraction !== 'balanced' && priorContractions.has(altContraction)) ? 0.65 : 0;
       const sameSlotBonus = (idx === currentSlotIndex && setsLoggedInSlot < 6) ? 0.4 : 0;
       const visitedPenalty = (idx !== currentSlotIndex && setsLoggedInSlot >= 3) ? -0.3 : 0;
-      const totalScore = overlapScore + sameSlotBonus + visitedPenalty;
+      const totalScore = overlapScore + contractionBonus + sameSlotBonus + visitedPenalty;
 
       if (totalScore > bestOverallScore) {
         bestOverallScore = totalScore;
