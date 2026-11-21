@@ -2255,6 +2255,59 @@ export const MOVEMENT_INTEL = {
     cue: "With arms locked straight and torso frozen like a statue, slowly draw small, crisp figure-8s (or capital letters A–F) in the air against the lateral cable tension.",
     safety: "Keep ribcage clamped down and hips motionless—all movement comes strictly from the shoulders while the core resists perturbation."
   },
+  "DDP Diamond Cutter to Touchdown": {
+    type: "Compound",
+    contraction: "Isometric",
+    muscles: "[MOBILITY // DYNAMIC RESISTANCE 6–8r] Thoracic Extensors, Deltoids, Glutes & Core",
+    setup: "Stand tall with feet hip-width apart, big toes touching or parallel, knees softly unlocked, and glutes squeezed. Form a diamond with your thumbs and index fingers in front of your groin.",
+    cue: "Create full-body isometric tension from calves to core, pull shoulders back and down, and slowly sweep your arms up overhead into 'Touchdown' as if moving through thick mud. Exhale and reverse slowly back to Diamond Cutter.",
+    safety: "Keep continuous nasal breathing throughout the isometric squeeze—never hold your breath or flare your lower ribs as your arms reach overhead."
+  },
+
+  "DDP Broken Table (Crunch & Isometric Extension)": {
+    type: "Isolation",
+    contraction: "Isometric",
+    muscles: "[STABILIZER // ANTI-ROTATION 6–8r/side] Multifidus, Transverse Abdominis, Glutes & Posterior Deltoid",
+    setup: "Start in a quadruped tabletop position with hands stacked directly under shoulders and knees directly under hips, spine neutral.",
+    cue: "Extend your right arm forward and left leg straight back while flexing every muscle in both limbs. Pause 2s, pull elbow and knee tightly together underneath your torso with a strong exhale, and re-extend under tension.",
+    safety: "Keep your hips level with the floor—do not arch your lower back or kick your heel above hip height."
+  },
+
+  "DDP Twisting Lunge to Warrior Flow": {
+    type: "Compound",
+    contraction: "Isometric",
+    muscles: "[MOBILITY // UNILATERAL FLOW 5–6r/side] Hip Flexors, Quads, Glutes & Thoracic Rotators",
+    setup: "Step into a long lunge stance with your front knee stacked directly over your ankle and your back heel lifted high off the floor.",
+    cue: "Sink your hips squarely downward while sweeping arms overhead into Warrior, then place your opposite hand inside your front foot (or twist your torso toward your lead thigh) while reaching your top arm to the ceiling.",
+    safety: "Keep your front knee tracking straight over your second toe—rotate strictly through your upper back rather than twisting your pelvis or lower back."
+  },
+
+  "DDP Cobra / Upward Dog to Safety Zone": {
+    type: "Isolation",
+    contraction: "Isometric",
+    muscles: "[FLEXIBILITY // SPINAL DECOMPRESSION 30–45s] Anterior Core, Hip Flexors, Lats & Lumbar Paraspinals",
+    setup: "Lie prone on a mat with palms planted beside your lower ribs and tops of your feet pressing flat into the floor.",
+    cue: "Press through your palms to lift your chest smoothly into Cobra/Upward Dog with shoulders pulled away from your ears for 2 slow breaths, then push your hips straight back onto your heels into Safety Zone (Child's Pose) with arms reached long.",
+    safety: "Keep glutes lightly engaged during Cobra to protect your lumbar spine; only lift as high as feels smooth and pinch-free."
+  },
+
+  "DDP Slow-Burn Push-Up (3–5s Eccentric Count)": {
+    type: "Compound",
+    contraction: "Eccentric",
+    muscles: "[COMPOUND // BODYWEIGHT TENSION 8–10r] Pectorals, Triceps, Anterior Deltoids & Serratus",
+    setup: "Assume a high plank position with hands slightly wider than shoulder-width, fingers spread, glutes locked, and heels pressed back.",
+    cue: "Engage full-body Dynamic Resistance and lower your chest toward the floor over a strict 3-to-5-second count with elbows tucked at ~45°. Hover 1 inch off the mat for 1 second, then press smoothly back to lockout.",
+    safety: "Keep your body in a rigid straight line from head to heels—do not let your hips sag or your neck jut forward."
+  },
+
+  "DDP Can Opener / Pinfall Stretch": {
+    type: "Isolation",
+    contraction: "Isometric",
+    muscles: "[FLEXIBILITY // PARASYMPATHETIC HOLD 30–45s/side] Hamstrings, Piriformis, Glutes & Lower Back",
+    setup: "Lie flat on your back on a mat with both legs extended. Hug one knee tightly into your chest while keeping your opposite leg straight and pressed into the floor.",
+    cue: "First extend the hugged leg straight toward the ceiling (holding behind the hamstring/calf) for 20 seconds, then bend the knee and guide it across your midline toward the opposite shoulder for 20 seconds while keeping both shoulders flat.",
+    safety: "Move slowly into mild, comfortable tension with deep nasal exhales—never force your knee to the floor if your opposite shoulder lifts."
+  },
   "Mid-Anchor Band Pallof Figure-8 Trace": {
     type: "Isolation",
     contraction: "Isometric",
