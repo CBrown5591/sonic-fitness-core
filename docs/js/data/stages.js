@@ -510,6 +510,8 @@ export const STAGES = {
           "Bravo Anti-Extension Overhead Hold",
           "Lat & Thoracic Bench Prayer Stretch",
   "Half-Kneeling Hip Flexor & Quad Stretch",
+          "Jefferson Curl (Bodyweight / Light DB)",
+  "DB / Low-Anchor Oblique Side Bend (Controlled)",
           "Tall-Kneeling Pallof Hold (20s)",
           "Hollow Body Isometric Hold (30s)"
         ]
@@ -782,6 +784,8 @@ export const STAGES = {
           "Half Turkish Get-Up (DB/KB)",
 "Bodyweight / Goblet Tactical Get-Up",
 "Single-Leg Cable Pallof Press (Perturbation)",
+          "Jefferson Curl (Bodyweight / Light DB)",
+  "DB / Low-Anchor Oblique Side Bend (Controlled)",
           "Band Shoulder Dislocates"
         ]
       },
