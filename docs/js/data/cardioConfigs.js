@@ -419,9 +419,16 @@ export const CARDIO_CONFIGS = {
     })
   },
   "Low-Impact Lateral Shuffle & Carioca (Zone 2)": {
-    metricLabel: "Flow Time (s)",
-    defaultDuration: 30,
-    zone: "Zone 2 Agility"
+    label1: "LOAD (LBS)",
+    label2: "SECONDS",
+    label3: "ZONE / RPE",
+    default1: 0,
+    default2: 30,
+    calcEquiv: (load, secs) => ({
+      equivReps: Math.round(secs / 2),
+      equivVolume: Math.round(secs * 14 * (1 + (load || 0) * 0.03)),
+      display: `${secs}s Agility Flow`
+    })
   },
   "Rower / Incline Treadmill (90s Max Effort AMRAP)": {
     label1: "DAMPER / %",
